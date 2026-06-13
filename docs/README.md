@@ -1,4 +1,4 @@
-Last updated: 2026-06-13T22:47:44Z (UTC)
+Last updated: 2026-06-13T23:02:10Z (UTC)
 
 # Docs Index
 
@@ -10,9 +10,16 @@ This folder contains public Codeheart Operating Kit documentation.
 - Repository placement contract: `docs/repo/reference/placement-contract.md`
 - Consumer-impact classification:
   `docs/repo/reference/consumer-impact-classification.md`
+- Public-core hygiene inventory:
+  `docs/repo/reference/public-core-hygiene-inventory.md`
 - Kit change runbook: `docs/repo/runbooks/change-operating-kit.md`
 - Kit release runbook: `docs/repo/runbooks/release-operating-kit.md`
 - Consumer promotion runbook: `docs/repo/runbooks/promote-consumer-change.md`
+- Planning workflows: `components/planning-workflows/managed/README.md`
+- Agent memory: `components/agent-memory/managed/README.md`
+- Agent interface: `components/agent-interface/managed/README.md`
+- Structure governance: `components/structure-governance/managed/README.md`
+- Native Codex capabilities: `components/native-codex-capabilities/managed/README.md`
 
 ## Placement
 

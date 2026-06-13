@@ -1,4 +1,4 @@
-Last updated: 2026-06-13T22:47:44Z (UTC)
+Last updated: 2026-06-13T23:02:10Z (UTC)
 
 # Codeheart Operating Kit
 
@@ -20,9 +20,12 @@ configuration.
 
 - `AGENTS.md`: agent-facing bootstrap and maintainer routing.
 - `docs/README.md`: documentation router.
+- `components/`: managed Operating Kit component source content.
+- `templates/`: templates for installed consumer surfaces.
 - `docs/repo/reference/placement-contract.md`: repository documentation placement contract.
 - `docs/repo/reference/consumer-impact-classification.md`: consumer-impact classes for kit
   changes.
+- `docs/repo/reference/public-core-hygiene-inventory.md`: public-core extraction inventory.
 - `docs/repo/runbooks/change-operating-kit.md`: procedure for changing this repository.
 - `docs/repo/runbooks/release-operating-kit.md`: procedure for public releases.
 - `docs/repo/runbooks/promote-consumer-change.md`: procedure for promoting consumer-local
