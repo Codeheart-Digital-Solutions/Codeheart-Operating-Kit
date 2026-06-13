@@ -1,0 +1,29 @@
+# Python and build output
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+build/
+dist/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Node and frontend caches
+node_modules/
+.npm/
+
+# Local OS/editor files
+.DS_Store
+.idea/
+.vscode/
+
+# Local Operating Kit user layer
+.codeheart/user/*
+!.codeheart/user/README.md
+!.codeheart/user/examples/
+!.codeheart/user/examples/**
