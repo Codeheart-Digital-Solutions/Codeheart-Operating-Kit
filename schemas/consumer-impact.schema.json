@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/schemas/consumer-impact.schema.json",
+  "title": "Codeheart Operating Kit Consumer Impact Record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "impact_class",
+    "affected_paths",
+    "validation",
+    "release_note_required",
+    "migration_or_adoption_note_required",
+    "known_consumer_action"
+  ],
+  "properties": {
+    "impact_class": {
+      "type": "string",
+      "enum": [
+        "instruction-only change",
+        "validator-only change",
+        "component addition",
+        "backwards-compatible scaffold addition",
+        "consumer migration required",
+        "breaking placement-contract change",
+        "security or safety policy change"
+      ]
+    },
+    "affected_paths": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "validation": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "release_note_required": { "type": "boolean" },
+    "migration_or_adoption_note_required": { "type": "boolean" },
+    "known_consumer_action": { "type": "string" }
+  }
+}

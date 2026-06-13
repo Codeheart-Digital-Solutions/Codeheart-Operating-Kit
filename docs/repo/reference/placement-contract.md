@@ -1,4 +1,4 @@
-Last updated: 2026-06-13T22:47:44Z (UTC)
+Last updated: 2026-06-13T23:16:03Z (UTC)
 
 # Placement Contract
 
@@ -11,11 +11,11 @@ This reference defines the first public placement contract for Codeheart Operati
 - `docs/`: public human-readable kit documentation.
 - `docs/repo/`: repository governance, runbooks, and reference docs.
 - `components/`: versioned managed content, scaffolds, templates, validators, and component
-  metadata once implemented.
-- `profiles/`: profile presets once implemented.
-- `schemas/`: machine-readable contracts once implemented.
+  metadata.
+- `profiles/`: profile presets.
+- `schemas/`: machine-readable contracts.
 - `src/`: CLI source once implemented.
-- `tests/`: validation coverage once implemented.
+- `tests/`: validation coverage and fixtures.
 - `scripts/`: release, validation, and packaging helpers once implemented.
 
 ## Installed Consumer Areas
@@ -36,6 +36,28 @@ The Operating Kit may create or manage these consumer paths when the CLI is impl
 - `scaffold`: created when absent, then owned by the consumer.
 - `template`: available as a starter or example, but installed only when a command explicitly uses
   it.
+
+## Component Target Rules
+
+- Managed documentation component files target `.codeheart/kit/docs/<component>/`.
+- Agent-memory state scaffolds target `docs/agent-memory/` and are never overwritten after
+  creation.
+- Repository documentation starters target `docs/repo/` only as absent-file scaffolds. Reusable
+  generic doctrine belongs in the Operating Kit, not in consumer `docs/repo/`.
+- Root `AGENTS.md` receives the Operating Kit managed block from the agent-interface template while
+  preserving repository-owned and local-user sections.
+- Local user guidance targets `.codeheart/user/` and must stay ignored or local-only.
+- G1 does not define or scaffold `docs/workspace/`.
+
+## Consumer-Owned Boundaries
+
+- `docs/repo/`: repository-specific plans, runbooks, references, local commands, validation notes,
+  architecture notes, and exceptions to Operating Kit defaults.
+- Product or module docs: local product, package, module, or source-area guidance owned by the
+  consumer repository.
+- `.codeheart/user/`: personal local preferences and notes.
+- `.codeheart/kit.config.yaml`: shared non-secret setup configuration.
+- `.codeheart/kit.lock.yaml`: generated installed-state and update-check metadata.
 
 ## Placement Rules
 

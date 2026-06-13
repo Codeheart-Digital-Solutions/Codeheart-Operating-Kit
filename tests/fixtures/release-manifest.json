@@ -1,0 +1,180 @@
+{
+  "schema_version": 1,
+  "version": "0.1.0",
+  "released_at": "2026-06-13T00:00:00Z",
+  "assets": [
+    {
+      "name": "codeheart-operating-kit-0.1.0.zip",
+      "url": "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.0/codeheart-operating-kit-0.1.0.zip",
+      "sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+      "platform": "universal"
+    }
+  ],
+  "components": [
+    {
+      "id": "planning-workflows",
+      "version": "0.1.0",
+      "manifest_path": "components/planning-workflows/component.yaml",
+      "checksum_sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+      "consumer_impact": [
+        "component addition",
+        "instruction-only change"
+      ]
+    },
+    {
+      "id": "agent-memory",
+      "version": "0.1.0",
+      "manifest_path": "components/agent-memory/component.yaml",
+      "checksum_sha256": "2222222222222222222222222222222222222222222222222222222222222222",
+      "consumer_impact": [
+        "component addition",
+        "instruction-only change",
+        "backwards-compatible scaffold addition"
+      ]
+    },
+    {
+      "id": "agent-interface",
+      "version": "0.1.0",
+      "manifest_path": "components/agent-interface/component.yaml",
+      "checksum_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "consumer_impact": [
+        "component addition",
+        "instruction-only change",
+        "consumer migration required"
+      ]
+    },
+    {
+      "id": "structure-governance",
+      "version": "0.1.0",
+      "manifest_path": "components/structure-governance/component.yaml",
+      "checksum_sha256": "3333333333333333333333333333333333333333333333333333333333333333",
+      "consumer_impact": [
+        "component addition",
+        "instruction-only change",
+        "backwards-compatible scaffold addition",
+        "breaking placement-contract change"
+      ]
+    },
+    {
+      "id": "native-codex-capabilities",
+      "version": "0.1.0",
+      "manifest_path": "components/native-codex-capabilities/component.yaml",
+      "checksum_sha256": "4444444444444444444444444444444444444444444444444444444444444444",
+      "consumer_impact": [
+        "component addition",
+        "instruction-only change"
+      ]
+    },
+    {
+      "id": "validators",
+      "version": "0.1.0",
+      "manifest_path": "components/validators/component.yaml",
+      "checksum_sha256": "5555555555555555555555555555555555555555555555555555555555555555",
+      "consumer_impact": [
+        "component addition",
+        "validator-only change"
+      ]
+    }
+  ],
+  "profiles": [
+    {
+      "id": "standard",
+      "manifest_path": "profiles/standard.yaml",
+      "components": [
+        "planning-workflows",
+        "agent-memory",
+        "agent-interface",
+        "structure-governance",
+        "native-codex-capabilities",
+        "validators"
+      ],
+      "generated_surfaces": [
+        ".codeheart/kit/",
+        ".codeheart/kit.lock.yaml",
+        ".codeheart/kit.config.yaml",
+        "AGENTS.md",
+        "docs/repo/README.md",
+        "docs/agent-memory/README.md",
+        "docs/agent-memory/goal-register.md",
+        "docs/agent-memory/session-ledger.md",
+        "docs/agent-memory/untriaged-sessions.md",
+        ".codeheart/user/"
+      ]
+    }
+  ],
+  "native_baseline_capability_checks": [
+    {
+      "id": "documents",
+      "profile": "standard",
+      "status_values": [
+        "available",
+        "installed",
+        "missing",
+        "install-attempted",
+        "unavailable",
+        "blocked",
+        "unknown"
+      ]
+    },
+    {
+      "id": "spreadsheets",
+      "profile": "standard",
+      "status_values": [
+        "available",
+        "installed",
+        "missing",
+        "install-attempted",
+        "unavailable",
+        "blocked",
+        "unknown"
+      ]
+    },
+    {
+      "id": "presentations",
+      "profile": "standard",
+      "status_values": [
+        "available",
+        "installed",
+        "missing",
+        "install-attempted",
+        "unavailable",
+        "blocked",
+        "unknown"
+      ]
+    },
+    {
+      "id": "browser",
+      "profile": "standard",
+      "status_values": [
+        "available",
+        "installed",
+        "missing",
+        "install-attempted",
+        "unavailable",
+        "blocked",
+        "unknown"
+      ]
+    },
+    {
+      "id": "pdf",
+      "profile": "standard",
+      "status_values": [
+        "available",
+        "installed",
+        "missing",
+        "install-attempted",
+        "unavailable",
+        "blocked",
+        "unknown"
+      ]
+    }
+  ],
+  "consumer_impact": [
+    "component addition",
+    "instruction-only change",
+    "validator-only change",
+    "backwards-compatible scaffold addition",
+    "consumer migration required",
+    "breaking placement-contract change"
+  ]
+}

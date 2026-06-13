@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/schemas/kit-config.schema.json",
+  "title": "Codeheart Operating Kit Consumer Config",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "selected_profile",
+    "setup_purpose",
+    "project_display_name",
+    "selected_setup_folder",
+    "local_consumer_layer",
+    "component_settings"
+  ],
+  "properties": {
+    "schema_version": { "type": "integer", "const": 1 },
+    "selected_profile": { "type": "string", "const": "standard" },
+    "setup_purpose": {
+      "type": "string",
+      "enum": ["private-automation", "company-automation", "software-product"]
+    },
+    "project_display_name": { "type": "string", "minLength": 1 },
+    "selected_setup_folder": { "type": "string", "minLength": 1 },
+    "local_consumer_layer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["repo_docs_path", "agent_memory_path", "user_layer_path"],
+      "properties": {
+        "repo_docs_path": { "type": "string", "const": "docs/repo/" },
+        "agent_memory_path": { "type": "string", "const": "docs/agent-memory/" },
+        "user_layer_path": { "type": "string", "const": ".codeheart/user/" }
+      }
+    },
+    "component_settings": {
+      "type": "object",
+      "additionalProperties": { "type": "object" }
+    }
+  }
+}

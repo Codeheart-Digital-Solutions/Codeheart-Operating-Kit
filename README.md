@@ -1,4 +1,4 @@
-Last updated: 2026-06-13T23:02:10Z (UTC)
+Last updated: 2026-06-13T23:16:03Z (UTC)
 
 # Codeheart Operating Kit
 
@@ -21,6 +21,8 @@ configuration.
 - `AGENTS.md`: agent-facing bootstrap and maintainer routing.
 - `docs/README.md`: documentation router.
 - `components/`: managed Operating Kit component source content.
+- `profiles/standard.yaml`: first G1 profile preset.
+- `schemas/`: lockfile, config, release-manifest, and consumer-impact contracts.
 - `templates/`: templates for installed consumer surfaces.
 - `docs/repo/reference/placement-contract.md`: repository documentation placement contract.
 - `docs/repo/reference/consumer-impact-classification.md`: consumer-impact classes for kit

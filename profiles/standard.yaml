@@ -1,0 +1,54 @@
+schema_version: 1
+profile:
+  id: standard
+  version: "0.1.0"
+  name: Standard
+  description: Base public Operating Kit profile for general agent-first repositories and folders.
+  selected_components:
+    - planning-workflows
+    - agent-memory
+    - agent-interface
+    - structure-governance
+    - native-codex-capabilities
+    - validators
+  generated_surfaces:
+    - path: .codeheart/kit/
+      ownership: managed
+      source: selected managed component files
+    - path: .codeheart/kit.lock.yaml
+      ownership: generated-surface
+      source: schemas/kit-lock.schema.json
+    - path: .codeheart/kit.config.yaml
+      ownership: generated-surface
+      source: schemas/kit-config.schema.json
+    - path: AGENTS.md
+      ownership: template
+      source: templates/agents/AGENTS.managed-block.md
+    - path: docs/repo/README.md
+      ownership: scaffold
+      source: templates/consumer-docs/repo/README.md
+      install_when: absent
+    - path: docs/agent-memory/README.md
+      ownership: scaffold
+      source: components/agent-memory/scaffolds/README.md
+      install_when: absent
+    - path: docs/agent-memory/goal-register.md
+      ownership: scaffold
+      source: components/agent-memory/scaffolds/goal-register.md
+      install_when: absent
+    - path: docs/agent-memory/session-ledger.md
+      ownership: scaffold
+      source: components/agent-memory/scaffolds/session-ledger.md
+      install_when: absent
+    - path: docs/agent-memory/untriaged-sessions.md
+      ownership: scaffold
+      source: components/agent-memory/scaffolds/untriaged-sessions.md
+      install_when: absent
+    - path: .codeheart/user/
+      ownership: local-user
+      source: templates/user-layer/
+      install_when: absent
+  update_check:
+    cadence_days: 7
+    current_result_agent_message: silent
+    update_available_agent_message: prompt-user-before-apply

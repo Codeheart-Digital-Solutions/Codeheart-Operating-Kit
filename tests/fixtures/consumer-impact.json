@@ -1,0 +1,8 @@
+{
+  "impact_class": "instruction-only change",
+  "affected_paths": [".codeheart/kit/docs/agent-interface/README.md"],
+  "validation": ["markdown timestamp scan", "git diff --check"],
+  "release_note_required": true,
+  "migration_or_adoption_note_required": false,
+  "known_consumer_action": "Run codeheart-operating-kit sync when ready."
+}

@@ -1,4 +1,4 @@
-Last updated: 2026-06-13T23:02:10Z (UTC)
+Last updated: 2026-06-13T23:16:03Z (UTC)
 
 # Docs Index
 
@@ -20,6 +20,8 @@ This folder contains public Codeheart Operating Kit documentation.
 - Agent interface: `components/agent-interface/managed/README.md`
 - Structure governance: `components/structure-governance/managed/README.md`
 - Native Codex capabilities: `components/native-codex-capabilities/managed/README.md`
+- Standard profile: `profiles/standard.yaml`
+- Machine-readable schemas: `schemas/`
 
 ## Placement
 

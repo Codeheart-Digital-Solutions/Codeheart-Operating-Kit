@@ -1,0 +1,121 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/schemas/release-manifest.schema.json",
+  "title": "Codeheart Operating Kit Release Manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "version",
+    "assets",
+    "components",
+    "profiles",
+    "native_baseline_capability_checks",
+    "consumer_impact"
+  ],
+  "properties": {
+    "schema_version": { "type": "integer", "const": 1 },
+    "version": { "type": "string", "minLength": 1 },
+    "released_at": { "type": "string", "format": "date-time" },
+    "assets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "sha256", "platform"],
+        "properties": {
+          "name": { "type": "string" },
+          "url": { "type": "string" },
+          "sha256": { "type": "string", "pattern": "^[a-fA-F0-9]{64}$" },
+          "platform": { "type": "string", "enum": ["macos", "windows", "universal"] }
+        }
+      }
+    },
+    "components": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "version", "manifest_path", "checksum_sha256", "consumer_impact"],
+        "properties": {
+          "id": { "type": "string" },
+          "version": { "type": "string" },
+          "manifest_path": { "type": "string" },
+          "checksum_sha256": { "type": "string", "pattern": "^[a-fA-F0-9]{64}$" },
+          "consumer_impact": {
+            "type": "array",
+            "items": { "$ref": "#/$defs/impact_class" },
+            "uniqueItems": true
+          }
+        }
+      }
+    },
+    "profiles": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "manifest_path", "components", "generated_surfaces"],
+        "properties": {
+          "id": { "type": "string", "const": "standard" },
+          "manifest_path": { "type": "string" },
+          "components": {
+            "type": "array",
+            "items": { "type": "string" },
+            "uniqueItems": true
+          },
+          "generated_surfaces": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        }
+      }
+    },
+    "native_baseline_capability_checks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "status_values"],
+        "properties": {
+          "id": { "type": "string" },
+          "profile": { "type": "string", "const": "standard" },
+          "status_values": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "available",
+                "installed",
+                "missing",
+                "install-attempted",
+                "unavailable",
+                "blocked",
+                "unknown"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "consumer_impact": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/impact_class" },
+      "uniqueItems": true
+    }
+  },
+  "$defs": {
+    "impact_class": {
+      "type": "string",
+      "enum": [
+        "instruction-only change",
+        "validator-only change",
+        "component addition",
+        "backwards-compatible scaffold addition",
+        "consumer migration required",
+        "breaking placement-contract change",
+        "security or safety policy change"
+      ]
+    }
+  }
+}

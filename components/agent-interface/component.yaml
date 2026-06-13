@@ -1,0 +1,47 @@
+schema_version: 1
+component:
+  id: agent-interface
+  version: "0.1.0"
+  name: Agent Interface
+  description: Managed root AGENTS contract, onboarding, update-check, and repair guidance.
+  profiles:
+    - standard
+  consumer_impact:
+    - "component addition"
+    - "instruction-only change"
+    - "consumer migration required"
+  ownership_modes:
+    - managed
+    - template
+  files:
+    - source: components/agent-interface/managed/README.md
+      target: .codeheart/kit/docs/agent-interface/README.md
+      ownership: managed
+    - source: components/agent-interface/managed/reference/root-agents-md-contract.md
+      target: .codeheart/kit/docs/agent-interface/reference/root-agents-md-contract.md
+      ownership: managed
+    - source: components/agent-interface/managed/reference/managed-section-boundaries.md
+      target: .codeheart/kit/docs/agent-interface/reference/managed-section-boundaries.md
+      ownership: managed
+    - source: components/agent-interface/managed/reference/local-extension-contract.md
+      target: .codeheart/kit/docs/agent-interface/reference/local-extension-contract.md
+      ownership: managed
+    - source: components/agent-interface/managed/reference/onboarding-context-contract.md
+      target: .codeheart/kit/docs/agent-interface/reference/onboarding-context-contract.md
+      ownership: managed
+    - source: components/agent-interface/managed/reference/update-check-policy.md
+      target: .codeheart/kit/docs/agent-interface/reference/update-check-policy.md
+      ownership: managed
+    - source: components/agent-interface/managed/runbooks/conduct-first-run-onboarding.md
+      target: .codeheart/kit/docs/agent-interface/runbooks/conduct-first-run-onboarding.md
+      ownership: managed
+    - source: components/agent-interface/managed/runbooks/structure-root-agents-md.md
+      target: .codeheart/kit/docs/agent-interface/runbooks/structure-root-agents-md.md
+      ownership: managed
+    - source: components/agent-interface/managed/runbooks/repair-root-agents-md.md
+      target: .codeheart/kit/docs/agent-interface/runbooks/repair-root-agents-md.md
+      ownership: managed
+    - source: templates/agents/AGENTS.managed-block.md
+      target: AGENTS.md
+      ownership: template
+      install_mode: managed-block

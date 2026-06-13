@@ -1,0 +1,32 @@
+schema_version: 1
+component:
+  id: planning-workflows
+  version: "0.1.0"
+  name: Planning Workflows
+  description: Managed discovery, implementation planning, execution, review, and lifecycle guidance.
+  profiles:
+    - standard
+  consumer_impact:
+    - "component addition"
+    - "instruction-only change"
+  ownership_modes:
+    - managed
+  files:
+    - source: components/planning-workflows/managed/README.md
+      target: .codeheart/kit/docs/planning-workflows/README.md
+      ownership: managed
+    - source: components/planning-workflows/managed/runbooks/discovery-workflow.md
+      target: .codeheart/kit/docs/planning-workflows/runbooks/discovery-workflow.md
+      ownership: managed
+    - source: components/planning-workflows/managed/runbooks/draft-implementation-plan.md
+      target: .codeheart/kit/docs/planning-workflows/runbooks/draft-implementation-plan.md
+      ownership: managed
+    - source: components/planning-workflows/managed/runbooks/execute-implementation-plan.md
+      target: .codeheart/kit/docs/planning-workflows/runbooks/execute-implementation-plan.md
+      ownership: managed
+    - source: components/planning-workflows/managed/runbooks/review-planning-document.md
+      target: .codeheart/kit/docs/planning-workflows/runbooks/review-planning-document.md
+      ownership: managed
+    - source: components/planning-workflows/managed/reference/planning-document-lifecycle.md
+      target: .codeheart/kit/docs/planning-workflows/reference/planning-document-lifecycle.md
+      ownership: managed

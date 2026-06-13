@@ -1,0 +1,10 @@
+schema_version: 1
+selected_profile: standard
+setup_purpose: company-automation
+project_display_name: Example-Automation
+selected_setup_folder: Documents > Example-Automation
+local_consumer_layer:
+  repo_docs_path: docs/repo/
+  agent_memory_path: docs/agent-memory/
+  user_layer_path: .codeheart/user/
+component_settings: {}

@@ -1,4 +1,4 @@
-Last updated: 2026-06-13T22:55:57Z (UTC)
+Last updated: 2026-06-13T23:16:03Z (UTC)
 
 # Baseline Capability Profile
 
@@ -22,3 +22,7 @@ The G1 `standard` profile expects status reporting for these external Codex capa
 
 Record capability status, checked-at timestamp, profile applicability, and command result category
 in the lockfile. Do not record secrets, auth tokens, local absolute paths, or raw command logs.
+
+Release manifests record the native baseline checks expected by the release. Lockfiles record the
+status observed in the consumer folder. Missing, unavailable, blocked, or unknown capabilities are
+degraded states for reporting; they are not automatic Operating Kit setup failures.

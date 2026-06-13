@@ -1,0 +1,22 @@
+schema_version: 1
+component:
+  id: agent-interface
+  version: "0.1.0"
+  name: Agent Interface
+  profiles:
+    - standard
+  consumer_impact:
+    - "component addition"
+    - "instruction-only change"
+    - "consumer migration required"
+  ownership_modes:
+    - managed
+    - template
+  files:
+    - source: components/agent-interface/managed/README.md
+      target: .codeheart/kit/docs/agent-interface/README.md
+      ownership: managed
+    - source: templates/agents/AGENTS.managed-block.md
+      target: AGENTS.md
+      ownership: template
+      install_mode: managed-block
