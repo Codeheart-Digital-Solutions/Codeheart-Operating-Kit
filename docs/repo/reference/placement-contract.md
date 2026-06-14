@@ -1,4 +1,4 @@
-Last updated: 2026-06-13T23:16:03Z (UTC)
+Last updated: 2026-06-13T23:55:46Z (UTC)
 
 # Placement Contract
 
@@ -23,6 +23,7 @@ This reference defines the first public placement contract for Codeheart Operati
 The Operating Kit may create or manage these consumer paths when the CLI is implemented:
 
 - `.codeheart/kit/`: managed Operating Kit content.
+- `.codeheart/kit/README.md`: managed fallback inventory and route repair target.
 - `.codeheart/kit.lock.yaml`: installed version, checksum, managed paths, capability status, and
   update-check state.
 - `.codeheart/kit.config.yaml`: shared non-secret consumer configuration.
@@ -40,6 +41,8 @@ The Operating Kit may create or manage these consumer paths when the CLI is impl
 ## Component Target Rules
 
 - Managed documentation component files target `.codeheart/kit/docs/<component>/`.
+- `.codeheart/kit/README.md` is the one G1 managed fallback inventory target outside
+  `.codeheart/kit/docs/` because root `AGENTS.md` routes unclear kit-structure tasks there.
 - Agent-memory state scaffolds target `docs/agent-memory/` and are never overwritten after
   creation.
 - Repository documentation starters target `docs/repo/` only as absent-file scaffolds. Reusable

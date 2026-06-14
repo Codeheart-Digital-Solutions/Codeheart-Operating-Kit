@@ -1,0 +1,4 @@
+# Example only. Do not store secrets here.
+language: English
+preferred_setup_folder: Documents
+notify_only_when_update_available: true

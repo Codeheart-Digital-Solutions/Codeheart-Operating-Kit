@@ -1,4 +1,4 @@
-Last updated: 2026-06-13T23:16:03Z (UTC)
+Last updated: 2026-06-13T23:44:26Z (UTC)
 
 # Codeheart Operating Kit
 
@@ -23,6 +23,10 @@ configuration.
 - `components/`: managed Operating Kit component source content.
 - `profiles/standard.yaml`: first G1 profile preset.
 - `schemas/`: lockfile, config, release-manifest, and consumer-impact contracts.
+- `pyproject.toml`: Python package metadata and `codeheart-operating-kit` console entry point.
+- `src/codeheart_operating_kit/`: CLI source for onboard, inspect, init, sync, check, and
+  update-check.
+- `tests/`: CLI, manifest, onboarding, sync/check, update-check, and capability tests.
 - `templates/`: templates for installed consumer surfaces.
 - `docs/repo/reference/placement-contract.md`: repository documentation placement contract.
 - `docs/repo/reference/consumer-impact-classification.md`: consumer-impact classes for kit

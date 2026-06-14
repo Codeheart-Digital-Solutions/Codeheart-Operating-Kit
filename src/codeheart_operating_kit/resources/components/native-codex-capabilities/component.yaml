@@ -1,0 +1,26 @@
+schema_version: 1
+component:
+  id: native-codex-capabilities
+  version: "0.1.0"
+  name: Native Codex Capabilities
+  description: Managed baseline capability profile for external Codex document and browser tooling.
+  profiles:
+    - standard
+  consumer_impact:
+    - "component addition"
+    - "instruction-only change"
+  ownership_modes:
+    - managed
+  files:
+    - source: components/native-codex-capabilities/managed/README.md
+      target: .codeheart/kit/docs/native-codex-capabilities/README.md
+      ownership: managed
+    - source: components/native-codex-capabilities/managed/reference/baseline-capability-profile.md
+      target: .codeheart/kit/docs/native-codex-capabilities/reference/baseline-capability-profile.md
+      ownership: managed
+  capabilities:
+    - documents
+    - spreadsheets
+    - presentations
+    - browser
+    - pdf

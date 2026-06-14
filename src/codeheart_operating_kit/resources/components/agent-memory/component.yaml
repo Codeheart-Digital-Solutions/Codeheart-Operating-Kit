@@ -1,0 +1,41 @@
+schema_version: 1
+component:
+  id: agent-memory
+  version: "0.1.0"
+  name: Agent Memory
+  description: Managed memory rules plus consumer-owned memory state scaffolds.
+  profiles:
+    - standard
+  consumer_impact:
+    - "component addition"
+    - "instruction-only change"
+    - "backwards-compatible scaffold addition"
+  ownership_modes:
+    - managed
+    - scaffold
+  files:
+    - source: components/agent-memory/managed/README.md
+      target: .codeheart/kit/docs/agent-memory/README.md
+      ownership: managed
+    - source: components/agent-memory/managed/reference/entry-format.md
+      target: .codeheart/kit/docs/agent-memory/reference/entry-format.md
+      ownership: managed
+    - source: components/agent-memory/managed/runbooks/session-ledger-maintenance.md
+      target: .codeheart/kit/docs/agent-memory/runbooks/session-ledger-maintenance.md
+      ownership: managed
+    - source: components/agent-memory/scaffolds/README.md
+      target: docs/agent-memory/README.md
+      ownership: scaffold
+      install_when: absent
+    - source: components/agent-memory/scaffolds/goal-register.md
+      target: docs/agent-memory/goal-register.md
+      ownership: scaffold
+      install_when: absent
+    - source: components/agent-memory/scaffolds/session-ledger.md
+      target: docs/agent-memory/session-ledger.md
+      ownership: scaffold
+      install_when: absent
+    - source: components/agent-memory/scaffolds/untriaged-sessions.md
+      target: docs/agent-memory/untriaged-sessions.md
+      ownership: scaffold
+      install_when: absent

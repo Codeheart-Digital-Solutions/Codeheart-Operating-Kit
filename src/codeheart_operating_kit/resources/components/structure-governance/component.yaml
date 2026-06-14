@@ -1,0 +1,39 @@
+schema_version: 1
+component:
+  id: structure-governance
+  version: "0.1.0"
+  name: Structure Governance
+  description: Managed documentation placement, naming, ownership, and index-maintenance guidance.
+  profiles:
+    - standard
+  consumer_impact:
+    - "component addition"
+    - "instruction-only change"
+    - "backwards-compatible scaffold addition"
+    - "breaking placement-contract change"
+  ownership_modes:
+    - managed
+    - scaffold
+  files:
+    - source: components/structure-governance/managed/README.md
+      target: .codeheart/kit/docs/structure-governance/README.md
+      ownership: managed
+    - source: components/structure-governance/managed/reference/documentation-structure.md
+      target: .codeheart/kit/docs/structure-governance/reference/documentation-structure.md
+      ownership: managed
+    - source: components/structure-governance/managed/reference/repository-information-architecture.md
+      target: .codeheart/kit/docs/structure-governance/reference/repository-information-architecture.md
+      ownership: managed
+    - source: components/structure-governance/managed/reference/managed-content-boundaries.md
+      target: .codeheart/kit/docs/structure-governance/reference/managed-content-boundaries.md
+      ownership: managed
+    - source: components/structure-governance/managed/runbooks/change-documentation-placement.md
+      target: .codeheart/kit/docs/structure-governance/runbooks/change-documentation-placement.md
+      ownership: managed
+    - source: components/structure-governance/managed/runbooks/maintain-documentation-indexes.md
+      target: .codeheart/kit/docs/structure-governance/runbooks/maintain-documentation-indexes.md
+      ownership: managed
+    - source: templates/consumer-docs/repo/README.md
+      target: docs/repo/README.md
+      ownership: scaffold
+      install_when: absent

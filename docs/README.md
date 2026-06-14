@@ -1,4 +1,4 @@
-Last updated: 2026-06-13T23:16:03Z (UTC)
+Last updated: 2026-06-13T23:44:26Z (UTC)
 
 # Docs Index
 
@@ -22,6 +22,7 @@ This folder contains public Codeheart Operating Kit documentation.
 - Native Codex capabilities: `components/native-codex-capabilities/managed/README.md`
 - Standard profile: `profiles/standard.yaml`
 - Machine-readable schemas: `schemas/`
+- CLI source and tests: `src/codeheart_operating_kit/`, `tests/`
 
 ## Placement
 

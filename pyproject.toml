@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "codeheart-operating-kit"
+version = "0.1.0"
+description = "Public Codeheart Operating Kit CLI"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "Codeheart Digital Solutions" }]
+dependencies = []
+
+[project.scripts]
+codeheart-operating-kit = "codeheart_operating_kit.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+codeheart_operating_kit = ["resources/**/*"]
+
+[tool.pytest.ini_options]
+addopts = "-p no:cacheprovider"
