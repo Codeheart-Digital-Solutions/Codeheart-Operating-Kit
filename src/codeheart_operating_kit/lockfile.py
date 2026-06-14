@@ -53,6 +53,7 @@ def required_lock_keys() -> set[str]:
         "generated_surfaces",
         "cli_repair",
         "update_check",
+        "native_capabilities",
     }
 
 
@@ -75,6 +76,7 @@ def required_lock_metadata_paths() -> list[str]:
         "update_check.next_update_check_due",
         "update_check.latest_seen_version",
         "update_check.update_status",
+        "native_capabilities",
     ]
 
 

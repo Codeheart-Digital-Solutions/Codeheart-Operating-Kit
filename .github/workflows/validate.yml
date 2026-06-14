@@ -15,6 +15,33 @@ jobs:
       - run: python -m pip install --upgrade pip setuptools pytest
       - run: python -m pip install -e .
       - run: python -m pytest -q
+      - run: python scripts/validate-public-core.py
+      - run: python scripts/validate-markdown-headers.py
+      - run: python scripts/validate-release-manifest.py
+
+  native-capabilities:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: python -m pip install --upgrade pip setuptools pytest
+      - run: python -m pip install -e .
+      - run: python -m pytest tests/test_capabilities.py -q
+
+  release-assets:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: python -m pip install --upgrade pip setuptools
+      - run: python scripts/build-release-assets.py --output-dir dist
+      - run: test -f dist/codeheart-operating-kit-0.1.0-macos.tar.gz
+      - run: test -f dist/codeheart-operating-kit-0.1.0-windows.zip
+      - run: python scripts/validate-release-manifest.py
 
   macos-installer:
     runs-on: macos-latest

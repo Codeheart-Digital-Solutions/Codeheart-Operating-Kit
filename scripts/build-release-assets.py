@@ -14,6 +14,14 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
+PYPROJECT = ROOT / "pyproject.toml"
+
+
+def package_version() -> str:
+    for line in PYPROJECT.read_text(encoding="utf-8").splitlines():
+        if line.startswith("version = "):
+            return line.split("=", 1)[1].strip().strip('"')
+    raise RuntimeError("pyproject.toml does not define project version")
 
 
 def sha256(path: Path) -> str:
@@ -52,7 +60,9 @@ def build_wheel(version: str, work_dir: Path) -> Path:
         raise RuntimeError("wheel build did not produce a codeheart-operating-kit wheel")
     expected = f"codeheart_operating_kit-{version}-"
     matching = [wheel for wheel in wheels if wheel.name.startswith(expected)]
-    return matching[0] if matching else wheels[0]
+    if not matching:
+        raise RuntimeError(f"built wheel version does not match requested release version {version}")
+    return matching[0]
 
 
 def create_payload(wheel: Path, version: str, work_dir: Path) -> Path:
@@ -102,6 +112,11 @@ def main() -> int:
     parser.add_argument("--version", default="0.1.0")
     parser.add_argument("--output-dir", default="dist")
     args = parser.parse_args()
+    actual_version = package_version()
+    if args.version != actual_version:
+        raise SystemExit(
+            f"requested release version {args.version} does not match package version {actual_version}"
+        )
 
     output_dir = Path(args.output_dir).resolve()
     output_dir.mkdir(parents=True, exist_ok=True)

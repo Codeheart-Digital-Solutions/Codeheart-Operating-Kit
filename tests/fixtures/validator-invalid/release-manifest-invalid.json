@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "version": "0.1.0",
+  "assets": [
+    {
+      "name": "broken.zip",
+      "sha256": "not-a-checksum",
+      "platform": "broken"
+    }
+  ],
+  "components": [],
+  "profiles": [],
+  "native_baseline_capability_checks": [],
+  "consumer_impact": []
+}
