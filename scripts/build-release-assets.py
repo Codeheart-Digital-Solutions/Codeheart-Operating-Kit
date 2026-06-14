@@ -4,6 +4,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 import shutil
 import subprocess
 import sys
@@ -32,6 +33,17 @@ def sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
+def sanitized_pip_env() -> dict[str, str]:
+    env = {key: value for key, value in os.environ.items() if not key.startswith("PIP_")}
+    env["PIP_CONFIG_FILE"] = os.devnull
+    env["PIP_DISABLE_PIP_VERSION_CHECK"] = "1"
+    env["PIP_NO_CACHE_DIR"] = "1"
+    env["PIP_NO_INDEX"] = "1"
+    env["PIP_NO_INPUT"] = "1"
+    env["PYTHONNOUSERSITE"] = "1"
+    return env
+
+
 def build_wheel(version: str, work_dir: Path) -> Path:
     wheel_dir = work_dir / "wheelhouse"
     egg_base = work_dir / "egg-base"
@@ -46,6 +58,7 @@ def build_wheel(version: str, work_dir: Path) -> Path:
         "wheel",
         "--no-build-isolation",
         "--no-deps",
+        "--no-index",
         "--wheel-dir",
         str(wheel_dir),
         "--config-settings=--build-option=egg_info",
@@ -54,7 +67,16 @@ def build_wheel(version: str, work_dir: Path) -> Path:
         f"--config-settings=--build-option=--build-base={build_base}",
         str(ROOT),
     ]
-    subprocess.run(command, check=True)
+    try:
+        subprocess.run(
+            command,
+            check=True,
+            env=sanitized_pip_env(),
+            text=True,
+            capture_output=True,
+        )
+    except subprocess.CalledProcessError as error:
+        raise RuntimeError("wheel build failed while building local release asset payload") from error
     wheels = sorted(wheel_dir.glob("codeheart_operating_kit-*.whl"))
     if not wheels:
         raise RuntimeError("wheel build did not produce a codeheart-operating-kit wheel")
@@ -132,8 +154,8 @@ def main() -> int:
 
     result = {
         "version": args.version,
-        "assets": [str(asset) for asset in assets],
-        "checksums": [str(checksum) for checksum in checksums],
+        "assets": [asset.name for asset in assets],
+        "checksums": [checksum.name for checksum in checksums],
     }
     print(json.dumps(result, indent=2, sort_keys=True))
     return 0

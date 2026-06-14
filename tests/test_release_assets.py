@@ -52,6 +52,22 @@ def test_release_asset_build_check(tmp_path):
         assert name in checksum.read_text(encoding="utf-8")
 
 
+def test_release_asset_build_ignores_private_pip_index_env(tmp_path, monkeypatch):
+    private_index = "https://aws:secret@example-private.invalid/simple/"
+    monkeypatch.setenv("PIP_INDEX_URL", private_index)
+    result = subprocess.run(
+        [sys.executable, "scripts/build-release-assets.py", "--output-dir", str(tmp_path)],
+        cwd=ROOT,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    output = result.stdout + result.stderr
+    assert result.returncode == 0, output
+    assert "example-private.invalid" not in output
+    assert "aws:secret" not in output
+
+
 def test_release_asset_build_rejects_version_mismatch(tmp_path):
     result = subprocess.run(
         [sys.executable, "scripts/build-release-assets.py", "--version", "9.9.9", "--output-dir", str(tmp_path)],
