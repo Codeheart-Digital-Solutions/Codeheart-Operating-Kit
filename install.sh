@@ -5,7 +5,6 @@ export LANG=C
 
 VERSION="0.1.0"
 INSTALL_DIR="${CODEHEART_OPERATING_KIT_HOME:-$HOME/.codeheart/operating-kit}"
-RELEASE_BASE_URL="https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v${VERSION}"
 ASSET_URL=""
 ASSET_FILE=""
 CHECKSUM=""
@@ -70,6 +69,7 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
+RELEASE_BASE_URL="https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v${VERSION}"
 ASSET_NAME="codeheart-operating-kit-${VERSION}-macos.tar.gz"
 if [[ -z "$ASSET_URL" ]]; then
   ASSET_URL="${RELEASE_BASE_URL}/${ASSET_NAME}"
@@ -128,12 +128,22 @@ fi
 BIN_DIR="$INSTALL_DIR/bin"
 LIB_DIR="$INSTALL_DIR/lib"
 mkdir -p "$BIN_DIR" "$LIB_DIR"
-"$PYTHON_BIN" -m pip install --upgrade --target "$LIB_DIR" "$WHEEL_PATH"
+PIP_LOG="$TMP_DIR/pip-install.log"
+if ! PIP_CONFIG_FILE=/dev/null \
+  PIP_DISABLE_PIP_VERSION_CHECK=1 \
+  PIP_NO_CACHE_DIR=1 \
+  PIP_NO_INDEX=1 \
+  PIP_NO_INPUT=1 \
+  PYTHONNOUSERSITE=1 \
+    "$PYTHON_BIN" -m pip install --no-index --no-deps --upgrade --target "$LIB_DIR" "$WHEEL_PATH" > "$PIP_LOG" 2>&1; then
+  cat "$PIP_LOG" >&2
+  exit 1
+fi
 
 WRAPPER="$BIN_DIR/codeheart-operating-kit"
 cat > "$WRAPPER" <<EOF
 #!/usr/bin/env sh
-PYTHONPATH="$LIB_DIR\${PYTHONPATH:+:\$PYTHONPATH}" exec "$PYTHON_BIN" -m codeheart_operating_kit.cli "\$@"
+CODEHEART_OPERATING_KIT_CLI=1 PYTHONPATH="$LIB_DIR\${PYTHONPATH:+:\$PYTHONPATH}" exec "$PYTHON_BIN" -m codeheart_operating_kit.cli "\$@"
 EOF
 chmod +x "$WRAPPER"
 

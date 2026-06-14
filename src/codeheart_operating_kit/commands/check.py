@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import os
 import re
 import shutil
 import sys
@@ -22,6 +23,8 @@ def missing_route_targets(root: Path, agents_text: str) -> list[str]:
 
 
 def cli_available() -> bool:
+    if os.environ.get("CODEHEART_OPERATING_KIT_CLI") == "1":
+        return True
     if shutil.which("codeheart-operating-kit"):
         return True
     executable = Path(sys.argv[0])

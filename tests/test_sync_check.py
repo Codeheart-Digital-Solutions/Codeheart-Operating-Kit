@@ -1,7 +1,7 @@
 import json
 
 from codeheart_operating_kit.cli import main
-from codeheart_operating_kit.commands.check import check_repository
+from codeheart_operating_kit.commands.check import check_repository, cli_available
 from codeheart_operating_kit.lockfile import read_lock, write_lock
 
 
@@ -26,6 +26,12 @@ def test_check_json_reports_missing_cli_and_routing(tmp_path, capsys):
     assert "missing_cli" in data
     assert data["missing_routing"] is True
     assert "native_capabilities" in data
+
+
+def test_check_recognizes_installer_wrapper_marker(monkeypatch):
+    monkeypatch.setenv("CODEHEART_OPERATING_KIT_CLI", "1")
+
+    assert cli_available() is True
 
 
 def test_check_reports_missing_managed_route_target(tmp_path):

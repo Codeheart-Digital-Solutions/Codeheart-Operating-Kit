@@ -1,0 +1,162 @@
+schema_version: 1
+version: "0.1.0"
+released_at: "2026-06-14T01:02:20Z"
+assets:
+  - name: bootstrap.md
+    url: https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.0/bootstrap.md
+    sha256: 8e81e69ba841c5019bd5d14d4ce60947c15f6e6eaa2fc4eab4a413f303713cba
+    platform: universal
+  - name: install.sh
+    url: https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.0/install.sh
+    sha256: 58c0e376a4a7db36166ed1accfe6cab3b91b63640e7871b1d0f1b1d80e9572df
+    platform: macos
+  - name: install.ps1
+    url: https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.0/install.ps1
+    sha256: 512b29afe7c70a19017e7c7f4ff6dea68bebcce8d1e362c00a3e03a4d1c971c3
+    platform: windows
+  - name: release-notes.md
+    url: https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.0/release-notes.md
+    sha256: 3d3cdf4512edac6c0a1f2347cef32006c95fb3204bf02e287797f919b37586d6
+    platform: universal
+  - name: codeheart-operating-kit-0.1.0-macos.tar.gz
+    url: https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.0/codeheart-operating-kit-0.1.0-macos.tar.gz
+    sha256: 71f5c05daa41010b6064c313da686f3b9ef6ffa033d9a5be673622e2499a3c8b
+    platform: macos
+  - name: codeheart-operating-kit-0.1.0-macos.tar.gz.sha256
+    url: https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.0/codeheart-operating-kit-0.1.0-macos.tar.gz.sha256
+    sha256: f78ad0a4c24847aa230f2373abacc0891c36d7245fd155a7eeda03fcbdc6078f
+    platform: macos
+  - name: codeheart-operating-kit-0.1.0-windows.zip
+    url: https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.0/codeheart-operating-kit-0.1.0-windows.zip
+    sha256: 398de3984292fadaefa9e4f6bbe0b96bd9f438833af358a757f1d5907b5161ba
+    platform: windows
+  - name: codeheart-operating-kit-0.1.0-windows.zip.sha256
+    url: https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.0/codeheart-operating-kit-0.1.0-windows.zip.sha256
+    sha256: 38580df83335dda18a8df2689b75c221865419ff2d8a120b58acaff17c26abe7
+    platform: windows
+components:
+  - id: planning-workflows
+    version: "0.1.0"
+    manifest_path: components/planning-workflows/component.yaml
+    checksum_sha256: f7a062661039ceac89f283a6d45cc70765fc14d94a840e075019020d07a1173c
+    consumer_impact:
+      - component addition
+      - instruction-only change
+  - id: agent-memory
+    version: "0.1.0"
+    manifest_path: components/agent-memory/component.yaml
+    checksum_sha256: 7c0d9a181b10bdde66ccbec094fed2f222210038ee0bebfeb7b9842921dd4e96
+    consumer_impact:
+      - component addition
+      - instruction-only change
+      - backwards-compatible scaffold addition
+  - id: agent-interface
+    version: "0.1.0"
+    manifest_path: components/agent-interface/component.yaml
+    checksum_sha256: 1bd2751d24203f95f9d7f0ae253243b12a25e525a5a83000ca4467cf5f05b0e4
+    consumer_impact:
+      - component addition
+      - instruction-only change
+      - consumer migration required
+  - id: structure-governance
+    version: "0.1.0"
+    manifest_path: components/structure-governance/component.yaml
+    checksum_sha256: 95b45f5e82325566abc4248d66bbccf5c13196889cccc6a211a28a6046150fd2
+    consumer_impact:
+      - component addition
+      - instruction-only change
+      - backwards-compatible scaffold addition
+      - breaking placement-contract change
+  - id: native-codex-capabilities
+    version: "0.1.0"
+    manifest_path: components/native-codex-capabilities/component.yaml
+    checksum_sha256: 7504203b4971bd07d3de69c35f19efa5a1c2a1d3cb04973116d762f68f3543c4
+    consumer_impact:
+      - component addition
+      - instruction-only change
+  - id: validators
+    version: "0.1.0"
+    manifest_path: components/validators/component.yaml
+    checksum_sha256: 793a03f7d1cb444c837bc6d927f4e4df195a5789e01607f2ef2f05916d35f5bb
+    consumer_impact:
+      - component addition
+      - validator-only change
+profiles:
+  - id: standard
+    manifest_path: profiles/standard.yaml
+    components:
+      - planning-workflows
+      - agent-memory
+      - agent-interface
+      - structure-governance
+      - native-codex-capabilities
+      - validators
+    generated_surfaces:
+      - .codeheart/kit/
+      - .codeheart/kit.lock.yaml
+      - .codeheart/kit.config.yaml
+      - AGENTS.md
+      - docs/repo/README.md
+      - docs/agent-memory/README.md
+      - docs/agent-memory/goal-register.md
+      - docs/agent-memory/session-ledger.md
+      - docs/agent-memory/untriaged-sessions.md
+      - .codeheart/user/
+native_baseline_capability_checks:
+  - id: documents
+    profile: standard
+    status_values:
+      - available
+      - installed
+      - missing
+      - install-attempted
+      - unavailable
+      - blocked
+      - unknown
+  - id: spreadsheets
+    profile: standard
+    status_values:
+      - available
+      - installed
+      - missing
+      - install-attempted
+      - unavailable
+      - blocked
+      - unknown
+  - id: presentations
+    profile: standard
+    status_values:
+      - available
+      - installed
+      - missing
+      - install-attempted
+      - unavailable
+      - blocked
+      - unknown
+  - id: browser
+    profile: standard
+    status_values:
+      - available
+      - installed
+      - missing
+      - install-attempted
+      - unavailable
+      - blocked
+      - unknown
+  - id: pdf
+    profile: standard
+    status_values:
+      - available
+      - installed
+      - missing
+      - install-attempted
+      - unavailable
+      - blocked
+      - unknown
+consumer_impact:
+  - component addition
+  - instruction-only change
+  - validator-only change
+  - backwards-compatible scaffold addition
+  - consumer migration required
+  - breaking placement-contract change

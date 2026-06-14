@@ -1,15 +1,23 @@
-Last updated: 2026-06-14T00:13:08Z (UTC)
+Last updated: 2026-06-14T01:00:37Z (UTC)
 
 # Bootstrap Codeheart Operating Kit
 
 Use this public bootstrap when Codeheart Operating Kit is not installed yet. It does not require
 preinstalled Codeheart skills.
 
+Pinned G1 release:
+
+```text
+Version: v0.1.0
+Release URL: https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/tag/v0.1.0
+```
+
 ## Install The CLI
 
 macOS installs into a user-level Operating Kit folder:
 
 ```sh
+curl -fsSLO https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.0/install.sh
 bash install.sh
 ```
 
@@ -22,6 +30,7 @@ $HOME/.codeheart/operating-kit/bin/codeheart-operating-kit
 Windows installs into the current user's local application data folder:
 
 ```powershell
+Invoke-WebRequest -Uri "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.0/install.ps1" -OutFile install.ps1
 .\install.ps1
 ```
 

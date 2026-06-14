@@ -1,4 +1,4 @@
-# Last updated: 2026-06-14T00:13:08Z (UTC)
+# Last updated: 2026-06-14T01:07:14Z (UTC)
 [CmdletBinding()]
 param(
     [string]$Version = "0.1.0",
@@ -28,6 +28,48 @@ Options:
   -Python PATH           Python executable to use. Default: python
   -Help                  Show this help.
 "@
+}
+
+function Invoke-SanitizedPipInstall {
+    param(
+        [string]$PythonCommand,
+        [string]$TargetDirectory,
+        [string]$WheelPath
+    )
+
+    $PipEnvNames = @(
+        "PIP_CONFIG_FILE",
+        "PIP_DISABLE_PIP_VERSION_CHECK",
+        "PIP_EXTRA_INDEX_URL",
+        "PIP_INDEX_URL",
+        "PIP_NO_CACHE_DIR",
+        "PIP_NO_INDEX",
+        "PIP_NO_INPUT",
+        "PYTHONNOUSERSITE"
+    )
+    $PreviousValues = @{}
+    foreach ($Name in $PipEnvNames) {
+        $PreviousValues[$Name] = [Environment]::GetEnvironmentVariable($Name, "Process")
+        [Environment]::SetEnvironmentVariable($Name, $null, "Process")
+    }
+
+    try {
+        $env:PIP_CONFIG_FILE = "NUL"
+        $env:PIP_DISABLE_PIP_VERSION_CHECK = "1"
+        $env:PIP_NO_CACHE_DIR = "1"
+        $env:PIP_NO_INDEX = "1"
+        $env:PIP_NO_INPUT = "1"
+        $env:PYTHONNOUSERSITE = "1"
+        $PipOutput = & $PythonCommand -m pip install --no-index --no-deps --upgrade --target $TargetDirectory $WheelPath 2>&1
+        if ($LASTEXITCODE -ne 0) {
+            $PipOutput | ForEach-Object { Write-Error $_ }
+            throw "pip install failed."
+        }
+    } finally {
+        foreach ($Name in $PipEnvNames) {
+            [Environment]::SetEnvironmentVariable($Name, $PreviousValues[$Name], "Process")
+        }
+    }
 }
 
 if ($Help) {
@@ -85,14 +127,12 @@ try {
     $BinDir = Join-Path $InstallDir "bin"
     $LibDir = Join-Path $InstallDir "lib"
     New-Item -ItemType Directory -Force -Path $BinDir, $LibDir | Out-Null
-    & $Python -m pip install --upgrade --target $LibDir $Wheel.FullName
-    if ($LASTEXITCODE -ne 0) {
-        throw "pip install failed."
-    }
+    Invoke-SanitizedPipInstall -PythonCommand $Python -TargetDirectory $LibDir -WheelPath $Wheel.FullName
 
     $Wrapper = Join-Path $BinDir "codeheart-operating-kit.cmd"
-    $WrapperContent = @"
+$WrapperContent = @"
 @echo off
+set "CODEHEART_OPERATING_KIT_CLI=1"
 set "PYTHONPATH=$LibDir;%PYTHONPATH%"
 "$Python" -m codeheart_operating_kit.cli %*
 "@

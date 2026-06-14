@@ -3,6 +3,12 @@ name: Validate
 on:
   push:
   pull_request:
+  workflow_dispatch:
+    inputs:
+      release_version:
+        description: Public release tag to smoke test.
+        required: true
+        default: v0.1.0
 
 jobs:
   cli:
@@ -73,4 +79,57 @@ jobs:
         shell: pwsh
       - run: |
           & "$env:RUNNER_TEMP\codeheart-ok\bin\codeheart-operating-kit.cmd" --help
+        shell: pwsh
+
+  macos-public-release:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: macos-latest
+    env:
+      RELEASE_VERSION: ${{ github.event.inputs.release_version }}
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: |
+          VERSION="${RELEASE_VERSION#v}"
+          BASE_URL="https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/${RELEASE_VERSION}"
+          curl -fsSLO "${BASE_URL}/install.sh"
+          curl -fsSLO "${BASE_URL}/codeheart-operating-kit-${VERSION}-macos.tar.gz"
+          if bash install.sh --asset-file "codeheart-operating-kit-${VERSION}-macos.tar.gz" --checksum 0000000000000000000000000000000000000000000000000000000000000000 --install-dir "$RUNNER_TEMP/codeheart-ok-bad"; then
+            echo "Checksum mismatch unexpectedly succeeded." >&2
+            exit 1
+          fi
+          bash install.sh --version "$VERSION" --install-dir "$RUNNER_TEMP/codeheart-ok"
+          "$RUNNER_TEMP/codeheart-ok/bin/codeheart-operating-kit" --help
+          "$RUNNER_TEMP/codeheart-ok/bin/codeheart-operating-kit" onboard --target "$RUNNER_TEMP/consumer" --project-name Release-Smoke --purpose software-product --yes --json > "$RUNNER_TEMP/onboard.json"
+          grep '"native_capabilities"' "$RUNNER_TEMP/onboard.json"
+          "$RUNNER_TEMP/codeheart-ok/bin/codeheart-operating-kit" check "$RUNNER_TEMP/consumer" --json
+
+  windows-public-release:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: windows-latest
+    env:
+      RELEASE_VERSION: ${{ github.event.inputs.release_version }}
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: |
+          $Version = $env:RELEASE_VERSION.TrimStart("v")
+          $BaseUrl = "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/$env:RELEASE_VERSION"
+          Invoke-WebRequest -Uri "$BaseUrl/install.ps1" -OutFile install.ps1
+          Invoke-WebRequest -Uri "$BaseUrl/codeheart-operating-kit-$Version-windows.zip" -OutFile "codeheart-operating-kit-$Version-windows.zip"
+          try {
+              .\install.ps1 -AssetFile "codeheart-operating-kit-$Version-windows.zip" -Checksum "0000000000000000000000000000000000000000000000000000000000000000" -InstallDir "$env:RUNNER_TEMP\codeheart-ok-bad"
+              throw "Checksum mismatch unexpectedly succeeded."
+          } catch {
+              if ($_.Exception.Message -notmatch "Checksum mismatch") {
+                  throw
+              }
+          }
+          .\install.ps1 -Version $Version -InstallDir "$env:RUNNER_TEMP\codeheart-ok"
+          & "$env:RUNNER_TEMP\codeheart-ok\bin\codeheart-operating-kit.cmd" --help
+          & "$env:RUNNER_TEMP\codeheart-ok\bin\codeheart-operating-kit.cmd" onboard --target "$env:RUNNER_TEMP\consumer" --project-name Release-Smoke --purpose software-product --yes --json | Tee-Object -FilePath "$env:RUNNER_TEMP\onboard.json"
+          Select-String -Path "$env:RUNNER_TEMP\onboard.json" -Pattern '"native_capabilities"'
+          & "$env:RUNNER_TEMP\codeheart-ok\bin\codeheart-operating-kit.cmd" check "$env:RUNNER_TEMP\consumer" --json
         shell: pwsh

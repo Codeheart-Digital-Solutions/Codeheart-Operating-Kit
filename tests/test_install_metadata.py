@@ -7,6 +7,9 @@ ROOT = Path(__file__).resolve().parents[1]
 def test_bootstrap_documents_first_run_path():
     text = (ROOT / "bootstrap.md").read_text(encoding="utf-8")
     assert "codeheart-operating-kit onboard" in text
+    assert "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/tag/v0.1.0" in text
+    assert "releases/download/v0.1.0/install.sh" in text
+    assert "releases/download/v0.1.0/install.ps1" in text
     assert "GPT-5.5" in text
     assert "Extra High" in text
     assert "Fast" in text
@@ -19,7 +22,10 @@ def test_macos_installer_requires_checksum_and_user_level_path():
     assert "$HOME/.codeheart/operating-kit" in text
     assert "shasum -a 256" in text
     assert "Checksum mismatch" in text
-    assert "pip install --upgrade --target" in text
+    assert "pip install --no-index --no-deps --upgrade --target" in text
+    assert "PIP_CONFIG_FILE=/dev/null" in text
+    assert "--no-index --no-deps" in text
+    assert "CODEHEART_OPERATING_KIT_CLI=1" in text
     assert "codeheart-operating-kit onboard" in text
 
 
@@ -28,7 +34,10 @@ def test_windows_installer_requires_checksum_and_user_level_path():
     assert "%LOCALAPPDATA%\\Codeheart\\OperatingKit" in text
     assert "Get-FileHash -Algorithm SHA256" in text
     assert "Checksum mismatch" in text
-    assert "pip install --upgrade --target" in text
+    assert "pip install --no-index --no-deps --upgrade --target" in text
+    assert "$env:PIP_CONFIG_FILE = \"NUL\"" in text
+    assert "--no-index --no-deps" in text
+    assert "CODEHEART_OPERATING_KIT_CLI=1" in text
     assert "codeheart-operating-kit onboard" in text
 
 
