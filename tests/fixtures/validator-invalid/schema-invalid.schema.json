@@ -1,0 +1,8 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/codeheart-operating-kit/schema-invalid.schema.json",
+  "title": "Invalid Test Schema",
+  "type": "object",
+  "required": ["missing"],
+  "properties": {}
+}

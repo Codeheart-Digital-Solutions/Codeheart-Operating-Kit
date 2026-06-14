@@ -1,4 +1,4 @@
-Last updated: 2026-06-14T00:13:08Z (UTC)
+Last updated: 2026-06-14T00:50:28Z (UTC)
 
 # Codeheart Operating Kit
 
@@ -28,6 +28,8 @@ configuration.
 - `schemas/`: lockfile, config, release-manifest, and consumer-impact contracts.
 - `pyproject.toml`: Python package metadata and `codeheart-operating-kit` console entry point.
 - `scripts/build-release-assets.py`: macOS and Windows release-asset builder with checksums.
+- `scripts/validate-*.py`: public-core, Markdown timestamp, JSON schema, and release-manifest
+  validators.
 - `src/codeheart_operating_kit/`: CLI source for onboard, inspect, init, sync, check, and
   update-check.
 - `tests/`: CLI, manifest, onboarding, sync/check, update-check, and capability tests.

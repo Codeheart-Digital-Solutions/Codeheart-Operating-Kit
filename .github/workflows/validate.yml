@@ -17,6 +17,7 @@ jobs:
       - run: python -m pytest -q
       - run: python scripts/validate-public-core.py
       - run: python scripts/validate-markdown-headers.py
+      - run: python scripts/validate-json-schemas.py
       - run: python scripts/validate-release-manifest.py
 
   native-capabilities:
