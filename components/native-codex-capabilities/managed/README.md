@@ -1,4 +1,4 @@
-Last updated: 2026-06-13T22:55:57Z (UTC)
+Last updated: 2026-06-14T00:23:12Z (UTC)
 
 # Native Codex Capabilities
 
@@ -9,6 +9,6 @@ baseline. These capabilities are not Codeheart-owned workflow doctrine.
 
 - Baseline capability profile: `reference/baseline-capability-profile.md`
 
-Bootstrap and `check` should verify or attempt installation when Codex exposes supported commands,
-record status, and report degraded state without hard-failing G1 setup solely because a capability
-is unavailable.
+Onboarding attempts installation only when Codex exposes a supported plugin install command and the
+capability is available but not installed. `check` reports the lockfile status. Missing, blocked,
+unavailable, and unknown states are degraded states, not G1 setup failures.

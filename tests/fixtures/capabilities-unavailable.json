@@ -1,0 +1,6 @@
+{
+  "ok": false,
+  "category": "missing-cli",
+  "stdout": "",
+  "stderr": "codex not found"
+}

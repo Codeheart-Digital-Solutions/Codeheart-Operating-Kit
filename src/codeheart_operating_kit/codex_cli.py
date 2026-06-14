@@ -16,6 +16,8 @@ def run_codex(args: list[str], timeout: int = 20) -> dict[str, object]:
             timeout=timeout,
             check=False,
         )
+    except PermissionError as exc:
+        return {"ok": False, "category": "permission-denied", "stdout": "", "stderr": str(exc)}
     except subprocess.TimeoutExpired:
         return {"ok": False, "category": "timeout", "stdout": "", "stderr": "codex timed out"}
     return {

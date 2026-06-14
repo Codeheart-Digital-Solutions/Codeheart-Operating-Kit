@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+from ..capabilities import refresh_native_capability_lock
 from .init import initialize
 from .inspect import inspect_folder
 
@@ -96,6 +97,7 @@ def run(args) -> int:
     result = {"inspection": inspection, "written": False}
     if args.yes and inspection["mode"] != "ambiguous-folder-stop":
         result = initialize(target, args.project_name, args.purpose, str(target))
+        result["native_capabilities"] = refresh_native_capability_lock(target, attempt_install=True)
         result["written"] = True
     if args.json:
         result["script"] = script

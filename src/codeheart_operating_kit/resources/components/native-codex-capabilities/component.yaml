@@ -19,8 +19,23 @@ component:
       target: .codeheart/kit/docs/native-codex-capabilities/reference/baseline-capability-profile.md
       ownership: managed
   capabilities:
-    - documents
-    - spreadsheets
-    - presentations
-    - browser
-    - pdf
+    - id: documents
+      purpose: Word and .docx creation, editing, review, and rendering.
+      profile_applicability: standard
+      plugin_selector: documents@openai-primary-runtime
+    - id: spreadsheets
+      purpose: Excel, CSV, workbook analysis, formula work, and modification.
+      profile_applicability: standard
+      plugin_selector: spreadsheets@openai-primary-runtime
+    - id: presentations
+      purpose: PowerPoint and slide deck creation, editing, rendering, and export.
+      profile_applicability: standard
+      plugin_selector: presentations@openai-primary-runtime
+    - id: browser
+      purpose: UI inspection, screenshots, interaction, and frontend verification.
+      profile_applicability: standard
+      plugin_selector: browser@openai-bundled
+    - id: pdf
+      purpose: PDF reading, extraction, generation, rendering checks, and review.
+      profile_applicability: standard
+      plugin_selector: pdf@openai-primary-runtime

@@ -1,0 +1,33 @@
+{
+  "installed": [
+    {
+      "pluginId": "documents@openai-primary-runtime",
+      "name": "documents",
+      "installed": true,
+      "enabled": true,
+      "installPolicy": "AVAILABLE"
+    },
+    {
+      "pluginId": "spreadsheets@openai-primary-runtime",
+      "name": "spreadsheets",
+      "installed": true,
+      "enabled": true,
+      "installPolicy": "AVAILABLE"
+    },
+    {
+      "pluginId": "presentations@openai-primary-runtime",
+      "name": "presentations",
+      "installed": true,
+      "enabled": true,
+      "installPolicy": "AVAILABLE"
+    },
+    {
+      "pluginId": "browser@openai-bundled",
+      "name": "browser",
+      "installed": true,
+      "enabled": true,
+      "installPolicy": "AVAILABLE"
+    }
+  ],
+  "available": []
+}

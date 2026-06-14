@@ -1,0 +1,12 @@
+{
+  "installed": [],
+  "available": [
+    {
+      "pluginId": "pdf@openai-primary-runtime",
+      "name": "pdf",
+      "installed": false,
+      "enabled": false,
+      "installPolicy": "BLOCKED"
+    }
+  ]
+}

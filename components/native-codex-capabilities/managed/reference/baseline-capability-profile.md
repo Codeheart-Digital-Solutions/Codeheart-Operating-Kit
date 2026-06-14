@@ -1,14 +1,19 @@
-Last updated: 2026-06-13T23:16:03Z (UTC)
+Last updated: 2026-06-14T00:23:12Z (UTC)
 
 # Baseline Capability Profile
 
 The G1 `standard` profile expects status reporting for these external Codex capabilities:
 
-- `documents`: Word and `.docx` creation, editing, review, and rendering.
-- `spreadsheets`: Excel, CSV, workbook analysis, formula work, and modification.
-- `presentations`: PowerPoint and slide deck creation, editing, rendering, and export.
-- `browser`: UI inspection, screenshots, interaction, and frontend verification.
-- `pdf`: PDF reading, extraction, generation, rendering checks, and review.
+- `documents`: Word and `.docx` creation, editing, review, and rendering. Applies to the
+  `standard` profile.
+- `spreadsheets`: Excel, CSV, workbook analysis, formula work, and modification. Applies to the
+  `standard` profile.
+- `presentations`: PowerPoint and slide deck creation, editing, rendering, and export. Applies to
+  the `standard` profile.
+- `browser`: UI inspection, screenshots, interaction, and frontend verification. Applies to the
+  `standard` profile.
+- `pdf`: PDF reading, extraction, generation, rendering checks, and review. Applies to the
+  `standard` profile.
 
 ## Status Values
 
