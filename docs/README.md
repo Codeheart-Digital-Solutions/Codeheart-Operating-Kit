@@ -1,4 +1,4 @@
-Last updated: 2026-06-13T23:44:26Z (UTC)
+Last updated: 2026-06-14T00:13:08Z (UTC)
 
 # Docs Index
 
@@ -7,6 +7,9 @@ This folder contains public Codeheart Operating Kit documentation.
 ## Router Model
 
 - Repository governance: `docs/repo/`
+- Public bootstrap: `bootstrap.md`
+- macOS installer: `install.sh`
+- Windows installer: `install.ps1`
 - Repository placement contract: `docs/repo/reference/placement-contract.md`
 - Consumer-impact classification:
   `docs/repo/reference/consumer-impact-classification.md`
@@ -22,6 +25,7 @@ This folder contains public Codeheart Operating Kit documentation.
 - Native Codex capabilities: `components/native-codex-capabilities/managed/README.md`
 - Standard profile: `profiles/standard.yaml`
 - Machine-readable schemas: `schemas/`
+- Release asset builder: `scripts/build-release-assets.py`
 - CLI source and tests: `src/codeheart_operating_kit/`, `tests/`
 
 ## Placement

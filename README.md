@@ -1,4 +1,4 @@
-Last updated: 2026-06-13T23:44:26Z (UTC)
+Last updated: 2026-06-14T00:13:08Z (UTC)
 
 # Codeheart Operating Kit
 
@@ -20,10 +20,14 @@ configuration.
 
 - `AGENTS.md`: agent-facing bootstrap and maintainer routing.
 - `docs/README.md`: documentation router.
+- `bootstrap.md`: first-run public bootstrap path for users without preinstalled Codeheart skills.
+- `install.sh`: macOS user-level installer and repair script.
+- `install.ps1`: Windows user-level installer and repair script.
 - `components/`: managed Operating Kit component source content.
 - `profiles/standard.yaml`: first G1 profile preset.
 - `schemas/`: lockfile, config, release-manifest, and consumer-impact contracts.
 - `pyproject.toml`: Python package metadata and `codeheart-operating-kit` console entry point.
+- `scripts/build-release-assets.py`: macOS and Windows release-asset builder with checksums.
 - `src/codeheart_operating_kit/`: CLI source for onboard, inspect, init, sync, check, and
   update-check.
 - `tests/`: CLI, manifest, onboarding, sync/check, update-check, and capability tests.
