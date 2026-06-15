@@ -99,7 +99,7 @@ def ensure_gitignore(root: Path) -> bool:
     return True
 
 
-def write_default_state(root: Path, project_name: str, purpose: str, selected_folder: str) -> dict[str, Any]:
+def write_default_state(root: Path, project_name: str, purpose: str | None, selected_folder: str) -> dict[str, Any]:
     now = utc_now()
     profile = load_profile("standard")
     managed_records = copy_managed_files(root)
@@ -147,22 +147,21 @@ def write_default_state(root: Path, project_name: str, purpose: str, selected_fo
         },
     }
     write_lock(root, lock)
-    write_config(
-        root,
-        {
-            "schema_version": 1,
-            "selected_profile": "standard",
-            "setup_purpose": purpose,
-            "project_display_name": project_name,
-            "selected_setup_folder": selected_folder,
-            "local_consumer_layer": {
-                "repo_docs_path": "docs/repo/",
-                "agent_memory_path": "docs/agent-memory/",
-                "user_layer_path": ".codeheart/user/",
-            },
-            "component_settings": {},
+    config = {
+        "schema_version": 1,
+        "selected_profile": "standard",
+        "project_display_name": project_name,
+        "selected_setup_folder": selected_folder,
+        "local_consumer_layer": {
+            "repo_docs_path": "docs/repo/",
+            "agent_memory_path": "docs/agent-memory/",
+            "user_layer_path": ".codeheart/user/",
         },
-    )
+        "component_settings": {},
+    }
+    if purpose:
+        config["setup_purpose"] = purpose
+    write_config(root, config)
     return {
         "managed_paths": managed_records,
         "generated_surfaces": generated_surfaces,

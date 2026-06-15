@@ -27,6 +27,17 @@ def test_public_core_validator_blocks_private_patterns():
     assert "blocked public-core pattern" in result.stdout
 
 
+def test_public_core_validator_blocks_legacy_onboarding_examples():
+    result = run_validator(ROOT / "tests/fixtures/validator-invalid/public-core-legacy-onboarding-examples.txt")
+    assert result.returncode == 1
+    assert "legacy onboarding example" in result.stdout
+
+
 def test_public_core_validator_allows_placeholders():
     result = run_validator(ROOT / "tests/fixtures/validator-valid/public-core-placeholder.txt")
+    assert result.returncode == 0, result.stdout + result.stderr
+
+
+def test_public_core_validator_allows_neutral_onboarding_examples():
+    result = run_validator(ROOT / "tests/fixtures/validator-valid/public-core-onboarding-placeholders.txt")
     assert result.returncode == 0, result.stdout + result.stderr

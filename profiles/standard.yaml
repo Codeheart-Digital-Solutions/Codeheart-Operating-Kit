@@ -1,7 +1,7 @@
 schema_version: 1
 profile:
   id: standard
-  version: "0.1.0"
+  version: "0.1.1"
   name: Standard
   description: Base public Operating Kit profile for general agent-first repositories and folders.
   selected_components:

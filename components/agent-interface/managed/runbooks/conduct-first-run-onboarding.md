@@ -1,15 +1,17 @@
-Last updated: 2026-06-13T23:08:01Z (UTC)
+Last updated: 2026-06-15T10:16:29Z (UTC)
 
 # Conduct First-Run Onboarding
 
 Use this runbook when guiding a user through `codeheart-operating-kit onboard`. This public
-runbook owns the G1 onboarding order and required wording constraints for installed Operating Kit
-content.
+runbook owns the onboarding order and required stop points for installed Operating Kit content.
+
+The agent must not infer setup purpose, project name, target folder, or write approval from local
+context. Ask the user directly and keep the conversation visible in Codex chat.
 
 ## Procedure
 
 1. Ask for setup language with the three visible choices: English, Deutsch, and Chinese. Continue
-   in the chosen language when localized copy is available.
+   in the chosen language in chat after the user answers.
 2. Guide Codex chat setup before folder setup. Tell the user to use the menu in the lower-right
    area of the message box and set Model to `GPT-5.5`, Thinking to `Extra High`, and Speed to
    `Fast`.
@@ -17,37 +19,75 @@ content.
    of the left sidebar, stay on the General tab, set Work Mode to Coding at the top of the main
    settings screen, and turn on Default permissions, Auto review, and Full access directly beneath
    it. Then ask them to check the chat-box control named Approve for me.
-4. Ask whether the setup is for private automation, company automation, or a software product.
-5. Explain why the project folder name matters in the Codex sidebar.
-6. Ask for a purpose-specific project name.
-7. Recommend `Documents > <Project-Name>`.
-8. Ask whether to use the recommended folder or a different folder.
-9. Inspect the selected folder before writing.
-10. Present exactly one setup-mode message.
-11. Present the concrete setup, adoption, or repair plan.
-12. Ask for write confirmation.
-13. Check or record native Codex capability status when the user agrees.
-14. Explain quiet weekly update checking.
-15. Finish with base Operating Kit setup completion.
+4. Ask whether the user already knows the Codex project name or wants a suggestion.
+5. Ask lightweight purpose/context only when the user wants naming help.
+6. Explain why the project folder name matters in the Codex sidebar.
+7. Ask for the project name.
+8. Ask whether the user already knows the target folder or wants a simple location.
+9. Recommend `Documents > <Project-Name>` when the user wants a suggestion.
+10. Ask whether to use the recommended folder or a different folder.
+11. Inspect the selected folder before writing.
+12. Present exactly one setup-mode message.
+13. Present the concrete setup, adoption, or repair plan.
+14. Ask for write confirmation.
+15. Check or record native Codex capability status when the user agrees.
+16. Explain quiet weekly update checking.
+17. Finish with base Operating Kit setup completion.
 
-## Setup Purpose Wording
+## Required User-Owned Decisions
 
-Keep the first purpose prompt non-technical:
+Ask the user before deciding:
 
-- Private automation covers personal documents, household tasks, reminders, research, and similar
-  private work.
-- Company automation covers office work, documents, spreadsheets, email, Microsoft 365
-  integration, internal processes, and similar company work.
-- Software product covers apps, websites, technical products, and existing code projects.
+- setup language;
+- Codex project name;
+- target folder;
+- setup writes.
 
-Do not ask for a company or organization name as a standalone metadata question. Ask for it only
-when it helps produce a purpose-specific project name.
+Do not use non-interactive flags to fill missing user decisions. Do not use `--yes` unless the user
+already supplied the target folder, supplied the project name, and approved writing files.
+
+## Purpose And Context Wording
+
+Purpose is optional context, not a required setup branch. Ask for it only when the user wants help
+choosing a name or needs next-step guidance:
+
+```text
+What is this mainly for?
+
+1. Personal automation
+2. Company operations
+3. Software or product development
+4. I am not sure yet
+```
+
+Use the answer only to make naming help concrete. Do not use it to select a different profile;
+`standard` remains the installed profile.
+
+## Project Naming Flow
+
+Before asking for the name, explain that Codex uses the project folder name in the left sidebar and
+groups chat threads under that project. A recognizable name helps the user reopen the same setup
+later.
+
+Use neutral examples only:
+
+- Personal automation: `Yourname-Automation`
+- Company operations: `Companyname-Automation`
+- Software or product development: `Productname-Development`
+- Team operations: `Teamname-Operations`
+
+Do not use real-looking person, family, company, customer, tenant, or product names as examples.
 
 ## Folder Handling
 
-Default to `Documents > <Project-Name>` because it is understandable to non-technical users and is
-easy to reopen in Codex later. If the user chooses a different folder, ask for the folder name or
-location immediately and show simple examples.
+Default to `Documents > <Project-Name>` when the user asks for a simple recommendation. If the
+user chooses a different folder, ask for the folder name or location immediately and show only
+neutral examples:
+
+- `Documents > Companyname-Automation`
+- `Documents > Yourname-Automation`
+- `Desktop > Productname-Development`
+- `Documents > Existing-Project-Name`
 
 Always inspect before writing:
 
@@ -59,13 +99,16 @@ Always inspect before writing:
   capability status before repair.
 - `ambiguous-folder-stop`: stop and ask for a different folder or more context.
 
-## Write Boundary
+## Setup Plan And Write Boundary
 
-Before writing, show the concrete file groups that will be added or repaired. Do not delete
-existing files during onboarding. Do not create a Python virtual environment during default G1
-onboarding. Do not mention GitHub during first-run onboarding.
+Before writing, show the concrete file groups that will be added or repaired. Do not write files
+before confirmation. Do not delete existing files during onboarding. Do not create a Python virtual
+environment during default onboarding. Do not mention GitHub during first-run onboarding.
 
-## Safety
+## Native Capabilities And Updates
 
-Do not write files before confirmation. Do not delete existing docs during onboarding. Record
-unavailable native capabilities as degraded state, not setup failure.
+Check or record native Codex capability status only when the user agrees. Record unavailable native
+capabilities as degraded state, not setup failure.
+
+Explain that Operating Kit includes quiet weekly update checking. If everything is current, Codex
+does not mention it. If an update is available, Codex asks before applying anything.

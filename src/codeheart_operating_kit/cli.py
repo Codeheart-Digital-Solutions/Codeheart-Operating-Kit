@@ -7,20 +7,38 @@ from . import __version__
 from .commands import check, init, inspect, onboard, sync, update_check
 
 
+PURPOSE_CHOICES = ["private-automation", "company-automation", "software-product"]
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="codeheart-operating-kit")
     parser.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
     subparsers = parser.add_subparsers(dest="command", required=True)
 
-    onboard_parser = subparsers.add_parser("onboard", help="Guide first-run Operating Kit onboarding")
-    onboard_parser.add_argument("--target", default=".", help="Folder to inspect or set up")
-    onboard_parser.add_argument("--project-name", default="Example-Automation", help="Codex project folder name")
+    onboard_parser = subparsers.add_parser(
+        "onboard",
+        help="Guide first-run Operating Kit onboarding",
+        description="Render the agent-guided first-run onboarding script and setup plan.",
+        epilog=(
+            "First-run user setup should run without --yes so Codex can ask for language, "
+            "project name, target folder, setup-plan review, and write approval in chat. "
+            "Non-interactive --yes writes require explicit --target and --project-name values."
+        ),
+    )
+    onboard_parser.add_argument(
+        "--target",
+        help="Explicit folder to inspect or set up. Required with --yes.",
+    )
+    onboard_parser.add_argument(
+        "--project-name",
+        help="Explicit Codex project folder name. Required with --yes.",
+    )
     onboard_parser.add_argument(
         "--purpose",
-        default="company-automation",
-        choices=["private-automation", "company-automation", "software-product"],
+        choices=PURPOSE_CHOICES,
+        help="Optional backward-compatible setup metadata; it does not select a different profile.",
     )
-    onboard_parser.add_argument("--yes", action="store_true", help="Write setup files after showing the plan")
+    onboard_parser.add_argument("--yes", action="store_true", help="Write setup files after explicit decisions are supplied")
     onboard_parser.add_argument("--json", action="store_true")
     onboard_parser.set_defaults(func=onboard.run)
 
@@ -34,8 +52,8 @@ def build_parser() -> argparse.ArgumentParser:
     init_parser.add_argument("--project-name", default="Example-Automation")
     init_parser.add_argument(
         "--purpose",
-        default="company-automation",
-        choices=["private-automation", "company-automation", "software-product"],
+        choices=PURPOSE_CHOICES,
+        help="Optional backward-compatible setup metadata; omitted for new generic setups.",
     )
     init_parser.add_argument("--selected-folder")
     init_parser.add_argument("--json", action="store_true")

@@ -1,0 +1,6 @@
+These placeholder onboarding examples are public-safe:
+Yourname-Automation
+Companyname-Automation
+Productname-Development
+Teamname-Operations
+Existing-Project-Name

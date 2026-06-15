@@ -7,7 +7,7 @@ from ..components import write_adoption_cleanup_report, write_default_state
 from .inspect import inspect_folder
 
 
-def initialize(root: Path, project_name: str, purpose: str, selected_folder: str | None = None) -> dict[str, object]:
+def initialize(root: Path, project_name: str, purpose: str | None = None, selected_folder: str | None = None) -> dict[str, object]:
     root = root.expanduser()
     root.mkdir(parents=True, exist_ok=True)
     inspection = inspect_folder(root)

@@ -2,6 +2,8 @@ import subprocess
 import sys
 from pathlib import Path
 
+from codeheart_operating_kit import __version__
+
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -43,8 +45,8 @@ def test_release_asset_build_check(tmp_path):
     )
     assert result.returncode == 0, result.stdout + result.stderr
     for name in [
-        "codeheart-operating-kit-0.1.0-macos.tar.gz",
-        "codeheart-operating-kit-0.1.0-windows.zip",
+        f"codeheart-operating-kit-{__version__}-macos.tar.gz",
+        f"codeheart-operating-kit-{__version__}-windows.zip",
     ]:
         assert (tmp_path / name).exists()
         checksum = tmp_path / f"{name}.sha256"

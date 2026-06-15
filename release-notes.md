@@ -1,6 +1,54 @@
-Last updated: 2026-06-14T01:01:25Z (UTC)
+Last updated: 2026-06-15T10:43:39Z (UTC)
 
-# Codeheart Operating Kit v0.1.0 Release Notes
+# Codeheart Operating Kit Release Notes
+
+## v0.1.1 Release Notes
+
+`v0.1.1` is an onboarding-contract hardening release for Codeheart Operating Kit.
+
+### Included
+
+- Public `README.md` `Start Here` prompt that keeps the first user prompt short and points to the
+  latest public `bootstrap.md`.
+- Hardened public `bootstrap.md` agent contract for language-first setup, explicit project-name
+  selection, explicit target-folder selection, setup-plan preview, and write confirmation.
+- Managed onboarding reference and runbook updates that make purpose optional context instead of a
+  required setup branch for the `standard` profile.
+- Neutral onboarding examples only: `Yourname-Automation`, `Companyname-Automation`,
+  `Productname-Development`, `Teamname-Operations`, and `Existing-Project-Name`.
+- Non-interactive onboarding policy that reserves `--yes` for explicit automation or repair flows
+  where the user-owned decisions are already supplied.
+
+### Consumer Impact
+
+- `instruction-only change`: public bootstrap, public README, managed onboarding reference, and
+  managed onboarding runbook now tell agents not to infer setup decisions.
+- `validator-only change`: public-core validation now rejects legacy real-looking onboarding
+  examples in public onboarding surfaces.
+- `security or safety policy change`: non-interactive onboarding write behavior now fails closed
+  when `--yes` is used without explicit target folder and project name decisions.
+- CLI impact: `onboard` no longer supplies default target, project name, or purpose values;
+  `init` can create a standard setup without purpose metadata.
+- Schema impact: `setup_purpose` remains valid when present, but is no longer required for new
+  `standard` profile configs.
+- Installer impact: macOS and Windows installer defaults point to `v0.1.1` release assets.
+- Known consumer action: none for installed consumers; existing `setup_purpose` metadata remains
+  supported.
+
+### Validation
+
+- Local validation covers onboarding prompt order, explicit decision requirements, no-write
+  behavior without `--yes`, config compatibility with and without `setup_purpose`, public-core
+  hygiene, release manifest consistency, release asset build, and local macOS install from built
+  assets.
+
+### Deferred
+
+- Purpose-specific installed profiles.
+- Foundry module selection during onboarding.
+- End-to-end external agent simulation.
+
+## v0.1.0 Release Notes
 
 `v0.1.0` is the first public Codeheart Operating Kit release.
 

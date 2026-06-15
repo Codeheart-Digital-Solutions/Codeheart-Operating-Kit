@@ -7,7 +7,6 @@
   "required": [
     "schema_version",
     "selected_profile",
-    "setup_purpose",
     "project_display_name",
     "selected_setup_folder",
     "local_consumer_layer",

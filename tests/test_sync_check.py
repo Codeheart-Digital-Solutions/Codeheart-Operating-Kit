@@ -28,6 +28,14 @@ def test_check_json_reports_missing_cli_and_routing(tmp_path, capsys):
     assert "native_capabilities" in data
 
 
+def test_check_accepts_config_without_setup_purpose(tmp_path, monkeypatch):
+    monkeypatch.setenv("CODEHEART_OPERATING_KIT_CLI", "1")
+    assert main(["init", str(tmp_path), "--project-name", "Companyname-Automation"]) == 0
+    report = check_repository(tmp_path)
+    assert report["ok"] is True
+    assert report["missing_lock_metadata"] == []
+
+
 def test_check_recognizes_installer_wrapper_marker(monkeypatch):
     monkeypatch.setenv("CODEHEART_OPERATING_KIT_CLI", "1")
 

@@ -1,4 +1,4 @@
-Last updated: 2026-06-14T00:50:28Z (UTC)
+Last updated: 2026-06-15T10:16:29Z (UTC)
 
 # Codeheart Operating Kit
 
@@ -9,6 +9,16 @@ capability checks.
 This repository contains public-core-safe material only. Do not add private Codeheart business
 records, customer or tenant details, secrets, credentials, instance state, or restricted strategy
 content.
+
+## Start Here
+
+Give Codex this prompt to set up the latest public Operating Kit:
+
+```text
+Set up Codeheart Operating Kit:
+
+https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/latest/download/bootstrap.md
+```
 
 ## Public Boundary
 

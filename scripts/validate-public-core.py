@@ -30,6 +30,21 @@ TEXT_SUFFIXES = {
     ".txt",
 }
 
+LEGACY_ONBOARDING_EXAMPLE_PARTS = [
+    ("Maria", "Automation"),
+    ("Family", "Planning"),
+    ("Home", "Research"),
+    ("Bluebird", "Automation"),
+    ("Finance", "Team", "Automation"),
+    ("M365", "Office", "Automation"),
+    ("Client", "Portal"),
+    ("Booking", "App"),
+    ("Storefront", "Relaunch"),
+]
+LEGACY_ONBOARDING_EXAMPLE_PATTERN = re.compile(
+    r"\b(?:" + "|".join("-".join(parts) for parts in LEGACY_ONBOARDING_EXAMPLE_PARTS) + r")\b"
+)
+
 
 @dataclass(frozen=True)
 class Rule:
@@ -45,6 +60,7 @@ RULES = [
     Rule("private CodeArtifact account marker", re.compile(r"codeheart-[0-9]{12}")),
     Rule("private CodeArtifact host marker", re.compile(r"d\.codeartifact")),
     Rule("private key marker", re.compile(r"BEGIN (?:RSA |EC |OPENSSH |)PRIVATE KEY")),
+    Rule("legacy onboarding example", LEGACY_ONBOARDING_EXAMPLE_PATTERN),
 ]
 
 

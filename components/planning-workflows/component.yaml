@@ -1,7 +1,7 @@
 schema_version: 1
 component:
   id: planning-workflows
-  version: "0.1.0"
+  version: "0.1.1"
   name: Planning Workflows
   description: Managed discovery, implementation planning, execution, review, and lifecycle guidance.
   profiles:

@@ -1,7 +1,8 @@
 import json
 
+from codeheart_operating_kit import __version__
 from codeheart_operating_kit.cli import main
-from codeheart_operating_kit.lockfile import read_lock
+from codeheart_operating_kit.lockfile import read_lock, write_lock
 
 
 def test_update_check_writes_weekly_cadence(tmp_path):
@@ -10,7 +11,7 @@ def test_update_check_writes_weekly_cadence(tmp_path):
         "update-check",
         str(tmp_path),
         "--latest-version",
-        "0.1.0",
+        __version__,
         "--now",
         "2026-06-13T00:00:00Z",
     ])
@@ -23,7 +24,7 @@ def test_update_check_writes_weekly_cadence(tmp_path):
 def test_update_check_silent_current_for_agent_notification(tmp_path, capsys):
     main(["init", str(tmp_path), "--project-name", "Example-Automation"])
     capsys.readouterr()
-    main(["update-check", str(tmp_path), "--latest-version", "0.1.0", "--agent-notification"])
+    main(["update-check", str(tmp_path), "--latest-version", __version__, "--agent-notification"])
     assert capsys.readouterr().out == ""
 
 
@@ -32,6 +33,20 @@ def test_update_check_prompts_for_available_update(tmp_path, capsys):
     capsys.readouterr()
     main(["update-check", str(tmp_path), "--latest-version", "0.2.0", "--agent-notification"])
     assert "update available" in capsys.readouterr().out.lower()
+
+
+def test_update_check_detects_v011_from_v010_lock(tmp_path, capsys):
+    main(["init", str(tmp_path), "--project-name", "Example-Automation"])
+    lock = read_lock(tmp_path)
+    lock["kit_version"] = "0.1.0"
+    write_lock(tmp_path, lock)
+    capsys.readouterr()
+
+    main(["update-check", str(tmp_path), "--latest-version", __version__, "--json"])
+
+    output = json.loads(capsys.readouterr().out)
+    assert output["status"] == "update-available"
+    assert read_lock(tmp_path)["update_check"]["latest_seen_version"] == __version__
 
 
 def test_update_check_reads_latest_release_metadata_url(tmp_path, capsys):

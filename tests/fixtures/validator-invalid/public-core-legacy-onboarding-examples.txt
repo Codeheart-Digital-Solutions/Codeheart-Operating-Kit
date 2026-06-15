@@ -1,0 +1,10 @@
+These legacy onboarding examples must not appear in public onboarding copy:
+Maria-Automation
+Family-Planning
+Home-Research
+Bluebird-Automation
+Finance-Team-Automation
+M365-Office-Automation
+Client-Portal
+Booking-App
+Storefront-Relaunch
