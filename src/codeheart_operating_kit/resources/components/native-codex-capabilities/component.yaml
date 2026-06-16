@@ -1,7 +1,7 @@
 schema_version: 1
 component:
   id: native-codex-capabilities
-  version: "0.1.1"
+  version: "0.1.2"
   name: Native Codex Capabilities
   description: Managed baseline capability profile for external Codex document and browser tooling.
   profiles:

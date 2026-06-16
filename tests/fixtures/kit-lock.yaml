@@ -1,5 +1,5 @@
 schema_version: 1
-kit_version: "0.1.1"
+kit_version: "0.1.2"
 selected_profile: standard
 selected_components:
   - planning-workflows
@@ -9,7 +9,7 @@ selected_components:
   - native-codex-capabilities
   - validators
 release:
-  asset_url: https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.1/codeheart-operating-kit-0.1.1.zip
+  asset_url: https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.2/codeheart-operating-kit-0.1.2.zip
   checksum_sha256: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 managed_paths:
   - path: .codeheart/kit/docs/agent-interface/README.md
@@ -25,12 +25,12 @@ generated_surfaces:
     ownership: scaffold
 cli_repair:
   installed_cli_path: codeheart-operating-kit
-  repair_source_url: https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.1/install.sh
+  repair_source_url: https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.2/install.sh
   repair_checksum_sha256: cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 update_check:
   last_update_check_at: "2026-06-13T00:00:00Z"
   next_update_check_due: "2026-06-20T00:00:00Z"
-  latest_seen_version: "0.1.1"
+  latest_seen_version: "0.1.2"
   update_status: current
 native_capabilities:
   documents:

@@ -1,6 +1,50 @@
-Last updated: 2026-06-15T10:43:39Z (UTC)
+Last updated: 2026-06-16T21:42:43Z (UTC)
 
 # Codeheart Operating Kit Release Notes
+
+## v0.1.2 Release Notes
+
+`v0.1.2` replaces the managed discovery workflow with the consolidated public-core workflow and
+refreshes sync metadata when installed consumers update managed kit files.
+
+### Included
+
+- Managed `discovery-workflow.md` now includes the consolidated intention-led, normal discovery,
+  and goal-style discovery workflow in one public Operating Kit runbook.
+- Deep Discovery is now an explicit autonomous discovery mode that users can trigger with `/goal`
+  plus a discovery document path. The runbook defines success criteria, decision-inventory passes,
+  helper-agent research and review, reviewer exchange summaries, and manual-review readiness.
+- Implementation-handoff readiness is separated from manual-review readiness so deferred or
+  unresolved implementation-shaping decisions cannot silently become a normal single-path handoff.
+- `sync` refreshes installed lock metadata from the currently installed CLI resources, including
+  `kit_version`, selected component metadata, release metadata defaults, and managed-file
+  checksums.
+
+### Consumer Impact
+
+- `instruction-only change`: installed consumers receive the expanded managed discovery workflow
+  when they sync or update the Operating Kit.
+- CLI impact: `sync` updates stale lock metadata to match the installed CLI version and managed
+  resource checksums.
+- Optional consumer action: run `codeheart-operating-kit sync <path>` after upgrading to refresh
+  managed discovery instructions in an installed consumer folder or repository.
+
+### Validation
+
+- Local validation covers the consolidated discovery workflow copy, public-core hygiene, Markdown
+  timestamps, JSON schema structure, release manifest structure, sync metadata refresh from a stale
+  lock, unsupported-platform release metadata preservation, packaged-resource release metadata
+  refresh, and release asset naming for v0.1.2.
+- Full local CLI tests passed: `72 passed`.
+- Local release asset build produced `codeheart-operating-kit-0.1.2-macos.tar.gz` and
+  `codeheart-operating-kit-0.1.2-windows.zip`.
+- Local macOS installer smoke installed `codeheart-operating-kit 0.1.2` from the generated asset.
+- Local checksum mismatch validation failed closed as expected.
+
+### Deferred
+
+- Splitting the discovery workflow into shorter companion references. This release intentionally
+  keeps one managed runbook as the canonical workflow source.
 
 ## v0.1.1 Release Notes
 

@@ -1,7 +1,7 @@
 schema_version: 1
 profile:
   id: standard
-  version: "0.1.1"
+  version: "0.1.2"
   selected_components:
     - planning-workflows
     - agent-memory

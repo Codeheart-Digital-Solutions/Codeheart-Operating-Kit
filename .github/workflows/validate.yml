@@ -8,7 +8,7 @@ on:
       release_version:
         description: Public release tag to smoke test.
         required: true
-        default: v0.1.1
+        default: v0.1.2
 
 jobs:
   cli:
@@ -46,8 +46,8 @@ jobs:
           python-version: "3.11"
       - run: python -m pip install --upgrade pip setuptools
       - run: python scripts/build-release-assets.py --output-dir dist
-      - run: test -f dist/codeheart-operating-kit-0.1.1-macos.tar.gz
-      - run: test -f dist/codeheart-operating-kit-0.1.1-windows.zip
+      - run: test -f dist/codeheart-operating-kit-0.1.2-macos.tar.gz
+      - run: test -f dist/codeheart-operating-kit-0.1.2-windows.zip
       - run: python scripts/validate-release-manifest.py
 
   macos-installer:
@@ -60,7 +60,7 @@ jobs:
       - run: python -m pip install --upgrade pip setuptools
       - run: python scripts/build-release-assets.py --output-dir dist
       - run: bash install.sh --help
-      - run: bash install.sh --asset-file dist/codeheart-operating-kit-0.1.1-macos.tar.gz --checksum-file dist/codeheart-operating-kit-0.1.1-macos.tar.gz.sha256 --install-dir "$RUNNER_TEMP/codeheart-ok"
+      - run: bash install.sh --asset-file dist/codeheart-operating-kit-0.1.2-macos.tar.gz --checksum-file dist/codeheart-operating-kit-0.1.2-macos.tar.gz.sha256 --install-dir "$RUNNER_TEMP/codeheart-ok"
       - run: |
           "$RUNNER_TEMP/codeheart-ok/bin/codeheart-operating-kit" --help
 
@@ -75,7 +75,7 @@ jobs:
       - run: python scripts/build-release-assets.py --output-dir dist
       - run: .\install.ps1 -Help
         shell: pwsh
-      - run: .\install.ps1 -AssetFile dist\codeheart-operating-kit-0.1.1-windows.zip -ChecksumFile dist\codeheart-operating-kit-0.1.1-windows.zip.sha256 -InstallDir "$env:RUNNER_TEMP\codeheart-ok"
+      - run: .\install.ps1 -AssetFile dist\codeheart-operating-kit-0.1.2-windows.zip -ChecksumFile dist\codeheart-operating-kit-0.1.2-windows.zip.sha256 -InstallDir "$env:RUNNER_TEMP\codeheart-ok"
         shell: pwsh
       - run: |
           & "$env:RUNNER_TEMP\codeheart-ok\bin\codeheart-operating-kit.cmd" --help

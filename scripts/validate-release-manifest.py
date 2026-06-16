@@ -86,6 +86,9 @@ def default_manifests() -> list[Path]:
     release_manifest = ROOT / "manifest.yaml"
     if release_manifest.exists():
         paths.append(release_manifest)
+    packaged_manifest = ROOT / "src/codeheart_operating_kit/resources/manifest.yaml"
+    if packaged_manifest.exists():
+        paths.append(packaged_manifest)
     return paths
 
 

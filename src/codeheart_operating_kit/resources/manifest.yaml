@@ -5,42 +5,42 @@ assets:
   -
     name: bootstrap.md
     url: "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.2/bootstrap.md"
-    sha256: 7e7ae2dfaa8896a694c0e290c33feb2a4debfb18ee8e867d194b8514259ed664
+    sha256: "0000000000000000000000000000000000000000000000000000000000000000"
     platform: universal
   -
     name: install.sh
     url: "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.2/install.sh"
-    sha256: 4c14422aa27faa764138241ad1879574988a8a4844eff323601eba11ede502d5
+    sha256: "0000000000000000000000000000000000000000000000000000000000000000"
     platform: macos
   -
     name: install.ps1
     url: "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.2/install.ps1"
-    sha256: 0a49ad6abe2dc8bdcb8c1257e0a0caece442fdabf7e063f5b16ac3dd8a80ec6c
+    sha256: "0000000000000000000000000000000000000000000000000000000000000000"
     platform: windows
   -
     name: release-notes.md
     url: "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.2/release-notes.md"
-    sha256: c5604626654cd9dbaf8a75e83e33ccc67a68f20e79935c2a348b98b6e2cd1f31
+    sha256: "0000000000000000000000000000000000000000000000000000000000000000"
     platform: universal
   -
     name: codeheart-operating-kit-0.1.2-macos.tar.gz
     url: "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.2/codeheart-operating-kit-0.1.2-macos.tar.gz"
-    sha256: a19fefa167affdda48f14e886f26ec690cfe88f6af52f8cf1919a87b2d5952cb
+    sha256: "0000000000000000000000000000000000000000000000000000000000000000"
     platform: macos
   -
     name: codeheart-operating-kit-0.1.2-macos.tar.gz.sha256
     url: "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.2/codeheart-operating-kit-0.1.2-macos.tar.gz.sha256"
-    sha256: 792ca30a3e64f5ed97b295288490b16a18b16adb1f5285e7709b18a3e963effd
+    sha256: "0000000000000000000000000000000000000000000000000000000000000000"
     platform: macos
   -
     name: codeheart-operating-kit-0.1.2-windows.zip
     url: "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.2/codeheart-operating-kit-0.1.2-windows.zip"
-    sha256: e4ea8b79de88df5d9999e5155b68af6544a0bad26c1c6a9c779af44ef3ebe285
+    sha256: "0000000000000000000000000000000000000000000000000000000000000000"
     platform: windows
   -
     name: codeheart-operating-kit-0.1.2-windows.zip.sha256
     url: "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.2/codeheart-operating-kit-0.1.2-windows.zip.sha256"
-    sha256: f2a44b488cc8d75d6721268fae0e534c88a7d495a0258fdafdd08d56bca56c7a
+    sha256: "0000000000000000000000000000000000000000000000000000000000000000"
     platform: windows
 components:
   -
