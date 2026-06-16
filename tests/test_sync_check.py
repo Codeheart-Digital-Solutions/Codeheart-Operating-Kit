@@ -25,6 +25,7 @@ def test_check_detects_drift_and_sync_repairs(tmp_path):
 
 def test_sync_refreshes_v011_lock_to_installed_cli_metadata(tmp_path, monkeypatch):
     monkeypatch.setenv("CODEHEART_OPERATING_KIT_CLI", "1")
+    monkeypatch.setattr("codeheart_operating_kit.commands.sync.sys.platform", "darwin")
     main(["init", str(tmp_path), "--project-name", "Example-Automation"])
     lock = read_lock(tmp_path)
     lock["kit_version"] = "0.1.1"
