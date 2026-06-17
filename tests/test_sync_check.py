@@ -47,7 +47,7 @@ def test_sync_refreshes_v011_lock_to_installed_cli_metadata(tmp_path, monkeypatc
     assert refreshed["kit_version"] == __version__
     assert refreshed["selected_profile"] == "standard"
     assert "planning-workflows" in refreshed["selected_components"]
-    assert "v0.1.2" in refreshed["release"]["asset_url"]
+    assert f"v{__version__}" in refreshed["release"]["asset_url"]
     assert refreshed_record["checksum_sha256"] == sha256_file(tmp_path / discovery_path)
     assert check_repository(tmp_path)["ok"] is True
 
@@ -87,8 +87,8 @@ def test_sync_refreshes_release_metadata_from_packaged_resources(tmp_path, monke
     main(["sync", str(tmp_path)])
     release = read_lock(tmp_path)["release"]
 
-    assert release["asset_url"].endswith("codeheart-operating-kit-0.1.2-macos.tar.gz")
-    assert "v0.1.2" in release["asset_url"]
+    assert release["asset_url"].endswith(f"codeheart-operating-kit-{__version__}-macos.tar.gz")
+    assert f"v{__version__}" in release["asset_url"]
 
 
 def test_check_json_reports_missing_cli_and_routing(tmp_path, capsys):

@@ -1,14 +1,26 @@
-Last updated: 2026-06-13T22:55:57Z (UTC)
+Last updated: 2026-06-17T06:46:46Z (UTC)
 
 # Structure Governance
 
-This managed domain owns reusable documentation placement, naming, boundary, and index-maintenance
-guidance.
+This managed domain owns reusable documentation placement, durable naming, ownership boundaries,
+managed-content boundaries, and documentation index-maintenance guidance.
 
-## Routes
+## Use
 
-- Documentation structure: `reference/documentation-structure.md`
-- Repository information architecture: `reference/repository-information-architecture.md`
-- Managed content boundaries: `reference/managed-content-boundaries.md`
-- Change documentation placement: `runbooks/change-documentation-placement.md`
-- Maintain documentation indexes: `runbooks/maintain-documentation-indexes.md`
+- Use `reference/documentation-structure.md` before creating, moving, archiving, or reorganizing
+  docs.
+- Use `reference/repository-information-architecture.md` before introducing durable names, new
+  folder boundaries, or externally visible identifiers.
+- Use `reference/managed-content-boundaries.md` to distinguish managed, scaffold, template,
+  consumer-owned, local-user, generated, and report content.
+- Use `runbooks/change-documentation-placement.md` before changing documentation placement.
+- Use `runbooks/maintain-documentation-indexes.md` when discoverability changes.
+
+## Boundary
+
+Reusable generic structure doctrine belongs in the Operating Kit. Consumer repositories own local
+product docs, local plans, local runbooks, local references, memory state, credentials,
+environment details, and local exceptions.
+
+When a consumer-local doc duplicates managed doctrine, convert it to a concise wrapper that points
+to managed kit doctrine and keeps only real local exceptions.

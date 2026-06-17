@@ -1,8 +1,23 @@
-Last updated: 2026-06-13T22:55:57Z (UTC)
+Last updated: 2026-06-17T06:40:50Z (UTC)
 
 # Agent Memory Entry Format
 
-Use grouped, labeled list entries instead of Markdown tables so raw Markdown stays readable.
+This reference owns reusable entry shapes for consumer-owned agent memory files. Live memory files
+should start with compact overviews and actual entries, not long templates.
+
+Use grouped, labeled list entries instead of Markdown tables so raw Markdown stays readable and
+agents can parse fields reliably.
+
+## Overview Order
+
+Overview sections mirror the order of the detailed entries below them.
+
+- `goal-register.md`: `Goal Overview` follows the same order as `Goals`.
+- `session-ledger.md`: `Session Overview` follows the same order as `Active Ledger`.
+- `untriaged-sessions.md`: `Inbox Overview` follows the same order as `Inbox`.
+
+Do not maintain a second sort order in the overview. If a maintenance pass reorders detailed
+entries, update the overview in the same change.
 
 ## Status Values
 
@@ -10,7 +25,7 @@ Use grouped, labeled list entries instead of Markdown tables so raw Markdown sta
 - `blocked`: cannot move until a named blocker is resolved.
 - `paused`: intentionally not moving now.
 - `resolved`: workstream outcome is complete but still recent.
-- `archived`: retained for history.
+- `archived`: retained for history outside the active register or ledger.
 - `unknown`: needs triage.
 
 ## Relation Labels
@@ -23,7 +38,7 @@ Use grouped, labeled list entries instead of Markdown tables so raw Markdown sta
 - `related`: useful context, but not a dependency.
 - `archived`: retained for history, not active.
 
-## Goal Entry Shape
+## Goal Entry
 
 ```md
 ## Goal: <goal name>
@@ -32,20 +47,54 @@ Status: active | blocked | paused | resolved | archived | unknown
 Last reviewed: YYYY-MM-DDTHH:MM:SSZ (UTC)
 Current focus: <one sentence>
 Canonical docs:
-- <relative path>
+- <repo-relative path>
 Related workstreams:
 - <relation>: <workstream id or title>
 Ordering notes:
-- <timestamp>: <priority or ordering decision>
+- <timestamp>: <priority or ordering decision, if any>
 Current state:
 - <short status summary>
 Next action:
 - <specific next action>
 ```
 
-## Session Entry Shape
+## Goal Workstream Entry
 
 ```md
+### Workstream: <workstream name>
+
+Status: active | blocked | paused | resolved | archived | unknown
+Last reviewed: YYYY-MM-DDTHH:MM:SSZ (UTC)
+Parent goal: <goal name>
+Canonical docs:
+- <repo-relative path>
+Recent sessions:
+- Session: <short title>
+  - Started: YYYY-MM-DDTHH:MM:SSZ (UTC)
+  - Last observed activity: YYYY-MM-DDTHH:MM:SSZ (UTC)
+  - Session ID: <session ID when available>
+Related workstreams:
+- <relation>: <workstream id or title>
+Ordering notes:
+- <timestamp>: <priority or ordering decision, if any>
+Current state:
+- <short status summary>
+Next action:
+- <specific next action>
+Archive references:
+- <repo-relative archive path or none>
+```
+
+## Session Ledger Entry
+
+```md
+### Workstream: <workstream name>
+
+Status: active | blocked | paused | resolved | archived | unknown
+Last reviewed: YYYY-MM-DDTHH:MM:SSZ (UTC)
+Ordering notes:
+- <timestamp>: <priority or ordering decision, if any>
+
 #### Session: YYYY-MM-DDTHH:MM:SSZ (UTC) - <short title>
 
 Session ID: `<session-id>`
@@ -61,5 +110,32 @@ Handoff:
 - <next action>
 
 References:
-- `<relative path>`
+- `<repo-relative path>`
 ```
+
+## Untriaged Entry
+
+```md
+### Session: YYYY-MM-DDTHH:MM:SSZ (UTC) - <short title>
+
+Session ID: `<session-id>`
+Session started: YYYY-MM-DDTHH:MM:SSZ (UTC)
+Last observed activity: YYYY-MM-DDTHH:MM:SSZ (UTC)
+
+Why untriaged:
+- <reason>
+
+Possible workstreams:
+- <candidate>
+
+Suggested next step:
+- <triage action>
+```
+
+## Ordering Notes
+
+Use ordering to help the user resume thinking, not as a mechanical status sort.
+
+Ask the user when ordering would imply a meaningful priority decision and the right order is
+unclear. Record explicit user ordering or priority decisions as `Ordering notes:` in the relevant
+entry.

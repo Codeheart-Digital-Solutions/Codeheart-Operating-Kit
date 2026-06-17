@@ -1,6 +1,52 @@
-Last updated: 2026-06-16T21:42:43Z (UTC)
+Last updated: 2026-06-17T07:09:33Z (UTC)
 
 # Codeheart Operating Kit Release Notes
+
+## v0.1.3 Release Notes
+
+`v0.1.3` replaces thin managed planning, memory, and structure-governance guidance with the
+consolidated public-core doctrine extracted from the mature AWS Platform repository.
+
+### Included
+
+- Managed planning-workflow docs now include fuller implementation-plan drafting, implementation
+  execution, planning-document review, and planning-lifecycle doctrine.
+- Managed agent-memory docs now distinguish curated continuity state from session transcripts and
+  define goal-register, session-ledger, untriaged-session, and entry-format maintenance rules.
+- Managed structure-governance docs now define repository documentation structure, durable naming
+  and placement decisions, managed-content boundaries, documentation placement changes, and index
+  maintenance.
+- Consumer `docs/repo/README.md` scaffolding routes generic documentation and structure questions
+  to managed Operating Kit governance while leaving repository-specific docs local.
+
+### Consumer Impact
+
+- `instruction-only change`: installed consumers receive stronger managed operating instructions
+  when they sync or update the Operating Kit.
+- Optional consumer action: run `codeheart-operating-kit sync <path>` after upgrading to refresh
+  managed planning, memory, and structure-governance instructions in an installed consumer folder
+  or repository.
+- Review local duplicates after syncing: local planning, memory, or documentation-governance docs
+  should become wrappers, repository-specific extensions, or archived historical references when
+  the managed kit now owns the generic rule.
+
+### Validation
+
+- Local validation covers public-core hygiene, Markdown timestamps, JSON schema structure, release
+  manifest structure, full CLI tests, and release asset naming for v0.1.3.
+- Full local CLI tests passed under Python 3.12: `72 passed`.
+- Manifest parity checks confirmed source and packaged component manifests, profile manifest, and
+  release manifest are byte-identical, and release-manifest component checksums match source
+  component manifests.
+- Local release asset build produced `codeheart-operating-kit-0.1.3-macos.tar.gz` and
+  `codeheart-operating-kit-0.1.3-windows.zip`.
+- Local macOS installer smoke installed `codeheart-operating-kit 0.1.3` from the generated asset.
+- Local checksum mismatch validation failed closed as expected.
+
+### Deferred
+
+- Product-specific or Foundry-specific operating profiles. This release keeps the `standard`
+  profile general and instruction-only.
 
 ## v0.1.2 Release Notes
 
