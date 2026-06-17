@@ -1,4 +1,5 @@
 from codeheart_operating_kit.cli import main
+from codeheart_operating_kit.components import ensure_gitignore
 from codeheart_operating_kit.lockfile import read_lock
 from codeheart_operating_kit.manifest import load_yaml
 
@@ -29,7 +30,10 @@ def test_init_writes_standard_surfaces(tmp_path):
     ]
     for relative in expected:
         assert (tmp_path / relative).exists(), relative
-    assert ".codeheart/user/preferences.yaml" in (tmp_path / ".gitignore").read_text(encoding="utf-8")
+    gitignore = (tmp_path / ".gitignore").read_text(encoding="utf-8")
+    assert ".codeheart/user/preferences.yaml" in gitignore
+    assert ".codeheart/user/*.local.yaml" in gitignore
+    assert ".codeheart/user/feedback/" in gitignore
     lock = read_lock(tmp_path)
     assert lock["selected_profile"] == "standard"
     assert ".codeheart/kit/README.md" in {item["path"] for item in lock["managed_paths"]}
@@ -43,3 +47,18 @@ def test_init_can_omit_purpose_metadata(tmp_path):
     config = load_yaml(tmp_path / ".codeheart/kit.config.yaml")
     assert "setup_purpose" not in config
     assert config["project_display_name"] == "Companyname-Automation"
+
+
+def test_gitignore_adds_feedback_draft_path_to_existing_local_user_block(tmp_path):
+    (tmp_path / ".gitignore").write_text(
+        "# Codeheart Operating Kit local user layer\n"
+        ".codeheart/user/preferences.yaml\n"
+        ".codeheart/user/*.local.yaml\n",
+        encoding="utf-8",
+    )
+
+    assert ensure_gitignore(tmp_path) is True
+
+    gitignore = (tmp_path / ".gitignore").read_text(encoding="utf-8")
+    assert ".codeheart/user/feedback/" in gitignore
+    assert gitignore.count("# Codeheart Operating Kit local user layer") == 1

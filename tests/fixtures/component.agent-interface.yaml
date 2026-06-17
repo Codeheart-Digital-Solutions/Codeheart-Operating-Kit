@@ -1,7 +1,7 @@
 schema_version: 1
 component:
   id: agent-interface
-  version: "0.1.3"
+  version: "0.1.4"
   name: Agent Interface
   profiles:
     - standard

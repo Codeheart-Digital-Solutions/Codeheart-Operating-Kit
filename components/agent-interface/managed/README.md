@@ -1,4 +1,4 @@
-Last updated: 2026-06-13T23:55:46Z (UTC)
+Last updated: 2026-06-17T19:21:22Z (UTC)
 
 # Agent Interface
 
@@ -13,7 +13,9 @@ inventory for every task.
 - Local extension contract: `reference/local-extension-contract.md`
 - Onboarding context contract: `reference/onboarding-context-contract.md`
 - Update-check policy: `reference/update-check-policy.md`
+- Kit feedback item format: `reference/kit-feedback-item-format.md`
 - First-run onboarding: `runbooks/conduct-first-run-onboarding.md`
 - Root `AGENTS.md` structure: `runbooks/structure-root-agents-md.md`
 - Root `AGENTS.md` repair: `runbooks/repair-root-agents-md.md`
+- Submit kit feedback: `runbooks/submit-kit-feedback.md`
 - Installed fallback inventory: `.codeheart/kit/README.md`

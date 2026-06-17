@@ -1,4 +1,4 @@
-Last updated: 2026-06-13T23:55:46Z (UTC)
+Last updated: 2026-06-17T19:21:22Z (UTC)
 
 # Codeheart Operating Kit Inventory
 
@@ -21,6 +21,13 @@ state looks missing, stale, or damaged.
 - Lock metadata: `.codeheart/kit.lock.yaml`
 - Shared non-secret config: `.codeheart/kit.config.yaml`
 - Local user layer: `.codeheart/user/`
+
+## Feedback
+
+- Submit sanitized Operating Kit feedback:
+  `.codeheart/kit/docs/agent-interface/runbooks/submit-kit-feedback.md`
+- Feedback item format:
+  `.codeheart/kit/docs/agent-interface/reference/kit-feedback-item-format.md`
 
 ## Operating Rule
 

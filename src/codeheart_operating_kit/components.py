@@ -12,6 +12,12 @@ from .manifest import iter_component_files, kit_root, load_profile, sha256_file
 
 BEGIN_MARKER = "<!-- BEGIN CODEHEART OPERATING KIT MANAGED BLOCK -->"
 END_MARKER = "<!-- END CODEHEART OPERATING KIT MANAGED BLOCK -->"
+LOCAL_USER_GITIGNORE_LINES = [
+    "# Codeheart Operating Kit local user layer",
+    ".codeheart/user/preferences.yaml",
+    ".codeheart/user/*.local.yaml",
+    ".codeheart/user/feedback/",
+]
 
 
 def copy_managed_files(root: Path, profile_id: str = "standard") -> list[dict[str, Any]]:
@@ -84,17 +90,15 @@ def scaffold_consumer_files(root: Path) -> list[dict[str, str]]:
 
 def ensure_gitignore(root: Path) -> bool:
     path = root / ".gitignore"
-    marker = ".codeheart/user/preferences.yaml"
     text = path.read_text(encoding="utf-8") if path.exists() else ""
     lines = text.splitlines()
-    additions = [
-        "",
-        "# Codeheart Operating Kit local user layer",
-        marker,
-        ".codeheart/user/*.local.yaml",
-    ]
-    if marker in lines:
+    missing = [line for line in LOCAL_USER_GITIGNORE_LINES if line not in lines]
+    if not missing:
         return False
+    additions = []
+    if lines:
+        additions.append("")
+    additions.extend(missing)
     path.write_text("\n".join(lines + additions).lstrip("\n") + "\n", encoding="utf-8")
     return True
 

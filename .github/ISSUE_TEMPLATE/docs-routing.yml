@@ -1,0 +1,48 @@
+name: Docs clarity or routing issue
+description: Report confusing, missing, stale, or hard-to-find documentation routes.
+title: "[Docs routing]: "
+labels: ["feedback-docs-routing", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: "Use this form when the docs route, index, wording, or placement is unclear."
+  - type: textarea
+    id: current-route
+    attributes:
+      label: Current route or location
+      description: "Name the page, route, index, or managed doc that caused confusion."
+      placeholder: "AGENTS.md managed routes, .codeheart/kit/README.md, or docs/repo/README.md"
+    validations:
+      required: true
+  - type: textarea
+    id: expected-route
+    attributes:
+      label: Expected route or wording
+      description: "Describe where you expected to find the guidance."
+      placeholder: "The managed fallback README should point to the relevant runbook."
+    validations:
+      required: true
+  - type: textarea
+    id: audience
+    attributes:
+      label: Affected audience
+      description: "Name the public-safe audience or workflow."
+      placeholder: "kit consumer, maintainer, reviewing agent, or first-run user"
+    validations:
+      required: true
+  - type: textarea
+    id: confusion
+    attributes:
+      label: Confusion summary
+      description: "Explain the public-safe source of confusion."
+      placeholder: "Two indexes appear to route the same task differently."
+    validations:
+      required: true
+  - type: checkboxes
+    id: public-core-confirmation
+    attributes:
+      label: Public-core confirmation
+      description: "This repository is public. Confirm the issue body is safe to publish."
+      options:
+        - label: "I confirm this issue excludes secrets, credentials, customer or tenant details, local machine state, account identifiers, raw logs, and private strategy."
+          required: true

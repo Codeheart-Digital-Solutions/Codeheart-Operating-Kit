@@ -1,0 +1,48 @@
+name: Rough feedback or idea
+description: Share early friction, weak signals, or ideas that are not implementation-ready.
+title: "[Rough feedback]: "
+labels: ["feedback-rough", "needs-triage", "needs-shaping"]
+body:
+  - type: markdown
+    attributes:
+      value: "Use this form for early feedback. Keep it public-safe and sanitized."
+  - type: textarea
+    id: observation
+    attributes:
+      label: What are you noticing?
+      description: "Describe the friction, weak signal, or idea in public-safe terms."
+      placeholder: "A user is unsure which managed runbook to follow for a common workflow."
+    validations:
+      required: true
+  - type: textarea
+    id: why-it-matters
+    attributes:
+      label: Why might this matter?
+      description: "Explain the effect on consumers, agents, maintainers, or kit doctrine."
+      placeholder: "This may cause agents to duplicate local guidance instead of routing to managed docs."
+    validations:
+      required: true
+  - type: textarea
+    id: affected-area
+    attributes:
+      label: Affected kit area
+      description: "Name the component, runbook, document, command, or workflow when known."
+      placeholder: "planning-workflows, agent-interface, structure-governance, sync/check, or unknown"
+    validations:
+      required: true
+  - type: textarea
+    id: useful-context
+    attributes:
+      label: Sanitized context
+      description: "Add public-safe examples, reproduction notes, or links. Do not include raw logs."
+      placeholder: "Use generic placeholders and summarize evidence instead of pasting private material."
+    validations:
+      required: false
+  - type: checkboxes
+    id: public-core-confirmation
+    attributes:
+      label: Public-core confirmation
+      description: "This repository is public. Confirm the issue body is safe to publish."
+      options:
+        - label: "I confirm this issue excludes secrets, credentials, customer or tenant details, local machine state, account identifiers, raw logs, and private strategy."
+          required: true

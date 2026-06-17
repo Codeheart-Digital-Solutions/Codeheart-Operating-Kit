@@ -1,6 +1,60 @@
-Last updated: 2026-06-17T07:09:33Z (UTC)
+Last updated: 2026-06-17T20:24:00Z (UTC)
 
 # Codeheart Operating Kit Release Notes
+
+## v0.1.4 Release Notes
+
+`v0.1.4` adds a public-safe feedback intake workflow for Operating Kit consumers and maintainers.
+
+### Included
+
+- Public GitHub issue forms now provide sanitized intake for rough feedback, bugs, doctrine gaps,
+  install/sync/check issues, docs routing issues, and feature requests.
+- Maintainer feedback triage docs and label taxonomy now define feedback lifecycle states,
+  discovery and implementation handoff, consumer-specific closure, and accidental disclosure
+  response.
+- Managed agent-interface docs now route consumers to public-safe feedback submission guidance and
+  a reusable feedback item format.
+- `init` and `sync` now ensure `.codeheart/user/feedback/` is ignored as optional local draft
+  space without scaffolding that directory.
+
+### Consumer Impact
+
+- `instruction-only change`: installed consumers receive managed feedback-submission guidance when
+  they sync or update the Operating Kit.
+- `security or safety policy change`: public feedback intake now requires sanitization, warns
+  against sensitive public submissions, and defines maintainer no-copy disclosure response.
+- Repository-governance addition: public GitHub issue forms and feedback lifecycle labels are now
+  part of the maintainer intake workflow.
+- CLI impact: `init` and `sync` add `.codeheart/user/feedback/` to `.gitignore` so optional local
+  feedback drafts remain local-only by default.
+- Optional consumer action: run `codeheart-operating-kit sync <path>` after upgrading to refresh
+  feedback-intake instructions in an installed consumer folder or repository.
+- Migration required: none for already installed consumers. Normal sync/update adoption is enough.
+
+### Validation
+
+- Local validation covers public-core hygiene, Markdown timestamps, JSON schema structure, release
+  manifest structure, full CLI tests, and release asset naming for v0.1.4.
+- Feedback-intake validation covers issue-form YAML structure, required public-core confirmation
+  checkboxes, GitHub label existence, managed-doc packaging parity, packaged fallback install of
+  feedback docs, init/sync gitignore behavior, release manifest metadata, and per-epic reviewer
+  gates.
+- Full local CLI tests passed under Python 3.14.3: `74 passed`.
+- Manifest parity checks confirmed source and packaged component manifests and profile manifest are
+  byte-identical, and release-manifest component checksums match source component manifests.
+- Local release asset build produced `codeheart-operating-kit-0.1.4-macos.tar.gz` and
+  `codeheart-operating-kit-0.1.4-windows.zip`.
+- Local macOS installer smoke installed `codeheart-operating-kit 0.1.4` from the generated asset.
+- Local checksum mismatch validation failed closed as expected.
+
+### Deferred
+
+- CLI-assisted feedback drafting is deferred until real public issue examples prove the intake
+  fields and local metadata needs.
+- `.codeheart/user/feedback/` scaffold creation remains deferred; the path is optional ignored
+  draft space, not a synchronized backlog.
+- Private security reporting remains deferred to a focused security intake plan.
 
 ## v0.1.3 Release Notes
 

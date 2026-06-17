@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import Any
 
 from .. import __version__
-from ..components import copy_managed_files
+from ..components import copy_managed_files, ensure_gitignore
 from ..lockfile import format_time, read_lock, utc_now, write_lock
 from ..manifest import kit_root, load_profile, load_yaml, validate_release_manifest
 
@@ -126,9 +126,11 @@ def run(args) -> int:
     if args.release_manifest:
         release = validate_release_manifest(Path(args.release_manifest))
     managed = copy_managed_files(root)
+    gitignore_changed = ensure_gitignore(root)
     refreshed_lock = _refresh_lock(root, managed, release)
     result = {
         "synced_managed_paths": managed,
+        "gitignore_changed": gitignore_changed,
         "release_manifest": release is not None,
         "kit_version": refreshed_lock["kit_version"],
     }

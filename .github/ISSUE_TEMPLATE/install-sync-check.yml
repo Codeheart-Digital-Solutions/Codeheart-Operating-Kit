@@ -1,0 +1,64 @@
+name: Install, sync, or check issue
+description: Report public-safe install, sync, check, or update-check friction.
+title: "[Install/sync/check]: "
+labels: ["feedback-install-sync-check", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: "Summarize command behavior. Do not paste raw logs, tokens, local paths, or private identifiers."
+  - type: input
+    id: kit-version
+    attributes:
+      label: Operating Kit version
+      description: "Use the installed version or release tag when known."
+      placeholder: "0.1.4"
+    validations:
+      required: true
+  - type: dropdown
+    id: command-area
+    attributes:
+      label: Command or workflow area
+      options:
+        - install
+        - onboard
+        - init
+        - sync
+        - check
+        - update-check
+        - inspect
+        - release asset
+        - unknown
+    validations:
+      required: true
+  - type: textarea
+    id: observed
+    attributes:
+      label: Observed result
+      description: "Describe the public-safe result."
+      placeholder: "The command reports a validation failure for a managed document."
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected result
+      description: "Describe the result you expected."
+      placeholder: "The command should finish without requiring consumer-owned file edits."
+    validations:
+      required: true
+  - type: textarea
+    id: sanitized-output
+    attributes:
+      label: Sanitized output summary
+      description: "Summarize relevant output. Do not paste raw logs or private paths."
+      placeholder: "The relevant message names a managed path and a checksum mismatch."
+    validations:
+      required: false
+  - type: checkboxes
+    id: public-core-confirmation
+    attributes:
+      label: Public-core confirmation
+      description: "This repository is public. Confirm the issue body is safe to publish."
+      options:
+        - label: "I confirm this issue excludes secrets, credentials, customer or tenant details, local machine state, account identifiers, raw logs, and private strategy."
+          required: true

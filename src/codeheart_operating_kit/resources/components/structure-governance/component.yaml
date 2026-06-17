@@ -1,7 +1,7 @@
 schema_version: 1
 component:
   id: structure-governance
-  version: "0.1.3"
+  version: "0.1.4"
   name: Structure Governance
   description: Managed documentation placement, naming, ownership, and index-maintenance guidance.
   profiles:

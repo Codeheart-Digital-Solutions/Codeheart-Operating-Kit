@@ -1,0 +1,56 @@
+name: Feature or capability request
+description: Propose a public-safe Operating Kit feature or capability.
+title: "[Feature]: "
+labels: ["feedback-feature", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: "Use this form for reusable kit capabilities, not consumer-specific product work."
+  - type: textarea
+    id: user-goal
+    attributes:
+      label: User goal
+      description: "Describe the reusable goal in public-safe terms."
+      placeholder: "A maintainer wants agents to capture sanitized kit feedback consistently."
+    validations:
+      required: true
+  - type: textarea
+    id: target-workflow
+    attributes:
+      label: Target workflow or component
+      description: "Name the workflow, component, command, or managed surface."
+      placeholder: "agent-interface, planning-workflows, sync/check, installer, or update-check"
+    validations:
+      required: true
+  - type: textarea
+    id: value
+    attributes:
+      label: Expected value
+      description: "Explain why this should exist in the reusable kit."
+      placeholder: "It would reduce repeated local guidance and make maintainer triage easier."
+    validations:
+      required: true
+  - type: textarea
+    id: constraints
+    attributes:
+      label: Constraints or boundaries
+      description: "Name privacy, ownership, compatibility, or migration constraints."
+      placeholder: "Must not overwrite consumer-owned docs or require secrets in public issues."
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance-signal
+    attributes:
+      label: Acceptance signal
+      description: "Describe how maintainers would know the feature works."
+      placeholder: "Consumers can follow one managed route and maintainers can triage the result."
+    validations:
+      required: false
+  - type: checkboxes
+    id: public-core-confirmation
+    attributes:
+      label: Public-core confirmation
+      description: "This repository is public. Confirm the issue body is safe to publish."
+      options:
+        - label: "I confirm this issue excludes secrets, credentials, customer or tenant details, local machine state, account identifiers, raw logs, and private strategy."
+          required: true

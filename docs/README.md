@@ -1,4 +1,4 @@
-Last updated: 2026-06-14T00:13:08Z (UTC)
+Last updated: 2026-06-17T19:56:15Z (UTC)
 
 # Docs Index
 
@@ -15,9 +15,19 @@ This folder contains public Codeheart Operating Kit documentation.
   `docs/repo/reference/consumer-impact-classification.md`
 - Public-core hygiene inventory:
   `docs/repo/reference/public-core-hygiene-inventory.md`
+- Kit feedback label taxonomy:
+  `docs/repo/reference/kit-feedback-label-taxonomy.md`
 - Kit change runbook: `docs/repo/runbooks/change-operating-kit.md`
 - Kit release runbook: `docs/repo/runbooks/release-operating-kit.md`
 - Consumer promotion runbook: `docs/repo/runbooks/promote-consumer-change.md`
+- Kit feedback triage runbook: `docs/repo/runbooks/triage-kit-feedback.md`
+- Repo plans: `docs/repo/plans/README.md`
+- Kit feedback intake discovery:
+  `docs/repo/plans/kit-feedback-intake/kit-feedback-intake_discovery_doc.md`
+- Kit feedback intake implementation plan:
+  `docs/repo/plans/kit-feedback-intake/kit-feedback-intake_implementation_doc.md`
+- Kit feedback intake execution log:
+  `docs/repo/plans/kit-feedback-intake/kit-feedback-intake_execution_log.md`
 - Planning workflows: `components/planning-workflows/managed/README.md`
 - Agent memory: `components/agent-memory/managed/README.md`
 - Agent interface: `components/agent-interface/managed/README.md`

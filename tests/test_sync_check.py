@@ -70,6 +70,23 @@ def test_sync_preserves_release_metadata_on_platform_without_cli_asset(tmp_path,
     assert not release["asset_url"].endswith("bootstrap.md")
 
 
+def test_sync_adds_feedback_draft_gitignore_to_existing_install(tmp_path):
+    main(["init", str(tmp_path), "--project-name", "Example-Automation"])
+    gitignore = tmp_path / ".gitignore"
+    gitignore.write_text(
+        "# Codeheart Operating Kit local user layer\n"
+        ".codeheart/user/preferences.yaml\n"
+        ".codeheart/user/*.local.yaml\n",
+        encoding="utf-8",
+    )
+
+    main(["sync", str(tmp_path)])
+
+    text = gitignore.read_text(encoding="utf-8")
+    assert ".codeheart/user/feedback/" in text
+    assert text.count("# Codeheart Operating Kit local user layer") == 1
+
+
 def test_sync_refreshes_release_metadata_from_packaged_resources(tmp_path, monkeypatch):
     monkeypatch.setenv("CODEHEART_OPERATING_KIT_CLI", "1")
     monkeypatch.setattr(manifest, "SOURCE_ROOT", Path("/definitely/not/a/checkout"))

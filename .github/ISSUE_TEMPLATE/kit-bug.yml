@@ -1,0 +1,56 @@
+name: Kit bug or regression
+description: Report a public-safe Operating Kit defect or regression.
+title: "[Bug]: "
+labels: ["feedback-bug", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: "Report only sanitized, public-safe details. Do not paste secrets or raw local logs."
+  - type: input
+    id: kit-version
+    attributes:
+      label: Operating Kit version
+      description: "Use the installed version or release tag when known."
+      placeholder: "0.1.4"
+    validations:
+      required: true
+  - type: textarea
+    id: observed
+    attributes:
+      label: Observed behavior
+      description: "Describe what happened in public-safe terms."
+      placeholder: "The sync check reports drift for a managed route that should be current."
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: "Describe the behavior you expected."
+      placeholder: "The check should recognize the managed file as current."
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Sanitized reproduction steps
+      description: "List minimal steps with generic paths and placeholders."
+      placeholder: "1. Install the kit. 2. Run the documented command. 3. Observe the public-safe result."
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Sanitized evidence summary
+      description: "Summarize evidence without raw logs, machine state, or private identifiers."
+      placeholder: "The command returns a drift message for a managed file path."
+    validations:
+      required: false
+  - type: checkboxes
+    id: public-core-confirmation
+    attributes:
+      label: Public-core confirmation
+      description: "This repository is public. Confirm the issue body is safe to publish."
+      options:
+        - label: "I confirm this issue excludes secrets, credentials, customer or tenant details, local machine state, account identifiers, raw logs, and private strategy."
+          required: true

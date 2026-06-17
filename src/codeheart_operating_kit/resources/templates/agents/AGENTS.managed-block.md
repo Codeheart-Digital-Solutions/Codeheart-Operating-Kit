@@ -1,4 +1,4 @@
-Last updated: 2026-06-13T23:02:10Z (UTC)
+Last updated: 2026-06-17T19:21:22Z (UTC)
 
 <!-- BEGIN CODEHEART OPERATING KIT MANAGED BLOCK -->
 
@@ -27,6 +27,8 @@ Last updated: 2026-06-13T23:02:10Z (UTC)
   `.codeheart/kit/docs/planning-workflows/runbooks/review-planning-document.md`
 - Agent memory: `.codeheart/kit/docs/agent-memory/README.md`
 - Agent interface: `.codeheart/kit/docs/agent-interface/README.md`
+- Operating Kit feedback:
+  `.codeheart/kit/docs/agent-interface/runbooks/submit-kit-feedback.md`
 - Structure governance: `.codeheart/kit/docs/structure-governance/README.md`
 - Full kit inventory and fallback: `.codeheart/kit/README.md`
 

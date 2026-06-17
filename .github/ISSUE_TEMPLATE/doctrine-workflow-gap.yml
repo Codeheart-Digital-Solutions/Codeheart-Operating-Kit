@@ -1,0 +1,48 @@
+name: Doctrine or workflow gap
+description: Report missing, confusing, or conflicting reusable kit guidance.
+title: "[Doctrine gap]: "
+labels: ["feedback-doctrine", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: "Use this form for reusable Operating Kit guidance gaps, not consumer-specific exceptions."
+  - type: textarea
+    id: affected-guidance
+    attributes:
+      label: Affected doctrine or workflow
+      description: "Name the managed doc, runbook, component, or workflow."
+      placeholder: "discovery workflow, implementation execution, agent memory, or structure governance"
+    validations:
+      required: true
+  - type: textarea
+    id: gap
+    attributes:
+      label: Gap or conflict
+      description: "Describe what is missing, unclear, stale, or conflicting."
+      placeholder: "The managed workflow does not say how to handle a recurring planning case."
+    validations:
+      required: true
+  - type: textarea
+    id: expected-guidance
+    attributes:
+      label: Expected reusable guidance
+      description: "Describe the general guidance the kit should provide."
+      placeholder: "The kit should route this case to a shared plan family instead of local ad hoc notes."
+    validations:
+      required: true
+  - type: textarea
+    id: sanitized-context
+    attributes:
+      label: Sanitized context
+      description: "Summarize public-safe context. Keep consumer-specific details out."
+      placeholder: "This appeared during a generic repository cleanup conversation."
+    validations:
+      required: false
+  - type: checkboxes
+    id: public-core-confirmation
+    attributes:
+      label: Public-core confirmation
+      description: "This repository is public. Confirm the issue body is safe to publish."
+      options:
+        - label: "I confirm this issue excludes secrets, credentials, customer or tenant details, local machine state, account identifiers, raw logs, and private strategy."
+          required: true
