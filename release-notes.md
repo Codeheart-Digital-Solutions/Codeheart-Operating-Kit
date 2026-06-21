@@ -1,6 +1,40 @@
-Last updated: 2026-06-21T15:40:16Z (UTC)
+Last updated: 2026-06-21T19:06:25Z (UTC)
 
 # Codeheart Operating Kit Release Notes
+
+## v0.1.6 Release Notes
+
+`v0.1.6` hardens plan-register session references and lifecycle organization as an additive
+planning-workflow doctrine release.
+
+### Included
+
+- Plan-register maintenance now includes a self-contained bounded session-reference resolution
+  procedure for agents that cannot read their own session ID directly from runtime context.
+- The session-reference procedure is metadata-first: it uses local Codex session filenames,
+  modification times, and first-record session metadata before any filename-only phrase check.
+- Session-reference fallbacks are explicit: `not recorded`, `ambiguous: <reason>`, and
+  `not confidently identified`.
+- Plan-register format guidance now shows session-reference examples for identified, missing,
+  ambiguous, and not-confident states.
+- Plan-register format guidance now recommends lifecycle grouping inside one default
+  `docs/repo/plans/plan-register.md` for active/draft, completed, and superseded/archived
+  entries.
+- No separate archive register is created by default.
+
+### Consumer Impact
+
+- `instruction-only change`: installed consumers receive clearer managed plan-register doctrine
+  when they sync or update the Operating Kit.
+- No migration is required. Existing consumer-owned plan registers and pending-sync files are not
+  rewritten.
+- Consumers adopt the new guidance through normal sync or update.
+- Plan-register session-reference guidance does not depend on agent-memory or session-ledger docs.
+
+### Validation
+
+- Release-readiness validation is recorded in the implementation execution log before public
+  tagging or publishing.
 
 ## v0.1.5 Release Notes
 

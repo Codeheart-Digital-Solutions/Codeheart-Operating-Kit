@@ -1,4 +1,4 @@
-Last updated: 2026-06-21T14:53:02Z (UTC)
+Last updated: 2026-06-21T19:01:10Z (UTC)
 
 # Plan Register Format
 
@@ -9,8 +9,9 @@ A plan register is a lightweight, durable index of important planning and workst
 helps agents and humans find canonical planning documents, understand relationships between plans,
 and recover session IDs for plan creation or material plan changes.
 
-The register does not replace discovery documents, implementation plans, execution logs, session
-ledgers, runbooks, or task trackers.
+The register does not replace discovery documents, implementation plans, execution logs, runbooks,
+or task trackers. Session-reference guidance for formal plan registration lives in this planning
+workflow reference and its maintenance runbook.
 
 ## Source Of Truth
 
@@ -74,6 +75,34 @@ Do not invent additional status values in the register. If a canonical document 
 local status, preserve the canonical value in the document and use the closest standard lifecycle
 snapshot in the register.
 
+## Lifecycle Grouping
+
+Keep one `docs/repo/plans/plan-register.md` as the default durable register. Do not create a
+separate archive register by default.
+
+Recommended grouping:
+
+```md
+## Active And Draft Entries
+
+### PR-001 - Current Implementation Plan
+
+## Completed Entries
+
+### PR-002 - Completed Discovery Plan
+
+## Superseded And Archived Entries
+
+### PR-003 - Superseded Planning Model
+```
+
+Use grouping when the register has enough entries that lifecycle sections make scanning easier.
+For very small registers, a single `## Entries` section is acceptable. When lifecycle grouping is
+used, entry headings should sit below the grouping heading. The entry fields do not change.
+
+Move entries between lifecycle groups when the canonical document status changes. The canonical
+planning document remains the source of truth; grouping is only an index convenience.
+
 ## Relation Vocabulary
 
 Use these relation terms:
@@ -101,8 +130,27 @@ reference should contain only:
 - optional short note naming the material change.
 
 Do not add session summaries, transcript excerpts, or detailed status narratives to the register.
-When no session ID is available, omit the row or record `not recorded`; missing session IDs do not
-block planning work.
+When no session ID is available, omit the row or record one of the explicit fallback values below;
+missing session IDs do not block planning work.
+
+Use these compact forms:
+
+```md
+Session refs:
+- created: 2026-06-21, session <session-id>
+- material update: 2026-06-21, session <session-id>, activated implementation plan.
+- created: not recorded
+- material update: 2026-06-21, ambiguous: multiple matching user sessions in this repository.
+- material update: 2026-06-21, not confidently identified, metadata did not isolate one user session.
+```
+
+Fallback meanings:
+
+- `not recorded`: no session ID was available or no session scan was performed.
+- `ambiguous: <reason>`: bounded metadata or filename-only checks found more than one plausible
+  user session.
+- `not confidently identified`: metadata existed, but it did not support a confident match to the
+  current user session.
 
 ## Coordination Notes
 
@@ -124,7 +172,9 @@ register entry.
 Use this repeated-section shape:
 
 ```md
-## PR-001 - Example Portfolio Coordination Model
+## Active And Draft Entries
+
+### PR-001 - Example Portfolio Coordination Model
 
 Type: discovery-plan
 Purpose: Define a reusable coordination model for related repositories.
@@ -137,11 +187,11 @@ Priority / ordering note: Needed before implementation planning.
 
 Relations:
 - parent: PF-001 - Example Portfolio Foundation
-- related: PR-002 - Example Agent Memory Model
+- related: PR-002 - Example Dependency Model
 
 Session refs:
 - created: not recorded
-- material update: 2026-06-21, session not recorded, selected repeated-section format.
+- material update: 2026-06-21, not recorded, selected repeated-section format.
 
 Coordination note:
 - candidate for coordination-home register
@@ -162,4 +212,3 @@ Do not use the register as:
 - a duplicate copy of discovery or implementation plan details;
 - a place for private tenant, customer, credential, or local-machine information;
 - a mechanism for silently discovering or writing sibling repositories.
-

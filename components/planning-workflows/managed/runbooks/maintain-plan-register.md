@@ -1,4 +1,4 @@
-Last updated: 2026-06-21T14:53:02Z (UTC)
+Last updated: 2026-06-21T19:01:10Z (UTC)
 
 # Maintain Plan Register
 
@@ -36,9 +36,11 @@ Read:
 4. Add or refresh only the compact index fields defined in `../reference/plan-register-format.md`.
 5. Copy lifecycle metadata from the canonical document as a snapshot.
 6. Add or update relations using the standard relation vocabulary.
-7. Record creating or material-update session refs when a session ID is available.
-8. Omit the session row or record `not recorded` when no session ID is available.
-9. Keep detailed status, blockers, decisions, execution evidence, and next actions in the
+7. Resolve the current session ref with the bounded procedure below when the current task needs a
+   new creation or material-update session ref.
+8. Record creating or material-update session refs when a session ID is available.
+9. Omit the session row or record `not recorded` when no session ID is available.
+10. Keep detailed status, blockers, decisions, execution evidence, and next actions in the
    canonical documents or execution logs.
 
 If the register and canonical plan conflict, trust the canonical plan and refresh the register.
@@ -84,7 +86,7 @@ Affected plan entry: <ID, title, and canonical path>
 Intended change: <add | update | complete | supersede | archive | relation-update>
 Reason: <why coordination-home sync is needed>
 Date: YYYY-MM-DD
-Session ref: <session ID, not recorded, or unavailable>
+Session ref: session <session-id> | not recorded | ambiguous: <reason> | not confidently identified
 Status: pending
 
 Notes:
@@ -101,10 +103,64 @@ When the pending sync is later applied:
 
 Missing coordination-home access does not fail the local planning task.
 
+## Session Reference Resolution
+
+Use this self-contained procedure for plan-register session refs. Do not depend on a separate
+continuity runbook for this step.
+
+Prefer a direct runtime-provided session ID when the agent environment exposes one. If no direct
+runtime value is available, use a bounded read-only metadata scan:
+
+1. Resolve the local Codex state root:
+
+   ```sh
+   CODEX_STATE_ROOT="${CODEX_HOME:-$HOME/.codex}"
+   ```
+
+2. Look for dated session JSONL files under:
+
+   ```text
+   $CODEX_STATE_ROOT/sessions/YYYY/MM/DD/*.jsonl
+   ```
+
+3. Inspect only filenames, modification times, and the first JSON record of likely files. The
+   first record should be session metadata. Useful metadata fields include:
+
+   - `payload.id`
+   - `payload.timestamp`
+   - `payload.thread_source`
+   - `payload.source`
+   - `payload.cwd`
+
+4. Prefer a single candidate whose metadata indicates the main user thread, matches the current
+   repository path, and has plausible start time or recent modification time.
+5. Exclude helper, tool, and subagent sessions when metadata identifies them, especially
+   `thread_source: subagent`.
+6. If multiple user-thread candidates remain and confirmation is necessary, search only for a
+   distinctive current-turn phrase with filename-only output:
+
+   ```sh
+   rg -l '<unique current-turn phrase>' "$CODEX_STATE_ROOT/sessions/YYYY/MM/DD"
+   ```
+
+   Use the matching filename only to select the candidate session metadata. Do not print matching
+   transcript lines or paste transcript bodies into the register.
+7. Stop at the first confident result. Do not browse historical transcript content to make a
+   session ref nicer.
+
+Record confidence explicitly:
+
+- use `session <session-id>` when one main user session is confidently identified;
+- use `not recorded` when the environment has no usable session metadata or no scan was performed;
+- use `ambiguous: <reason>` when more than one plausible user session remains;
+- use `not confidently identified` when metadata exists but does not support a confident current
+  session match.
+
 ## Session Reference Handling
 
-Record session IDs only when they are available in the current environment. Do not invent session
-IDs, search private transcripts, or block the task because the ID is unavailable.
+Record session IDs only when they are available in the current environment or confidently resolved
+through the bounded metadata-first procedure. Do not invent session IDs, print private transcript
+content, or block the task because the ID is unavailable.
 
 Material update reasons include:
 
@@ -121,7 +177,7 @@ Use short notes. Do not add session summaries.
 ## Safety Rules
 
 - Never overwrite existing register or pending-sync content.
-- Do not move or rewrite `docs/agent-memory/goal-register.md`.
+- Do not move or rewrite unrelated local state files while maintaining the register.
 - Do not write to a coordination home when its local instructions, worktree state, permissions, or
   user direction make the change unsafe.
 - Do not add private repository topology, customer names, tenant details, credentials, account

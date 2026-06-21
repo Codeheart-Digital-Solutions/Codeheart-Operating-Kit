@@ -1,4 +1,4 @@
-Last updated: 2026-06-21T15:26:40Z (UTC)
+Last updated: 2026-06-21T19:29:39Z (UTC)
 
 # Repo Documentation
 
@@ -21,6 +21,7 @@ This folder contains public repository governance for Codeheart Operating Kit.
 - `runbooks/triage-kit-feedback.md`: ordered maintainer procedure for triaging public kit feedback
   issues.
 - `plans/README.md`: repository-level discovery and implementation plans.
+- `plans/plan-register.md`: lightweight index of registered Operating Kit repository plans.
 - `plans/kit-feedback-intake/kit-feedback-intake_discovery_doc.md`: discovery for a safe
   consumer feedback intake and maintainer backlog workflow.
 - `plans/portfolio-coordination-plan-register/portfolio-coordination-plan-register_discovery_doc.md`:
@@ -32,6 +33,12 @@ This folder contains public repository governance for Codeheart Operating Kit.
 - `plans/portfolio-coordination-plan-register/portfolio-coordination-plan-register_execution_log.md`:
   execution evidence and per-epic review log for the portfolio coordination and plan-register
   workflow.
+- `plans/plan-register-session-lifecycle-hardening/plan-register-session-lifecycle-hardening_implementation_doc.md`:
+  implementation plan for self-contained plan-register session-reference resolution and lifecycle
+  grouping hardening.
+- `plans/plan-register-session-lifecycle-hardening/plan-register-session-lifecycle-hardening_execution_log.md`:
+  execution evidence and per-epic review log for the plan-register session-reference and lifecycle
+  hardening release.
 - `plans/kit-feedback-intake/kit-feedback-intake_implementation_doc.md`: completed implementation
   plan for the kit feedback intake workflow.
 - `plans/kit-feedback-intake/kit-feedback-intake_execution_log.md`: execution evidence and

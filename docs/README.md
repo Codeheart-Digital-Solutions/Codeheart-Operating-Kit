@@ -1,4 +1,4 @@
-Last updated: 2026-06-21T15:26:40Z (UTC)
+Last updated: 2026-06-21T19:29:39Z (UTC)
 
 # Docs Index
 
@@ -22,6 +22,7 @@ This folder contains public Codeheart Operating Kit documentation.
 - Consumer promotion runbook: `docs/repo/runbooks/promote-consumer-change.md`
 - Kit feedback triage runbook: `docs/repo/runbooks/triage-kit-feedback.md`
 - Repo plans: `docs/repo/plans/README.md`
+- Repo plan register: `docs/repo/plans/plan-register.md`
 - Kit feedback intake discovery:
   `docs/repo/plans/kit-feedback-intake/kit-feedback-intake_discovery_doc.md`
 - Portfolio coordination and plan-register model discovery:
@@ -30,6 +31,10 @@ This folder contains public Codeheart Operating Kit documentation.
   `docs/repo/plans/portfolio-coordination-plan-register/portfolio-coordination-plan-register_implementation_doc.md`
 - Portfolio coordination and plan-register execution log:
   `docs/repo/plans/portfolio-coordination-plan-register/portfolio-coordination-plan-register_execution_log.md`
+- Plan-register session and lifecycle hardening implementation plan:
+  `docs/repo/plans/plan-register-session-lifecycle-hardening/plan-register-session-lifecycle-hardening_implementation_doc.md`
+- Plan-register session and lifecycle hardening execution log:
+  `docs/repo/plans/plan-register-session-lifecycle-hardening/plan-register-session-lifecycle-hardening_execution_log.md`
 - Kit feedback intake implementation plan:
   `docs/repo/plans/kit-feedback-intake/kit-feedback-intake_implementation_doc.md`
 - Kit feedback intake execution log:
