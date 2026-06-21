@@ -1,4 +1,4 @@
-Last updated: 2026-06-17T06:34:53Z (UTC)
+Last updated: 2026-06-21T15:07:29Z (UTC)
 
 # Planning Document Lifecycle
 
@@ -206,6 +206,25 @@ archive task.
 
 Archived plans remain historical by default. New active work should link to archived history rather
 than adding active plans under `archive/`.
+
+## Plan Register Relationship
+
+`docs/repo/plans/plan-register.md` is the lightweight index for formal plans, plan families, major
+workstreams, and portfolio-relevant planning records.
+
+Planning documents remain the source of truth for their own lifecycle state, scope, decisions,
+execution evidence, and handoff details. The register may copy lifecycle metadata as a snapshot.
+When a register entry and canonical planning document disagree, refresh the register from the
+canonical document.
+
+Use `../runbooks/maintain-plan-register.md` when a discovery document or implementation plan is
+created, materially changed, activated, completed, superseded, archived, or linked to parent,
+child, dependency, supersession, or related planning records.
+
+Do not treat review-only workflows as side-effecting register maintenance. A planning-document
+review may report a stale or missing register entry as a finding. The register update belongs to a
+later user-authorized discovery, implementation-planning, or execution edit that materially
+changes or refreshes the canonical plan.
 
 ## Index Maintenance
 

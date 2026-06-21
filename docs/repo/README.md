@@ -1,4 +1,4 @@
-Last updated: 2026-06-21T12:32:42Z (UTC)
+Last updated: 2026-06-21T15:26:40Z (UTC)
 
 # Repo Documentation
 
@@ -29,6 +29,9 @@ This folder contains public repository governance for Codeheart Operating Kit.
 - `plans/portfolio-coordination-plan-register/portfolio-coordination-plan-register_implementation_doc.md`:
   implementation plan for managed plan-register doctrine, optional portfolio coordination,
   consumer scaffolds, safe sync behavior, and release validation.
+- `plans/portfolio-coordination-plan-register/portfolio-coordination-plan-register_execution_log.md`:
+  execution evidence and per-epic review log for the portfolio coordination and plan-register
+  workflow.
 - `plans/kit-feedback-intake/kit-feedback-intake_implementation_doc.md`: completed implementation
   plan for the kit feedback intake workflow.
 - `plans/kit-feedback-intake/kit-feedback-intake_execution_log.md`: execution evidence and

@@ -9,6 +9,87 @@ from codeheart_operating_kit.manifest import load_yaml
 ROOT = Path(__file__).resolve().parents[1]
 
 
+def validate_instance(schema, instance):
+    errors = []
+
+    def validate(subschema, value, location):
+        if not isinstance(subschema, dict):
+            return
+        expected_type = subschema.get("type")
+        if expected_type == "object" or "properties" in subschema or "required" in subschema:
+            if not isinstance(value, dict):
+                errors.append(f"{location}: expected object")
+                return
+            properties = subschema.get("properties", {})
+            for required in subschema.get("required", []):
+                if required not in value:
+                    errors.append(f"{location}: missing {required}")
+            if subschema.get("additionalProperties") is False:
+                for key in value:
+                    if key not in properties:
+                        errors.append(f"{location}: unknown {key}")
+            for key, property_schema in properties.items():
+                if key in value:
+                    validate(property_schema, value[key], f"{location}.{key}")
+        elif expected_type == "integer" and not isinstance(value, int):
+            errors.append(f"{location}: expected integer")
+        elif expected_type == "string":
+            if not isinstance(value, str):
+                errors.append(f"{location}: expected string")
+            elif len(value) < subschema.get("minLength", 0):
+                errors.append(f"{location}: too short")
+
+        if "const" in subschema and value != subschema["const"]:
+            errors.append(f"{location}: expected const {subschema['const']}")
+        if "enum" in subschema and value not in subschema["enum"]:
+            errors.append(f"{location}: invalid enum {value}")
+
+        for clause in subschema.get("allOf", []):
+            condition = clause.get("if")
+            then = clause.get("then")
+            if condition and then and condition_matches(condition, value):
+                validate(then, value, location)
+
+    def condition_matches(condition, value):
+        before = list(errors)
+        validate(condition, value, "$condition")
+        matched = errors == before
+        del errors[len(before):]
+        return matched
+
+    validate(schema, instance, "$")
+    return errors
+
+
+def base_config():
+    return {
+        "schema_version": 1,
+        "selected_profile": "standard",
+        "project_display_name": "Example-Automation",
+        "selected_setup_folder": "/tmp/Example-Automation",
+        "local_consumer_layer": {
+            "repo_docs_path": "docs/repo/",
+            "agent_memory_path": "docs/agent-memory/",
+            "user_layer_path": ".codeheart/user/",
+        },
+        "component_settings": {},
+    }
+
+
+def kit_config_schema():
+    return json.loads((ROOT / "schemas/kit-config.schema.json").read_text(encoding="utf-8"))
+
+
+def assert_config_valid(config):
+    errors = validate_instance(kit_config_schema(), config)
+    assert errors == []
+
+
+def assert_config_invalid(config, expected):
+    errors = validate_instance(kit_config_schema(), config)
+    assert any(expected in error for error in errors), errors
+
+
 def run_validator(*paths: Path) -> subprocess.CompletedProcess[str]:
     return subprocess.run(
         [sys.executable, "scripts/validate-json-schemas.py", *(str(path) for path in paths)],
@@ -50,3 +131,85 @@ def test_kit_config_schema_preserves_existing_setup_purpose_values():
         "company-automation",
         "software-product",
     ]
+
+
+def test_kit_config_schema_accepts_no_portfolio_block():
+    config = base_config()
+
+    assert_config_valid(config)
+
+
+def test_kit_config_schema_accepts_valid_member_portfolio_config():
+    config = base_config()
+    config["portfolio"] = {
+        "role": "member",
+        "member_repository_id": "Example-Automation",
+        "coordination_home_path": "../Coordination-Home",
+        "coordination_home_register_path": "docs/repo/plans/plan-register.md",
+    }
+
+    assert_config_valid(config)
+
+
+def test_kit_config_schema_accepts_valid_coordination_home_portfolio_config():
+    config = base_config()
+    config["portfolio"] = {
+        "role": "coordination-home",
+        "coordination_home_register_path": "docs/repo/plans/plan-register.md",
+    }
+
+    assert_config_valid(config)
+
+
+def test_kit_config_schema_rejects_empty_portfolio_config():
+    config = base_config()
+    config["portfolio"] = {}
+
+    assert_config_invalid(config, "missing role")
+
+
+def test_kit_config_schema_rejects_invalid_portfolio_role():
+    config = base_config()
+    config["portfolio"] = {"role": "standalone"}
+
+    assert_config_invalid(config, "invalid enum standalone")
+
+
+def test_kit_config_schema_rejects_removed_portfolio_fields():
+    for removed_field in ["enabled", "member_register_path", "pending_sync_path"]:
+        config = base_config()
+        config["portfolio"] = {
+            "role": "member",
+            "member_repository_id": "Example-Automation",
+            "coordination_home_path": "../Coordination-Home",
+            "coordination_home_register_path": "docs/repo/plans/plan-register.md",
+            removed_field: True,
+        }
+
+        assert_config_invalid(config, f"unknown {removed_field}")
+
+
+def test_kit_config_schema_rejects_incomplete_member_portfolio_config():
+    for missing_field in [
+        "member_repository_id",
+        "coordination_home_path",
+        "coordination_home_register_path",
+    ]:
+        portfolio = {
+            "role": "member",
+            "member_repository_id": "Example-Automation",
+            "coordination_home_path": "../Coordination-Home",
+            "coordination_home_register_path": "docs/repo/plans/plan-register.md",
+        }
+        del portfolio[missing_field]
+        config = base_config()
+        config["portfolio"] = portfolio
+
+        assert_config_invalid(config, f"missing {missing_field}")
+
+
+def test_kit_config_schema_rejects_incomplete_coordination_home_portfolio_config():
+    config = base_config()
+    config["portfolio"] = {"role": "coordination-home"}
+
+    assert_config_invalid(config, "missing coordination_home_register_path")

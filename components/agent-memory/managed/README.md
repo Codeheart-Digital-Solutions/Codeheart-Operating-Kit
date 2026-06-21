@@ -1,4 +1,4 @@
-Last updated: 2026-06-17T06:40:50Z (UTC)
+Last updated: 2026-06-21T15:17:48Z (UTC)
 
 # Agent Memory
 
@@ -14,6 +14,11 @@ or clearly references an ongoing workstream that may have session history.
 
 Do not read agent memory by default for every task. Verify the current repository state and the
 relevant canonical docs before acting on a memory summary.
+
+Formal discovery documents, implementation plans, plan families, and major workstreams are
+registered in `docs/repo/plans/plan-register.md` when they exist or are created. Use
+`docs/agent-memory/goal-register.md` for informal, pre-plan, or transitional continuity that has
+not yet become a formal planning record.
 
 ## Source-Of-Truth Order
 
@@ -66,3 +71,5 @@ Typical consumer-owned files:
   machine-specific absolute checkout paths.
 - Do not treat memory as a replacement for canonical product, business, research, discovery,
   implementation, runbook, or reference docs.
+- Do not use `goal-register.md` as the canonical formal plan register when
+  `docs/repo/plans/plan-register.md` exists or should be created.

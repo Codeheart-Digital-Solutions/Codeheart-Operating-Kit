@@ -9,8 +9,10 @@ component:
   consumer_impact:
     - "component addition"
     - "instruction-only change"
+    - "backwards-compatible scaffold addition"
   ownership_modes:
     - managed
+    - scaffold
   files:
     - source: components/planning-workflows/managed/README.md
       target: .codeheart/kit/docs/planning-workflows/README.md
@@ -27,6 +29,20 @@ component:
     - source: components/planning-workflows/managed/runbooks/review-planning-document.md
       target: .codeheart/kit/docs/planning-workflows/runbooks/review-planning-document.md
       ownership: managed
+    - source: components/planning-workflows/managed/runbooks/maintain-plan-register.md
+      target: .codeheart/kit/docs/planning-workflows/runbooks/maintain-plan-register.md
+      ownership: managed
     - source: components/planning-workflows/managed/reference/planning-document-lifecycle.md
       target: .codeheart/kit/docs/planning-workflows/reference/planning-document-lifecycle.md
       ownership: managed
+    - source: components/planning-workflows/managed/reference/plan-register-format.md
+      target: .codeheart/kit/docs/planning-workflows/reference/plan-register-format.md
+      ownership: managed
+    - source: components/planning-workflows/scaffolds/plan-register.md
+      target: docs/repo/plans/plan-register.md
+      ownership: scaffold
+      install_when: absent
+    - source: components/planning-workflows/scaffolds/coordination-sync-pending.md
+      target: docs/repo/plans/coordination-sync-pending.md
+      ownership: scaffold
+      install_when: absent

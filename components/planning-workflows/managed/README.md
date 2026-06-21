@@ -1,9 +1,9 @@
-Last updated: 2026-06-16T22:55:46Z (UTC)
+Last updated: 2026-06-21T14:53:02Z (UTC)
 
 # Planning Workflows
 
 This component owns managed guidance for discovery, implementation planning, implementation-plan
-execution, planning document review, and planning document lifecycle.
+execution, planning document review, planning document lifecycle, and plan-register maintenance.
 
 ## Use
 
@@ -15,9 +15,13 @@ execution, planning document review, and planning document lifecycle.
   including goal-style runs.
 - Use `runbooks/review-planning-document.md` to review discovery and implementation documents for
   quality and execution readiness.
+- Use `runbooks/maintain-plan-register.md` to update local and configured coordination-home plan
+  registers for material planning lifecycle and relationship changes.
 - Use `reference/planning-document-lifecycle.md` for planning metadata, statuses, execution logs,
   plan bundles, subplans, plan families, program folders, attachments, archives, and index
   maintenance.
+- Use `reference/plan-register-format.md` for `docs/repo/plans/plan-register.md` entry shape,
+  lifecycle snapshots, relation vocabulary, session refs, and coordination notes.
 
 ## Boundaries
 

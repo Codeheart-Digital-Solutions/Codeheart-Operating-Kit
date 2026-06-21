@@ -1,4 +1,4 @@
-Last updated: 2026-06-17T19:21:22Z (UTC)
+Last updated: 2026-06-21T15:11:52Z (UTC)
 
 <!-- BEGIN CODEHEART OPERATING KIT MANAGED BLOCK -->
 
@@ -25,6 +25,8 @@ Last updated: 2026-06-17T19:21:22Z (UTC)
   `.codeheart/kit/docs/planning-workflows/runbooks/execute-implementation-plan.md`
 - Planning document review:
   `.codeheart/kit/docs/planning-workflows/runbooks/review-planning-document.md`
+- Plan registers and configured portfolio coordination:
+  `.codeheart/kit/docs/planning-workflows/runbooks/maintain-plan-register.md`
 - Agent memory: `.codeheart/kit/docs/agent-memory/README.md`
 - Agent interface: `.codeheart/kit/docs/agent-interface/README.md`
 - Operating Kit feedback:

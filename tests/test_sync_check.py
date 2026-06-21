@@ -87,6 +87,80 @@ def test_sync_adds_feedback_draft_gitignore_to_existing_install(tmp_path):
     assert text.count("# Codeheart Operating Kit local user layer") == 1
 
 
+def test_sync_creates_missing_plan_state_files_and_merges_lock_records(tmp_path):
+    main(["init", str(tmp_path), "--project-name", "Example-Automation"])
+    for relative in [
+        "docs/repo/plans/plan-register.md",
+        "docs/repo/plans/coordination-sync-pending.md",
+    ]:
+        (tmp_path / relative).unlink()
+    lock = read_lock(tmp_path)
+    lock["generated_surfaces"] = [
+        item
+        for item in lock["generated_surfaces"]
+        if item["path"]
+        not in {
+            "docs/repo/plans/plan-register.md",
+            "docs/repo/plans/coordination-sync-pending.md",
+        }
+    ]
+    lock["generated_surfaces"].append({"path": "docs/custom-local.md", "ownership": "scaffold"})
+    write_lock(tmp_path, lock)
+
+    main(["sync", str(tmp_path)])
+
+    refreshed = read_lock(tmp_path)
+    generated = {item["path"] for item in refreshed["generated_surfaces"]}
+    assert (tmp_path / "docs/repo/plans/plan-register.md").exists()
+    assert (tmp_path / "docs/repo/plans/coordination-sync-pending.md").exists()
+    assert "docs/repo/plans/plan-register.md" in generated
+    assert "docs/repo/plans/coordination-sync-pending.md" in generated
+    assert "docs/custom-local.md" in generated
+
+
+def test_sync_preserves_existing_plan_state_files_byte_for_byte(tmp_path, monkeypatch):
+    monkeypatch.setenv("CODEHEART_OPERATING_KIT_CLI", "1")
+    main(["init", str(tmp_path), "--project-name", "Example-Automation"])
+    custom_content = {
+        "docs/agent-memory/goal-register.md": "custom goal register\n",
+        "docs/repo/plans/plan-register.md": "custom plan register\n",
+        "docs/repo/plans/coordination-sync-pending.md": "custom pending sync\n",
+    }
+    for relative, text in custom_content.items():
+        (tmp_path / relative).write_text(text, encoding="utf-8")
+
+    main(["sync", str(tmp_path)])
+
+    for relative, text in custom_content.items():
+        assert (tmp_path / relative).read_text(encoding="utf-8") == text
+    assert check_repository(tmp_path)["drift"] == []
+
+
+def test_sync_refreshes_existing_agents_managed_block_and_preserves_local_content(tmp_path):
+    main(["init", str(tmp_path), "--project-name", "Example-Automation"])
+    agents = tmp_path / "AGENTS.md"
+    text = agents.read_text(encoding="utf-8")
+    before, rest = text.split("<!-- BEGIN CODEHEART OPERATING KIT MANAGED BLOCK -->", 1)
+    _managed, after = rest.split("<!-- END CODEHEART OPERATING KIT MANAGED BLOCK -->", 1)
+    agents.write_text(
+        "local prefix\n"
+        "<!-- BEGIN CODEHEART OPERATING KIT MANAGED BLOCK -->\n"
+        "stale managed block\n"
+        "<!-- END CODEHEART OPERATING KIT MANAGED BLOCK -->"
+        f"{after}\nlocal suffix\n",
+        encoding="utf-8",
+    )
+
+    main(["sync", str(tmp_path)])
+
+    refreshed = agents.read_text(encoding="utf-8")
+    assert "local prefix" in refreshed
+    assert "local suffix" in refreshed
+    assert "stale managed block" not in refreshed
+    assert "Plan registers and configured portfolio coordination" in refreshed
+    assert ".codeheart/kit/docs/planning-workflows/runbooks/maintain-plan-register.md" in refreshed
+
+
 def test_sync_refreshes_release_metadata_from_packaged_resources(tmp_path, monkeypatch):
     monkeypatch.setenv("CODEHEART_OPERATING_KIT_CLI", "1")
     monkeypatch.setattr(manifest, "SOURCE_ROOT", Path("/definitely/not/a/checkout"))

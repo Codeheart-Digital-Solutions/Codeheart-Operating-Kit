@@ -1,6 +1,8 @@
-Last updated: 2026-06-21T14:43:20Z (UTC)
+Last updated: 2026-06-21T15:32:08Z (UTC)
 Created: 2026-06-21
-Status: active
+Status: completed
+Completed: 2026-06-21
+Execution log: docs/repo/plans/portfolio-coordination-plan-register/portfolio-coordination-plan-register_execution_log.md
 
 # Document Header
 
@@ -483,15 +485,15 @@ document.
 
 ### F) Tasks Checklist
 
-- [ ] Read the discovery decisions and current planning-workflows managed files before drafting.
-- [ ] Add `components/planning-workflows/managed/reference/plan-register-format.md`.
-- [ ] Add `components/planning-workflows/managed/runbooks/maintain-plan-register.md`.
-- [ ] Define the pending-sync entry format inside `maintain-plan-register.md`.
-- [ ] Update `components/planning-workflows/managed/README.md` with routes to the new reference and runbook.
-- [ ] Update `components/planning-workflows/component.yaml` with the new managed files.
-- [ ] Mirror new and changed planning-workflow files under `src/codeheart_operating_kit/resources/components/planning-workflows/`.
-- [ ] Verify the reference and runbook include complete instructions rather than placeholder summaries.
-- [ ] Verify examples are generic and public-core safe.
+- [x] Read the discovery decisions and current planning-workflows managed files before drafting.
+- [x] Add `components/planning-workflows/managed/reference/plan-register-format.md`.
+- [x] Add `components/planning-workflows/managed/runbooks/maintain-plan-register.md`.
+- [x] Define the pending-sync entry format inside `maintain-plan-register.md`.
+- [x] Update `components/planning-workflows/managed/README.md` with routes to the new reference and runbook.
+- [x] Update `components/planning-workflows/component.yaml` with the new managed files.
+- [x] Mirror new and changed planning-workflow files under `src/codeheart_operating_kit/resources/components/planning-workflows/`.
+- [x] Verify the reference and runbook include complete instructions rather than placeholder summaries.
+- [x] Verify examples are generic and public-core safe.
 
 ### G) Implementation Notes
 
@@ -601,23 +603,23 @@ epic because it changes sync behavior for existing consumers.
 
 ### F) Tasks Checklist
 
-- [ ] Add `components/planning-workflows/scaffolds/plan-register.md` with a repeated-section starter.
-- [ ] Add `components/planning-workflows/scaffolds/coordination-sync-pending.md`.
-- [ ] Update `components/planning-workflows/component.yaml` to declare kit-initialized consumer state behavior and absent-file install/repair behavior for both files.
-- [ ] Update source and packaged planning-workflow component metadata with the chosen ownership/presence semantics and backwards-compatible consumer-impact classification.
-- [ ] Mirror scaffold files and component metadata under `src/codeheart_operating_kit/resources/components/planning-workflows/`.
-- [ ] Update `profiles/standard.yaml` with the new generated surfaces.
-- [ ] Mirror the standard profile under `src/codeheart_operating_kit/resources/profiles/standard.yaml`.
-- [ ] Refactor absent-file creation as needed so sync can create missing state baselines safely.
-- [ ] Update `src/codeheart_operating_kit/commands/sync.py` to create newly introduced absent scaffolds.
-- [ ] Update lock refresh behavior so newly created scaffold records are merged into `generated_surfaces`.
-- [ ] Add init tests that assert both new planning files are created on new installs.
-- [ ] Add onboarding tests that assert `onboard --yes` creates both new planning files when absent.
-- [ ] Add onboarding tests that assert normal onboarding output contains no portfolio-coordination setup prompt.
-- [ ] Add onboarding or init tests that assert default config contains no `portfolio` block.
-- [ ] Add sync tests that assert missing planning files are created for existing installs.
-- [ ] Add sync tests that assert existing `goal-register.md`, `plan-register.md`, and `coordination-sync-pending.md` contents are preserved byte-for-byte.
-- [ ] Add sync tests that assert generated-surface lock records are preserved and extended rather than replaced.
+- [x] Add `components/planning-workflows/scaffolds/plan-register.md` with a repeated-section starter.
+- [x] Add `components/planning-workflows/scaffolds/coordination-sync-pending.md`.
+- [x] Update `components/planning-workflows/component.yaml` to declare kit-initialized consumer state behavior and absent-file install/repair behavior for both files.
+- [x] Update source and packaged planning-workflow component metadata with the chosen ownership/presence semantics and backwards-compatible consumer-impact classification.
+- [x] Mirror scaffold files and component metadata under `src/codeheart_operating_kit/resources/components/planning-workflows/`.
+- [x] Update `profiles/standard.yaml` with the new generated surfaces.
+- [x] Mirror the standard profile under `src/codeheart_operating_kit/resources/profiles/standard.yaml`.
+- [x] Refactor absent-file creation as needed so sync can create missing state baselines safely.
+- [x] Update `src/codeheart_operating_kit/commands/sync.py` to create newly introduced absent scaffolds.
+- [x] Update lock refresh behavior so newly created scaffold records are merged into `generated_surfaces`.
+- [x] Add init tests that assert both new planning files are created on new installs.
+- [x] Add onboarding tests that assert `onboard --yes` creates both new planning files when absent.
+- [x] Add onboarding tests that assert normal onboarding output contains no portfolio-coordination setup prompt.
+- [x] Add onboarding or init tests that assert default config contains no `portfolio` block.
+- [x] Add sync tests that assert missing planning files are created for existing installs.
+- [x] Add sync tests that assert existing `goal-register.md`, `plan-register.md`, and `coordination-sync-pending.md` contents are preserved byte-for-byte.
+- [x] Add sync tests that assert generated-surface lock records are preserved and extended rather than replaced.
 
 ### G) Implementation Notes
 
@@ -712,14 +714,14 @@ plan-register model will fail if agents only see the scaffold and not the lifecy
 
 ### F) Tasks Checklist
 
-- [ ] Update `discovery-workflow.md` with targeted plan-register lifecycle and session-ref hooks.
-- [ ] Update `draft-implementation-plan.md` with targeted plan-register lifecycle and session-ref hooks.
-- [ ] Update `execute-implementation-plan.md` with targeted plan-register lifecycle and session-ref hooks.
-- [ ] Ensure each planning workflow hook routes to local register, coordination-home update, and pending-sync fallback behavior through `maintain-plan-register.md`.
-- [ ] Update `planning-document-lifecycle.md` with the register relationship.
-- [ ] Mirror every changed planning-workflow managed file under packaged resources.
-- [ ] Confirm `review-planning-document.md` remains outside the mutation path for register updates.
-- [ ] Review all hooks for noise control and source-of-truth clarity.
+- [x] Update `discovery-workflow.md` with targeted plan-register lifecycle and session-ref hooks.
+- [x] Update `draft-implementation-plan.md` with targeted plan-register lifecycle and session-ref hooks.
+- [x] Update `execute-implementation-plan.md` with targeted plan-register lifecycle and session-ref hooks.
+- [x] Ensure each planning workflow hook routes to local register, coordination-home update, and pending-sync fallback behavior through `maintain-plan-register.md`.
+- [x] Update `planning-document-lifecycle.md` with the register relationship.
+- [x] Mirror every changed planning-workflow managed file under packaged resources.
+- [x] Confirm `review-planning-document.md` remains outside the mutation path for register updates.
+- [x] Review all hooks for noise control and source-of-truth clarity.
 
 ### G) Implementation Notes
 
@@ -821,24 +823,24 @@ path is final.
 
 ### F) Tasks Checklist
 
-- [ ] Draft the managed `AGENTS.md` conditional portfolio hook in the source template.
-- [ ] Update agent-interface managed docs to explain the hook boundary.
-- [ ] Mirror source template and managed docs under packaged resources.
-- [ ] Update sync behavior to refresh only the managed `AGENTS.md` block when markers are present.
-- [ ] Add sync tests proving managed-block refresh and preservation of repository-owned content outside the block.
-- [ ] Extend `schemas/kit-config.schema.json` with optional presence-based `portfolio`.
-- [ ] Add fixture-based config instance tests for omitted portfolio config.
-- [ ] Add schema tests for a valid member portfolio config.
-- [ ] Add schema tests for a valid coordination-home portfolio config.
-- [ ] Add schema tests for invalid role rejection.
-- [ ] Add schema tests rejecting `portfolio: {}`.
-- [ ] Add schema tests rejecting `role: standalone`.
-- [ ] Add schema tests rejecting `enabled`.
-- [ ] Add schema tests rejecting `member_register_path`.
-- [ ] Add schema tests rejecting `pending_sync_path`.
-- [ ] Add schema tests rejecting member configs missing `member_repository_id`, `coordination_home_path`, or `coordination_home_register_path`.
-- [ ] Add schema tests rejecting coordination-home configs missing `coordination_home_register_path`.
-- [ ] Confirm default init/onboard test fixtures or assertions still show no default portfolio block.
+- [x] Draft the managed `AGENTS.md` conditional portfolio hook in the source template.
+- [x] Update agent-interface managed docs to explain the hook boundary.
+- [x] Mirror source template and managed docs under packaged resources.
+- [x] Update sync behavior to refresh only the managed `AGENTS.md` block when markers are present.
+- [x] Add sync tests proving managed-block refresh and preservation of repository-owned content outside the block.
+- [x] Extend `schemas/kit-config.schema.json` with optional presence-based `portfolio`.
+- [x] Add fixture-based config instance tests for omitted portfolio config.
+- [x] Add schema tests for a valid member portfolio config.
+- [x] Add schema tests for a valid coordination-home portfolio config.
+- [x] Add schema tests for invalid role rejection.
+- [x] Add schema tests rejecting `portfolio: {}`.
+- [x] Add schema tests rejecting `role: standalone`.
+- [x] Add schema tests rejecting `enabled`.
+- [x] Add schema tests rejecting `member_register_path`.
+- [x] Add schema tests rejecting `pending_sync_path`.
+- [x] Add schema tests rejecting member configs missing `member_repository_id`, `coordination_home_path`, or `coordination_home_register_path`.
+- [x] Add schema tests rejecting coordination-home configs missing `coordination_home_register_path`.
+- [x] Confirm default init/onboard test fixtures or assertions still show no default portfolio block.
 
 ### G) Implementation Notes
 
@@ -950,15 +952,15 @@ Depends on `EP1` and `EP2` so the docs can refer to real managed references and 
 
 ### F) Tasks Checklist
 
-- [ ] Update agent-memory managed README with the formal-plan versus memory-state boundary.
-- [ ] Update agent-memory entry-format reference with the same boundary.
-- [ ] Update `session-ledger-maintenance.md` with the formal-plan versus memory-state boundary.
-- [ ] Update `components/agent-memory/scaffolds/goal-register.md` to describe informal or pre-plan continuity.
-- [ ] Update consumer `docs/repo/README.md` scaffold with plan-register and pending-sync routes.
-- [ ] Update placement contract with ownership, install-when-absent, repair-when-missing, and
+- [x] Update agent-memory managed README with the formal-plan versus memory-state boundary.
+- [x] Update agent-memory entry-format reference with the same boundary.
+- [x] Update `session-ledger-maintenance.md` with the formal-plan versus memory-state boundary.
+- [x] Update `components/agent-memory/scaffolds/goal-register.md` to describe informal or pre-plan continuity.
+- [x] Update consumer `docs/repo/README.md` scaffold with plan-register and pending-sync routes.
+- [x] Update placement contract with ownership, install-when-absent, repair-when-missing, and
   preserve-when-present rules for the new files.
-- [ ] Mirror changed agent-memory and structure-governance files under packaged resources.
-- [ ] Review wording to ensure it does not imply a required migration.
+- [x] Mirror changed agent-memory and structure-governance files under packaged resources.
+- [x] Review wording to ensure it does not imply a required migration.
 
 ### G) Implementation Notes
 
@@ -1059,23 +1061,23 @@ indexes need the final file list.
 
 ### F) Tasks Checklist
 
-- [ ] Update `src/codeheart_operating_kit/resources/manifest.yaml`.
-- [ ] Review root `manifest.yaml` and record whether it remains release-runbook-owned or is updated in this implementation.
-- [ ] Update `docs/README.md` with the implementation plan route.
-- [ ] Update `docs/repo/README.md` with the implementation plan route.
-- [ ] Update `docs/repo/plans/README.md` with the implementation plan route.
-- [ ] Update the Consumer Impact Record in this implementation plan.
-- [ ] Update `release-notes.md` with the additive consumer-impact summary for the target release.
-- [ ] Add packaged-resource parity tests for changed source and mirror files.
-- [ ] Add packaged fallback assertions for plan-register and coordination-sync-pending scaffolds.
-- [ ] Run `python3 scripts/validate-markdown-headers.py`.
-- [ ] Run `python3 scripts/validate-public-core.py`.
-- [ ] Run `python3 scripts/validate-json-schemas.py`.
-- [ ] Run `python3 scripts/validate-release-manifest.py`.
-- [ ] Run `pytest tests/test_init.py tests/test_onboard.py tests/test_sync_check.py tests/test_packaging_resources.py tests/test_json_schemas.py tests/test_public_core.py tests/test_markdown_headers.py`.
-- [ ] Run the full `pytest` suite when the focused suite passes.
-- [ ] Run `git diff --check`.
-- [ ] Record any validation failures and fixes in the execution log if this plan is executed.
+- [x] Update `src/codeheart_operating_kit/resources/manifest.yaml`.
+- [x] Review root `manifest.yaml` and record whether it remains release-runbook-owned or is updated in this implementation.
+- [x] Update `docs/README.md` with the implementation plan route.
+- [x] Update `docs/repo/README.md` with the implementation plan route.
+- [x] Update `docs/repo/plans/README.md` with the implementation plan route.
+- [x] Update the Consumer Impact Record in this implementation plan.
+- [x] Update `release-notes.md` with the additive consumer-impact summary for the target release.
+- [x] Add packaged-resource parity tests for changed source and mirror files.
+- [x] Add packaged fallback assertions for plan-register and coordination-sync-pending scaffolds.
+- [x] Run `python3 scripts/validate-markdown-headers.py`.
+- [x] Run `python3 scripts/validate-public-core.py`.
+- [x] Run `python3 scripts/validate-json-schemas.py`.
+- [x] Run `python3 scripts/validate-release-manifest.py`.
+- [x] Run `pytest tests/test_init.py tests/test_onboard.py tests/test_sync_check.py tests/test_packaging_resources.py tests/test_json_schemas.py tests/test_public_core.py tests/test_markdown_headers.py`.
+- [x] Run the full `pytest` suite when the focused suite passes.
+- [x] Run `git diff --check`.
+- [x] Record any validation failures and fixes in the execution log if this plan is executed.
 
 ### G) Implementation Notes
 
@@ -1107,6 +1109,24 @@ When all epics are complete and validated, hand off to the release runbook with:
 
 Do not tag, publish, or merge as part of this implementation plan unless the user explicitly asks
 for release execution after reviewing the implementation result.
+
+Implementation execution note: the packaged resource manifest's component checksum, consumer
+impact, and generated-surface metadata were updated for fallback installs. The root `manifest.yaml`
+and the bundled resource manifest's release metadata fields, including `version`, `released_at`,
+asset URLs, and asset checksums, remain release-runbook-owned because this implementation does not
+execute a public release. Package version fields, `bootstrap.md`, `install.sh`, `install.ps1`,
+release asset checksums, tag creation, and publication are also deferred to the release runbook.
+
+Current validation evidence:
+
+- `python3 scripts/validate-markdown-headers.py` passed.
+- `python3 scripts/validate-public-core.py` passed.
+- `python3 scripts/validate-json-schemas.py` passed.
+- `python3 scripts/validate-release-manifest.py` passed.
+- Focused suite passed: `pytest tests/test_init.py tests/test_onboard.py tests/test_sync_check.py tests/test_packaging_resources.py tests/test_json_schemas.py tests/test_public_core.py tests/test_markdown_headers.py`
+  reported `49 passed`.
+- Full suite passed: `pytest` reported `86 passed`.
+- `git diff --check` passed.
 
 ## 3.2 Consumer Impact Record
 
@@ -1174,3 +1194,5 @@ Future implementation plans should revisit:
   scaffold language with kit-initialized consumer state file terminology, removed `enabled`,
   `standalone`, `member_register_path`, and `pending_sync_path` from the proposed portfolio schema,
   and added role-specific required-field and negative-test expectations.
+- 2026-06-21: Executed EP1 through EP6, recorded validation evidence, kept release publication
+  tasks under the release runbook, fixed final review findings, and completed the plan.

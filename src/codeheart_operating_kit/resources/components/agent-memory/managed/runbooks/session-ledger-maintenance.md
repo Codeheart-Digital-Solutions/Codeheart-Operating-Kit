@@ -1,4 +1,4 @@
-Last updated: 2026-06-17T06:40:50Z (UTC)
+Last updated: 2026-06-21T15:17:48Z (UTC)
 
 # Session Ledger Maintenance
 
@@ -36,6 +36,17 @@ Out of scope:
 - Creating automation scripts.
 - Replacing canonical product, business, research, discovery, implementation, runbook, reference,
   source-control, issue, or release records.
+
+## Formal Plan Boundary
+
+When a session creates or materially changes a formal discovery document, implementation plan, plan
+family, or major workstream, record formal lifecycle, canonical plan docs, blockers that belong to
+the plan, and plan relationships through `docs/repo/plans/plan-register.md` and the planning
+workflow register-maintenance runbook.
+
+Keep `docs/agent-memory/goal-register.md` available for informal, pre-plan, or transitional
+continuity that has not yet become a formal plan. Do not duplicate full formal plan status,
+per-epic progress, plan relationships, or canonical execution evidence in `goal-register.md`.
 
 ## Preflight
 
@@ -91,16 +102,20 @@ Classify each relevant session into one primary destination.
 
 Update `goal-register.md` when a session changes:
 
-- top-level goal status;
-- active workstream status;
+- top-level informal or pre-plan goal status;
+- active informal or transitional workstream status;
 - current focus;
-- blocker state;
+- informal or pre-plan blocker state;
 - next action;
-- canonical doc references;
-- relationship between workstreams.
+- lightweight references for resumption;
+- relationship between informal or transitional workstreams.
 
 Keep goal entries short. Link canonical docs rather than duplicating them. Keep `Goal Overview` in
 the same order as the detailed goals.
+
+When the workstream has a formal discovery or implementation plan, update
+`docs/repo/plans/plan-register.md` for formal lifecycle state and relationships. Keep only
+resumption-oriented memory here.
 
 ### Session Ledger
 
@@ -173,7 +188,8 @@ Use ordering to help the user resume thinking.
 
 1. Build a bounded candidate list from curated memory, user-provided IDs, and raw metadata.
 2. Verify current repository state for each candidate workstream.
-3. Update `goal-register.md` for changed goal or workstream state.
+3. Update `goal-register.md` for changed informal, pre-plan, or transitional goal or workstream
+   state.
 4. Update `session-ledger.md` for active, blocked, unresolved, recent, or active-workstream
    sessions.
 5. Apply ordering rules.

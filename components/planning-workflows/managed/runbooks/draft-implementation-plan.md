@@ -1,4 +1,4 @@
-Last updated: 2026-06-17T06:34:53Z (UTC)
+Last updated: 2026-06-21T15:07:29Z (UTC)
 
 # Draft Implementation Plan
 
@@ -202,6 +202,29 @@ For an affected blocked epic:
 
 Use `BLOCKER: no` for decisions that can be safely defaulted, deferred, or resolved during
 execution without changing the main path.
+
+## Plan Register Hook
+
+When implementation planning creates or materially updates a `*_implementation_doc.md`, maintain
+the local plan register if the change affects plan identity, scope, lifecycle status, parent or
+child relationships, dependencies, supersession, related plans, implementation path, or review
+outcome.
+
+Use `maintain-plan-register.md` for the procedure and `../reference/plan-register-format.md` for
+entry shape. The sequence is:
+
+1. Update `docs/repo/plans/plan-register.md` in the local repository.
+2. When portfolio coordination is configured and the coordination home is available and safe to
+   edit, update the configured coordination-home register.
+3. When portfolio coordination is configured but the coordination home is unavailable or unsafe to
+   edit, record pending sync in `docs/repo/plans/coordination-sync-pending.md` and continue the
+   local planning task.
+
+Record creating or material-update session refs when a session ID is available. Do not block
+implementation planning when no session ID is available.
+
+Do not update the register for typos, formatting-only edits, timestamp-only edits, or mechanical
+checklist progress that does not change lifecycle, relationships, scope, or implementation path.
 
 ## Section 4 - Future Planning
 

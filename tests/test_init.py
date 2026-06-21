@@ -22,6 +22,8 @@ def test_init_writes_standard_surfaces(tmp_path):
         ".codeheart/user/examples/preferences.yaml",
         "AGENTS.md",
         "docs/repo/README.md",
+        "docs/repo/plans/plan-register.md",
+        "docs/repo/plans/coordination-sync-pending.md",
         "docs/agent-memory/README.md",
         "docs/agent-memory/goal-register.md",
         "docs/agent-memory/session-ledger.md",
@@ -37,9 +39,13 @@ def test_init_writes_standard_surfaces(tmp_path):
     lock = read_lock(tmp_path)
     assert lock["selected_profile"] == "standard"
     assert ".codeheart/kit/README.md" in {item["path"] for item in lock["managed_paths"]}
+    generated = {item["path"] for item in lock["generated_surfaces"]}
+    assert "docs/repo/plans/plan-register.md" in generated
+    assert "docs/repo/plans/coordination-sync-pending.md" in generated
     assert set(lock["native_capabilities"]) == {"documents", "spreadsheets", "presentations", "browser", "pdf"}
     config = load_yaml(tmp_path / ".codeheart/kit.config.yaml")
     assert config["setup_purpose"] == "company-automation"
+    assert "portfolio" not in config
 
 
 def test_init_can_omit_purpose_metadata(tmp_path):

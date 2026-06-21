@@ -1,4 +1,4 @@
-Last updated: 2026-06-16T20:15:25Z (UTC)
+Last updated: 2026-06-21T15:07:29Z (UTC)
 
 # Discovery Workflow
 
@@ -921,6 +921,28 @@ document.
 
 If a closed decision changes after handoff, treat the handoff as stale and regenerate it before
 drafting or updating an implementation plan.
+
+## Plan Register Hook
+
+When discovery work creates or materially updates a `*_discovery_doc.md`, maintain the local plan
+register if the change affects plan identity, scope, decision state, lifecycle state, readiness,
+parent or child relationships, dependencies, supersession, related plans, or review outcome.
+
+Use `maintain-plan-register.md` for the procedure and `../reference/plan-register-format.md` for
+entry shape. The sequence is:
+
+1. Update `docs/repo/plans/plan-register.md` in the local repository.
+2. When portfolio coordination is configured and the coordination home is available and safe to
+   edit, update the configured coordination-home register.
+3. When portfolio coordination is configured but the coordination home is unavailable or unsafe to
+   edit, record pending sync in `docs/repo/plans/coordination-sync-pending.md` and continue the
+   local discovery task.
+
+Record creating or material-update session refs when a session ID is available. Do not block
+discovery when no session ID is available.
+
+Do not update the register for typos, formatting-only edits, timestamp-only edits, or mechanical
+checklist progress that does not change lifecycle, relationships, readiness, or decision state.
 
 ## Domain Adaptation
 

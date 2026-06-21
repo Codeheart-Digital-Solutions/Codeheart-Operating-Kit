@@ -1,6 +1,59 @@
-Last updated: 2026-06-17T20:24:00Z (UTC)
+Last updated: 2026-06-21T15:26:40Z (UTC)
 
 # Codeheart Operating Kit Release Notes
+
+## v0.1.5 Release Notes
+
+`v0.1.5` prepares the Operating Kit plan-register model and optional portfolio coordination as an
+additive, runbook-first release.
+
+### Included
+
+- Managed planning-workflow docs now define `docs/repo/plans/plan-register.md` as the formal
+  planning register for plans, plan families, lifecycle state, relationships, and lightweight
+  session references.
+- Managed planning-workflow docs now define
+  `docs/repo/plans/coordination-sync-pending.md` as the local queue for coordination-home updates
+  that could not be applied because the coordination home was unavailable.
+- New consumers receive plan-register and pending-sync baselines during init/onboarding.
+- Existing consumers receive the same baselines through normal sync only when the files are absent.
+- `sync` refreshes an existing marked Operating Kit block in `AGENTS.md` so configured portfolio
+  coordination routes to the plan-register maintenance runbook.
+- The optional `portfolio` config schema is presence-based: no block means no configured portfolio
+  coordination. Supported roles are `member` and `coordination-home`.
+- Agent-memory guidance now keeps `goal-register.md` available for informal, pre-plan, or
+  transitional continuity while formal plans move to `docs/repo/plans/plan-register.md`.
+
+### Consumer Impact
+
+- `instruction-only change`: installed consumers receive managed plan-register doctrine,
+  planning-workflow hooks, the agent-memory boundary clarification, and the lean `AGENTS.md` route
+  when they sync or update the Operating Kit.
+- `backwards-compatible scaffold addition`: `docs/repo/plans/plan-register.md` and
+  `docs/repo/plans/coordination-sync-pending.md` are created only when absent and are then
+  consumer-owned state files.
+- `validator-only change`: `.codeheart/kit.config.yaml` validation accepts optional role-specific
+  portfolio configuration and rejects incomplete or contradictory portfolio blocks.
+- Existing consumer-owned content is preserved. Sync does not rewrite existing `goal-register.md`,
+  `plan-register.md`, or `coordination-sync-pending.md` content.
+- No forced migration is required, no automatic goal-register rewrite is performed, and no normal
+  onboarding prompt asks users to configure portfolio coordination.
+- Optional consumer action: after upgrading, run normal sync/check to receive absent planning
+  state files and refreshed managed instructions.
+
+### Validation
+
+- Local validation covers Markdown timestamps, public-core hygiene, JSON schema structure, release
+  manifest structure, init/onboarding/sync behavior, packaged fallback behavior, source/package
+  resource parity, and the full Python test suite.
+- Focused local tests passed under Python 3.12.11: `49 passed`.
+- Full local tests passed under Python 3.12.11: `86 passed`.
+- Local script validation passed for Markdown timestamps, public-core hygiene, JSON schemas, and
+  release manifest structure.
+- `git diff --check` passed.
+- Release publication is deferred to the release runbook. Final version bump, root and bundled
+  release-manifest metadata regeneration, `bootstrap.md`, installers, asset checksums, tag
+  creation, and GitHub publication are not part of this implementation step.
 
 ## v0.1.4 Release Notes
 

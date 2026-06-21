@@ -28,6 +28,14 @@ profile:
       ownership: scaffold
       source: templates/consumer-docs/repo/README.md
       install_when: absent
+    - path: docs/repo/plans/plan-register.md
+      ownership: scaffold
+      source: components/planning-workflows/scaffolds/plan-register.md
+      install_when: absent
+    - path: docs/repo/plans/coordination-sync-pending.md
+      ownership: scaffold
+      source: components/planning-workflows/scaffolds/coordination-sync-pending.md
+      install_when: absent
     - path: docs/agent-memory/README.md
       ownership: scaffold
       source: components/agent-memory/scaffolds/README.md

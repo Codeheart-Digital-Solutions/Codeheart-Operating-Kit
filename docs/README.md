@@ -1,4 +1,4 @@
-Last updated: 2026-06-21T12:32:42Z (UTC)
+Last updated: 2026-06-21T15:26:40Z (UTC)
 
 # Docs Index
 
@@ -28,6 +28,8 @@ This folder contains public Codeheart Operating Kit documentation.
   `docs/repo/plans/portfolio-coordination-plan-register/portfolio-coordination-plan-register_discovery_doc.md`
 - Portfolio coordination and plan-register implementation plan:
   `docs/repo/plans/portfolio-coordination-plan-register/portfolio-coordination-plan-register_implementation_doc.md`
+- Portfolio coordination and plan-register execution log:
+  `docs/repo/plans/portfolio-coordination-plan-register/portfolio-coordination-plan-register_execution_log.md`
 - Kit feedback intake implementation plan:
   `docs/repo/plans/kit-feedback-intake/kit-feedback-intake_implementation_doc.md`
 - Kit feedback intake execution log:

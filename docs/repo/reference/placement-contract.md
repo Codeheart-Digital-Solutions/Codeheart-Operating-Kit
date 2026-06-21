@@ -1,4 +1,4 @@
-Last updated: 2026-06-13T23:55:46Z (UTC)
+Last updated: 2026-06-21T15:17:48Z (UTC)
 
 # Placement Contract
 
@@ -35,6 +35,9 @@ The Operating Kit may create or manage these consumer paths when the CLI is impl
 
 - `managed`: synchronized from an Operating Kit release and checked for drift.
 - `scaffold`: created when absent, then owned by the consumer.
+- `kit-initialized consumer state file`: created or recreated when absent from an Operating Kit
+  baseline; the kit owns location, format, and presence behavior, while the consumer owns content
+  after creation.
 - `template`: available as a starter or example, but installed only when a command explicitly uses
   it.
 
@@ -47,6 +50,11 @@ The Operating Kit may create or manage these consumer paths when the CLI is impl
   creation.
 - Repository documentation starters target `docs/repo/` only as absent-file scaffolds. Reusable
   generic doctrine belongs in the Operating Kit, not in consumer `docs/repo/`.
+- Plan-register state files target `docs/repo/plans/plan-register.md` and
+  `docs/repo/plans/coordination-sync-pending.md` as kit-initialized consumer state files. Sync may
+  create them when absent and must not overwrite them when present.
+- Adding these files is additive and does not force migration, movement, rewrite, or archival of
+  existing consumer-owned planning or agent-memory content.
 - Root `AGENTS.md` receives the Operating Kit managed block from the agent-interface template while
   preserving repository-owned and local-user sections.
 - Local user guidance targets `.codeheart/user/` and must stay ignored or local-only.

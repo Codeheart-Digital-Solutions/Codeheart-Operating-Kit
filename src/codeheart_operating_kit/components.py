@@ -60,9 +60,26 @@ def render_agents(root: Path) -> str:
     return "added-managed-block"
 
 
-def scaffold_consumer_files(root: Path) -> list[dict[str, str]]:
+def refresh_agents_managed_block(root: Path) -> str:
+    template = (kit_root() / "templates/agents/AGENTS.managed-block.md").read_text(encoding="utf-8")
+    existing_path = root / "AGENTS.md"
+    if not existing_path.exists():
+        return "missing"
+
+    existing = existing_path.read_text(encoding="utf-8")
+    if BEGIN_MARKER not in existing or END_MARKER not in existing:
+        return "unchanged-no-managed-block"
+
+    before, rest = existing.split(BEGIN_MARKER, 1)
+    _old, after = rest.split(END_MARKER, 1)
+    managed = template.split(BEGIN_MARKER, 1)[1].split(END_MARKER, 1)[0]
+    existing_path.write_text(f"{before}{BEGIN_MARKER}{managed}{END_MARKER}{after}", encoding="utf-8")
+    return "refreshed-managed-block"
+
+
+def scaffold_consumer_files(root: Path, profile_id: str = "standard") -> list[dict[str, str]]:
     created: list[dict[str, str]] = []
-    for entry in iter_component_files("standard"):
+    for entry in iter_component_files(profile_id):
         if entry.get("ownership") != "scaffold":
             continue
         source = kit_root() / entry["source"]

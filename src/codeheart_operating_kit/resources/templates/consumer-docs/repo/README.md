@@ -1,4 +1,4 @@
-Last updated: 2026-06-17T06:46:46Z (UTC)
+Last updated: 2026-06-21T15:17:48Z (UTC)
 
 # Repository Documentation
 
@@ -9,6 +9,8 @@ Use it for:
 - local repository plans;
 - local repository runbooks;
 - local repository references;
+- local plan register: `plans/plan-register.md`;
+- pending coordination sync: `plans/coordination-sync-pending.md`;
 - build, test, release, and validation details;
 - repository-specific architecture notes;
 - local exceptions to Operating Kit defaults.

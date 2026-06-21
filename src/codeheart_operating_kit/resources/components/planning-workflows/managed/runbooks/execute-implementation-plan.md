@@ -1,4 +1,4 @@
-Last updated: 2026-06-17T06:34:53Z (UTC)
+Last updated: 2026-06-21T15:07:29Z (UTC)
 
 # Execute Implementation Plan
 
@@ -220,6 +220,33 @@ When the plan and log conflict:
   acceptance criteria;
 - use the execution log to understand what changed during execution and why;
 - correct the conflicting document before closing the epic or plan.
+
+## Plan Register Hook
+
+When implementation execution changes a plan's lifecycle or material path, maintain the local plan
+register. Material execution changes include activation, completion, supersession, archive state,
+major implementation-path changes, new parent or child links, changed dependencies, changed
+related-plan links, and execution handoff changes.
+
+Use `maintain-plan-register.md` for the procedure and `../reference/plan-register-format.md` for
+entry shape. The sequence is:
+
+1. Update `docs/repo/plans/plan-register.md` in the local repository.
+2. When portfolio coordination is configured and the coordination home is available and safe to
+   edit, update the configured coordination-home register.
+3. When portfolio coordination is configured but the coordination home is unavailable or unsafe to
+   edit, record pending sync in `docs/repo/plans/coordination-sync-pending.md` and continue the
+   local execution task.
+
+The implementation plan and execution log remain the canonical execution state. The register is an
+index snapshot and should not duplicate epic progress, validation details, review logs, or
+execution evidence.
+
+Record material-update session refs when a session ID is available. Do not block execution when no
+session ID is available.
+
+Do not update the register for typos, formatting-only edits, timestamp-only edits, or mechanical
+checklist progress that does not change lifecycle, relationships, or implementation path.
 
 ## Final User Summary
 

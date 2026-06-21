@@ -1,4 +1,4 @@
-Last updated: 2026-06-17T06:40:50Z (UTC)
+Last updated: 2026-06-21T15:17:48Z (UTC)
 
 # Agent Memory Entry Format
 
@@ -7,6 +7,12 @@ should start with compact overviews and actual entries, not long templates.
 
 Use grouped, labeled list entries instead of Markdown tables so raw Markdown stays readable and
 agents can parse fields reliably.
+
+Formal discovery documents, implementation plans, plan families, major workstreams, canonical plan
+docs, formal lifecycle state, and plan relationships belong in
+`docs/repo/plans/plan-register.md` when a formal plan exists or is created. Use
+`goal-register.md` only for informal, pre-plan, or transitional continuity that still needs
+session-memory context.
 
 ## Overview Order
 
@@ -57,6 +63,10 @@ Current state:
 Next action:
 - <specific next action>
 ```
+
+When the goal has become a formal discovery plan, implementation plan, plan family, or major
+workstream, keep only informal resumption context here and register formal lifecycle and
+relationships in `docs/repo/plans/plan-register.md`.
 
 ## Goal Workstream Entry
 

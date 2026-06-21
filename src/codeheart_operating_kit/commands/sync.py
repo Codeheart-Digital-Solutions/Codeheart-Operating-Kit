@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import Any
 
 from .. import __version__
-from ..components import copy_managed_files, ensure_gitignore
+from ..components import copy_managed_files, ensure_gitignore, refresh_agents_managed_block, scaffold_consumer_files
 from ..lockfile import format_time, read_lock, utc_now, write_lock
 from ..manifest import kit_root, load_profile, load_yaml, validate_release_manifest
 
@@ -83,7 +83,24 @@ def _release_metadata(existing: dict[str, Any], release_manifest: dict[str, Any]
     return {"asset_url": asset_url, "checksum_sha256": checksum}
 
 
-def _refresh_lock(root: Path, managed: list[dict[str, Any]], release_manifest: dict[str, Any] | None) -> dict[str, Any]:
+def _merge_generated_surfaces(existing: object, created: list[dict[str, str]]) -> list[dict[str, Any]]:
+    merged = [dict(item) for item in existing if isinstance(item, dict)] if isinstance(existing, list) else []
+    seen = {str(item.get("path")) for item in merged if item.get("path")}
+    for item in created:
+        path = item.get("path")
+        if not path or path in seen:
+            continue
+        merged.append(dict(item))
+        seen.add(path)
+    return merged
+
+
+def _refresh_lock(
+    root: Path,
+    managed: list[dict[str, Any]],
+    release_manifest: dict[str, Any] | None,
+    created_surfaces: list[dict[str, str]],
+) -> dict[str, Any]:
     now = utc_now()
     lock = read_lock(root)
     profile_id = str(lock.get("selected_profile") or "standard")
@@ -100,7 +117,7 @@ def _refresh_lock(root: Path, managed: list[dict[str, Any]], release_manifest: d
         "selected_components": profile["selected_components"],
         "release": _release_metadata(lock, release_manifest),
         "managed_paths": managed,
-        "generated_surfaces": lock.get("generated_surfaces") or [],
+        "generated_surfaces": _merge_generated_surfaces(lock.get("generated_surfaces") or [], created_surfaces),
         "cli_repair": {
             "installed_cli_path": existing_cli.get("installed_cli_path", "codeheart-operating-kit"),
             "repair_source_url": existing_cli.get("repair_source_url", "local-source"),
@@ -125,11 +142,17 @@ def run(args) -> int:
     release = None
     if args.release_manifest:
         release = validate_release_manifest(Path(args.release_manifest))
+    existing_lock = read_lock(root)
+    profile_id = str(existing_lock.get("selected_profile") or "standard")
     managed = copy_managed_files(root)
+    created_surfaces = scaffold_consumer_files(root, profile_id)
+    agents_status = refresh_agents_managed_block(root)
     gitignore_changed = ensure_gitignore(root)
-    refreshed_lock = _refresh_lock(root, managed, release)
+    refreshed_lock = _refresh_lock(root, managed, release, created_surfaces)
     result = {
         "synced_managed_paths": managed,
+        "created_generated_surfaces": created_surfaces,
+        "agents_status": agents_status,
         "gitignore_changed": gitignore_changed,
         "release_manifest": release is not None,
         "kit_version": refreshed_lock["kit_version"],

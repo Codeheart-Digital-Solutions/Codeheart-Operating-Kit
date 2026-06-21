@@ -47,10 +47,11 @@ components:
     id: planning-workflows
     version: 0.1.4
     manifest_path: components/planning-workflows/component.yaml
-    checksum_sha256: aa01b11654de90f4d02283334122d316b4670966a193c57410c68e5ed7b39b28
+    checksum_sha256: efefb05f409c0c8d48af8a1f0d81e67d40fad73e00f96e12294e65dbb58744c3
     consumer_impact:
       - component addition
       - instruction-only change
+      - backwards-compatible scaffold addition
   -
     id: agent-memory
     version: 0.1.4
@@ -113,6 +114,8 @@ profiles:
       - .codeheart/kit.config.yaml
       - AGENTS.md
       - docs/repo/README.md
+      - docs/repo/plans/plan-register.md
+      - docs/repo/plans/coordination-sync-pending.md
       - docs/agent-memory/README.md
       - docs/agent-memory/goal-register.md
       - docs/agent-memory/session-ledger.md
@@ -176,4 +179,6 @@ native_baseline_capability_checks:
       - unknown
 consumer_impact:
   - instruction-only change
+  - backwards-compatible scaffold addition
+  - validator-only change
   - security or safety policy change

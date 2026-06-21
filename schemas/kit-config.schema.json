@@ -34,6 +34,44 @@
     "component_settings": {
       "type": "object",
       "additionalProperties": { "type": "object" }
+    },
+    "portfolio": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["role"],
+      "properties": {
+        "role": {
+          "type": "string",
+          "enum": ["member", "coordination-home"]
+        },
+        "member_repository_id": { "type": "string", "minLength": 1 },
+        "coordination_home_path": { "type": "string", "minLength": 1 },
+        "coordination_home_register_path": { "type": "string", "minLength": 1 }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "role": { "const": "member" } },
+            "required": ["role"]
+          },
+          "then": {
+            "required": [
+              "member_repository_id",
+              "coordination_home_path",
+              "coordination_home_register_path"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": { "role": { "const": "coordination-home" } },
+            "required": ["role"]
+          },
+          "then": {
+            "required": ["coordination_home_register_path"]
+          }
+        }
+      ]
     }
   }
 }

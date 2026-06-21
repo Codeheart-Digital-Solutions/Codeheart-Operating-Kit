@@ -37,6 +37,8 @@ def test_onboard_prompt_order_and_copy(tmp_path, capsys):
     assert "Use a different folder" in output
     assert "Desktop > Productname-Development" in output
     assert not (tmp_path / ".codeheart").exists()
+    assert "portfolio" not in output.lower()
+    assert "coordination" not in output.lower()
 
 
 def test_onboard_project_name_and_target_folder_help_prompts(tmp_path, capsys):
@@ -77,9 +79,12 @@ def test_onboard_yes_writes_and_creates_adoption_report(tmp_path):
     ]) == 0
     assert (tmp_path / ".codeheart/kit.lock.yaml").exists()
     assert (tmp_path / ".codeheart/reports/adoption-cleanup-report.md").exists()
+    assert (tmp_path / "docs/repo/plans/plan-register.md").exists()
+    assert (tmp_path / "docs/repo/plans/coordination-sync-pending.md").exists()
     assert "local instructions" in (tmp_path / "AGENTS.md").read_text(encoding="utf-8")
     config = load_yaml(tmp_path / ".codeheart/kit.config.yaml")
     assert config["setup_purpose"] == "software-product"
+    assert "portfolio" not in config
 
 
 def test_onboard_yes_requires_target_folder(capsys):
