@@ -1,4 +1,4 @@
-Last updated: 2026-06-16T21:22:03Z (UTC)
+Last updated: 2026-06-21T15:40:16Z (UTC)
 
 # Bootstrap Codeheart Operating Kit
 
@@ -8,8 +8,8 @@ preinstalled Codeheart skills.
 Pinned corrective release:
 
 ```text
-Version: v0.1.4
-Release URL: https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/tag/v0.1.4
+Version: v0.1.5
+Release URL: https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/tag/v0.1.5
 ```
 
 ## Install The CLI
@@ -17,7 +17,7 @@ Release URL: https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-
 macOS installs into a user-level Operating Kit folder:
 
 ```sh
-curl -fsSLO https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.4/install.sh
+curl -fsSLO https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.5/install.sh
 bash install.sh
 ```
 
@@ -30,7 +30,7 @@ $HOME/.codeheart/operating-kit/bin/codeheart-operating-kit
 Windows installs into the current user's local application data folder:
 
 ```powershell
-Invoke-WebRequest -Uri "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.4/install.ps1" -OutFile install.ps1
+Invoke-WebRequest -Uri "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.5/install.ps1" -OutFile install.ps1
 .\install.ps1
 ```
 
@@ -63,7 +63,7 @@ Follow this contract exactly during first-run setup:
   writing files.
 - Keep current update-check results silent and mention only available updates.
 
-For `v0.1.4`, `codeheart-operating-kit onboard` is an agent-guided script and setup-plan renderer.
+For `v0.1.5`, `codeheart-operating-kit onboard` is an agent-guided script and setup-plan renderer.
 It is not a terminal stdin prompt loop. Show rendered prompts in Codex chat, collect user decisions
 in chat, and rerun the command with explicit values only when applying setup.
 

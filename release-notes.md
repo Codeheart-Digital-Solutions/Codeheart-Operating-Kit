@@ -1,4 +1,4 @@
-Last updated: 2026-06-21T15:26:40Z (UTC)
+Last updated: 2026-06-21T15:40:16Z (UTC)
 
 # Codeheart Operating Kit Release Notes
 
@@ -51,9 +51,10 @@ additive, runbook-first release.
 - Local script validation passed for Markdown timestamps, public-core hygiene, JSON schemas, and
   release manifest structure.
 - `git diff --check` passed.
-- Release publication is deferred to the release runbook. Final version bump, root and bundled
-  release-manifest metadata regeneration, `bootstrap.md`, installers, asset checksums, tag
-  creation, and GitHub publication are not part of this implementation step.
+- Local release asset build produced `codeheart-operating-kit-0.1.5-macos.tar.gz` and
+  `codeheart-operating-kit-0.1.5-windows.zip`.
+- Local macOS installer smoke installed `codeheart-operating-kit 0.1.5` from the generated asset.
+- Local checksum mismatch validation failed closed as expected.
 
 ## v0.1.4 Release Notes
 

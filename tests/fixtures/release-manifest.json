@@ -1,11 +1,11 @@
 {
   "schema_version": 1,
-  "version": "0.1.4",
+  "version": "0.1.5",
   "released_at": "2026-06-16T21:22:03Z",
   "assets": [
     {
-      "name": "codeheart-operating-kit-0.1.4.zip",
-      "url": "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.4/codeheart-operating-kit-0.1.4.zip",
+      "name": "codeheart-operating-kit-0.1.5.zip",
+      "url": "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.5/codeheart-operating-kit-0.1.5.zip",
       "sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
       "platform": "universal"
     }
@@ -13,7 +13,7 @@
   "components": [
     {
       "id": "planning-workflows",
-      "version": "0.1.4",
+      "version": "0.1.5",
       "manifest_path": "components/planning-workflows/component.yaml",
       "checksum_sha256": "1111111111111111111111111111111111111111111111111111111111111111",
       "consumer_impact": [
@@ -23,7 +23,7 @@
     },
     {
       "id": "agent-memory",
-      "version": "0.1.4",
+      "version": "0.1.5",
       "manifest_path": "components/agent-memory/component.yaml",
       "checksum_sha256": "2222222222222222222222222222222222222222222222222222222222222222",
       "consumer_impact": [
@@ -34,7 +34,7 @@
     },
     {
       "id": "agent-interface",
-      "version": "0.1.4",
+      "version": "0.1.5",
       "manifest_path": "components/agent-interface/component.yaml",
       "checksum_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
       "consumer_impact": [
@@ -45,7 +45,7 @@
     },
     {
       "id": "structure-governance",
-      "version": "0.1.4",
+      "version": "0.1.5",
       "manifest_path": "components/structure-governance/component.yaml",
       "checksum_sha256": "3333333333333333333333333333333333333333333333333333333333333333",
       "consumer_impact": [
@@ -57,7 +57,7 @@
     },
     {
       "id": "native-codex-capabilities",
-      "version": "0.1.4",
+      "version": "0.1.5",
       "manifest_path": "components/native-codex-capabilities/component.yaml",
       "checksum_sha256": "4444444444444444444444444444444444444444444444444444444444444444",
       "consumer_impact": [
@@ -67,7 +67,7 @@
     },
     {
       "id": "validators",
-      "version": "0.1.4",
+      "version": "0.1.5",
       "manifest_path": "components/validators/component.yaml",
       "checksum_sha256": "5555555555555555555555555555555555555555555555555555555555555555",
       "consumer_impact": [

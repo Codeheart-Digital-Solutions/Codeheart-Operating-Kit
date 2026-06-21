@@ -22,7 +22,7 @@ Use this reference to structure sanitized Operating Kit feedback before opening 
 
 ```text
 Summary: The managed documentation route for a recurring planning case is unclear.
-Kit version: 0.1.4
+Kit version: 0.1.5
 Affected area: planning-workflows
 Feedback type: doctrine or workflow gap
 Observed problem: Agents may create local guidance instead of using a managed route.
