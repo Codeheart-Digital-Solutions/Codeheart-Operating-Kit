@@ -1,11 +1,11 @@
 {
   "schema_version": 1,
-  "version": "0.1.6",
-  "released_at": "2026-06-21T19:06:25Z",
+  "version": "0.1.8",
+  "released_at": "2026-06-22T19:29:41Z",
   "assets": [
     {
-      "name": "codeheart-operating-kit-0.1.6.zip",
-      "url": "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.6/codeheart-operating-kit-0.1.6.zip",
+      "name": "codeheart-operating-kit-0.1.8.zip",
+      "url": "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.8/codeheart-operating-kit-0.1.8.zip",
       "sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
       "platform": "universal"
     }
@@ -13,12 +13,13 @@
   "components": [
     {
       "id": "planning-workflows",
-      "version": "0.1.6",
+      "version": "0.1.8",
       "manifest_path": "components/planning-workflows/component.yaml",
-      "checksum_sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+      "checksum_sha256": "e504c39adeea21c6cba51271875eb86668cdca59fdc6a49111b73a94c752c561",
       "consumer_impact": [
         "component addition",
-        "instruction-only change"
+        "instruction-only change",
+        "backwards-compatible scaffold addition"
       ]
     },
     {

@@ -1,4 +1,4 @@
-Last updated: 2026-06-21T19:01:10Z (UTC)
+Last updated: 2026-06-22T19:27:03Z (UTC)
 
 # Maintain Plan Register
 
@@ -54,20 +54,34 @@ For `portfolio.role: member`:
 
 1. Complete the local register update first.
 2. Read `portfolio.coordination_home_path` and `portfolio.coordination_home_register_path`.
-3. If the coordination home is locally available and safe to edit, update the coordination-home
-   register using the same entry format.
-4. If the coordination home is missing, inaccessible, outside the agent's writable scope, or
+3. For member entries added to the coordination-home register, derive a source namespace from
+   `portfolio.member_repository_id`. Normalize it by uppercasing letters, replacing runs of
+   non-alphanumeric characters with one hyphen, and trimming leading or trailing hyphens.
+4. Build the coordination-home ID as `<SOURCE-NAMESPACE>-<source local ID>`. Do not copy a bare
+   member-local ID such as `PR-001` into the coordination-home register as the coordination-home
+   ID.
+5. Preserve the member repository's source local ID in `Coordination note` as
+   `Source local register ID: <ID>`.
+6. If the coordination home is locally available and safe to edit, update the coordination-home
+   register using the same entry format and the coordination-home ID.
+7. If the coordination home is missing, inaccessible, outside the agent's writable scope, or
    otherwise unsafe to edit, record pending sync locally and continue the local planning task.
 
 For `portfolio.role: coordination-home`:
 
 1. Treat `portfolio.coordination_home_register_path` as the local coordination-home register path.
 2. Update it for local portfolio-level entries and for explicitly requested member updates.
-3. Do not scan sibling repositories, GitHub organizations, or remote repositories unless the user
+3. For explicitly requested member updates, use a coordination-home-unique ID with the member
+   source namespace and preserve the member's source local ID in `Coordination note`.
+4. Do not scan sibling repositories, GitHub organizations, or remote repositories unless the user
    explicitly asks for that separate discovery or enrollment work.
 
 Do not infer coordination homes from repository names, sibling folder names, GitHub organizations,
 or private conventions.
+
+In coordination-home registers, relations between represented entries should use coordination-home
+IDs. Use explicit repository/path pointers when a related member plan is not represented by a
+coordination-home entry.
 
 ## Pending Sync Fallback
 

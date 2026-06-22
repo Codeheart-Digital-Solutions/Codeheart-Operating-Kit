@@ -1,4 +1,4 @@
-Last updated: 2026-06-22T18:50:19Z (UTC)
+Last updated: 2026-06-22T19:39:08Z (UTC)
 
 # Plan Register
 
@@ -20,6 +20,36 @@ entered during plan-register adoption. Earlier repository plans may be added dur
 maintenance.
 
 ## Entries
+
+## OK-PR-003 - Coordination Home Register ID Namespace
+
+Type: implementation-plan
+Purpose: Add managed plan-register doctrine so coordination-home entries use unique IDs for
+member-repository plans while preserving source local register IDs.
+Status: active
+Owner / repository: Codeheart-Operating-Kit
+Canonical docs:
+docs/repo/plans/coordination-home-register-id-namespace/coordination-home-register-id-namespace_implementation_doc.md
+Created: 2026-06-22
+Last updated: 2026-06-22T19:36:00Z (UTC)
+Priority / ordering note: Small instruction-only patch candidate for the next Operating Kit
+release after `v0.1.7`.
+
+Relations:
+- related: OK-PR-001 - Plan Register Session And Lifecycle Hardening
+- related: docs/repo/plans/portfolio-coordination-plan-register/portfolio-coordination-plan-register_implementation_doc.md
+
+Session refs:
+- created: not recorded
+- material update: 2026-06-22, not recorded, activated implementation plan and created sibling
+  execution log.
+- material update: 2026-06-22, not recorded, completed release-preparation epics through local
+  asset build and validation; public release publication remains pending explicit approval.
+- material update: 2026-06-22, not recorded, completed EP-04 local pre-publication checks; public
+  tag, GitHub release, and consumer sync proof remain pending.
+
+Coordination note:
+- local-only
 
 ## OK-PR-002 - Codeheart Operating Kit Implementation-Planning Quality
 

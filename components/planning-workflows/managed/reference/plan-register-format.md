@@ -1,4 +1,4 @@
-Last updated: 2026-06-21T19:01:10Z (UTC)
+Last updated: 2026-06-22T19:27:03Z (UTC)
 
 # Plan Register Format
 
@@ -37,7 +37,7 @@ Use one repeated Markdown section per entry.
 
 Required fields:
 
-- `ID`: stable local register identifier or canonical plan ID.
+- `ID`: stable local register identifier, coordination-home identifier, or canonical plan ID.
 - `Title`: human-readable title.
 - `Type`: one of `discovery-plan`, `implementation-plan`, `plan-family`, `workstream`, or
   `reference-index`.
@@ -74,6 +74,41 @@ Use these lifecycle values when copying status from canonical planning documents
 Do not invent additional status values in the register. If a canonical document uses a different
 local status, preserve the canonical value in the document and use the closest standard lifecycle
 snapshot in the register.
+
+## Coordination-Home ID Uniqueness
+
+Register IDs must be unique inside the register that contains them.
+
+Local register IDs are local to the owning repository. A member repository may use `PR-001` in its
+own local register even when another member repository also has a local `PR-001`.
+
+Coordination-home register IDs must be unique inside the coordination-home register. When adding a
+member-repository entry to a coordination-home register, do not copy a bare member-local ID such as
+`PR-001` as the coordination-home ID. Use a coordination-home ID that includes a stable source
+namespace plus the source local ID.
+
+Derive the namespace from `portfolio.member_repository_id` when present. Normalize it for register
+IDs by uppercasing letters, replacing runs of non-alphanumeric characters with one hyphen, and
+trimming leading or trailing hyphens. If `portfolio.member_repository_id` is unavailable, use the
+`Owner / repository` value with the same normalization.
+
+Examples:
+
+- local member ID: `PR-001`
+- member repository ID: `Example-Automation`
+- coordination-home ID: `EXAMPLE-AUTOMATION-PR-001`
+
+Preserve the source local ID in `Coordination note`:
+
+```md
+Coordination note:
+- Source local register ID: PR-001
+- synced to coordination home
+```
+
+Use coordination-home IDs in coordination-home relations when the related entry is represented in
+the coordination-home register. Use explicit repository/path pointers for related plans that are
+not represented as coordination-home entries.
 
 ## Lifecycle Grouping
 
@@ -163,6 +198,7 @@ Examples:
 - `candidate for coordination-home register`
 - `synced to coordination home`
 - `coordination-sync-pending`
+- `Source local register ID: PR-001`
 
 Detailed pending sync belongs in `docs/repo/plans/coordination-sync-pending.md`, not in the main
 register entry.
@@ -174,7 +210,7 @@ Use this repeated-section shape:
 ```md
 ## Active And Draft Entries
 
-### PR-001 - Example Portfolio Coordination Model
+### EXAMPLE-AUTOMATION-PR-001 - Example Portfolio Coordination Model
 
 Type: discovery-plan
 Purpose: Define a reusable coordination model for related repositories.
@@ -187,13 +223,14 @@ Priority / ordering note: Needed before implementation planning.
 
 Relations:
 - parent: PF-001 - Example Portfolio Foundation
-- related: PR-002 - Example Dependency Model
+- related: EXAMPLE-AUTOMATION-PR-002 - Example Dependency Model
 
 Session refs:
 - created: not recorded
 - material update: 2026-06-21, not recorded, selected repeated-section format.
 
 Coordination note:
+- Source local register ID: PR-001
 - candidate for coordination-home register
 ```
 

@@ -1,6 +1,39 @@
-Last updated: 2026-06-22T18:05:35Z (UTC)
+Last updated: 2026-06-22T19:29:41Z (UTC)
 
 # Codeheart Operating Kit Release Notes
+
+## v0.1.8 Release Notes
+
+`v0.1.8` clarifies coordination-home plan-register identity rules so multiple member repositories
+can safely use local IDs such as `PR-001` while the coordination home keeps a unique portfolio
+index.
+
+### Included
+
+- Plan-register format guidance now states that coordination-home entry IDs must be unique inside
+  the coordination-home register.
+- Member-repository entries promoted to a coordination home now use a stable source namespace plus
+  the source local ID, such as `EXAMPLE-AUTOMATION-PR-001`.
+- Coordination notes now preserve source local register IDs with
+  `Source local register ID: <ID>`.
+- Plan-register maintenance guidance now tells agents how to derive member namespaces from
+  `portfolio.member_repository_id` and how to avoid copying bare member-local IDs into a
+  coordination-home register.
+- Coordination-home relation guidance now uses coordination-home IDs when represented entries are
+  related inside the coordination-home register.
+
+### Consumer Impact
+
+- `instruction-only change`: installed consumers receive clearer managed plan-register doctrine
+  when they sync or update the Operating Kit.
+- No forced migration is required. Existing consumer-owned plan registers and pending-sync files
+  are not rewritten.
+- Consumers adopt the new guidance through normal sync or update.
+
+### Validation
+
+- Release-readiness validation is recorded in the coordination-home register ID namespace
+  execution log before public tagging or publishing.
 
 ## v0.1.7 Release Notes
 
