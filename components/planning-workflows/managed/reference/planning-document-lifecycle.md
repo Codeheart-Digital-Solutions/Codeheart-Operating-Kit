@@ -1,4 +1,4 @@
-Last updated: 2026-06-21T15:07:29Z (UTC)
+Last updated: 2026-06-22T20:58:22Z (UTC)
 
 # Planning Document Lifecycle
 
@@ -211,6 +211,11 @@ than adding active plans under `archive/`.
 
 `docs/repo/plans/plan-register.md` is the lightweight index for formal plans, plan families, major
 workstreams, and portfolio-relevant planning records.
+
+The register location is stable even when canonical planning documents live under product,
+module, business, source-area, or other repository-owned planning roots. Use
+`plan-register-format.md` for local and coordination-home entry shapes, canonical document
+pointers, repository-qualified IDs, lifecycle grouping, and relation vocabulary.
 
 Planning documents remain the source of truth for their own lifecycle state, scope, decisions,
 execution evidence, and handoff details. The register may copy lifecycle metadata as a snapshot.

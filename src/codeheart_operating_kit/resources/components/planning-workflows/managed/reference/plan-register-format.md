@@ -1,4 +1,4 @@
-Last updated: 2026-06-22T19:27:03Z (UTC)
+Last updated: 2026-06-22T20:58:22Z (UTC)
 
 # Plan Register Format
 
@@ -21,6 +21,24 @@ The register may copy lifecycle metadata such as status, creation date, and last
 as an index snapshot. When the register and the canonical document disagree, the canonical
 document wins and the register should be refreshed.
 
+The register owns compact index metadata and stable relationship pointers. Keep decision
+rationale, blockers, execution evidence, review findings, detailed dependencies, and active work
+state in the canonical planning document or execution log.
+
+## Register Location And Canonical Documents
+
+Keep one `docs/repo/plans/plan-register.md` as the default durable register for the repository.
+The register location does not require every canonical planning document to live under
+`docs/repo/plans/`.
+
+Canonical planning documents may live in any repository-owned planning root, including
+`docs/repo/plans/`, `docs/business/plans/`, product docs, module docs, or source-area planning
+folders. The register points to those canonical homes instead of moving or duplicating them.
+
+Use repo-relative paths for canonical documents owned by the same repository. Use explicit
+repository/path pointers for member-repository entries represented in a coordination-home
+register, such as `Example-Automation:docs/repo/plans/example/example_implementation_doc.md`.
+
 ## Coverage
 
 A local repository register should list important local discovery plans, implementation plans,
@@ -28,8 +46,10 @@ plan families, major workstreams, and selected cross-repository dependencies tha
 affect local work.
 
 A coordination-home register uses the same entry shape but may be selective. It should cover
-portfolio-level plan families and selected member-repository entries that matter to portfolio
-coordination.
+portfolio-level plan families, local coordination-home plans, and selected member-repository
+entries that matter to portfolio coordination. It is not limited to cross-repository entries; it
+may also give a compact overview of what each represented repository is planning, implementing,
+and completing.
 
 ## Entry Fields
 
@@ -61,6 +81,21 @@ Optional fields:
 - `Sync state`: local-only marker such as `local-only`, `synced`, or
   `coordination-sync-pending`.
 
+## ID Conventions
+
+Standalone repository registers may use short local IDs such as `PR-001` when those IDs are clear
+inside that one repository.
+
+Coordinated portfolios may use repository-qualified local IDs such as
+`EXAMPLE-AUTOMATION-PR-001` when the same entry should be easy to recognize in both the local
+register and the coordination-home register. Repository-qualified local IDs are preferred when a
+consumer repository expects frequent portfolio coordination and wants to avoid mental mapping
+between local and coordination-home IDs.
+
+Do not force existing consumer-owned registers to migrate only because this convention exists.
+Apply it when creating new coordinated entries or when a consumer intentionally refreshes register
+IDs through a local plan.
+
 ## Lifecycle Values
 
 Use these lifecycle values when copying status from canonical planning documents:
@@ -79,12 +114,12 @@ snapshot in the register.
 
 Register IDs must be unique inside the register that contains them.
 
-Local register IDs are local to the owning repository. A member repository may use `PR-001` in its
-own local register even when another member repository also has a local `PR-001`.
+Local register IDs are local to the owning repository. A standalone member repository may use
+`PR-001` in its own local register even when another member repository also has a local `PR-001`.
 
 Coordination-home register IDs must be unique inside the coordination-home register. When adding a
-member-repository entry to a coordination-home register, do not copy a bare member-local ID such as
-`PR-001` as the coordination-home ID. Use a coordination-home ID that includes a stable source
+member-repository entry to a coordination-home register, do not copy a bare member-local ID such
+as `PR-001` as the coordination-home ID. Use a coordination-home ID that includes a stable source
 namespace plus the source local ID.
 
 Derive the namespace from `portfolio.member_repository_id` when present. Normalize it for register
@@ -92,11 +127,16 @@ IDs by uppercasing letters, replacing runs of non-alphanumeric characters with o
 trimming leading or trailing hyphens. If `portfolio.member_repository_id` is unavailable, use the
 `Owner / repository` value with the same normalization.
 
+If the member local ID is already repository-qualified with that normalized source namespace, the
+coordination home may reuse that ID. Do not double-prefix an already-qualified ID.
+
 Examples:
 
 - local member ID: `PR-001`
 - member repository ID: `Example-Automation`
 - coordination-home ID: `EXAMPLE-AUTOMATION-PR-001`
+- already-qualified local member ID: `EXAMPLE-AUTOMATION-PR-001`
+- coordination-home ID when already qualified: `EXAMPLE-AUTOMATION-PR-001`
 
 Preserve the source local ID in `Coordination note`:
 
@@ -138,6 +178,27 @@ used, entry headings should sit below the grouping heading. The entry fields do 
 Move entries between lifecycle groups when the canonical document status changes. The canonical
 planning document remains the source of truth; grouping is only an index convenience.
 
+## Repository Grouping
+
+Coordination-home registers may group entries by owning repository when that improves scanning.
+Repository grouping is an index convenience, not a separate ownership model.
+
+Example:
+
+```md
+## Codeheart Operating Kit Entries
+
+### OPERATING-KIT-PR-001 - Example Managed Workflow Plan
+
+## Example Automation Entries
+
+### EXAMPLE-AUTOMATION-PR-001 - Example Member Implementation Plan
+```
+
+Use repository grouping when ownership is the stable scanning boundary. Keep plan families,
+workstreams, and lifecycle status in fields and relations rather than making every fuzzy grouping
+a durable section.
+
 ## Relation Vocabulary
 
 Use these relation terms:
@@ -151,6 +212,10 @@ Use these relation terms:
 - `related`: relevant but non-blocking relationship.
 
 Prefer stable IDs and relative paths over prose-only references.
+
+Relations in the register are compact pointers. Put detailed dependency rationale, sequencing
+notes, decision history, and implementation evidence in canonical planning documents and execution
+logs.
 
 ## Session References
 
@@ -203,26 +268,26 @@ Examples:
 Detailed pending sync belongs in `docs/repo/plans/coordination-sync-pending.md`, not in the main
 register entry.
 
-## Markdown Shape
+## Local Entry Shape
 
-Use this repeated-section shape:
+Use this repeated-section shape for a local repository entry:
 
 ```md
 ## Active And Draft Entries
 
-### EXAMPLE-AUTOMATION-PR-001 - Example Portfolio Coordination Model
+### EXAMPLE-AUTOMATION-PR-001 - Example Local Implementation Plan
 
-Type: discovery-plan
-Purpose: Define a reusable coordination model for related repositories.
+Type: implementation-plan
+Purpose: Implement a repository-local capability that is relevant to portfolio coordination.
 Status: active
 Owner / repository: Example-Automation
-Canonical docs: docs/repo/plans/example-portfolio/example-portfolio_discovery_doc.md
+Canonical docs: docs/repo/plans/example-local/example-local_implementation_doc.md
 Created: 2026-06-21
 Last updated: 2026-06-21T14:53:02Z (UTC)
 Priority / ordering note: Needed before implementation planning.
 
 Relations:
-- parent: PF-001 - Example Portfolio Foundation
+- parent: EXAMPLE-AUTOMATION-PF-001 - Example Local Plan Family
 - related: EXAMPLE-AUTOMATION-PR-002 - Example Dependency Model
 
 Session refs:
@@ -230,8 +295,38 @@ Session refs:
 - material update: 2026-06-21, not recorded, selected repeated-section format.
 
 Coordination note:
-- Source local register ID: PR-001
 - candidate for coordination-home register
+```
+
+## Coordination-Home Member Entry Shape
+
+Use this repeated-section shape when a coordination-home register represents a member-repository
+entry:
+
+```md
+## Example Automation Entries
+
+### EXAMPLE-AUTOMATION-PR-001 - Example Local Implementation Plan
+
+Type: implementation-plan
+Purpose: Implement a member-repository capability that affects portfolio coordination.
+Status: active
+Owner / repository: Example-Automation
+Canonical docs: Example-Automation:docs/repo/plans/example-local/example-local_implementation_doc.md
+Created: 2026-06-21
+Last updated: 2026-06-21T14:53:02Z (UTC)
+Priority / ordering note: Needed before the portfolio can depend on the member capability.
+
+Relations:
+- depends-on: OPERATING-KIT-PR-001 - Example Managed Workflow Plan
+- related: Example-Automation:docs/repo/plans/example-dependency/example-dependency_discovery_doc.md
+
+Session refs:
+- created: not recorded
+
+Coordination note:
+- Source local register ID: PR-001
+- synced to coordination home
 ```
 
 Keep entries compact. If a field would need multiple paragraphs, move the detail to the canonical

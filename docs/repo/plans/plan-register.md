@@ -1,4 +1,4 @@
-Last updated: 2026-06-22T19:47:33Z (UTC)
+Last updated: 2026-06-22T21:13:19Z (UTC)
 
 # Plan Register
 
@@ -20,6 +20,38 @@ entered during plan-register adoption. Earlier repository plans may be added dur
 maintenance.
 
 ## Entries
+
+## OK-PR-004 - Plan Register Portfolio Doctrine Refinement
+
+Type: implementation-plan
+Purpose: Refine managed plan-register doctrine with local and coordination-home reference shapes,
+repository-qualified ID guidance, canonical pointer examples, relation ownership, and public-safe
+portfolio overview conventions.
+Status: active
+Owner / repository: Codeheart-Operating-Kit
+Canonical docs:
+docs/repo/plans/plan-register-portfolio-doctrine-refinement/plan-register-portfolio-doctrine-refinement_implementation_doc.md
+Created: 2026-06-22
+Last updated: 2026-06-22T21:13:19Z (UTC)
+Priority / ordering note: Should execute before consumers rely on refined portfolio register
+shapes for coordination-home population or repository-qualified local register IDs.
+
+Relations:
+- related: OK-PR-003 - Coordination Home Register ID Namespace
+- related: OK-PR-001 - Plan Register Session And Lifecycle Hardening
+- related: docs/repo/plans/portfolio-coordination-plan-register/portfolio-coordination-plan-register_implementation_doc.md
+- related: consumer-local portfolio planning surfaces discovery handoff
+
+Session refs:
+- created: not recorded
+- material update: 2026-06-22, not recorded, activated implementation plan.
+- material update: 2026-06-22, not recorded, completed managed doctrine edits, packaged resource
+  mirroring, `v0.1.9` release preparation, and local validation; public release publication and
+  consumer sync proof remain pending explicit approval.
+
+Coordination note:
+- local-only
+- consumer-local discovery source sanitized for public-core doctrine planning
 
 ## OK-PR-003 - Coordination Home Register ID Namespace
 

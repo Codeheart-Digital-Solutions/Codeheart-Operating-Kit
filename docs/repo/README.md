@@ -1,4 +1,4 @@
-Last updated: 2026-06-22T19:20:04Z (UTC)
+Last updated: 2026-06-22T20:52:45Z (UTC)
 
 # Repo Documentation
 
@@ -22,6 +22,9 @@ This folder contains public repository governance for Codeheart Operating Kit.
   issues.
 - `plans/README.md`: repository-level discovery and implementation plans.
 - `plans/plan-register.md`: lightweight index of registered Operating Kit repository plans.
+- `plans/plan-register-portfolio-doctrine-refinement/plan-register-portfolio-doctrine-refinement_implementation_doc.md`:
+  draft implementation plan for refined local and coordination-home plan-register reference shapes,
+  repository-qualified ID guidance, canonical pointer examples, and relation ownership doctrine.
 - `plans/kit-feedback-intake/kit-feedback-intake_discovery_doc.md`: discovery for a safe
   consumer feedback intake and maintainer backlog workflow.
 - `plans/portfolio-coordination-plan-register/portfolio-coordination-plan-register_discovery_doc.md`:

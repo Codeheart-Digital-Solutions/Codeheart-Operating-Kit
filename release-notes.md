@@ -1,6 +1,42 @@
-Last updated: 2026-06-22T19:29:41Z (UTC)
+Last updated: 2026-06-22T20:58:22Z (UTC)
 
 # Codeheart Operating Kit Release Notes
+
+## v0.1.9 Release Notes
+
+`v0.1.9` refines managed plan-register doctrine for local repositories and configured
+coordination homes. It keeps the existing `docs/repo/plans/plan-register.md` location and adds
+clearer reference shapes for portfolio overview usage.
+
+### Included
+
+- Plan-register format guidance now clarifies that canonical planning documents may live outside
+  `docs/repo/plans/` while the durable register still lives at
+  `docs/repo/plans/plan-register.md`.
+- Local and coordination-home entry examples now show repository-qualified IDs, canonical document
+  pointer shapes, compact relation fields, and coordination notes.
+- Coordinated portfolios may use repository-qualified local IDs so a member register and the
+  coordination-home register can refer to the same plan with the same stable ID.
+- Coordination-home guidance now reuses already repository-qualified member IDs and derives
+  `<SOURCE-NAMESPACE>-<LOCAL-ID>` only for bare member-local IDs.
+- Plan-register guidance now clarifies that registers own compact index metadata and relation
+  pointers while canonical planning documents own detailed decisions, blockers, execution
+  evidence, and rationale.
+- Repository grouping guidance now allows coordination-home registers to group entries by owning
+  repository when that improves scanning.
+
+### Consumer Impact
+
+- `instruction-only change`: installed consumers receive clearer managed plan-register doctrine
+  when they sync or update the Operating Kit.
+- No forced migration is required. Existing consumer-owned plan registers, pending-sync files,
+  canonical plans, local runbooks, and local board-like surfaces are not rewritten.
+- Consumers adopt the new guidance through normal sync or update.
+
+### Validation
+
+- Release-readiness validation is recorded in the plan-register portfolio doctrine refinement
+  execution log before public tagging or publishing.
 
 ## v0.1.8 Release Notes
 

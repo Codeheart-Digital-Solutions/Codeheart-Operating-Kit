@@ -1,4 +1,4 @@
-Last updated: 2026-06-22T19:27:03Z (UTC)
+Last updated: 2026-06-22T20:58:22Z (UTC)
 
 # Maintain Plan Register
 
@@ -33,14 +33,18 @@ Read:
 2. Create the register from the kit baseline when it is absent and the current task includes
    register maintenance.
 3. Find an existing entry by stable ID, title, canonical path, or relation.
-4. Add or refresh only the compact index fields defined in `../reference/plan-register-format.md`.
-5. Copy lifecycle metadata from the canonical document as a snapshot.
-6. Add or update relations using the standard relation vocabulary.
-7. Resolve the current session ref with the bounded procedure below when the current task needs a
+4. Preserve the existing stable ID unless the current task explicitly includes an ID migration.
+5. For new coordinated-portfolio entries, follow the repository's local ID convention. A
+   repository-qualified ID such as `EXAMPLE-AUTOMATION-PR-001` is acceptable when the entry should
+   use the same ID locally and in the coordination home.
+6. Add or refresh only the compact index fields defined in `../reference/plan-register-format.md`.
+7. Copy lifecycle metadata from the canonical document as a snapshot.
+8. Add or update relations using the standard relation vocabulary.
+9. Resolve the current session ref with the bounded procedure below when the current task needs a
    new creation or material-update session ref.
-8. Record creating or material-update session refs when a session ID is available.
-9. Omit the session row or record `not recorded` when no session ID is available.
-10. Keep detailed status, blockers, decisions, execution evidence, and next actions in the
+10. Record creating or material-update session refs when a session ID is available.
+11. Omit the session row or record `not recorded` when no session ID is available.
+12. Keep detailed status, blockers, decisions, execution evidence, and next actions in the
    canonical documents or execution logs.
 
 If the register and canonical plan conflict, trust the canonical plan and refresh the register.
@@ -54,26 +58,32 @@ For `portfolio.role: member`:
 
 1. Complete the local register update first.
 2. Read `portfolio.coordination_home_path` and `portfolio.coordination_home_register_path`.
-3. For member entries added to the coordination-home register, derive a source namespace from
+3. For member entries added to the coordination-home register, derive the source namespace from
    `portfolio.member_repository_id`. Normalize it by uppercasing letters, replacing runs of
    non-alphanumeric characters with one hyphen, and trimming leading or trailing hyphens.
-4. Build the coordination-home ID as `<SOURCE-NAMESPACE>-<source local ID>`. Do not copy a bare
-   member-local ID such as `PR-001` into the coordination-home register as the coordination-home
-   ID.
-5. Preserve the member repository's source local ID in `Coordination note` as
+4. If the member local ID already begins with `<SOURCE-NAMESPACE>-`, reuse it as the
+   coordination-home ID.
+5. If the member local ID is bare, build the coordination-home ID as
+   `<SOURCE-NAMESPACE>-<source local ID>`. Do not copy a bare member-local ID such as `PR-001`
+   into the coordination-home register as the coordination-home ID.
+6. Preserve the member repository's source local ID in `Coordination note` as
    `Source local register ID: <ID>`.
-6. If the coordination home is locally available and safe to edit, update the coordination-home
+7. If the coordination home is locally available and safe to edit, update the coordination-home
    register using the same entry format and the coordination-home ID.
-7. If the coordination home is missing, inaccessible, outside the agent's writable scope, or
+8. If the coordination home is missing, inaccessible, outside the agent's writable scope, or
    otherwise unsafe to edit, record pending sync locally and continue the local planning task.
 
 For `portfolio.role: coordination-home`:
 
 1. Treat `portfolio.coordination_home_register_path` as the local coordination-home register path.
 2. Update it for local portfolio-level entries and for explicitly requested member updates.
-3. For explicitly requested member updates, use a coordination-home-unique ID with the member
-   source namespace and preserve the member's source local ID in `Coordination note`.
-4. Do not scan sibling repositories, GitHub organizations, or remote repositories unless the user
+3. For explicitly requested member updates, derive the source namespace from the member's
+   repository ID when available, otherwise from `Owner / repository`.
+4. Reuse an already repository-qualified member ID when it begins with the normalized source
+   namespace.
+5. Build `<SOURCE-NAMESPACE>-<source local ID>` only when the member source local ID is bare.
+6. Preserve the member's source local ID in `Coordination note`.
+7. Do not scan sibling repositories, GitHub organizations, or remote repositories unless the user
    explicitly asks for that separate discovery or enrollment work.
 
 Do not infer coordination homes from repository names, sibling folder names, GitHub organizations,
@@ -81,7 +91,8 @@ or private conventions.
 
 In coordination-home registers, relations between represented entries should use coordination-home
 IDs. Use explicit repository/path pointers when a related member plan is not represented by a
-coordination-home entry.
+coordination-home entry. Keep detailed dependency rationale and execution evidence in canonical
+planning documents and execution logs.
 
 ## Pending Sync Fallback
 
@@ -97,6 +108,8 @@ Use this entry shape:
 Source repository: <member repository ID or repository name>
 Target coordination register: <coordination_home_path>/<coordination_home_register_path>
 Affected plan entry: <ID, title, and canonical path>
+Source local register ID: <ID>
+Target coordination-home ID: <ID>
 Intended change: <add | update | complete | supersede | archive | relation-update>
 Reason: <why coordination-home sync is needed>
 Date: YYYY-MM-DD

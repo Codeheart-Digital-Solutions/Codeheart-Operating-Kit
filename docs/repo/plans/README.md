@@ -1,4 +1,4 @@
-Last updated: 2026-06-22T19:20:04Z (UTC)
+Last updated: 2026-06-22T20:52:45Z (UTC)
 
 # Repo Plans
 
@@ -7,6 +7,8 @@ This folder contains Codeheart Operating Kit repository-level discovery and impl
 ## Current Plans
 
 - Plan register: `plan-register.md`
+- Plan-register portfolio doctrine refinement implementation plan:
+  `plan-register-portfolio-doctrine-refinement/plan-register-portfolio-doctrine-refinement_implementation_doc.md`
 - Kit feedback intake discovery:
   `kit-feedback-intake/kit-feedback-intake_discovery_doc.md`
 - Portfolio coordination and plan-register model discovery:

@@ -1,4 +1,4 @@
-Last updated: 2026-06-21T14:53:02Z (UTC)
+Last updated: 2026-06-22T20:58:22Z (UTC)
 
 # Planning Workflows
 
@@ -21,7 +21,8 @@ execution, planning document review, planning document lifecycle, and plan-regis
   plan bundles, subplans, plan families, program folders, attachments, archives, and index
   maintenance.
 - Use `reference/plan-register-format.md` for `docs/repo/plans/plan-register.md` entry shape,
-  lifecycle snapshots, relation vocabulary, session refs, and coordination notes.
+  repository-qualified IDs, canonical document pointers, lifecycle snapshots, relation
+  vocabulary, session refs, coordination-home member entries, and coordination notes.
 
 ## Boundaries
 
