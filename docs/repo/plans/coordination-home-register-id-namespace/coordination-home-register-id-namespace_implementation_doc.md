@@ -1,6 +1,6 @@
-Last updated: 2026-06-22T19:39:08Z (UTC)
+Last updated: 2026-06-22T19:47:33Z (UTC)
 Created: 2026-06-22
-Status: active
+Status: completed
 Execution log: docs/repo/plans/coordination-home-register-id-namespace/coordination-home-register-id-namespace_execution_log.md
 
 # Document Header
@@ -503,17 +503,17 @@ time this epic starts.
 ### F) Tasks Checklist
 
 - [x] Re-read `docs/repo/runbooks/release-operating-kit.md` before release publication.
-- [ ] Confirm the validated commit matches the intended release commit with `git status --short` and `git rev-parse HEAD`.
+- [x] Confirm the validated commit matches the intended release commit with `git status --short` and `git rev-parse HEAD`.
 - [x] Confirm `release-notes.md` covers the coordination-home ID namespace consumer impact.
 - [x] Confirm `dist/codeheart-operating-kit-0.1.8-macos.tar.gz` exists from the validated asset build.
 - [x] Confirm `dist/codeheart-operating-kit-0.1.8-windows.zip` exists from the validated asset build.
 - [x] Confirm checksum files exist for both release assets.
-- [ ] Create public tag `v0.1.8` from the validated commit after explicit release publication approval.
-- [ ] Publish GitHub release `v0.1.8` with `bootstrap.md`, `install.sh`, `install.ps1`, `release-notes.md`, `manifest.yaml`, release assets, and checksum files.
-- [ ] Run `codeheart-operating-kit update-check` in one consumer repository after publication.
-- [ ] Run `codeheart-operating-kit sync <consumer-repository-path>` in the same consumer repository after update-check sees `v0.1.8`.
-- [ ] Run `codeheart-operating-kit check <consumer-repository-path> --json` and confirm managed-content drift is absent.
-- [ ] Create `docs/repo/plans/coordination-home-register-id-namespace/coordination-home-register-id-namespace_execution_log.md` with validation and release evidence.
+- [x] Create public tag `v0.1.8` from the validated commit after explicit release publication approval.
+- [x] Publish GitHub release `v0.1.8` with `bootstrap.md`, `install.sh`, `install.ps1`, `release-notes.md`, `manifest.yaml`, release assets, and checksum files.
+- [x] Run `codeheart-operating-kit update-check` in one consumer repository after publication.
+- [x] Run `codeheart-operating-kit sync <consumer-repository-path>` in the same consumer repository after update-check sees `v0.1.8`.
+- [x] Run `codeheart-operating-kit check <consumer-repository-path> --json` and confirm managed-content drift is absent.
+- [x] Create `docs/repo/plans/coordination-home-register-id-namespace/coordination-home-register-id-namespace_execution_log.md` with validation and release evidence.
 
 ### G) Implementation Notes
 
@@ -556,3 +556,6 @@ OQ-2 applies.
 - 2026-06-22: Completed EP-04 local pre-publication checks for release notes, assets, checksums,
   checksum mismatch fail-closed behavior, and local macOS install from the built asset. Public tag,
   GitHub release, and consumer sync proof remain pending explicit release-publication approval.
+- 2026-06-22: Completed EP-04 after explicit release-publication approval by publishing
+  `v0.1.8`, verifying release assets, and proving update-check, sync, and check adoption in an
+  isolated consumer repository.

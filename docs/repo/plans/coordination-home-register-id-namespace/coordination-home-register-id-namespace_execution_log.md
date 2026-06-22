@@ -1,6 +1,6 @@
-Last updated: 2026-06-22T19:39:08Z (UTC)
+Last updated: 2026-06-22T19:47:33Z (UTC)
 Created: 2026-06-22
-Status: active
+Status: completed
 
 # Execution Log
 
@@ -9,19 +9,20 @@ docs/repo/plans/coordination-home-register-id-namespace/coordination-home-regist
 
 Mode: goal-style implementation execution.
 
-Overall divergence: None at activation. The plan is active and execution started from the approved
-draft.
+Overall divergence: None at activation. The plan executed from the approved draft. Consumer sync
+proof used an isolated temporary consumer repository after locally available named consumers showed
+pre-existing dirty managed files.
 
 ## Summary
 
-The plan was activated after explicit user approval to activate and implement it. The intended
-change remains an instruction-only Operating Kit patch: managed plan-register doctrine will define
-coordination-home-unique IDs for member entries, preserve source local register IDs in
-`Coordination note`, mirror packaged resources, update release/version surfaces, and validate
-release asset readiness.
+The plan was activated after explicit user approval to activate and implement it. The completed
+change is an instruction-only Operating Kit patch: managed plan-register doctrine defines
+coordination-home-unique IDs for member entries, preserves source local register IDs in
+`Coordination note`, mirrors packaged resources, updates release/version surfaces, and publishes
+`v0.1.8`.
 
-Public tag creation and GitHub release publication remain governed by the plan's EP-04 release
-boundary and the release runbook.
+Public tag creation and GitHub release publication were completed after explicit release
+publication approval.
 
 ## Epic Delta Index
 
@@ -31,7 +32,7 @@ boundary and the release runbook.
 | EP-01 | completed | Source managed docs now define coordination-home-unique IDs, namespace derivation, source local ID traceability, and coordination-home relation IDs. | Markdown headers and public-core validation passed. | accepted |
 | EP-02 | completed | Packaged managed docs and planning-workflows component metadata mirror source doctrine at version `0.1.8`. | Mirror `cmp` checks and packaging-resource pytest passed. | accepted |
 | EP-03 | completed | Release notes, version surfaces, workflow asset names, manifests, fixture, validation, and local release assets are ready for `v0.1.8`. | Markdown headers, public-core, JSON schemas, release manifest, focused tests, full pytest, asset build, manifest hash refresh, and diff check passed. | accepted |
-| EP-04 | partial | Local release pre-publication checks passed; public tag, GitHub release, and consumer sync proof remain pending explicit approval and a validated commit. | Release runbook re-read, assets/checksums confirmed, bad checksum failed closed, local macOS install reported `codeheart-operating-kit 0.1.8`. | pending |
+| EP-04 | completed | Public `v0.1.8` tag and GitHub release were published from the validated commit, and a consumer update-check/sync/check proof passed. | Release runbook re-read, assets/checksums confirmed, bad checksum failed closed, local macOS install reported `codeheart-operating-kit 0.1.8`, release metadata verified, published asset checksum verified, update-check detected `v0.1.8`, sync reported `kit_version` `0.1.8`, and check returned `ok: true` with no drift. | accepted |
 
 ## Review Gate Metrics
 
@@ -41,6 +42,7 @@ boundary and the release runbook.
 | EP-01 | yes | main-thread review; subagent unavailable without explicit user delegation request | 1 | no material findings | no | accepted |
 | EP-02 | yes | main-thread review; subagent unavailable without explicit user delegation request | 1 | no material findings | no | accepted |
 | EP-03 | yes | main-thread review; subagent unavailable without explicit user delegation request | 1 | no material findings | no | accepted |
+| EP-04 | yes | main-thread review; subagent unavailable without explicit user delegation request | 1 | no material findings | no | accepted |
 
 ## EP-00 - Activation
 
@@ -205,15 +207,17 @@ Divergence:
 
 ## EP-04 - Release Publication And Consumer Sync Proof
 
-Practical outcome so far: Local pre-publication checks are complete. Public release publication and
-consumer sync proof remain pending.
+Practical outcome: `v0.1.8` is published, and an isolated consumer proved normal update-check,
+sync, and check adoption of the new managed doctrine.
 
 Evidence:
 
 - Re-read `docs/repo/runbooks/release-operating-kit.md`.
-- Current pre-commit HEAD is `0e70c2f2ef619b49308d11fcc60be84f4758b9cd`.
-- `git status --short --untracked-files=all` shows release-prep changes are not committed, so no
-  validated release commit exists yet.
+- Validated release commit is `c8b04f71b3b1670cbacffbc91d5da74a92dc16cc`.
+- `git status --short --untracked-files=all` was clean before tag creation.
+- `origin/main` was updated from `0e70c2f` to `c8b04f7`.
+- Annotated tag `v0.1.8` dereferences to
+  `c8b04f71b3b1670cbacffbc91d5da74a92dc16cc`.
 - `release-notes.md` covers `v0.1.8`, coordination-home ID namespace behavior,
   `instruction-only change`, no forced migration, and normal sync/update adoption.
 - `dist/codeheart-operating-kit-0.1.8-macos.tar.gz` exists.
@@ -224,19 +228,44 @@ Evidence:
   `Checksum mismatch for codeheart-operating-kit-0.1.8-macos.tar.gz; installation stopped.`
 - Local macOS install from the built asset and checksum file reported
   `codeheart-operating-kit 0.1.8`.
-
-Remaining:
-
-- Commit release-prep changes.
-- Confirm the validated commit matches the intended release commit.
-- Create public tag `v0.1.8` after explicit release-publication approval.
-- Publish GitHub release `v0.1.8` with release notes, manifest, installers, assets, and checksums.
-- Run consumer update-check, sync, and check proof after publication.
+- Public GitHub release:
+  `https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/tag/v0.1.8`.
+- Release metadata reports `isDraft: false`, `isPrerelease: false`, `name: v0.1.8`, and
+  `publishedAt: 2026-06-22T19:45:47Z`.
+- Release asset names:
+  `bootstrap.md`,
+  `codeheart-operating-kit-0.1.8-macos.tar.gz`,
+  `codeheart-operating-kit-0.1.8-macos.tar.gz.sha256`,
+  `codeheart-operating-kit-0.1.8-windows.zip`,
+  `codeheart-operating-kit-0.1.8-windows.zip.sha256`,
+  `install.ps1`,
+  `install.sh`,
+  `manifest.yaml`,
+  `release-notes.md`.
+- Published macOS asset checksum verification passed with
+  `codeheart-operating-kit-0.1.8-macos.tar.gz: OK`.
+- Isolated consumer proof started from installed `codeheart-operating-kit 0.1.7`.
+- `codeheart-operating-kit update-check --json` reported
+  `status: update-available` and `latest_seen_version: v0.1.8`.
+- A temporary virtual environment installed the wheel from the published `v0.1.8` macOS release
+  asset and reported `codeheart-operating-kit 0.1.8`.
+- `codeheart-operating-kit sync --json` on the isolated consumer reported `kit_version: 0.1.8`.
+- `codeheart-operating-kit check --json` on the isolated consumer reported `ok: true`,
+  `stale_cli: false`, and an empty `drift` list.
+- Synced managed docs contained the new coordination-home ID doctrine, including
+  `portfolio.member_repository_id` namespace derivation and
+  `Source local register ID: <ID>` traceability.
 
 Review gate:
 
-- EP-04 review remains pending until public release and consumer sync proof are complete.
+- Main-thread review compared tag target, release metadata, attached asset names, checksum
+  verification, consumer proof output, and synced managed-doc snippets against EP-04 acceptance
+  criteria and found no material findings.
 
 Divergence:
 
-- None.
+- Consumer proof used an isolated temporary consumer because locally available named consumer
+  repositories had pre-existing dirty managed files. This avoided overwriting unrelated local work.
+- The temporary pip install emitted a private-index authentication warning from local pip
+  configuration, but the wheel from the published release asset installed successfully and the CLI
+  reported `0.1.8`.
