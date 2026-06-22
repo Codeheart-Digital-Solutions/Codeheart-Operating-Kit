@@ -1,4 +1,4 @@
-Last updated: 2026-06-22T18:05:35Z (UTC)
+Last updated: 2026-06-22T18:50:19Z (UTC)
 
 # Plan Register
 
@@ -27,14 +27,14 @@ Type: implementation-plan
 Purpose: Update managed discovery, implementation-planning, planning-review, and execution
 workflows so plans preserve intended feature capability and reject policy-only or under-covered
 implementation.
-Status: active
+Status: completed
 Owner / repository: Codeheart-Operating-Kit
 Canonical docs:
 docs/repo/plans/codeheart-operating-kit-implementation-planning-quality/codeheart-operating-kit-implementation-planning-quality_implementation_doc.md
 Created: 2026-06-22
-Last updated: 2026-06-22T18:05:35Z (UTC)
-Priority / ordering note: Targets `v0.1.7` planning workflow quality release and first consumer repository
-first-consumer sync proof.
+Last updated: 2026-06-22T18:50:19Z (UTC)
+Priority / ordering note: Completed `v0.1.7` planning workflow quality release and first-consumer
+sync proof.
 
 Relations:
 - related: first consumer repository discovery handoff -
@@ -44,6 +44,8 @@ Relations:
 
 Session refs:
 - created: 2026-06-22, session 019eef87-f252-7b91-aa50-ecf54b357c6c
+- material update: 2026-06-22, session 019eef87-f252-7b91-aa50-ecf54b357c6c,
+  completed `v0.1.7` release publication and first-consumer sync proof.
 
 Coordination note:
 - local-only

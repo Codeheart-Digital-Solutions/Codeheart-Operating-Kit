@@ -1,6 +1,6 @@
-Last updated: 2026-06-22T18:40:30Z (UTC)
+Last updated: 2026-06-22T18:50:19Z (UTC)
 Created: 2026-06-22
-Status: active
+Status: completed
 
 # Execution Log
 
@@ -17,7 +17,7 @@ docs/repo/plans/codeheart-operating-kit-implementation-planning-quality/codehear
 | EP3 | reviewed | Planning-document review now checks feature capability coverage, quiet narrowing, support-structure-only plans, lazy implementer risk, and avoidable non-concreteness. | Mirror diff, Markdown headers, public-core, packaged-resource parity, diff check passed. | accepted |
 | EP4 | reviewed | Execution per-epic review now checks delivered feature capability and treats incomplete, narrow, policy-only, stubbed, unusable, and unvalidated capability gaps as material findings. | Mirror diff, Markdown headers, public-core, packaged-resource parity, diff check passed. | accepted |
 | EP5 | reviewed | Release notes, manifest surfaces, rebuilt release assets, consumer-impact record, and full validation are complete. | Markdown headers, public-core, JSON schemas, release manifest, focused tests, full pytest, asset build, and diff check passed. | accepted |
-| EP6 | active | Release surfaces and assets are prepared; tag, GitHub release, and first-consumer sync remain. | Release-prep validation passed. | pending |
+| EP6 | reviewed | `v0.1.7` was pushed, published as a GitHub release, and adopted by the first consumer repository through normal install, sync, and check. | Release URL, tag, assets, checksums, update-check, sync, check, and diff evidence recorded. | accepted |
 
 # Review Gate Metrics
 
@@ -29,12 +29,18 @@ docs/repo/plans/codeheart-operating-kit-implementation-planning-quality/codehear
 | EP3 | yes | read-only subagent | 1 | no material findings | no |
 | EP4 | yes | read-only subagent | 1 | no material findings | no |
 | EP5 | yes | read-only subagent | 1 | no material findings | no |
+| EP6 | yes | read-only subagent | 1 | no material findings | no |
 
 Review round 1 used a fresh read-only reviewer. The reviewer accepted EP0 through EP5 and found
 no material issue blocking release-prep completion or proceeding to EP6 tag/publish work. Residual
 risk noted by the reviewer: pytest was run with the available Python 3.12 test environment because
 the system Python did not have pytest, and ignored `dist/` release assets must be uploaded from the
 current local files rather than assumed to be committed.
+
+Review round 2 used a fresh read-only reviewer for EP6 after release publication and first-consumer
+sync. The reviewer accepted EP6 and found no material findings. Residual risk noted by the
+reviewer: live GitHub release metadata and asset presence were verified, but remote assets were
+not downloaded and re-hashed against local checksum files.
 
 # EP0 - Source Context And Canonical Plan Setup
 
@@ -141,10 +147,34 @@ Source execution context is established in this repository with source-relative 
 - Release runbook was read before release-prep work.
 - Source version surfaces target `0.1.7` and `v0.1.7`.
 - Release assets were rebuilt and root manifest asset hashes were updated to the rebuilt files.
+- Source commit `fe3334b98c28652b4eb1bbae08af2e91a1a55160` was pushed to `main`.
+- Annotated tag `v0.1.7` was pushed and points to
+  `fe3334b98c28652b4eb1bbae08af2e91a1a55160`.
+- GitHub release published:
+  `https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/tag/v0.1.7`
+- Uploaded release assets:
+  `bootstrap.md`, `install.sh`, `install.ps1`, `release-notes.md`, `manifest.yaml`,
+  `codeheart-operating-kit-0.1.7-macos.tar.gz`,
+  `codeheart-operating-kit-0.1.7-macos.tar.gz.sha256`,
+  `codeheart-operating-kit-0.1.7-windows.zip`, and
+  `codeheart-operating-kit-0.1.7-windows.zip.sha256`.
+- First-consumer `codeheart-operating-kit update-check` saw `v0.1.7` available before adoption.
+- First-consumer user-level CLI was upgraded with the published `0.1.7` macOS release asset.
+- First-consumer `codeheart-operating-kit --version` returned `codeheart-operating-kit 0.1.7`.
+- First-consumer `codeheart-operating-kit sync .` synced 31 managed files.
+- First-consumer lock now records `kit_version: 0.1.7`, release asset URL for `v0.1.7`, and
+  `update_status: current`.
+- First-consumer managed planning runbooks contain the new capability-scope, feature-capability,
+  lazy implementer, and delivered-capability wording.
+- First-consumer `codeheart-operating-kit check` reported `OK: True` and `Drift findings: 0`.
+- First-consumer `git diff --check` passed.
+
+## Divergence
+
+- The initial first-consumer sync was run while the PATH CLI still reported `0.1.6`; that did not
+  adopt the released managed guidance. The published `0.1.7` installer was then run, and
+  update-check, sync, check, and diff validation were repeated with CLI `0.1.7`.
 
 ## Remaining
 
-- Commit validated source changes.
-- Create and push tag `v0.1.7` from the validated source commit.
-- Publish GitHub release `v0.1.7` with manifests, installers, release notes, assets, and checksums.
-- Run first-consumer `update-check`, `sync`, `check`, and `git diff --check`.
+- None.

@@ -1,6 +1,7 @@
-Last updated: 2026-06-22T18:36:23Z (UTC)
+Last updated: 2026-06-22T18:50:19Z (UTC)
 Created: 2026-06-22
-Status: active
+Status: completed
+Completed: 2026-06-22
 Execution log: docs/repo/plans/codeheart-operating-kit-implementation-planning-quality/codeheart-operating-kit-implementation-planning-quality_execution_log.md
 
 # Document Header
@@ -910,14 +911,14 @@ after source managed wording, packaged resources, release notes, and local valid
 - [x] Run `python3 -m pytest -q`.
 - [x] Run `python3 scripts/build-release-assets.py --version 0.1.7 --output-dir dist`.
 - [x] Run `python3 -m pytest tests/test_install_metadata.py tests/test_release_assets.py tests/test_packaging_resources.py tests/test_sync_check.py tests/test_json_schemas.py -q`.
-- [ ] Create Git tag `v0.1.7` from the validated source commit.
-- [ ] Publish GitHub release `v0.1.7` with `bootstrap.md`, `install.sh`, `install.ps1`, `release-notes.md`, `manifest.yaml`, `dist/codeheart-operating-kit-0.1.7-macos.tar.gz`, `dist/codeheart-operating-kit-0.1.7-macos.tar.gz.sha256`, `dist/codeheart-operating-kit-0.1.7-windows.zip`, and `dist/codeheart-operating-kit-0.1.7-windows.zip.sha256`.
-- [ ] Record release URL, Git tag, asset filenames, checksum values, and residual risk in `docs/repo/plans/codeheart-operating-kit-implementation-planning-quality/codeheart-operating-kit-implementation-planning-quality_execution_log.md`.
-- [ ] Run `codeheart-operating-kit update-check` in `../<first-consumer-repository>`.
-- [ ] Run `codeheart-operating-kit sync .` in `../<first-consumer-repository>`.
-- [ ] Run `codeheart-operating-kit check` in `../<first-consumer-repository>`.
-- [ ] Run `git -C ../<first-consumer-repository> diff --check`.
-- [ ] Record first consumer repository update-check, sync, check, and diff evidence in `docs/repo/plans/codeheart-operating-kit-implementation-planning-quality/codeheart-operating-kit-implementation-planning-quality_execution_log.md`.
+- [x] Create Git tag `v0.1.7` from the validated source commit.
+- [x] Publish GitHub release `v0.1.7` with `bootstrap.md`, `install.sh`, `install.ps1`, `release-notes.md`, `manifest.yaml`, `dist/codeheart-operating-kit-0.1.7-macos.tar.gz`, `dist/codeheart-operating-kit-0.1.7-macos.tar.gz.sha256`, `dist/codeheart-operating-kit-0.1.7-windows.zip`, and `dist/codeheart-operating-kit-0.1.7-windows.zip.sha256`.
+- [x] Record release URL, Git tag, asset filenames, checksum values, and residual risk in `docs/repo/plans/codeheart-operating-kit-implementation-planning-quality/codeheart-operating-kit-implementation-planning-quality_execution_log.md`.
+- [x] Run `codeheart-operating-kit update-check` in `../<first-consumer-repository>`.
+- [x] Run `codeheart-operating-kit sync .` in `../<first-consumer-repository>`.
+- [x] Run `codeheart-operating-kit check` in `../<first-consumer-repository>`.
+- [x] Run `git -C ../<first-consumer-repository> diff --check`.
+- [x] Record first consumer repository update-check, sync, check, and diff evidence in `docs/repo/plans/codeheart-operating-kit-implementation-planning-quality/codeheart-operating-kit-implementation-planning-quality_execution_log.md`.
 
 ### G) Implementation Notes
 
@@ -971,3 +972,4 @@ Maintain this record during source execution.
 - 2026-06-22: Activated plan for implementation.
 - 2026-06-22: Removed weak-plan sample work from the implementation scope while preserving release
   and consumer sync planning.
+- 2026-06-22: Published `v0.1.7` and recorded first-consumer sync proof.
