@@ -1,4 +1,4 @@
-Last updated: 2026-06-22T21:13:19Z (UTC)
+Last updated: 2026-06-22T21:18:13Z (UTC)
 
 # Plan Register
 
@@ -27,12 +27,12 @@ Type: implementation-plan
 Purpose: Refine managed plan-register doctrine with local and coordination-home reference shapes,
 repository-qualified ID guidance, canonical pointer examples, relation ownership, and public-safe
 portfolio overview conventions.
-Status: active
+Status: completed
 Owner / repository: Codeheart-Operating-Kit
 Canonical docs:
 docs/repo/plans/plan-register-portfolio-doctrine-refinement/plan-register-portfolio-doctrine-refinement_implementation_doc.md
 Created: 2026-06-22
-Last updated: 2026-06-22T21:13:19Z (UTC)
+Last updated: 2026-06-22T21:18:13Z (UTC)
 Priority / ordering note: Should execute before consumers rely on refined portfolio register
 shapes for coordination-home population or repository-qualified local register IDs.
 
@@ -48,6 +48,8 @@ Session refs:
 - material update: 2026-06-22, not recorded, completed managed doctrine edits, packaged resource
   mirroring, `v0.1.9` release preparation, and local validation; public release publication and
   consumer sync proof remain pending explicit approval.
+- material update: 2026-06-22, not recorded, published `v0.1.9`, completed first-consumer sync
+  proof, and marked implementation complete.
 
 Coordination note:
 - local-only

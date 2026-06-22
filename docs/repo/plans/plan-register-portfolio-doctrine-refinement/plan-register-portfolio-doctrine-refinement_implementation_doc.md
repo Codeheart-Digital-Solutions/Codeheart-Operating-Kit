@@ -1,6 +1,7 @@
-Last updated: 2026-06-22T21:13:19Z (UTC)
+Last updated: 2026-06-22T21:18:13Z (UTC)
 Created: 2026-06-22
-Status: active
+Status: completed
+Completed: 2026-06-22
 Execution log: docs/repo/plans/plan-register-portfolio-doctrine-refinement/plan-register-portfolio-doctrine-refinement_execution_log.md
 
 # Document Header
@@ -749,19 +750,19 @@ epic starts.
 
 ### F) Tasks Checklist
 
-- [ ] Re-read `docs/repo/runbooks/release-operating-kit.md` before release publication.
-- [ ] Confirm the validated commit with `git status --short` and `git rev-parse HEAD`.
-- [ ] Confirm `release-notes.md` covers the plan-register portfolio doctrine consumer impact.
-- [ ] Confirm `dist/codeheart-operating-kit-0.1.9-macos.tar.gz` exists from the validated asset build.
-- [ ] Confirm `dist/codeheart-operating-kit-0.1.9-windows.zip` exists from the validated asset build.
-- [ ] Confirm checksum files exist for both release assets.
-- [ ] Create public tag `v0.1.9` from the validated commit after explicit release publication approval.
-- [ ] Publish GitHub release `v0.1.9` with `bootstrap.md`, `install.sh`, `install.ps1`, `release-notes.md`, `manifest.yaml`, release assets, and checksum files.
-- [ ] Run `codeheart-operating-kit update-check` in one consumer repository after publication.
-- [ ] Run `codeheart-operating-kit sync <consumer-repository-path>` in the same consumer repository after update-check sees `v0.1.9`.
-- [ ] Run `codeheart-operating-kit check <consumer-repository-path> --json` and confirm managed-content drift is absent.
-- [ ] Record release publication evidence in `docs/repo/plans/plan-register-portfolio-doctrine-refinement/plan-register-portfolio-doctrine-refinement_execution_log.md`.
-- [ ] Record consumer update-check, sync, and check evidence in `docs/repo/plans/plan-register-portfolio-doctrine-refinement/plan-register-portfolio-doctrine-refinement_execution_log.md`.
+- [x] Re-read `docs/repo/runbooks/release-operating-kit.md` before release publication.
+- [x] Confirm the validated commit with `git status --short` and `git rev-parse HEAD`.
+- [x] Confirm `release-notes.md` covers the plan-register portfolio doctrine consumer impact.
+- [x] Confirm `dist/codeheart-operating-kit-0.1.9-macos.tar.gz` exists from the validated asset build.
+- [x] Confirm `dist/codeheart-operating-kit-0.1.9-windows.zip` exists from the validated asset build.
+- [x] Confirm checksum files exist for both release assets.
+- [x] Create public tag `v0.1.9` from the validated commit after explicit release publication approval.
+- [x] Publish GitHub release `v0.1.9` with `bootstrap.md`, `install.sh`, `install.ps1`, `release-notes.md`, `manifest.yaml`, release assets, and checksum files.
+- [x] Run `codeheart-operating-kit update-check` in one consumer repository after publication.
+- [x] Run `codeheart-operating-kit sync <consumer-repository-path>` in the same consumer repository after update-check sees `v0.1.9`.
+- [x] Run `codeheart-operating-kit check <consumer-repository-path> --json` and confirm managed-content drift is absent.
+- [x] Record release publication evidence in `docs/repo/plans/plan-register-portfolio-doctrine-refinement/plan-register-portfolio-doctrine-refinement_execution_log.md`.
+- [x] Record consumer update-check, sync, and check evidence in `docs/repo/plans/plan-register-portfolio-doctrine-refinement/plan-register-portfolio-doctrine-refinement_execution_log.md`.
 
 ### G) Implementation Notes
 
@@ -818,3 +819,5 @@ Maintain this record during source execution.
 - 2026-06-22: Completed managed doctrine, packaged resource mirrors, release preparation, and
   local validation through release asset build. Public release publication and consumer sync proof
   remain gated by explicit release-publication approval.
+- 2026-06-22: Published `v0.1.9`, completed first-consumer sync proof, and marked the
+  implementation complete.

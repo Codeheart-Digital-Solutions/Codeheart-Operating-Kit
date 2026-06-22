@@ -1,4 +1,4 @@
-Last updated: 2026-06-22T21:13:19Z (UTC)
+Last updated: 2026-06-22T21:18:13Z (UTC)
 
 # Plan Register Portfolio Doctrine Refinement Execution Log
 
@@ -7,10 +7,10 @@ docs/repo/plans/plan-register-portfolio-doctrine-refinement/plan-register-portfo
 
 ## Execution Context
 
-- Status: active
+- Status: completed
 - Activated: 2026-06-22
 - Target release for prepared assets: `v0.1.9`
-- Public release publication: gated by explicit release-publication approval
+- Public release publication: completed
 - Epic review pauses: skipped per user instruction
 
 ## Worktree Baseline
@@ -71,9 +71,41 @@ Text asset checksums recorded in `manifest.yaml`:
 - `install.ps1`: `d60a13e1fdfc5bcd8d5aeb5a69d9bf497fa4a3b94804126285183d899bdabb00`
 - `release-notes.md`: `36c5bbc73ed1cdaae29c53553c078d5cfbf51322e5620e9ce6394682145aaddf`
 
-Public release evidence remains empty until explicit release-publication approval is given.
+Public release:
+
+- Validated release commit: `4e43e09c33a7ce947e33fc8bcb9d948e6e367b15`
+- Git tag: `v0.1.9`
+- Release URL:
+  `https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/tag/v0.1.9`
+- Uploaded release assets:
+  - `bootstrap.md`
+  - `install.sh`
+  - `install.ps1`
+  - `release-notes.md`
+  - `manifest.yaml`
+  - `codeheart-operating-kit-0.1.9-macos.tar.gz`
+  - `codeheart-operating-kit-0.1.9-macos.tar.gz.sha256`
+  - `codeheart-operating-kit-0.1.9-windows.zip`
+  - `codeheart-operating-kit-0.1.9-windows.zip.sha256`
+
+First-consumer sync proof:
+
+- Consumer: first installed consumer repository
+- Pre-sync `codeheart-operating-kit update-check` detected `v0.1.9`.
+- Local CLI was updated from the published `v0.1.9` macOS release asset and reported
+  `codeheart-operating-kit 0.1.9`.
+- Post-install consumer `codeheart-operating-kit update-check` detected `v0.1.9`.
+- `codeheart-operating-kit sync <consumer-repository-path>` synced 31 managed files under
+  `.codeheart/kit/`.
+- `codeheart-operating-kit check <consumer-repository-path> --json` reported `"ok": true`,
+  empty `drift`, empty `missing_lock_metadata`, empty `missing_route_targets`, and
+  `"stale_cli": false`.
+- Consumer lock evidence after sync:
+  - `kit_version: 0.1.9`
+  - `latest_seen_version: 0.1.9`
+  - `update_status: current`
 
 ## Residual Risk
 
-- Public tag creation, GitHub release publication, and first-consumer sync proof remain pending
-  explicit release-publication approval.
+- Consumer-owned plan registers are not migrated by this release. The managed doctrine is available
+  for future register maintenance and local migration plans.
