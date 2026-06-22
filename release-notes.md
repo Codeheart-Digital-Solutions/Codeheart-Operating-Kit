@@ -1,6 +1,38 @@
-Last updated: 2026-06-21T19:06:25Z (UTC)
+Last updated: 2026-06-22T18:05:35Z (UTC)
 
 # Codeheart Operating Kit Release Notes
+
+## v0.1.7 Release Notes
+
+`v0.1.7` improves managed planning workflow guidance so discovery handoff,
+implementation planning, planning-document review, and implementation execution preserve intended
+feature capability instead of accepting policy-only or under-covered plans.
+
+### Included
+
+- Discovery handoffs now require implementation capability-scope blocks for implementation-relevant
+  decision groups included in normal handoff.
+- Implementation planning now requires intended feature capability coverage from accepted
+  discovery when available, or from user request and targeted research when no discovery exists.
+- Checklist guidance now emphasizes capability-sized concrete tasks, non-negotiable details, and
+  exact preflight/remediation paths for legitimate execution-time variability.
+- Planning-document review now checks for quiet capability narrowing, support-structure-only plans,
+  avoidable non-concreteness, and the lazy implementer failure mode.
+- Implementation execution review now checks delivered feature capability against epic outcome and
+  discovery capability scope when available.
+
+### Consumer Impact
+
+- `instruction-only change`: installed consumers receive stronger managed planning workflow
+  guidance when they sync or update the Operating Kit.
+- No forced migration is required. Existing consumer-owned plans, discovery docs, execution logs,
+  and local runbooks are not rewritten.
+- Consumers adopt the new guidance through normal sync or update.
+
+### Validation
+
+- Release validation is recorded in the implementation-planning quality execution log before
+  public tagging or publishing.
 
 ## v0.1.6 Release Notes
 

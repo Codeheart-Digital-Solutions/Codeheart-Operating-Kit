@@ -1,4 +1,4 @@
-Last updated: 2026-06-16T22:55:46Z (UTC)
+Last updated: 2026-06-22T18:05:35Z (UTC)
 
 # Review Planning Document
 
@@ -95,7 +95,17 @@ For implementation docs, check whether:
   open questions;
 - validation gates cover the changed surface;
 - checklist tasks are concrete and non-branching;
-- release or migration authority is explicit.
+- release or migration authority is explicit;
+- the plan concretely implements the intended feature capability, not only surrounding policy,
+  scaffolding, gates, schemas, stubs, or validation shells;
+- the plan preserves accepted discovery goals, non-goals, decisions, blockers, and capability scope
+  when a discovery document exists;
+- omitted capability areas are explicitly out of scope, deferred, or blocked;
+- a lazy implementer cannot complete every checklist item while delivering only scaffolding,
+  policy, stubs, validation shells, or a narrow slice that does not fulfill the intended feature
+  capability;
+- checkable facts are resolved or represented by exact preflight checks, expected results,
+  remediation paths, retry validation, and stop conditions.
 
 For discovery docs, check whether:
 
@@ -140,6 +150,8 @@ For implementation documents, verify:
 - section order is correct;
 - Section 3 is linear;
 - every epic has acceptance criteria and validation tasks;
+- every epic outcome and checklist set covers the intended feature capability or records explicit
+  omissions;
 - blocker handling is coherent;
 - future planning does not hide required work;
 - execution log expectations are present for goal-style runs.

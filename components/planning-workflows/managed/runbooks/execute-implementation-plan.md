@@ -1,4 +1,4 @@
-Last updated: 2026-06-21T15:07:29Z (UTC)
+Last updated: 2026-06-22T18:05:35Z (UTC)
 
 # Execute Implementation Plan
 
@@ -125,6 +125,8 @@ The reviewer checks the implemented epic against:
 - validation evidence;
 - execution-log state;
 - scope boundaries and out-of-scope guardrails;
+- delivered feature capability, not only completed checklist lines;
+- discovery capability scope when the implementation plan references one;
 - accidental future-epic work.
 
 Use the same default model and reasoning mode as the implementing agent unless the user requests a
@@ -132,7 +134,10 @@ different reviewer setup or the epic is unusually high-risk.
 
 Fix material findings and repeat with a fresh read-only reviewer until no material issues remain
 or a clear blocker is recorded. A material issue is anything that makes the epic incomplete,
-misleading, out of scope, unvalidated, or not reproducible.
+misleading, out of scope, unvalidated, not reproducible, narrow, policy-only, stubbed, unusable,
+or incomplete against the intended feature capability. If the gap is within the approved epic
+scope, fix it. If fixing it requires a new high-impact decision or scope expansion, stop and
+amend the plan instead of improvising.
 
 When reviewer-agent execution is unavailable, record why and run the strongest practical
 main-thread review.

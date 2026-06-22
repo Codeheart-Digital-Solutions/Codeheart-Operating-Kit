@@ -1,4 +1,4 @@
-Last updated: 2026-06-21T19:30:29Z (UTC)
+Last updated: 2026-06-22T18:05:35Z (UTC)
 
 # Plan Register
 
@@ -20,6 +20,33 @@ entered during plan-register adoption. Earlier repository plans may be added dur
 maintenance.
 
 ## Entries
+
+## OK-PR-002 - Codeheart Operating Kit Implementation-Planning Quality
+
+Type: implementation-plan
+Purpose: Update managed discovery, implementation-planning, planning-review, and execution
+workflows so plans preserve intended feature capability and reject policy-only or under-covered
+implementation.
+Status: active
+Owner / repository: Codeheart-Operating-Kit
+Canonical docs:
+docs/repo/plans/codeheart-operating-kit-implementation-planning-quality/codeheart-operating-kit-implementation-planning-quality_implementation_doc.md
+Created: 2026-06-22
+Last updated: 2026-06-22T18:05:35Z (UTC)
+Priority / ordering note: Targets `v0.1.7` planning workflow quality release and first consumer repository
+first-consumer sync proof.
+
+Relations:
+- related: first consumer repository discovery handoff -
+  <first-consumer-repository>/docs/repo/plans/codeheart-operating-kit-implementation-planning-quality/codeheart-operating-kit-implementation-planning-quality_discovery_doc.md
+- related: first consumer repository handoff implementation plan -
+  <first-consumer-repository>/docs/repo/plans/codeheart-operating-kit-implementation-planning-quality/codeheart-operating-kit-implementation-planning-quality_implementation_doc.md
+
+Session refs:
+- created: 2026-06-22, session 019eef87-f252-7b91-aa50-ecf54b357c6c
+
+Coordination note:
+- local-only
 
 ## OK-PR-001 - Plan Register Session And Lifecycle Hardening
 

@@ -1,4 +1,4 @@
-Last updated: 2026-06-21T19:29:39Z (UTC)
+Last updated: 2026-06-22T18:05:35Z (UTC)
 
 # Repo Documentation
 
@@ -39,6 +39,11 @@ This folder contains public repository governance for Codeheart Operating Kit.
 - `plans/plan-register-session-lifecycle-hardening/plan-register-session-lifecycle-hardening_execution_log.md`:
   execution evidence and per-epic review log for the plan-register session-reference and lifecycle
   hardening release.
+- `plans/codeheart-operating-kit-implementation-planning-quality/codeheart-operating-kit-implementation-planning-quality_implementation_doc.md`:
+  active implementation plan for managed planning workflow guidance that preserves feature
+  capability and rejects policy-only implementation plans.
+- `plans/codeheart-operating-kit-implementation-planning-quality/codeheart-operating-kit-implementation-planning-quality_execution_log.md`:
+  execution evidence and per-epic review log for the implementation-planning quality release.
 - `plans/kit-feedback-intake/kit-feedback-intake_implementation_doc.md`: completed implementation
   plan for the kit feedback intake workflow.
 - `plans/kit-feedback-intake/kit-feedback-intake_execution_log.md`: execution evidence and

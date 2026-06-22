@@ -1,4 +1,4 @@
-Last updated: 2026-06-21T15:07:29Z (UTC)
+Last updated: 2026-06-22T18:05:35Z (UTC)
 
 # Draft Implementation Plan
 
@@ -32,6 +32,21 @@ Prefer inputs in this order:
 Discovery is recommended but not mandatory for straightforward work. When no discovery document
 exists, record the baseline problem, constraints, and assumptions in Sections 1 and 2 before
 drafting execution tasks.
+
+## Feature Capability Coverage
+
+Before drafting epics, identify the intended feature capability. Use the accepted discovery
+document when one exists, especially any `Implementation Capability Scope` blocks. When no
+discovery exists, derive the capability from the user request and targeted repository research.
+
+The execution plan must cover that capability surface. If the plan omits part of the intended
+capability, mark the omission explicitly as out of scope, deferred, or blocked with rationale. Do
+not let a plan quietly narrow the capability to policy, scaffolding, gates, schemas, stubs, or
+validation shells while the intended feature behavior remains unplanned.
+
+Use the fresh-implementer test before writing tasks: if a future implementer can only restate what
+must be true, but still has to invent the workflow, command sequence, file edits, data shape,
+permission model, or validation method, the epic is not implementation-ready.
 
 ## File And Naming Rules
 
@@ -165,7 +180,8 @@ For each epic include these fields:
 - `H) Open Questions`
 
 The epic outcome owns completion. Checkbox tasks are an execution aid, not the full possible task
-universe.
+universe. Each epic outcome should state what capability exists after the epic, and its tasks
+should cover the concrete behavior, artifact changes, and validation needed for that capability.
 
 ## Checklist Rules
 
@@ -174,7 +190,9 @@ Every task line in `F) Tasks Checklist` must:
 - start with `- [ ]`;
 - contain one concrete action;
 - name concrete files, commands, components, or validation gates;
-- be executable without choosing between branches.
+- be executable without choosing between branches;
+- represent one capability-sized implementation slice rather than one sentence or one handoff;
+- include the non-negotiable details the executor must not invent.
 
 Do not use these words in checkbox tasks:
 
@@ -186,8 +204,17 @@ Do not use these words in checkbox tasks:
 - `depending`
 - `TBD`
 
-End each epic with validation tasks that prove the epic outcome. Use the smallest validation set
-that actually covers the changed surface.
+Reject checklist tasks that only state policy intent, doctrine alignment, readiness, or gate
+validation without naming the concrete implementation action. Also reject tasks that deliver only
+scaffolding, schemas, stubs, or validation shells when the intended feature capability still lacks
+the workflow or behavior that uses them.
+
+Resolve checkable facts during planning when they can be checked safely. If execution-time
+variability is legitimate, specify the exact preflight check, expected result, remediation path,
+retry validation, and stop condition.
+
+End each epic with validation tasks that prove the epic outcome and feature capability. Use the
+smallest validation set that actually covers the changed surface.
 
 ## Blocker Handling
 
@@ -246,6 +273,11 @@ Before finalizing the plan, verify:
 - every epic has a file tree;
 - every epic has verifiable acceptance criteria;
 - every epic ends with validation tasks;
+- the plan covers intended feature capability or explicitly marks omitted capability areas;
+- no epic can be completed by delivering only policy, scaffolding, gates, schemas, stubs, or
+  validation shells while intended capability remains unplanned;
+- avoidable non-concreteness has been resolved into checked facts or exact execution-time
+  preflight/remediation paths;
 - every `OQ-*` includes blocker status and affected epic IDs;
 - no blocked epic contains normal implementation tasks;
 - the plan is self-contained enough for a new implementer;

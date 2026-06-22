@@ -1,4 +1,4 @@
-Last updated: 2026-06-21T15:07:29Z (UTC)
+Last updated: 2026-06-22T18:05:35Z (UTC)
 
 # Discovery Workflow
 
@@ -130,7 +130,46 @@ Discovery is implementation-handoff-ready when:
 - decision clusters have been promoted to candidate workstreams, implementation groups, or explicit
   follow-ups only where dependencies and ownership boundaries are clear;
 - risks, assumptions, and validation needs are recorded;
+- each implementation-relevant decision group included in the normal handoff has an
+  `Implementation Capability Scope - <group name>` block;
 - the handoff lists frozen inputs and remaining follow-ups.
+
+For each implementation-relevant decision group included in a normal handoff, add a compact block
+using this shape:
+
+```text
+## Implementation Capability Scope - <group name>
+
+Capability:
+<what should be possible after implementation>
+
+Primary workflow:
+<who or what uses it and through which workflow>
+
+Must cover:
+- <feature behavior the implementation plan must cover>
+
+Explicitly out of scope:
+- <exclusion>
+
+Deferred or blocked:
+- <capability piece>: <deferred reason or blocker ID>
+
+Preserve decisions:
+- <D-* decision>
+
+Planner must not reinvent:
+- <name, value, permission, constraint, or validation expectation>
+
+Feature-level success evidence:
+- <what proves the capability works at feature level>
+```
+
+The capability-scope block is a planning handoff target, not an implementation plan. Do not add
+epics, execution checklists, or sentence-level implementation tasks to discovery handoff. If the
+capability cannot be summarized concretely enough for a single-path plan, label the output as
+`blocked handoff`, `conditional handoff`, or `blocker-resolution handoff` instead of normal
+implementation-handoff-ready.
 
 If the user explicitly asks to carry a blocker forward, label the handoff as `blocked handoff`,
 `conditional handoff`, or `blocker-resolution handoff`. Do not label it as a normal single-path

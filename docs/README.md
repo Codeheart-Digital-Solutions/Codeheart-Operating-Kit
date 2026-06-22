@@ -1,4 +1,4 @@
-Last updated: 2026-06-21T19:29:39Z (UTC)
+Last updated: 2026-06-22T18:05:35Z (UTC)
 
 # Docs Index
 
@@ -35,6 +35,10 @@ This folder contains public Codeheart Operating Kit documentation.
   `docs/repo/plans/plan-register-session-lifecycle-hardening/plan-register-session-lifecycle-hardening_implementation_doc.md`
 - Plan-register session and lifecycle hardening execution log:
   `docs/repo/plans/plan-register-session-lifecycle-hardening/plan-register-session-lifecycle-hardening_execution_log.md`
+- Implementation-planning quality implementation plan:
+  `docs/repo/plans/codeheart-operating-kit-implementation-planning-quality/codeheart-operating-kit-implementation-planning-quality_implementation_doc.md`
+- Implementation-planning quality execution log:
+  `docs/repo/plans/codeheart-operating-kit-implementation-planning-quality/codeheart-operating-kit-implementation-planning-quality_execution_log.md`
 - Kit feedback intake implementation plan:
   `docs/repo/plans/kit-feedback-intake/kit-feedback-intake_implementation_doc.md`
 - Kit feedback intake execution log:
