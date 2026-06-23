@@ -1,4 +1,4 @@
-Last updated: 2026-06-17T19:21:22Z (UTC)
+Last updated: 2026-06-23T14:19:31Z (UTC)
 
 # Codeheart Operating Kit Inventory
 
@@ -28,6 +28,11 @@ state looks missing, stale, or damaged.
   `.codeheart/kit/docs/agent-interface/runbooks/submit-kit-feedback.md`
 - Feedback item format:
   `.codeheart/kit/docs/agent-interface/reference/kit-feedback-item-format.md`
+
+## Runbook Authoring
+
+- Runbook authoring standard:
+  `.codeheart/kit/docs/agent-interface/reference/runbook-authoring-standard.md`
 
 ## Operating Rule
 

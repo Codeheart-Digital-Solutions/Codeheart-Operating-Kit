@@ -1,4 +1,4 @@
-Last updated: 2026-06-22T21:18:13Z (UTC)
+Last updated: 2026-06-23T14:35:30Z (UTC)
 
 # Plan Register
 
@@ -20,6 +20,73 @@ entered during plan-register adoption. Earlier repository plans may be added dur
 maintenance.
 
 ## Entries
+
+## OK-PR-007 - Runbook Authoring Standards Implementation
+
+Type: implementation-plan
+Purpose: Implement the managed Operating Kit runbook authoring standard with audience
+classification, compact intention blocks, human-facing and agent-facing quality rules, planning
+workflow hooks, packaged resource mirroring, public release publication, and consumer sync proof.
+Status: active
+Owner / repository: Codeheart-Operating-Kit
+Canonical docs:
+docs/repo/plans/runbook-authoring-standards/runbook-authoring-standards_implementation_doc.md
+Created: 2026-06-23
+Last updated: 2026-06-23T14:35:30Z (UTC)
+Priority / ordering note: Should execute after the runbook authoring standards discovery is
+accepted and before future Operating Kit runbook-quality guidance is promoted into managed
+consumer routes.
+
+Relations:
+- depends-on: OK-PR-005 - Runbook Authoring Standards Discovery
+- related: OK-PR-002 - Codeheart Operating Kit Implementation-Planning Quality
+- related: managed first-run onboarding and onboarding context contract
+
+Session refs:
+- created: not recorded
+- material update: 2026-06-23, not recorded, added activation evidence, public release
+  publication, and consumer sync proof to the planned execution path.
+- material update: 2026-06-23, not recorded, activated implementation plan and created sibling
+  execution log.
+- material update: 2026-06-23, not recorded, prepared v0.1.10 release assets, manifests, and
+  validation evidence for publication.
+
+Coordination note:
+- promoted into the Codeheart-HQ coordination register as CODEHEART-OPERATING-KIT-PR-007.
+
+## OK-PR-005 - Runbook Authoring Standards Discovery
+
+Type: discovery-plan
+Purpose: Discover reusable Operating Kit standards for human-facing, agent-facing, hybrid, and
+maintainer runbooks so future runbooks have clear user scripts, explicit execution paths, source
+of truth, stop conditions, evidence, and validation.
+Status: draft
+Owner / repository: Codeheart-Operating-Kit
+Canonical docs:
+docs/repo/plans/runbook-authoring-standards/runbook-authoring-standards_discovery_doc.md
+Created: 2026-06-23
+Last updated: 2026-06-23T12:02:14Z (UTC)
+Priority / ordering note: Should precede the next Operating Kit runbook-quality implementation
+release and inform the Foundry M365 onboarding UX hardening work.
+
+Relations:
+- related: OK-PR-002 - Codeheart Operating Kit Implementation-Planning Quality
+- related: consumer-discovered Foundry M365 onboarding UX feedback
+- related: managed first-run onboarding and onboarding context contract
+
+Session refs:
+- created: not recorded
+- material update: 2026-06-23, not recorded, added the runbook sampling matrix attachment as the
+  first standard test set.
+- material update: 2026-06-23, not recorded, added condensed sampling lessons and the compact
+  runbook intention block decision.
+- material update: 2026-06-23, not recorded, added related Operating Kit feedback notes for slim
+  local preferences and shared environment/tooling readiness.
+- material update: 2026-06-23, not recorded, clarified language preference handling, audience
+  modeling, planning/execution/review integration, and no active consumer/module runbook retrofit.
+
+Coordination note:
+- promoted into the Codeheart-HQ coordination register as CODEHEART-OPERATING-KIT-PR-005.
 
 ## OK-PR-004 - Plan Register Portfolio Doctrine Refinement
 

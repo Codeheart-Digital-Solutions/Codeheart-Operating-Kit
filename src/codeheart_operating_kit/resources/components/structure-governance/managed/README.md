@@ -1,4 +1,4 @@
-Last updated: 2026-06-17T06:46:46Z (UTC)
+Last updated: 2026-06-23T14:19:31Z (UTC)
 
 # Structure Governance
 
@@ -13,6 +13,8 @@ managed-content boundaries, and documentation index-maintenance guidance.
   folder boundaries, or externally visible identifiers.
 - Use `reference/managed-content-boundaries.md` to distinguish managed, scaffold, template,
   consumer-owned, local-user, generated, and report content.
+- Use `../agent-interface/reference/runbook-authoring-standard.md` when creating or materially
+  changing durable runbooks.
 - Use `runbooks/change-documentation-placement.md` before changing documentation placement.
 - Use `runbooks/maintain-documentation-indexes.md` when discoverability changes.
 

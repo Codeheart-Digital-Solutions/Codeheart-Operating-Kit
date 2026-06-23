@@ -1,4 +1,4 @@
-Last updated: 2026-06-22T18:05:35Z (UTC)
+Last updated: 2026-06-23T14:31:23Z (UTC)
 
 # Draft Implementation Plan
 
@@ -47,6 +47,26 @@ validation shells while the intended feature behavior remains unplanned.
 Use the fresh-implementer test before writing tasks: if a future implementer can only restate what
 must be true, but still has to invent the workflow, command sequence, file edits, data shape,
 permission model, or validation method, the epic is not implementation-ready.
+
+## Runbook Change Coverage
+
+When a plan creates or materially changes durable runbooks, use
+`../../agent-interface/reference/runbook-authoring-standard.md` and make the runbook-authoring scope
+explicit.
+
+The plan must state:
+
+- each runbook created or materially changed;
+- audience class for each affected runbook;
+- whether each affected runbook needs human-facing flow, agent-facing execution path, hybrid
+  separation, or maintainer authority and evidence handling;
+- whether each affected runbook needs a compact intention block;
+- whether existing consumer-owned, module-owned, or unrelated runbooks are intentionally outside
+  scope.
+
+Runbook-related acceptance criteria must cover the relevant audience checks. Do not let a plan
+deliver only routing, policy, or placeholders when the intended runbook still lacks user-facing
+flow, agent execution path, approval boundaries, stop conditions, evidence, or validation.
 
 ## File And Naming Rules
 

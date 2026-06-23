@@ -31,6 +31,7 @@ def test_packaged_resource_fallback(monkeypatch, tmp_path):
     assert (tmp_path / ".codeheart/kit/docs/agent-interface/README.md").exists()
     assert (tmp_path / ".codeheart/kit/docs/agent-interface/runbooks/submit-kit-feedback.md").exists()
     assert (tmp_path / ".codeheart/kit/docs/agent-interface/reference/kit-feedback-item-format.md").exists()
+    assert (tmp_path / ".codeheart/kit/docs/agent-interface/reference/runbook-authoring-standard.md").exists()
     assert (tmp_path / "AGENTS.md").exists()
     assert (tmp_path / "docs/repo/plans/plan-register.md").exists()
     assert (tmp_path / "docs/repo/plans/coordination-sync-pending.md").exists()
@@ -48,10 +49,15 @@ def test_changed_source_and_packaged_resources_match():
         "components/planning-workflows/managed/runbooks/draft-implementation-plan.md",
         "components/planning-workflows/managed/runbooks/execute-implementation-plan.md",
         "components/planning-workflows/managed/runbooks/maintain-plan-register.md",
+        "components/planning-workflows/managed/runbooks/review-planning-document.md",
         "components/planning-workflows/scaffolds/coordination-sync-pending.md",
         "components/planning-workflows/scaffolds/plan-register.md",
+        "components/agent-interface/component.yaml",
         "components/agent-interface/managed/README.md",
+        "components/agent-interface/managed/kit-readme.md",
+        "components/agent-interface/managed/reference/runbook-authoring-standard.md",
         "components/agent-interface/managed/reference/root-agents-md-contract.md",
+        "components/structure-governance/managed/README.md",
         "components/agent-memory/managed/README.md",
         "components/agent-memory/managed/reference/entry-format.md",
         "components/agent-memory/managed/runbooks/session-ledger-maintenance.md",

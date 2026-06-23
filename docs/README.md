@@ -1,4 +1,4 @@
-Last updated: 2026-06-22T20:52:45Z (UTC)
+Last updated: 2026-06-23T14:35:30Z (UTC)
 
 # Docs Index
 
@@ -23,6 +23,12 @@ This folder contains public Codeheart Operating Kit documentation.
 - Kit feedback triage runbook: `docs/repo/runbooks/triage-kit-feedback.md`
 - Repo plans: `docs/repo/plans/README.md`
 - Repo plan register: `docs/repo/plans/plan-register.md`
+- Runbook authoring standards discovery:
+  `docs/repo/plans/runbook-authoring-standards/runbook-authoring-standards_discovery_doc.md`
+- Runbook authoring standards implementation plan:
+  `docs/repo/plans/runbook-authoring-standards/runbook-authoring-standards_implementation_doc.md`
+- Runbook authoring standards execution log:
+  `docs/repo/plans/runbook-authoring-standards/runbook-authoring-standards_execution_log.md`
 - Plan-register portfolio doctrine refinement implementation plan:
   `docs/repo/plans/plan-register-portfolio-doctrine-refinement/plan-register-portfolio-doctrine-refinement_implementation_doc.md`
 - Kit feedback intake discovery:

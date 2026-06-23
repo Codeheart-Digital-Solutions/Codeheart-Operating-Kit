@@ -1,4 +1,4 @@
-Last updated: 2026-06-22T20:52:45Z (UTC)
+Last updated: 2026-06-23T14:35:30Z (UTC)
 
 # Repo Plans
 
@@ -7,6 +7,12 @@ This folder contains Codeheart Operating Kit repository-level discovery and impl
 ## Current Plans
 
 - Plan register: `plan-register.md`
+- Runbook authoring standards discovery:
+  `runbook-authoring-standards/runbook-authoring-standards_discovery_doc.md`
+- Runbook authoring standards implementation plan:
+  `runbook-authoring-standards/runbook-authoring-standards_implementation_doc.md`
+- Runbook authoring standards execution log:
+  `runbook-authoring-standards/runbook-authoring-standards_execution_log.md`
 - Plan-register portfolio doctrine refinement implementation plan:
   `plan-register-portfolio-doctrine-refinement/plan-register-portfolio-doctrine-refinement_implementation_doc.md`
 - Kit feedback intake discovery:

@@ -1,4 +1,4 @@
-Last updated: 2026-06-22T18:05:35Z (UTC)
+Last updated: 2026-06-23T14:31:23Z (UTC)
 
 # Review Planning Document
 
@@ -106,6 +106,18 @@ For implementation docs, check whether:
   capability;
 - checkable facts are resolved or represented by exact preflight checks, expected results,
   remediation paths, retry validation, and stop conditions.
+- plans that create or materially change durable runbooks route to
+  `../../agent-interface/reference/runbook-authoring-standard.md`;
+- affected runbooks have clear audience classes and compact intention-block requirements;
+- human-facing runbook work includes user-visible flow, question pacing, explicit action wording,
+  and non-technical language boundaries;
+- agent-facing runbook work includes concrete execution paths, evidence, validation, and stop
+  conditions;
+- hybrid runbook work separates user dialogue from agent-only execution;
+- maintainer-facing runbook work preserves authority, evidence, rollback, and validation
+  boundaries;
+- runbook plans do not hide missing user-facing flow or agent execution detail behind routing,
+  policy, placeholders, or broad future audits.
 
 For discovery docs, check whether:
 

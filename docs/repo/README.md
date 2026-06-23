@@ -1,4 +1,4 @@
-Last updated: 2026-06-22T20:52:45Z (UTC)
+Last updated: 2026-06-23T14:35:30Z (UTC)
 
 # Repo Documentation
 
@@ -22,6 +22,14 @@ This folder contains public repository governance for Codeheart Operating Kit.
   issues.
 - `plans/README.md`: repository-level discovery and implementation plans.
 - `plans/plan-register.md`: lightweight index of registered Operating Kit repository plans.
+- `plans/runbook-authoring-standards/runbook-authoring-standards_discovery_doc.md`: discovery
+  for reusable human-facing, agent-facing, and hybrid runbook authoring standards.
+- `plans/runbook-authoring-standards/runbook-authoring-standards_implementation_doc.md`:
+  draft implementation plan for the managed runbook authoring standard, audience classification,
+  compact intention block, workflow hooks, packaged resources, and instruction-only release prep.
+- `plans/runbook-authoring-standards/runbook-authoring-standards_execution_log.md`: execution
+  evidence, validation, release-readiness evidence, and per-epic review log for the runbook
+  authoring standards release.
 - `plans/plan-register-portfolio-doctrine-refinement/plan-register-portfolio-doctrine-refinement_implementation_doc.md`:
   draft implementation plan for refined local and coordination-home plan-register reference shapes,
   repository-qualified ID guidance, canonical pointer examples, and relation ownership doctrine.

@@ -1,6 +1,39 @@
-Last updated: 2026-06-22T20:58:22Z (UTC)
+Last updated: 2026-06-23T14:35:30Z (UTC)
 
 # Codeheart Operating Kit Release Notes
+
+## v0.1.10 Release Notes
+
+`v0.1.10` adds a managed runbook authoring standard and connects it to planning,
+execution, review, and installed fallback routes.
+
+### Included
+
+- Agent-interface guidance now includes `runbook-authoring-standard.md` for human-facing,
+  agent-facing, hybrid, and maintainer-facing durable runbooks.
+- The standard defines compact intention blocks, user-visible flow requirements, agent execution
+  path requirements, explicit approval and stop boundaries, and the narrow local language
+  preference rule.
+- Planning workflow runbooks now require runbook-authoring scope, audience class, intention-block
+  coverage, execution checks, and review checks when plans create or materially change durable
+  runbooks.
+- Structure-governance guidance now routes durable runbook creation or material changes to the
+  agent-interface standard.
+- Packaged resources and fallback inventory include the new standard so installed consumers can
+  discover it after normal sync or update.
+
+### Consumer Impact
+
+- `instruction-only change`: installed consumers receive stronger managed runbook authoring,
+  planning, execution, and review guidance when they sync or update the Operating Kit.
+- No forced migration is required. Existing consumer-owned runbooks, module-owned runbooks,
+  plans, execution logs, and local state files are not rewritten.
+- Consumers adopt the new guidance through normal sync or update.
+
+### Validation
+
+- Release-readiness validation is recorded in the runbook authoring standards execution log before
+  public tagging, release publication, and consumer sync proof.
 
 ## v0.1.9 Release Notes
 

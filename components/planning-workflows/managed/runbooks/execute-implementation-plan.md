@@ -1,4 +1,4 @@
-Last updated: 2026-06-22T18:05:35Z (UTC)
+Last updated: 2026-06-23T14:31:23Z (UTC)
 
 # Execute Implementation Plan
 
@@ -76,6 +76,27 @@ After successful execution:
 - Stop and ask when a new high-impact decision has no clear safe default.
 - Preserve unrelated user work.
 - Do not mark an epic complete until validation and the review gate pass.
+
+## Runbook Change Execution
+
+When an epic creates or materially changes durable runbooks, use
+`../../agent-interface/reference/runbook-authoring-standard.md` before marking that epic complete.
+
+Verify the changed runbook surface against the plan and standard:
+
+- audience classification is explicit;
+- required compact intention blocks are present;
+- human-facing runbooks provide the user-visible flow, question pacing, and approval wording;
+- agent-facing runbooks provide the concrete execution path, evidence, validation, and stop
+  conditions;
+- hybrid runbooks clearly separate user dialogue from agent-only execution;
+- maintainer-facing runbooks preserve authority, evidence, rollback, and validation boundaries;
+- approval gates use explicit user-facing wording before external-state-changing actions;
+- planned scope is honored without accidental retrofit of unrelated runbooks.
+
+Fix gaps within the approved epic scope before completing the epic. If the fix requires a broader
+runbook audit, durable format change, ownership change, or new authority decision, stop and amend
+the plan instead of expanding execution ad hoc.
 
 ## Safe Defaults
 
