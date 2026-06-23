@@ -1,6 +1,6 @@
-Last updated: 2026-06-23T17:39:16Z (UTC)
+Last updated: 2026-06-23T17:50:15Z (UTC)
 Created: 2026-06-23
-Status: active
+Status: completed
 
 # Runbook Authoring Standards Execution Log
 
@@ -9,10 +9,11 @@ Plan path:
 
 Mode: goal-style implementation with per-epic review gates.
 
-Overall status: active.
+Overall status: completed.
 
-Overall divergence: none yet. The plan was activated from draft per user request and execution
-started with EP-00.
+Overall divergence: validation used explicit `uv run` dependency environments where local Python
+was missing pytest, pip, or setuptools; the configured consumer sync proof converted the published
+YAML manifest to JSON because the current `sync --release-manifest` path expects JSON.
 
 ## Summary
 
@@ -28,7 +29,7 @@ results for the runbook authoring standards implementation.
 | EP-02 - Managed Routing And Packaged Resources | completed | Validation used `uv run --with pytest` because local Python environments lacked pytest. |
 | EP-03 - Planning, Execution, And Review Integration | completed | Round 1 found and fixed incorrect installed-layout links. |
 | EP-04 - Release Prep, Registers, And Validation | completed | System Python lacked setuptools for asset build; validation used `uv run` with explicit build/test dependencies. |
-| EP-05 - Public Release Publication And Consumer Sync Proof | pending | Not started. |
+| EP-05 - Public Release Publication And Consumer Sync Proof | completed | Published v0.1.10, verified assets, and completed isolated plus configured consumer proofs. |
 
 ## Review Gate Metrics
 
@@ -204,7 +205,7 @@ Review gate:
 
 ## EP-04 - Release Prep, Registers, And Validation
 
-Status: review pending.
+Status: completed.
 
 Planned outcome: the instruction-only Operating Kit release is prepared, indexed, registered,
 validated, and ready for immediate publication in EP-05.
@@ -306,3 +307,99 @@ Review gate:
   manifest component versions and checksums, rebuilt assets with corrected packaged manifests,
   coherent release/version surfaces, installer defaults, release notes, indexes, and local/HQ
   register state.
+
+## EP-05 - Public Release Publication And Consumer Sync Proof
+
+Status: completed.
+
+Planned outcome: the validated Operating Kit release is published publicly, published release
+assets are verified from GitHub URLs, and isolated plus configured consumer proofs show the
+runbook authoring standard installs through the normal update path.
+
+Implementation notes:
+
+- Validated release commit: `19c65d7c74cd74f34643905cd854cb32c30c7c5a`.
+- Created and pushed Git tag `v0.1.10` at the validated release commit.
+- Pushed `main` to `origin` with the validated release commit.
+- Published GitHub release:
+  `https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/tag/v0.1.10`.
+- Uploaded release assets:
+  - `bootstrap.md`
+  - `install.sh`
+  - `install.ps1`
+  - `release-notes.md`
+  - `manifest.yaml`
+  - `dist/codeheart-operating-kit-0.1.10-macos.tar.gz`
+  - `dist/codeheart-operating-kit-0.1.10-macos.tar.gz.sha256`
+  - `dist/codeheart-operating-kit-0.1.10-windows.zip`
+  - `dist/codeheart-operating-kit-0.1.10-windows.zip.sha256`
+- Updated this implementation plan to `Status: completed` with `Completed: 2026-06-23`.
+- Updated local and Codeheart-HQ coordination registers to completed state for the runbook
+  authoring standards implementation.
+
+Published asset verification:
+
+- Downloaded every URL listed in root `manifest.yaml` from the published GitHub release.
+- Each downloaded asset matched the manifest checksum:
+  - `bootstrap.md`: `7fe0cc5f27d835140db68e4ef8ba662447a514f490cd72f2fc2a224155ecfaf7`
+  - `install.sh`: `756c5f6b910b0c1e5e9057a82be6ad0c4062d3b7de726236c397e4d4d7d181ce`
+  - `install.ps1`: `82336904d023d4d7341c95927011354646b93c7339959e69459ae417dbef0833`
+  - `release-notes.md`: `a1a98475c4525c5352e709fc31721900c33e08c7485df56e2fc958926b109761`
+  - `codeheart-operating-kit-0.1.10-macos.tar.gz`:
+    `dead0380eabeb94caeff1e19a90c5a9b5d6c5258661bff7b2adf83b97edcff3b`
+  - `codeheart-operating-kit-0.1.10-macos.tar.gz.sha256`:
+    `19e707fbf0e6fc688a1060d5d931ce3791ca814a2f12c1303c54a32a98edfa98`
+  - `codeheart-operating-kit-0.1.10-windows.zip`:
+    `90400b3b345387c4e1dce41b53656d39ce7f4041a9790c56a4a1c62ee60b0e66`
+  - `codeheart-operating-kit-0.1.10-windows.zip.sha256`:
+    `8ea18d92db9200d5ad6d50abf937bcfdb84ae5fe2d37b0c379b7562606888f98`
+
+Isolated consumer proof:
+
+- Downloaded the published `bootstrap.md`; it contained `Version: v0.1.10`.
+- Downloaded the published `install.sh` and installed the CLI into a temporary user-level
+  directory.
+- Installed CLI reported `codeheart-operating-kit 0.1.10`.
+- Initialized a temporary consumer repository with the published CLI.
+- `codeheart-operating-kit check` returned `ok: true`.
+- Verified installed target:
+  `.codeheart/kit/docs/agent-interface/reference/runbook-authoring-standard.md`.
+- Verified the installed file contains `Runbook Authoring Standard`, `Audience Classes`, and
+  `Compact Intention Block`.
+
+Configured consumer proof:
+
+- Target consumer: Codeheart-HQ.
+- Ran published `v0.1.10` CLI `update-check`; it returned update availability for `v0.1.10`.
+- First `sync --release-manifest` attempt with the published YAML `manifest.yaml` failed because
+  the current sync path expects JSON for that option.
+- Converted the published YAML manifest to JSON using the Operating Kit parser and reran sync.
+- `codeheart-operating-kit sync . --release-manifest <json> --json` returned
+  `kit_version: 0.1.10` and `agents_status: refreshed-managed-block`.
+- `codeheart-operating-kit check . --json` returned `ok: true`, `stale_cli: false`, and no drift.
+- Verified installed target:
+  `.codeheart/kit/docs/agent-interface/reference/runbook-authoring-standard.md`.
+- Verified the installed file contains `Runbook Authoring Standard`, `Audience Classes`, and
+  `Compact Intention Block`.
+- Verified `.codeheart/kit.lock.yaml` records `kit_version: 0.1.10`, the published macOS asset
+  URL, and checksum
+  `dead0380eabeb94caeff1e19a90c5a9b5d6c5258661bff7b2adf83b97edcff3b`.
+
+Residual risk:
+
+- The configured consumer proof refreshed managed Operating Kit files in a dirty Codeheart-HQ
+  worktree; unrelated HQ and Foundry changes were preserved and not staged by this plan.
+- `sync --release-manifest` currently expects JSON even though the public release asset is YAML;
+  the proof used a JSON conversion of the published manifest.
+- The machine's default `/opt/homebrew/bin/codeheart-operating-kit` remained at `0.1.9` during
+  review; the published `0.1.10` CLI path used for proof returned `ok: true`, no drift, and
+  `stale_cli: false`.
+
+Review gate:
+
+- Round 1 reviewer: spawned read-only sub-agent `019ef596-e6da-7ea3-b0e3-0498ff02d988`.
+- Round 1 findings: none.
+- Final accepted result: EP-05 accepted. The reviewer confirmed tag, remote tag, and GitHub
+  release point to `19c65d7c74cd74f34643905cd854cb32c30c7c5a`; release assets and checksum
+  evidence are credible; isolated and configured consumer proofs are recorded; plan and registers
+  are completed; unrelated entries such as OK-PR-008 and HQ setup were not accidentally completed.

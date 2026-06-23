@@ -1,6 +1,7 @@
-Last updated: 2026-06-23T17:39:16Z (UTC)
+Last updated: 2026-06-23T17:50:15Z (UTC)
 Created: 2026-06-23
-Status: active
+Status: completed
+Completed: 2026-06-23
 Execution log: docs/repo/plans/runbook-authoring-standards/runbook-authoring-standards_execution_log.md
 
 # Document Header
@@ -883,18 +884,18 @@ validation, then publish from the newly validated commit.
 
 ### F) Tasks Checklist
 
-- [ ] Confirm the current commit matches the validated release commit recorded in the execution log.
-- [ ] Create Git tag `v0.1.10` from the validated commit.
-- [ ] Publish GitHub release `v0.1.10` with `release-notes.md`, `manifest.yaml`, installers, release archives, and checksum files.
-- [ ] Verify published release URLs in `manifest.yaml` return assets matching recorded checksums.
-- [ ] Run isolated consumer install proof from the published `bootstrap.md` release URL.
-- [ ] Verify isolated consumer install includes `.codeheart/kit/docs/agent-interface/reference/runbook-authoring-standard.md`.
-- [ ] Run first configured consumer `codeheart-operating-kit update-check`, `codeheart-operating-kit sync`, and `codeheart-operating-kit check` proof from the published release.
-- [ ] Verify first configured consumer install includes `.codeheart/kit/docs/agent-interface/reference/runbook-authoring-standard.md`.
-- [ ] Record tag, release URL, asset checksums, isolated consumer proof, configured consumer proof, and residual risk in the execution log.
-- [ ] Set `docs/repo/plans/runbook-authoring-standards/runbook-authoring-standards_implementation_doc.md` to `Status: completed` with `Completed: YYYY-MM-DD`.
-- [ ] Update `docs/repo/plans/plan-register.md` with completed lifecycle state for `OK-PR-007`.
-- [ ] Update the Codeheart-HQ coordination register with completed lifecycle state for `CODEHEART-OPERATING-KIT-PR-007`.
+- [x] Confirm the current commit matches the validated release commit recorded in the execution log.
+- [x] Create Git tag `v0.1.10` from the validated commit.
+- [x] Publish GitHub release `v0.1.10` with `release-notes.md`, `manifest.yaml`, installers, release archives, and checksum files.
+- [x] Verify published release URLs in `manifest.yaml` return assets matching recorded checksums.
+- [x] Run isolated consumer install proof from the published `bootstrap.md` release URL.
+- [x] Verify isolated consumer install includes `.codeheart/kit/docs/agent-interface/reference/runbook-authoring-standard.md`.
+- [x] Run first configured consumer `codeheart-operating-kit update-check`, `codeheart-operating-kit sync`, and `codeheart-operating-kit check` proof from the published release.
+- [x] Verify first configured consumer install includes `.codeheart/kit/docs/agent-interface/reference/runbook-authoring-standard.md`.
+- [x] Record tag, release URL, asset checksums, isolated consumer proof, configured consumer proof, and residual risk in the execution log.
+- [x] Set `docs/repo/plans/runbook-authoring-standards/runbook-authoring-standards_implementation_doc.md` to `Status: completed` with `Completed: 2026-06-23`.
+- [x] Update `docs/repo/plans/plan-register.md` with completed lifecycle state for `OK-PR-007`.
+- [x] Update the Codeheart-HQ coordination register with completed lifecycle state for `CODEHEART-OPERATING-KIT-PR-007`.
 
 ### G) Implementation Notes
 

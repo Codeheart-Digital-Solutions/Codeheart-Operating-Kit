@@ -27,12 +27,12 @@ Type: implementation-plan
 Purpose: Implement the managed Operating Kit runbook authoring standard with audience
 classification, compact intention blocks, human-facing and agent-facing quality rules, planning
 workflow hooks, packaged resource mirroring, public release publication, and consumer sync proof.
-Status: active
+Status: completed
 Owner / repository: Codeheart-Operating-Kit
 Canonical docs:
 docs/repo/plans/runbook-authoring-standards/runbook-authoring-standards_implementation_doc.md
 Created: 2026-06-23
-Last updated: 2026-06-23T14:35:30Z (UTC)
+Last updated: 2026-06-23T17:44:23Z (UTC)
 Priority / ordering note: Should execute after the runbook authoring standards discovery is
 accepted and before future Operating Kit runbook-quality guidance is promoted into managed
 consumer routes.
@@ -50,6 +50,8 @@ Session refs:
   execution log.
 - material update: 2026-06-23, not recorded, prepared v0.1.10 release assets, manifests, and
   validation evidence for publication.
+- material update: 2026-06-23, not recorded, published v0.1.10 and completed isolated plus
+  configured consumer sync proof.
 
 Coordination note:
 - promoted into the Codeheart-HQ coordination register as CODEHEART-OPERATING-KIT-PR-007.
