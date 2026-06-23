@@ -1,4 +1,4 @@
-Last updated: 2026-06-23T14:35:30Z (UTC)
+Last updated: 2026-06-23T18:14:00Z (UTC)
 
 # Repo Documentation
 
@@ -22,6 +22,14 @@ This folder contains public repository governance for Codeheart Operating Kit.
   issues.
 - `plans/README.md`: repository-level discovery and implementation plans.
 - `plans/plan-register.md`: lightweight index of registered Operating Kit repository plans.
+- `plans/module-extension-state-routing/module-extension-state-routing_discovery_doc.md`:
+  discovery for committed non-secret module and extension state under `docs/repo/state/<id>/`.
+- `plans/module-extension-state-routing/module-extension-state-routing_implementation_doc.md`:
+  active implementation plan for managed structure-governance doctrine, generic agent routing,
+  packaged resources, tests, and release preparation for committed module and extension state.
+- `plans/module-extension-state-routing/module-extension-state-routing_execution_log.md`:
+  execution evidence, validation, release-readiness evidence, and per-epic review log for module
+  extension state routing.
 - `plans/runbook-authoring-standards/runbook-authoring-standards_discovery_doc.md`: discovery
   for reusable human-facing, agent-facing, and hybrid runbook authoring standards.
 - `plans/runbook-authoring-standards/runbook-authoring-standards_implementation_doc.md`:

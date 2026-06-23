@@ -1,4 +1,4 @@
-Last updated: 2026-06-23T14:35:30Z (UTC)
+Last updated: 2026-06-23T18:17:47Z (UTC)
 
 # Plan Register
 
@@ -21,6 +21,40 @@ maintenance.
 
 ## Entries
 
+## OK-PR-008 - Module Extension State Routing Implementation
+
+Type: implementation-plan
+Purpose: Implement managed Operating Kit structure-governance doctrine, generic agent routing,
+packaged-resource mirroring, tests, and release preparation for committed non-secret module and
+extension state under `docs/repo/state/<id>/`.
+Status: active
+Owner / repository: Codeheart-Operating-Kit
+Canonical docs:
+docs/repo/plans/module-extension-state-routing/module-extension-state-routing_implementation_doc.md
+Created: 2026-06-23
+Last updated: 2026-06-23T18:17:47Z (UTC)
+Priority / ordering note: Should execute after OK-PR-006 is accepted and before Foundry modules or
+other extensions depend on a shared committed-state placement route.
+
+Relations:
+- depends-on: OK-PR-006 - Module Extension State Routing Discovery
+- related: OK-PR-007 - Runbook Authoring Standards Implementation
+- related: managed structure-governance placement doctrine
+- related: Foundry M365 workspace registry discussion
+
+Session refs:
+- created: not recorded
+- material update: 2026-06-23, not recorded, updated implementation plan to target `0.1.11`
+  release prep with explicit approval-gated publication proof.
+- material update: 2026-06-23, not recorded, activated implementation plan and created sibling
+  execution log.
+- material update: 2026-06-23, not recorded, completed EP-01 through EP-04 local implementation,
+  packaged-resource mirroring, `v0.1.11` release preparation, and validation; public release
+  publication and consumer proof remain pending explicit approval.
+
+Coordination note:
+- promoted into the Codeheart-HQ coordination register as CODEHEART-OPERATING-KIT-PR-008.
+
 ## OK-PR-007 - Runbook Authoring Standards Implementation
 
 Type: implementation-plan
@@ -39,6 +73,7 @@ consumer routes.
 
 Relations:
 - depends-on: OK-PR-005 - Runbook Authoring Standards Discovery
+- related: OK-PR-006 - Module Extension State Routing Discovery
 - related: OK-PR-002 - Codeheart Operating Kit Implementation-Planning Quality
 - related: managed first-run onboarding and onboarding context contract
 
@@ -55,6 +90,34 @@ Session refs:
 
 Coordination note:
 - promoted into the Codeheart-HQ coordination register as CODEHEART-OPERATING-KIT-PR-007.
+
+## OK-PR-006 - Module Extension State Routing Discovery
+
+Type: discovery-plan
+Purpose: Discover the generic Operating Kit placement and routing convention for committed,
+non-secret, consumer-owned module and extension state under `docs/repo/state/<id>/`.
+Status: draft
+Owner / repository: Codeheart-Operating-Kit
+Canonical docs:
+docs/repo/plans/module-extension-state-routing/module-extension-state-routing_discovery_doc.md
+Created: 2026-06-23
+Last updated: 2026-06-23T13:41:25Z (UTC)
+Priority / ordering note: Should precede any structure-governance implementation that makes
+module or extension state routing visible in managed `AGENTS.md`, kit fallback inventory, and
+placement doctrine.
+
+Relations:
+- related: OK-PR-005 - Runbook Authoring Standards Discovery
+- related: Foundry M365 workspace registry discussion
+- related: managed structure-governance placement doctrine
+
+Session refs:
+- created: not recorded
+- material update: 2026-06-23, not recorded, added implementation scope handoff for a
+  structure-governance instruction-only release.
+
+Coordination note:
+- promoted into the Codeheart-HQ coordination register as CODEHEART-OPERATING-KIT-PR-006.
 
 ## OK-PR-005 - Runbook Authoring Standards Discovery
 

@@ -1,4 +1,4 @@
-Last updated: 2026-06-17T06:52:27Z (UTC)
+Last updated: 2026-06-23T18:09:34Z (UTC)
 
 # Documentation Structure
 
@@ -63,6 +63,7 @@ of repeating the full rule.
       plans/
       runbooks/
       reference/
+      state/
     research/
       README.md
     business/
@@ -100,6 +101,9 @@ source-area folders until the repository has a real owner and use for them.
 - `docs/repo/`: consumer repository organization, local development conventions,
   repo-maintenance plans, local runbooks, local references, and local exceptions to Operating Kit
   defaults.
+- `docs/repo/state/`: committed, non-secret, consumer-owned routing state for installed modules
+  and extensions. Use `docs/repo/state/<module-or-extension-id>/` after a module or extension ID
+  is known.
 - `docs/agent-memory/`: curated agent memory state. This is demand-driven context recovery, not a
   default read for every task.
 - `docs/business/`: business operating docs when the consumer repository intentionally stores
@@ -133,6 +137,8 @@ owned docs roots:
 - `runbooks/`: step-by-step operational procedures.
 - `reference/`: stable contracts, naming rules, lifecycle definitions, schemas, and durable
   architecture references.
+- `state/`: committed non-secret routing state for installed modules or extensions under
+  `docs/repo/state/<module-or-extension-id>/`.
 - `archive/`: superseded plans and historical docs retained for traceability.
 
 Package-local docs may use package-native conventions when an ecosystem has a strong standard.
@@ -179,11 +185,16 @@ reference owns where those shapes belong.
 ## Consumer Repository Docs
 
 Consumer `docs/repo/` is for local repository plans, runbooks, references, build/test/release
-details, local architecture notes, and local exceptions to Operating Kit defaults.
+details, committed non-secret module or extension state, local architecture notes, and local
+exceptions to Operating Kit defaults.
 
 Generic operating doctrine belongs in the Operating Kit. If an agent or contributor proposes
 reusable generic rules under consumer `docs/repo/`, flag that they are kit rules and recommend
 changing the Operating Kit instead.
+
+Committed state under `docs/repo/state/<module-or-extension-id>/` is routing context, not live
+external truth. Agents must still run live preflight before sensitive reads, writes, permission
+changes, or external system changes.
 
 ## Index Maintenance
 
@@ -193,6 +204,7 @@ Update the nearest README and parent index when discoverability changes:
 - a doc path, title, or purpose changes;
 - a doc is moved, archived, or removed;
 - a product, product area, package, or module folder is created;
+- a committed module or extension state namespace is created under `docs/repo/state/`;
 - a runbook path, command path, validator input, workflow command, or entry point changes.
 
 Index updates are not required for timestamp-only edits, local wording inside an already-linked

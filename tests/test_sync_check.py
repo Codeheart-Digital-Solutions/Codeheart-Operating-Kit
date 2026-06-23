@@ -159,6 +159,17 @@ def test_sync_refreshes_existing_agents_managed_block_and_preserves_local_conten
     assert "stale managed block" not in refreshed
     assert "Plan registers and configured portfolio coordination" in refreshed
     assert ".codeheart/kit/docs/planning-workflows/runbooks/maintain-plan-register.md" in refreshed
+    assert "docs/repo/state/<id>/" in refreshed
+
+
+def test_sync_installs_module_extension_state_reference_without_state_scaffold(tmp_path):
+    main(["init", str(tmp_path), "--project-name", "Example-Automation"])
+
+    state_reference = tmp_path / ".codeheart/kit/docs/structure-governance/reference/module-extension-state.md"
+
+    assert state_reference.exists()
+    assert "docs/repo/state/<module-or-extension-id>/" in state_reference.read_text(encoding="utf-8")
+    assert not (tmp_path / "docs/repo/state").exists()
 
 
 def test_sync_refreshes_release_metadata_from_packaged_resources(tmp_path, monkeypatch):

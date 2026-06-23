@@ -1,6 +1,38 @@
-Last updated: 2026-06-23T14:35:30Z (UTC)
+Last updated: 2026-06-23T18:09:34Z (UTC)
 
 # Codeheart Operating Kit Release Notes
+
+## v0.1.11 Release Notes
+
+`v0.1.11` adds managed doctrine and generic routing for committed, non-secret module and extension
+state under `docs/repo/state/<module-or-extension-id>/`.
+
+### Included
+
+- Structure-governance guidance now defines `docs/repo/state/<module-or-extension-id>/` as the
+  standard location for committed repo-owned module/extension routing state.
+- The managed root `AGENTS.md` block now tells agents to discover installed modules through the
+  module system present in the repository and check `docs/repo/state/<id>/` before asking repeated
+  setup questions.
+- The installed kit fallback inventory now routes agents to the module/extension state reference.
+- Placement and managed-boundary guidance now clarify that local committed state routes work but
+  does not replace live external preflight.
+- Packaged resources include the new structure-governance reference and updated route files.
+
+### Consumer Impact
+
+- `instruction-only change`: installed consumers receive clearer managed placement and routing
+  guidance for module/extension state when they sync or update the Operating Kit.
+- No forced migration is required. Existing consumer-owned module files, runbooks, plans,
+  execution logs, and local state files are not rewritten.
+- No `docs/repo/state/` folder is scaffolded by this release. Modules or extensions create
+  `docs/repo/state/<id>/` only when they have real committed non-secret state to store.
+- Consumers adopt the new guidance through normal sync or update.
+
+### Validation
+
+- Release-readiness validation is recorded in the module extension state routing execution log
+  before public tagging, release publication, and consumer proof.
 
 ## v0.1.10 Release Notes
 

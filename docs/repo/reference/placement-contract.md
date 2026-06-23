@@ -1,4 +1,4 @@
-Last updated: 2026-06-21T15:17:48Z (UTC)
+Last updated: 2026-06-23T18:09:34Z (UTC)
 
 # Placement Contract
 
@@ -29,6 +29,7 @@ The Operating Kit may create or manage these consumer paths when the CLI is impl
 - `.codeheart/kit.config.yaml`: shared non-secret consumer configuration.
 - `.codeheart/user/`: ignored local user layer.
 - `docs/repo/`: consumer-owned repository-specific documentation scaffold.
+- `docs/repo/state/`: consumer-owned committed state for installed modules and extensions.
 - `docs/agent-memory/`: consumer-owned agent memory state scaffold.
 
 ## Ownership Modes
@@ -50,6 +51,9 @@ The Operating Kit may create or manage these consumer paths when the CLI is impl
   creation.
 - Repository documentation starters target `docs/repo/` only as absent-file scaffolds. Reusable
   generic doctrine belongs in the Operating Kit, not in consumer `docs/repo/`.
+- Committed module or extension routing state targets `docs/repo/state/<module-or-extension-id>/`
+  only when a module or extension has real non-secret repo-owned state to store. The Operating Kit
+  defines the placement rule but does not scaffold empty state folders by default.
 - Plan-register state files target `docs/repo/plans/plan-register.md` and
   `docs/repo/plans/coordination-sync-pending.md` as kit-initialized consumer state files. Sync may
   create them when absent and must not overwrite them when present.
@@ -64,6 +68,9 @@ The Operating Kit may create or manage these consumer paths when the CLI is impl
 
 - `docs/repo/`: repository-specific plans, runbooks, references, local commands, validation notes,
   architecture notes, and exceptions to Operating Kit defaults.
+- `docs/repo/state/<module-or-extension-id>/`: committed, non-secret routing context for installed
+  modules and extensions. This state is not a source of live external truth and does not authorize
+  sensitive reads or external changes.
 - Product or module docs: local product, package, module, or source-area guidance owned by the
   consumer repository.
 - `.codeheart/user/`: personal local preferences and notes.

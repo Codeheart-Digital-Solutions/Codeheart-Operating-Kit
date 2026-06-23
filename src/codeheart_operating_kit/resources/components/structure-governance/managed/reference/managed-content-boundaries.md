@@ -1,4 +1,4 @@
-Last updated: 2026-06-17T06:46:46Z (UTC)
+Last updated: 2026-06-23T18:09:34Z (UTC)
 
 # Managed Content Boundaries
 
@@ -14,6 +14,7 @@ doctrine without overwriting consumer-owned state.
 - `.codeheart/kit.config.yaml`: shared non-secret consumer configuration.
 - `.codeheart/user/`: ignored local user layer.
 - `docs/repo/`: consumer-owned repository-specific documentation scaffold.
+- `docs/repo/state/`: consumer-owned committed state for installed modules and extensions.
 - `docs/agent-memory/`: consumer-owned agent memory state scaffold.
 
 ## Ownership Modes
@@ -23,6 +24,8 @@ doctrine without overwriting consumer-owned state.
 - `template`: starter or example content installed only when a command explicitly uses it.
 - `consumer-owned`: durable repository, product, memory, and business content owned by the
   consumer after install.
+- `committed module state`: non-secret repository-owned routing state under
+  `docs/repo/state/<module-or-extension-id>/`.
 - `local-user`: personal local preferences and notes that should stay ignored or local-only.
 - `generated`: machine output such as lockfiles, checksums, reports, or release assets.
 - `report`: generated or plan-scoped evidence used for review, not managed doctrine.
@@ -35,6 +38,10 @@ doctrine without overwriting consumer-owned state.
 - Keep reusable generic operating doctrine in managed kit docs.
 - Keep consumer-specific commands, product details, local exceptions, credentials, and environment
   details in the consumer repository.
+- Keep committed module or extension state under `docs/repo/state/<module-or-extension-id>/` only
+  when it is non-secret, repo-owned, and useful for routing.
+- Treat committed module or extension state as routing context. Validate live external systems
+  before sensitive reads, writes, permission changes, or external resource changes.
 - Keep local user guidance under `.codeheart/user/` and ignored by source control.
 - Treat generated reports as evidence, not as managed source of truth.
 

@@ -1,7 +1,7 @@
 schema_version: 1
 component:
   id: structure-governance
-  version: "0.1.7"
+  version: "0.1.8"
   name: Structure Governance
   description: Managed documentation placement, naming, ownership, and index-maintenance guidance.
   profiles:
@@ -26,6 +26,9 @@ component:
       ownership: managed
     - source: components/structure-governance/managed/reference/managed-content-boundaries.md
       target: .codeheart/kit/docs/structure-governance/reference/managed-content-boundaries.md
+      ownership: managed
+    - source: components/structure-governance/managed/reference/module-extension-state.md
+      target: .codeheart/kit/docs/structure-governance/reference/module-extension-state.md
       ownership: managed
     - source: components/structure-governance/managed/runbooks/change-documentation-placement.md
       target: .codeheart/kit/docs/structure-governance/runbooks/change-documentation-placement.md

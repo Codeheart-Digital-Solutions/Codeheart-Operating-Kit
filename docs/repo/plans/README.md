@@ -1,4 +1,4 @@
-Last updated: 2026-06-23T14:35:30Z (UTC)
+Last updated: 2026-06-23T18:14:00Z (UTC)
 
 # Repo Plans
 
@@ -7,6 +7,12 @@ This folder contains Codeheart Operating Kit repository-level discovery and impl
 ## Current Plans
 
 - Plan register: `plan-register.md`
+- Module extension state routing discovery:
+  `module-extension-state-routing/module-extension-state-routing_discovery_doc.md`
+- Module extension state routing implementation plan:
+  `module-extension-state-routing/module-extension-state-routing_implementation_doc.md`
+- Module extension state routing execution log:
+  `module-extension-state-routing/module-extension-state-routing_execution_log.md`
 - Runbook authoring standards discovery:
   `runbook-authoring-standards/runbook-authoring-standards_discovery_doc.md`
 - Runbook authoring standards implementation plan:

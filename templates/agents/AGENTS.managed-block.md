@@ -1,4 +1,4 @@
-Last updated: 2026-06-21T15:11:52Z (UTC)
+Last updated: 2026-06-23T18:10:49Z (UTC)
 
 <!-- BEGIN CODEHEART OPERATING KIT MANAGED BLOCK -->
 
@@ -15,6 +15,9 @@ Last updated: 2026-06-21T15:11:52Z (UTC)
   drift, repair, or sync work.
 - Keep reusable generic doctrine in the Operating Kit. Repository-owned sections should contain
   only local product, project, command, operational, and exception guidance.
+- Before operating installed modules or extensions, discover the module or extension ID through
+  the module system present in the repo, then check `docs/repo/state/<id>/` for committed
+  non-secret routing state. Local state routes the work; live external preflight still decides.
 
 ## Managed Routes
 
@@ -32,6 +35,8 @@ Last updated: 2026-06-21T15:11:52Z (UTC)
 - Operating Kit feedback:
   `.codeheart/kit/docs/agent-interface/runbooks/submit-kit-feedback.md`
 - Structure governance: `.codeheart/kit/docs/structure-governance/README.md`
+- Module and extension state:
+  `.codeheart/kit/docs/structure-governance/reference/module-extension-state.md`
 - Full kit inventory and fallback: `.codeheart/kit/README.md`
 
 ## Weekly Update Check

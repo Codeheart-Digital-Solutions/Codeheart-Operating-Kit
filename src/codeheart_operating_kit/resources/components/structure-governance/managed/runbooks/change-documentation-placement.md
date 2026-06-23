@@ -1,4 +1,4 @@
-Last updated: 2026-06-17T06:46:46Z (UTC)
+Last updated: 2026-06-23T18:09:34Z (UTC)
 
 # Change Documentation Placement
 
@@ -9,7 +9,7 @@ documentation.
 
 1. Identify the durable owner.
 2. Identify artifact kind: router, plan, runbook, reference, archive, scaffold, template, managed
-   doc, generated report, or local wrapper.
+   doc, committed module state, generated report, or local wrapper.
 3. Read the documentation structure reference.
 4. Read the repository information architecture reference when a durable name or new folder
    boundary is involved.
@@ -24,8 +24,10 @@ Use this order:
 2. Consumer repo docs for local repository rules, plans, commands, and exceptions.
 3. Product docs for product-owned rules, plans, runbooks, and references.
 4. Package, module, or source-area docs for local source-owned guidance.
-5. Agent memory for curated continuity state.
-6. Business or research docs only when the repository intentionally stores that type of material.
+5. Consumer repo state under `docs/repo/state/<module-or-extension-id>/` for committed
+   non-secret routing context owned by installed modules or extensions.
+6. Agent memory for curated continuity state.
+7. Business or research docs only when the repository intentionally stores that type of material.
 
 If proposed content is generic and reusable, recommend changing the Operating Kit instead of
 adding duplicate consumer-local doctrine.
@@ -39,11 +41,13 @@ adding duplicate consumer-local doctrine.
    public links.
 5. Move or create the document in the owning path.
 6. Convert duplicate local doctrine to a wrapper when managed kit doctrine owns the generic rule.
-7. Place plan-scoped temporary artifacts under the plan bundle's `attachments/` folder.
-8. Place historical material under `archive/` only when it no longer governs current behavior.
-9. Update nearest README and parent indexes.
-10. Update links, commands, validator inputs, and stale-path guards affected by the change.
-11. Record consumer impact when generated surfaces or managed routes change.
+7. Place committed non-secret module or extension routing state under
+   `docs/repo/state/<module-or-extension-id>/`.
+8. Place plan-scoped temporary artifacts under the plan bundle's `attachments/` folder.
+9. Place historical material under `archive/` only when it no longer governs current behavior.
+10. Update nearest README and parent indexes.
+11. Update links, commands, validator inputs, and stale-path guards affected by the change.
+12. Record consumer impact when generated surfaces or managed routes change.
 
 ## Archive Handling
 
@@ -68,4 +72,5 @@ Also validate:
 - moved paths have updated links;
 - archived docs are not still presented as current authority;
 - generated or managed paths were not changed without impact classification;
+- committed module or extension state is non-secret and remains under `docs/repo/state/<id>/`;
 - local wrappers point to the managed owner and keep only real local exceptions.

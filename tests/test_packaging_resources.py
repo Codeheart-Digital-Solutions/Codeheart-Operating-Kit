@@ -32,9 +32,11 @@ def test_packaged_resource_fallback(monkeypatch, tmp_path):
     assert (tmp_path / ".codeheart/kit/docs/agent-interface/runbooks/submit-kit-feedback.md").exists()
     assert (tmp_path / ".codeheart/kit/docs/agent-interface/reference/kit-feedback-item-format.md").exists()
     assert (tmp_path / ".codeheart/kit/docs/agent-interface/reference/runbook-authoring-standard.md").exists()
+    assert (tmp_path / ".codeheart/kit/docs/structure-governance/reference/module-extension-state.md").exists()
     assert (tmp_path / "AGENTS.md").exists()
     assert (tmp_path / "docs/repo/plans/plan-register.md").exists()
     assert (tmp_path / "docs/repo/plans/coordination-sync-pending.md").exists()
+    assert not (tmp_path / "docs/repo/state").exists()
     gitignore = (tmp_path / ".gitignore").read_text(encoding="utf-8")
     assert ".codeheart/user/feedback/" in gitignore
 
@@ -57,7 +59,12 @@ def test_changed_source_and_packaged_resources_match():
         "components/agent-interface/managed/kit-readme.md",
         "components/agent-interface/managed/reference/runbook-authoring-standard.md",
         "components/agent-interface/managed/reference/root-agents-md-contract.md",
+        "components/structure-governance/component.yaml",
         "components/structure-governance/managed/README.md",
+        "components/structure-governance/managed/reference/documentation-structure.md",
+        "components/structure-governance/managed/reference/managed-content-boundaries.md",
+        "components/structure-governance/managed/reference/module-extension-state.md",
+        "components/structure-governance/managed/runbooks/change-documentation-placement.md",
         "components/agent-memory/managed/README.md",
         "components/agent-memory/managed/reference/entry-format.md",
         "components/agent-memory/managed/runbooks/session-ledger-maintenance.md",

@@ -1,4 +1,4 @@
-Last updated: 2026-06-23T14:19:31Z (UTC)
+Last updated: 2026-06-23T18:10:49Z (UTC)
 
 # Codeheart Operating Kit Inventory
 
@@ -21,6 +21,13 @@ state looks missing, stale, or damaged.
 - Lock metadata: `.codeheart/kit.lock.yaml`
 - Shared non-secret config: `.codeheart/kit.config.yaml`
 - Local user layer: `.codeheart/user/`
+
+## Module And Extension State
+
+- Committed non-secret module/extension state convention:
+  `.codeheart/kit/docs/structure-governance/reference/module-extension-state.md`
+- Consumer-owned module/extension state root:
+  `docs/repo/state/<id>/`
 
 ## Feedback
 
