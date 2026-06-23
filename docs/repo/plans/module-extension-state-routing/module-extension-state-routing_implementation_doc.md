@@ -1,6 +1,6 @@
-Last updated: 2026-06-23T18:17:47Z (UTC)
+Last updated: 2026-06-23T18:26:27Z (UTC)
 Created: 2026-06-23
-Status: active
+Status: completed
 
 # Document Header
 
@@ -818,19 +818,19 @@ evidence is complete.
 
 ### F) Tasks Checklist
 
-- [ ] Confirm explicit release publication approval for `v0.1.11`.
-- [ ] Record release publication approval in `docs/repo/plans/module-extension-state-routing/module-extension-state-routing_execution_log.md`.
-- [ ] Create Git tag `v0.1.11` from the EP-04 validated commit.
-- [ ] Publish GitHub release `v0.1.11` with release notes, manifest, installers, archives, and checksums.
-- [ ] Verify published release asset URLs and checksums against `manifest.yaml`.
-- [ ] Run isolated temporary consumer install proof from published `v0.1.11` assets.
-- [ ] Run isolated temporary consumer sync/check proof from published `v0.1.11` assets.
-- [ ] Verify installed `.codeheart/kit/docs/structure-governance/reference/module-extension-state.md` exists in the proof workspace.
-- [ ] Verify installed root `AGENTS.md` contains the generic module/extension state route and no `docs/repo/state/` scaffold exists in the proof workspace.
-- [ ] Mark `docs/repo/plans/module-extension-state-routing/module-extension-state-routing_implementation_doc.md` complete after release proof passes.
-- [ ] Mark `OK-PR-008` complete in `docs/repo/plans/plan-register.md`.
-- [ ] Mark `CODEHEART-OPERATING-KIT-PR-008` complete in `Codeheart-HQ:docs/repo/plans/plan-register.md`.
-- [ ] Record release URLs, checksums, validation evidence, consumer proof evidence, and residual risk in the execution log.
+- [x] Confirm explicit release publication approval for `v0.1.11`.
+- [x] Record release publication approval in `docs/repo/plans/module-extension-state-routing/module-extension-state-routing_execution_log.md`.
+- [x] Create Git tag `v0.1.11` from the EP-04 validated commit.
+- [x] Publish GitHub release `v0.1.11` with release notes, manifest, installers, archives, and checksums.
+- [x] Verify published release asset URLs and checksums against `manifest.yaml`.
+- [x] Run isolated temporary consumer install proof from published `v0.1.11` assets.
+- [x] Run isolated temporary consumer sync/check proof from published `v0.1.11` assets.
+- [x] Verify installed `.codeheart/kit/docs/structure-governance/reference/module-extension-state.md` exists in the proof workspace.
+- [x] Verify installed root `AGENTS.md` contains the generic module/extension state route and no `docs/repo/state/` scaffold exists in the proof workspace.
+- [x] Mark `docs/repo/plans/module-extension-state-routing/module-extension-state-routing_implementation_doc.md` complete after release proof passes.
+- [x] Mark `OK-PR-008` complete in `docs/repo/plans/plan-register.md`.
+- [x] Mark `CODEHEART-OPERATING-KIT-PR-008` complete in `Codeheart-HQ:docs/repo/plans/plan-register.md`.
+- [x] Record release URLs, checksums, validation evidence, consumer proof evidence, and residual risk in the execution log.
 
 ### G) Implementation Notes
 
@@ -878,3 +878,5 @@ Likely follow-up candidates:
 - 2026-06-23: Updated plan to target `0.1.11` release prep, add approval-gated publication proof,
   and address implementation-plan review findings.
 - 2026-06-23: Activated implementation plan for execution.
+- 2026-06-23: Published `v0.1.11`, completed isolated consumer proof, and marked the
+  implementation complete.

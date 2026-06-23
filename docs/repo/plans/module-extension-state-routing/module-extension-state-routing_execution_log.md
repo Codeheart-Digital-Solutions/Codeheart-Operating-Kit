@@ -1,6 +1,6 @@
-Last updated: 2026-06-23T18:17:47Z (UTC)
+Last updated: 2026-06-23T18:26:27Z (UTC)
 Created: 2026-06-23
-Status: active
+Status: completed
 
 # Module Extension State Routing Execution Log
 
@@ -15,9 +15,9 @@ are handled in EP-04 release prep rather than EP-03 because component checksums 
 
 ## Summary
 
-Execution completed local managed-content, packaged-resource, test, and `0.1.11` release-prep
-work for Operating Kit module/extension state routing. Public release publication and consumer
-proof remain gated by explicit `v0.1.11` publication approval.
+Execution completed managed-content, packaged-resource, test, `0.1.11` release-prep, public
+release publication, published-asset verification, and isolated consumer proof work for Operating
+Kit module/extension state routing.
 
 ## Epic Delta Index
 
@@ -25,15 +25,15 @@ proof remain gated by explicit `v0.1.11` publication approval.
 - EP-02: completed
 - EP-03: completed
 - EP-04: completed
-- EP-05: not started, blocked by explicit release-publication approval after EP-04
+- EP-05: completed
 
 ## Review Gate Metrics
 
 - Review gate required: yes
 - Reviewer mode: main-thread review unless a separate reviewer tool becomes available
-- Review rounds: 4
-- Material findings status: no material findings through EP-04
-- Final accepted result: EP-01 through EP-04 accepted; EP-05 pending explicit approval
+- Review rounds: 5
+- Material findings status: no material findings
+- Final accepted result: EP-01 through EP-05 accepted; implementation complete
 
 ## EP-01 Delta - Managed State Doctrine Reference And Structure Routes
 
@@ -190,20 +190,75 @@ Review gate:
 
 ## EP-05 Delta - Public Release Publication And Consumer Proof
 
-Status: not started
+Status: completed
 
-Publication requires explicit `v0.1.11` release approval before creating a tag, publishing a
-GitHub release, or running consumer proof from published assets.
+Release publication approval:
+
+- User explicitly approved publishing Operating Kit `v0.1.11` from commit `f6bbd94`, including
+  pushing `main`, creating and pushing tag `v0.1.11`, publishing the GitHub release with
+  assets/checksums, verifying published assets, and running isolated consumer proof.
+
+Published release:
+
+- Release URL:
+  `https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/tag/v0.1.11`
+- Published tag: `v0.1.11`
+- Published tag target: `f6bbd94b197487cacbfce6148902617072355224`
+- Release state: not draft, not prerelease
+- Published at: `2026-06-23T18:25:39Z`
+
+Published asset checksum verification:
+
+- `bootstrap.md`:
+  `7256f76d7240a00645c12d145cb0ff60f865c6deb527c867ce2119eac795f85e`
+- `install.sh`:
+  `05298dfe55b0cd1aba19bd7e37c1bb3806750c9c2ab23160ccf0d33449858a06`
+- `install.ps1`:
+  `c0356b826961749a71fbd1aeb297b68ab612ebde6ce5fa1c493e821038361391`
+- `release-notes.md`:
+  `9b886f612fbff1296a44df2dde6743d2bb1fb4b91f9ba8ff181f0da441cac595`
+- `codeheart-operating-kit-0.1.11-macos.tar.gz`:
+  `3da7b06ab4dd30ed0aabb4889f5363a31ffa1d88a0dae181bedb8aa1a902dff5`
+- `codeheart-operating-kit-0.1.11-macos.tar.gz.sha256`:
+  `8dd6665be0ca50caf131ff2f8d7ae9f3041887da4ce3163de38bfc60a8e84a11`
+- `codeheart-operating-kit-0.1.11-windows.zip`:
+  `57bfa3d03cd0279a0c0ea6d09ad81708dd30c7bae5c6538fcee73fd42722be92`
+- `codeheart-operating-kit-0.1.11-windows.zip.sha256`:
+  `08766c4334521283e31f07992bf04819d9272826f04809ade1861f753a06f508`
+
+Consumer proof:
+
+- Proof workspace: `/tmp/codeheart-ok-consumer-proof.q0MEcE`
+- Install path used:
+  `https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.11/install.sh`
+- Installed CLI version: `codeheart-operating-kit 0.1.11`
+- `codeheart-operating-kit init` completed in an isolated temporary consumer repository.
+- `codeheart-operating-kit sync` completed and synced 33 managed files under `.codeheart/kit/`.
+- `codeheart-operating-kit check --json` returned `"ok": true`, no drift, no missing CLI, no
+  missing lock metadata, no missing route targets, and no missing routing.
+- Installed module/extension state reference exists at
+  `.codeheart/kit/docs/structure-governance/reference/module-extension-state.md`.
+- Installed state reference contains `docs/repo/state/<module-or-extension-id>/`.
+- Installed root `AGENTS.md` contains the generic `docs/repo/state/<id>/` route.
+- No `docs/repo/state/` scaffold was created in the proof workspace.
+
+Review gate:
+
+- Reviewer mode: main-thread review
+- Review rounds: 1
+- Finding: none material. Published assets match the manifest, the released CLI installs through
+  the public release path, and the isolated proof confirms the new state-routing convention without
+  scaffolding consumer state.
+- Final accepted result: EP-05 outcome achieved.
 
 ## Final Validation
 
-Local validation through EP-04 passed:
+Validation through EP-05 passed:
 
 - Diff checks passed in Codeheart-Operating-Kit and Codeheart-HQ.
 - Markdown, public-core, JSON-schema, and release-manifest validators passed.
 - Focused pytest suite passed: 35 passed.
 - Full pytest suite passed: 87 passed.
 - Root release-manifest checksums matched locally built `0.1.11` assets.
-
-Overall final validation remains pending EP-05 because public `v0.1.11` release publication and
-isolated consumer proof require explicit release-publication approval.
+- Published `v0.1.11` release assets matched `manifest.yaml`.
+- Isolated consumer install, sync, and check proof from published `v0.1.11` assets passed.

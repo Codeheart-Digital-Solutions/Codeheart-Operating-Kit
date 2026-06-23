@@ -1,4 +1,4 @@
-Last updated: 2026-06-23T18:17:47Z (UTC)
+Last updated: 2026-06-23T18:26:27Z (UTC)
 
 # Plan Register
 
@@ -27,12 +27,12 @@ Type: implementation-plan
 Purpose: Implement managed Operating Kit structure-governance doctrine, generic agent routing,
 packaged-resource mirroring, tests, and release preparation for committed non-secret module and
 extension state under `docs/repo/state/<id>/`.
-Status: active
+Status: completed
 Owner / repository: Codeheart-Operating-Kit
 Canonical docs:
 docs/repo/plans/module-extension-state-routing/module-extension-state-routing_implementation_doc.md
 Created: 2026-06-23
-Last updated: 2026-06-23T18:17:47Z (UTC)
+Last updated: 2026-06-23T18:26:27Z (UTC)
 Priority / ordering note: Should execute after OK-PR-006 is accepted and before Foundry modules or
 other extensions depend on a shared committed-state placement route.
 
@@ -51,6 +51,8 @@ Session refs:
 - material update: 2026-06-23, not recorded, completed EP-01 through EP-04 local implementation,
   packaged-resource mirroring, `v0.1.11` release preparation, and validation; public release
   publication and consumer proof remain pending explicit approval.
+- material update: 2026-06-23, not recorded, published `v0.1.11`, verified published assets,
+  completed isolated consumer proof, and marked the implementation complete.
 
 Coordination note:
 - promoted into the Codeheart-HQ coordination register as CODEHEART-OPERATING-KIT-PR-008.
