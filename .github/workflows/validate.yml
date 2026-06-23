@@ -6,9 +6,9 @@ on:
   workflow_dispatch:
     inputs:
       release_version:
-        description: Public release tag to smoke test.
-        required: true
-        default: v0.1.9
+        description: Public release tag to smoke test. Leave empty to use the pyproject version.
+        required: false
+        default: ""
 
 jobs:
   cli:
@@ -44,10 +44,19 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+      - id: package-version
+        run: |
+          python - <<'PY' >> "$GITHUB_OUTPUT"
+          import tomllib
+
+          with open("pyproject.toml", "rb") as stream:
+              version = tomllib.load(stream)["project"]["version"]
+          print(f"version={version}")
+          PY
       - run: python -m pip install --upgrade pip setuptools
       - run: python scripts/build-release-assets.py --output-dir dist
-      - run: test -f dist/codeheart-operating-kit-0.1.9-macos.tar.gz
-      - run: test -f dist/codeheart-operating-kit-0.1.9-windows.zip
+      - run: test -f "dist/codeheart-operating-kit-${{ steps.package-version.outputs.version }}-macos.tar.gz"
+      - run: test -f "dist/codeheart-operating-kit-${{ steps.package-version.outputs.version }}-windows.zip"
       - run: python scripts/validate-release-manifest.py
 
   macos-installer:
@@ -57,10 +66,24 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+      - id: package-version
+        run: |
+          python - <<'PY' >> "$GITHUB_OUTPUT"
+          import tomllib
+
+          with open("pyproject.toml", "rb") as stream:
+              version = tomllib.load(stream)["project"]["version"]
+          print(f"version={version}")
+          PY
       - run: python -m pip install --upgrade pip setuptools
       - run: python scripts/build-release-assets.py --output-dir dist
       - run: bash install.sh --help
-      - run: bash install.sh --asset-file dist/codeheart-operating-kit-0.1.9-macos.tar.gz --checksum-file dist/codeheart-operating-kit-0.1.9-macos.tar.gz.sha256 --install-dir "$RUNNER_TEMP/codeheart-ok"
+      - run: |
+          VERSION="${{ steps.package-version.outputs.version }}"
+          bash install.sh \
+            --asset-file "dist/codeheart-operating-kit-${VERSION}-macos.tar.gz" \
+            --checksum-file "dist/codeheart-operating-kit-${VERSION}-macos.tar.gz.sha256" \
+            --install-dir "$RUNNER_TEMP/codeheart-ok"
       - run: |
           "$RUNNER_TEMP/codeheart-ok/bin/codeheart-operating-kit" --help
 
@@ -71,11 +94,21 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+      - id: package-version
+        shell: pwsh
+        run: |
+          $Version = python -c "import tomllib; print(tomllib.load(open('pyproject.toml', 'rb'))['project']['version'])"
+          "version=$Version" >> $env:GITHUB_OUTPUT
       - run: python -m pip install --upgrade pip setuptools
       - run: python scripts/build-release-assets.py --output-dir dist
       - run: .\install.ps1 -Help
         shell: pwsh
-      - run: .\install.ps1 -AssetFile dist\codeheart-operating-kit-0.1.9-windows.zip -ChecksumFile dist\codeheart-operating-kit-0.1.9-windows.zip.sha256 -InstallDir "$env:RUNNER_TEMP\codeheart-ok"
+      - run: |
+          $Version = "${{ steps.package-version.outputs.version }}"
+          .\install.ps1 `
+            -AssetFile "dist\codeheart-operating-kit-$Version-windows.zip" `
+            -ChecksumFile "dist\codeheart-operating-kit-$Version-windows.zip.sha256" `
+            -InstallDir "$env:RUNNER_TEMP\codeheart-ok"
         shell: pwsh
       - run: |
           & "$env:RUNNER_TEMP\codeheart-ok\bin\codeheart-operating-kit.cmd" --help
@@ -87,10 +120,21 @@ jobs:
     env:
       RELEASE_VERSION: ${{ github.event.inputs.release_version }}
     steps:
+      - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+      - id: package-version
+        run: |
+          python - <<'PY' >> "$GITHUB_OUTPUT"
+          import tomllib
+
+          with open("pyproject.toml", "rb") as stream:
+              version = tomllib.load(stream)["project"]["version"]
+          print(f"version={version}")
+          PY
       - run: |
+          RELEASE_VERSION="${RELEASE_VERSION:-v${{ steps.package-version.outputs.version }}}"
           VERSION="${RELEASE_VERSION#v}"
           BASE_URL="https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/${RELEASE_VERSION}"
           curl -fsSLO "${BASE_URL}/install.sh"
@@ -111,12 +155,22 @@ jobs:
     env:
       RELEASE_VERSION: ${{ github.event.inputs.release_version }}
     steps:
+      - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+      - id: package-version
+        shell: pwsh
+        run: |
+          $Version = python -c "import tomllib; print(tomllib.load(open('pyproject.toml', 'rb'))['project']['version'])"
+          "version=$Version" >> $env:GITHUB_OUTPUT
       - run: |
-          $Version = $env:RELEASE_VERSION.TrimStart("v")
-          $BaseUrl = "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/$env:RELEASE_VERSION"
+          $ReleaseVersion = $env:RELEASE_VERSION
+          if ([string]::IsNullOrWhiteSpace($ReleaseVersion)) {
+              $ReleaseVersion = "v${{ steps.package-version.outputs.version }}"
+          }
+          $Version = $ReleaseVersion.TrimStart("v")
+          $BaseUrl = "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/$ReleaseVersion"
           Invoke-WebRequest -Uri "$BaseUrl/install.ps1" -OutFile install.ps1
           Invoke-WebRequest -Uri "$BaseUrl/codeheart-operating-kit-$Version-windows.zip" -OutFile "codeheart-operating-kit-$Version-windows.zip"
           try {
