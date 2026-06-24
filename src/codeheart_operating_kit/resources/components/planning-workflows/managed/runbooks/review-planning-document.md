@@ -1,4 +1,4 @@
-Last updated: 2026-06-23T14:31:23Z (UTC)
+Last updated: 2026-06-24T13:51:18Z (UTC)
 
 # Review Planning Document
 
@@ -116,6 +116,13 @@ For implementation docs, check whether:
 - hybrid runbook work separates user dialogue from agent-only execution;
 - maintainer-facing runbook work preserves authority, evidence, rollback, and validation
   boundaries;
+- runbook work that can hit missing local tooling names the blocker, routes generic local
+  readiness to `../../agent-interface/runbooks/handle-tooling-readiness.md`, and keeps
+  module-owned service preflight separate;
+- human-facing or hybrid runbook work presents blocker-specific choices instead of vague
+  "install tools" prompts when the blocker can be classified;
+- runbook work does not duplicate generic package-manager, runtime, or local-tool setup guidance
+  across multiple managed runbooks;
 - runbook plans do not hide missing user-facing flow or agent execution detail behind routing,
   policy, placeholders, or broad future audits.
 

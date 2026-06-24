@@ -1,4 +1,4 @@
-Last updated: 2026-06-23T14:31:23Z (UTC)
+Last updated: 2026-06-24T13:51:18Z (UTC)
 
 # Execute Implementation Plan
 
@@ -92,6 +92,12 @@ Verify the changed runbook surface against the plan and standard:
 - hybrid runbooks clearly separate user dialogue from agent-only execution;
 - maintainer-facing runbooks preserve authority, evidence, rollback, and validation boundaries;
 - approval gates use explicit user-facing wording before external-state-changing actions;
+- runbooks that can hit missing local tooling route generic environment blockers to
+  `../../agent-interface/runbooks/handle-tooling-readiness.md`;
+- module-specific install commands, version requirements, service authentication, and live
+  preflight remain in module-owned guidance;
+- broad package-manager, runtime, or local-tool setup guidance is not copied into multiple
+  managed runbooks unless the active plan explicitly changes the shared tooling-readiness route;
 - planned scope is honored without accidental retrofit of unrelated runbooks.
 
 Fix gaps within the approved epic scope before completing the epic. If the fix requires a broader

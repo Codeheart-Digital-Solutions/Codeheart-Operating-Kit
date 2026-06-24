@@ -1,4 +1,4 @@
-Last updated: 2026-06-23T18:14:00Z (UTC)
+Last updated: 2026-06-24T13:58:40Z (UTC)
 
 # Docs Index
 
@@ -23,6 +23,12 @@ This folder contains public Codeheart Operating Kit documentation.
 - Kit feedback triage runbook: `docs/repo/runbooks/triage-kit-feedback.md`
 - Repo plans: `docs/repo/plans/README.md`
 - Repo plan register: `docs/repo/plans/plan-register.md`
+- Tooling environment readiness discovery:
+  `docs/repo/plans/tooling-environment-readiness/tooling-environment-readiness_discovery_doc.md`
+- Tooling environment readiness implementation plan:
+  `docs/repo/plans/tooling-environment-readiness/tooling-environment-readiness_implementation_doc.md`
+- Tooling environment readiness execution log:
+  `docs/repo/plans/tooling-environment-readiness/tooling-environment-readiness_execution_log.md`
 - Module extension state routing discovery:
   `docs/repo/plans/module-extension-state-routing/module-extension-state-routing_discovery_doc.md`
 - Module extension state routing implementation plan:

@@ -1,4 +1,4 @@
-Last updated: 2026-06-23T18:10:49Z (UTC)
+Last updated: 2026-06-24T13:51:18Z (UTC)
 
 <!-- BEGIN CODEHEART OPERATING KIT MANAGED BLOCK -->
 
@@ -18,6 +18,9 @@ Last updated: 2026-06-23T18:10:49Z (UTC)
 - Before operating installed modules or extensions, discover the module or extension ID through
   the module system present in the repo, then check `docs/repo/state/<id>/` for committed
   non-secret routing state. Local state routes the work; live external preflight still decides.
+- When a module onboarding or operation is blocked by missing local tooling, follow the managed
+  tooling readiness route before installing, repairing, improvising setup, or declaring the
+  capability unavailable.
 
 ## Managed Routes
 
@@ -34,6 +37,8 @@ Last updated: 2026-06-23T18:10:49Z (UTC)
 - Agent interface: `.codeheart/kit/docs/agent-interface/README.md`
 - Operating Kit feedback:
   `.codeheart/kit/docs/agent-interface/runbooks/submit-kit-feedback.md`
+- Tooling readiness:
+  `.codeheart/kit/docs/agent-interface/runbooks/handle-tooling-readiness.md`
 - Structure governance: `.codeheart/kit/docs/structure-governance/README.md`
 - Module and extension state:
   `.codeheart/kit/docs/structure-governance/reference/module-extension-state.md`

@@ -1,6 +1,45 @@
-Last updated: 2026-06-23T18:09:34Z (UTC)
+Last updated: 2026-06-24T13:58:40Z (UTC)
 
 # Codeheart Operating Kit Release Notes
+
+## v0.1.12 Release Notes
+
+`v0.1.12` adds managed tooling-readiness guidance for local environment blockers encountered
+during module onboarding or operation.
+
+### Included
+
+- Agent-interface guidance now includes `handle-tooling-readiness.md`, one central hybrid runbook
+  for missing local tools such as package managers, runtimes, CLIs, PowerShell modules, browser
+  automation prerequisites, and document/PDF tooling.
+- The managed root `AGENTS.md` block and installed fallback inventory now route agents to the
+  tooling-readiness runbook before they install, repair, improvise setup, or declare a module
+  capability unavailable.
+- The runbook authoring standard now tells future runbooks to route generic local environment
+  blockers through the managed readiness route while keeping module-specific install commands and
+  live service preflight module-owned.
+- Planning, execution, and planning-review runbooks now check tooling-readiness routing only when
+  plans create or materially change runbooks that can encounter missing local tools.
+- Structure-governance guidance now clarifies that it owns runbook placement while
+  agent-interface owns durable runbook shape and generic tooling-readiness behavior.
+- Packaged resources include the new readiness runbook and updated route files.
+
+### Consumer Impact
+
+- `instruction-only change`: installed consumers receive clearer managed guidance for local
+  tooling blockers when they sync or update the Operating Kit.
+- No default tool installation is performed. The baseline tooling catalog is on-demand, not an
+  install bundle.
+- No forced migration is required. Existing consumer-owned runbooks, module-owned runbooks, plans,
+  execution logs, and local state files are not rewritten.
+- Modules still own concrete module-specific commands, version requirements, authentication,
+  permissions, and live external preflight.
+- Consumers adopt the new guidance through normal sync or update.
+
+### Validation
+
+- Release-readiness validation is recorded in the tooling environment readiness execution log
+  before public tagging, release publication, and consumer proof.
 
 ## v0.1.11 Release Notes
 

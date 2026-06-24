@@ -1,4 +1,4 @@
-Last updated: 2026-06-23T14:31:23Z (UTC)
+Last updated: 2026-06-24T13:51:18Z (UTC)
 
 # Draft Implementation Plan
 
@@ -63,6 +63,17 @@ The plan must state:
 - whether each affected runbook needs a compact intention block;
 - whether existing consumer-owned, module-owned, or unrelated runbooks are intentionally outside
   scope.
+
+When affected human-facing, agent-facing, or hybrid runbooks can hit missing local tooling, the
+plan must also state:
+
+- which local tool blockers can occur;
+- whether each blocker is local environment readiness or module-owned service preflight;
+- whether local blockers route through
+  `../../agent-interface/runbooks/handle-tooling-readiness.md`;
+- which concrete module-specific install commands or version requirements remain module-owned;
+- how the plan avoids duplicating generic package-manager, runtime, or local-tool guidance across
+  multiple runbooks.
 
 Runbook-related acceptance criteria must cover the relevant audience checks. Do not let a plan
 deliver only routing, policy, or placeholders when the intended runbook still lacks user-facing

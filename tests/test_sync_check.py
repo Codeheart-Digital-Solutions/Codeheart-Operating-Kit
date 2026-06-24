@@ -160,6 +160,7 @@ def test_sync_refreshes_existing_agents_managed_block_and_preserves_local_conten
     assert "Plan registers and configured portfolio coordination" in refreshed
     assert ".codeheart/kit/docs/planning-workflows/runbooks/maintain-plan-register.md" in refreshed
     assert "docs/repo/state/<id>/" in refreshed
+    assert ".codeheart/kit/docs/agent-interface/runbooks/handle-tooling-readiness.md" in refreshed
 
 
 def test_sync_installs_module_extension_state_reference_without_state_scaffold(tmp_path):
@@ -172,7 +173,7 @@ def test_sync_installs_module_extension_state_reference_without_state_scaffold(t
     assert not (tmp_path / "docs/repo/state").exists()
 
 
-def test_sync_refreshes_release_metadata_from_packaged_resources(tmp_path, monkeypatch):
+def test_sync_preserves_release_metadata_when_packaged_manifest_has_placeholder_checksums(tmp_path, monkeypatch):
     monkeypatch.setenv("CODEHEART_OPERATING_KIT_CLI", "1")
     monkeypatch.setattr(manifest, "SOURCE_ROOT", Path("/definitely/not/a/checkout"))
     monkeypatch.setattr(components, "kit_root", manifest.kit_root)
@@ -189,8 +190,9 @@ def test_sync_refreshes_release_metadata_from_packaged_resources(tmp_path, monke
     main(["sync", str(tmp_path)])
     release = read_lock(tmp_path)["release"]
 
-    assert release["asset_url"].endswith(f"codeheart-operating-kit-{__version__}-macos.tar.gz")
-    assert f"v{__version__}" in release["asset_url"]
+    assert release["asset_url"].endswith("codeheart-operating-kit-0.1.1-macos.tar.gz")
+    assert "v0.1.1" in release["asset_url"]
+    assert str(release["checksum_sha256"]) == "1" * 64
 
 
 def test_check_json_reports_missing_cli_and_routing(tmp_path, capsys):

@@ -17,6 +17,11 @@ def _valid_sha256(value: object) -> bool:
     return len(text) == 64 and all(char in "0123456789abcdefABCDEF" for char in text)
 
 
+def _usable_asset_sha256(value: object) -> bool:
+    text = str(value or "")
+    return _valid_sha256(text) and text != "0" * 64
+
+
 def _current_platform() -> str:
     if sys.platform.startswith("win"):
         return "windows"
@@ -43,17 +48,9 @@ def _release_asset_from_manifest(manifest: dict[str, Any] | None) -> dict[str, s
         if isinstance(asset, dict)
         and asset.get("platform") in {preferred_platform, "universal"}
         and is_cli_asset(asset)
+        and str(asset.get("url", ""))
+        and _usable_asset_sha256(asset.get("sha256"))
     ]
-    if not candidates:
-        candidates = [
-            asset
-            for asset in assets
-            if isinstance(asset, dict)
-            and is_cli_asset(asset)
-            and asset.get("platform") in {preferred_platform, "universal"}
-            and str(asset.get("url", ""))
-            and _valid_sha256(asset.get("sha256"))
-        ]
     if not candidates:
         return None
     asset = candidates[0]

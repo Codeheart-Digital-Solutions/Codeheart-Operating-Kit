@@ -1,4 +1,4 @@
-Last updated: 2026-06-23T18:09:34Z (UTC)
+Last updated: 2026-06-24T13:51:18Z (UTC)
 
 # Structure Governance
 
@@ -25,6 +25,11 @@ managed-content boundaries, and documentation index-maintenance guidance.
 Reusable generic structure doctrine belongs in the Operating Kit. Consumer repositories own local
 product docs, local plans, local runbooks, local references, memory state, credentials,
 environment details, and local exceptions.
+
+Structure governance decides where a runbook belongs. The agent-interface runbook authoring
+standard decides how a durable runbook should be shaped. When a runbook hits generic local tooling
+blockers, route the behavior through the managed tooling-readiness runbook instead of duplicating
+package-manager or runtime setup guidance in each location.
 
 When a consumer-local doc duplicates managed doctrine, convert it to a concise wrapper that points
 to managed kit doctrine and keeps only real local exceptions.

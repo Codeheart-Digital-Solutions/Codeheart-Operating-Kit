@@ -1,4 +1,4 @@
-Last updated: 2026-06-23T18:26:27Z (UTC)
+Last updated: 2026-06-24T14:16:20Z (UTC)
 
 # Plan Register
 
@@ -20,6 +20,84 @@ entered during plan-register adoption. Earlier repository plans may be added dur
 maintenance.
 
 ## Entries
+
+## OK-PR-010 - Tooling Environment Readiness Implementation
+
+Type: implementation-plan
+Purpose: Implement one central Operating Kit tooling-readiness route, installed route visibility,
+runbook-authoring and planning hooks, packaged-resource mirroring, tests, and `0.1.12` release
+preparation for local environment blockers encountered during module onboarding or operation.
+Status: active
+Owner / repository: Codeheart-Operating-Kit
+Canonical docs:
+docs/repo/plans/tooling-environment-readiness/tooling-environment-readiness_implementation_doc.md
+Created: 2026-06-24
+Last updated: 2026-06-24T14:16:20Z (UTC)
+Priority / ordering note: Should execute after OK-PR-009 is accepted and before modules depend on
+a managed Operating Kit route for missing package managers, runtimes, CLIs, PowerShell modules, or
+other local tooling blockers.
+
+Relations:
+- depends-on: OK-PR-009 - Tooling Environment Readiness Discovery
+- related: OK-PR-007 - Runbook Authoring Standards Implementation
+- related: OK-PR-008 - Module Extension State Routing Implementation
+- related: Foundry Microsoft 365 module onboarding tooling-readiness discussion
+
+Session refs:
+- created: not recorded
+- material update: 2026-06-24, not recorded, activated implementation plan and created sibling
+  execution log.
+- material update: 2026-06-24, not recorded, added a low-risk structure-governance
+  cross-reference to keep placement guidance separate from runbook-shape and tooling-readiness
+  standards.
+- material update: 2026-06-24, not recorded, clarified EP-04 release-manifest strategy after
+  review: root manifest records publishable asset hashes while packaged manifest keeps
+  zero-placeholder downloadable asset hashes to avoid self-referential archive checksums.
+
+Coordination note:
+- local-only
+
+## OK-PR-009 - Tooling Environment Readiness Discovery
+
+Type: discovery-plan
+Purpose: Discover shared Operating Kit doctrine for local tooling and environment readiness,
+including missing-tool routing, package-manager/bootstrap guidance boundaries, module-owned tool
+declarations, local readiness evidence placement, and approval-gated install or repair flows.
+Status: draft
+Owner / repository: Codeheart-Operating-Kit
+Canonical docs:
+docs/repo/plans/tooling-environment-readiness/tooling-environment-readiness_discovery_doc.md
+Created: 2026-06-24
+Last updated: 2026-06-24T13:38:01Z (UTC)
+Priority / ordering note: Should precede any Operating Kit implementation that adds shared
+tooling-readiness routes, package-manager/bootstrap guidance, readiness state placement, or
+module-facing tool declaration standards.
+
+Relations:
+- promoted-from: runbook-authoring-standards related feedback item "Shared Environment Readiness
+  And Tooling Register"
+- related: OK-PR-005 - Runbook Authoring Standards Discovery
+- related: OK-PR-006 - Module Extension State Routing Discovery
+- related: Foundry Microsoft 365 module onboarding tooling-readiness discussion
+
+Session refs:
+- created: not recorded
+- material update: 2026-06-24, not recorded, refined discovery around an on-demand baseline
+  tooling catalog, flexible module declarations by manifest/reference/runbook, and a generic
+  missing-tool behavior contract.
+- material update: 2026-06-24, not recorded, clarified that module onboarding and operation
+  environment blockers should trigger the readiness route and that package-manager guidance should
+  use concrete nontechnical choices.
+- material update: 2026-06-24, not recorded, added trigger-model review results from managed
+  route surfaces and the Foundry M365 hybrid onboarding runbook, including route visibility,
+  blocker-specific human choices, and the split between local environment blockers and
+  module-owned service blockers.
+- material update: 2026-06-24, not recorded, clarified the Operating Kit anti-sprawl boundary:
+  keep one central readiness route and small baseline catalog while leaving module-specific install
+  runbooks and commands in modules.
+
+Coordination note:
+- local-only
 
 ## OK-PR-008 - Module Extension State Routing Implementation
 

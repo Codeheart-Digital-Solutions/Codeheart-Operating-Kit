@@ -1,4 +1,4 @@
-Last updated: 2026-06-23T18:10:49Z (UTC)
+Last updated: 2026-06-24T13:51:18Z (UTC)
 
 # Codeheart Operating Kit Inventory
 
@@ -40,6 +40,11 @@ state looks missing, stale, or damaged.
 
 - Runbook authoring standard:
   `.codeheart/kit/docs/agent-interface/reference/runbook-authoring-standard.md`
+
+## Tooling Readiness
+
+- Missing local tooling route:
+  `.codeheart/kit/docs/agent-interface/runbooks/handle-tooling-readiness.md`
 
 ## Operating Rule
 

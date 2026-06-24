@@ -1,4 +1,4 @@
-Last updated: 2026-06-23T18:09:34Z (UTC)
+Last updated: 2026-06-24T13:51:18Z (UTC)
 
 # Change Documentation Placement
 
@@ -13,8 +13,10 @@ documentation.
 3. Read the documentation structure reference.
 4. Read the repository information architecture reference when a durable name or new folder
    boundary is involved.
-5. Check for an existing owner before adding a new document.
-6. Protect unrelated user work.
+5. When the artifact is a runbook, read the agent-interface runbook authoring standard for
+   internal runbook shape; this placement runbook only decides location and ownership.
+6. Check for an existing owner before adding a new document.
+7. Protect unrelated user work.
 
 ## Owner Selection
 
@@ -41,13 +43,15 @@ adding duplicate consumer-local doctrine.
    public links.
 5. Move or create the document in the owning path.
 6. Convert duplicate local doctrine to a wrapper when managed kit doctrine owns the generic rule.
-7. Place committed non-secret module or extension routing state under
+7. For durable runbooks, keep generic local tooling readiness behavior centralized in the managed
+   tooling-readiness runbook unless the approved plan changes that shared route.
+8. Place committed non-secret module or extension routing state under
    `docs/repo/state/<module-or-extension-id>/`.
-8. Place plan-scoped temporary artifacts under the plan bundle's `attachments/` folder.
-9. Place historical material under `archive/` only when it no longer governs current behavior.
-10. Update nearest README and parent indexes.
-11. Update links, commands, validator inputs, and stale-path guards affected by the change.
-12. Record consumer impact when generated surfaces or managed routes change.
+9. Place plan-scoped temporary artifacts under the plan bundle's `attachments/` folder.
+10. Place historical material under `archive/` only when it no longer governs current behavior.
+11. Update nearest README and parent indexes.
+12. Update links, commands, validator inputs, and stale-path guards affected by the change.
+13. Record consumer impact when generated surfaces or managed routes change.
 
 ## Archive Handling
 
@@ -73,4 +77,6 @@ Also validate:
 - archived docs are not still presented as current authority;
 - generated or managed paths were not changed without impact classification;
 - committed module or extension state is non-secret and remains under `docs/repo/state/<id>/`;
+- runbook placement uses structure governance while runbook shape uses the agent-interface
+  authoring standard;
 - local wrappers point to the managed owner and keep only real local exceptions.

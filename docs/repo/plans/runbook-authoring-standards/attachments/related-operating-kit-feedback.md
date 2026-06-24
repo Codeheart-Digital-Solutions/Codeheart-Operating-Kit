@@ -1,4 +1,4 @@
-Last updated: 2026-06-23T12:02:14Z (UTC)
+Last updated: 2026-06-24T06:50:35Z (UTC)
 
 # Related Operating Kit Feedback
 
@@ -70,6 +70,9 @@ account, secret, raw log, or local-machine details.
 
 Summary: Modules should not independently reinvent common tool checks and human-facing
 installation guidance when the Operating Kit could own a reusable environment-readiness pattern.
+
+Planning status: promoted to
+`docs/repo/plans/tooling-environment-readiness/tooling-environment-readiness_discovery_doc.md`.
 
 Kit version: `0.1.9`
 

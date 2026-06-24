@@ -1,4 +1,4 @@
-Last updated: 2026-06-23T18:14:00Z (UTC)
+Last updated: 2026-06-24T13:58:40Z (UTC)
 
 # Repo Plans
 
@@ -7,6 +7,12 @@ This folder contains Codeheart Operating Kit repository-level discovery and impl
 ## Current Plans
 
 - Plan register: `plan-register.md`
+- Tooling environment readiness discovery:
+  `tooling-environment-readiness/tooling-environment-readiness_discovery_doc.md`
+- Tooling environment readiness implementation plan:
+  `tooling-environment-readiness/tooling-environment-readiness_implementation_doc.md`
+- Tooling environment readiness execution log:
+  `tooling-environment-readiness/tooling-environment-readiness_execution_log.md`
 - Module extension state routing discovery:
   `module-extension-state-routing/module-extension-state-routing_discovery_doc.md`
 - Module extension state routing implementation plan:

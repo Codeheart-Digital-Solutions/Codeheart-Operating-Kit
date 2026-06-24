@@ -1,4 +1,4 @@
-Last updated: 2026-06-23T18:14:00Z (UTC)
+Last updated: 2026-06-24T13:58:40Z (UTC)
 
 # Repo Documentation
 
@@ -22,6 +22,15 @@ This folder contains public repository governance for Codeheart Operating Kit.
   issues.
 - `plans/README.md`: repository-level discovery and implementation plans.
 - `plans/plan-register.md`: lightweight index of registered Operating Kit repository plans.
+- `plans/tooling-environment-readiness/tooling-environment-readiness_discovery_doc.md`:
+  discovery for shared Operating Kit tooling and environment-readiness doctrine, missing-tool
+  routing, module-owned tool declarations, and local readiness evidence boundaries.
+- `plans/tooling-environment-readiness/tooling-environment-readiness_implementation_doc.md`:
+  active implementation plan for one central tooling-readiness route, installed route visibility,
+  runbook-authoring and planning hooks, packaged resources, and `0.1.12` release preparation.
+- `plans/tooling-environment-readiness/tooling-environment-readiness_execution_log.md`:
+  execution evidence, validation, release-readiness evidence, and review-gate log for tooling
+  environment readiness.
 - `plans/module-extension-state-routing/module-extension-state-routing_discovery_doc.md`:
   discovery for committed non-secret module and extension state under `docs/repo/state/<id>/`.
 - `plans/module-extension-state-routing/module-extension-state-routing_implementation_doc.md`:

@@ -1,4 +1,4 @@
-Last updated: 2026-06-23T14:13:07Z (UTC)
+Last updated: 2026-06-24T13:51:18Z (UTC)
 
 # Runbook Authoring Standard
 
@@ -83,6 +83,8 @@ Required quality bar:
 - Explain how the user can find values they may not know.
 - Ask explicit approval before writes, sign-ins, installs, external changes, destructive actions,
   or sensitive reads.
+- Route missing local tooling through `../runbooks/handle-tooling-readiness.md` and offer
+  blocker-specific choices instead of broad "install tools" prompts.
 - End with a clear result and next step.
 
 ### Language Preference
@@ -109,6 +111,8 @@ Required quality bar:
 - List required inputs and accepted formats.
 - State preconditions and tool readiness checks.
 - Name the execution lane, such as CLI, API, portal, document surface, or managed runbook.
+- Route missing generic local prerequisites through `../runbooks/handle-tooling-readiness.md`
+  before improvising install or repair guidance.
 - Provide an ordered procedure with concrete commands, API calls, document edits, or portal steps
   where applicable.
 - State approval gates before external-state-changing, destructive, sensitive, release, or
@@ -165,6 +169,28 @@ Higher-risk maintainer runbooks should include:
 - stop conditions;
 - release, migration, rollback, or handoff notes when relevant.
 
+## Tooling Readiness And DRY Architecture
+
+When a durable runbook can encounter missing local tooling, keep the responsibilities separate:
+
+- the runbook names required tools, capability unlocked, readiness checks, and module-owned
+  service preflight;
+- `../runbooks/handle-tooling-readiness.md` owns the generic missing-tool conversation, approval
+  gate, blocker-specific user choices, and return-to-runbook behavior;
+- module-owned runbooks and references own concrete module-specific install commands, versions,
+  and service caveats;
+- structure governance owns where the runbook belongs, not the internal runbook shape.
+
+Do not duplicate generic package-manager, runtime, or local-tool setup guidance across multiple
+managed Operating Kit runbooks. Use a concise route to the tooling-readiness runbook unless the
+implementation plan explicitly creates or changes the shared readiness route itself.
+
+Local environment blockers include missing package managers, shell runtimes, CLIs, PowerShell
+runtime, PowerShell modules, PATH discovery, browser automation prerequisites, and document/PDF
+tools. Service blockers such as external sign-in, tenant consent, admin roles, mailbox access,
+SharePoint permissions, licenses, app readiness, API authorization, or live external preflight
+remain module-owned.
+
 ## Review Checklist
 
 Use this checklist when reviewing a new or materially changed runbook.
@@ -187,12 +213,15 @@ Human-facing checks:
 - Approval wording is explicit before writes, sign-ins, installs, external changes, or sensitive
   reads.
 - Language preference is reused when a readable local `language` preference exists.
+- Missing local tooling routes to the managed tooling-readiness runbook with concrete user
+  choices.
 
 Agent-facing checks:
 
 - Source of truth and inputs are clear.
 - Preconditions and tool readiness checks are clear.
 - The execution lane is named.
+- Missing generic local tools route to the managed tooling-readiness runbook.
 - The ordered procedure is concrete enough for a fresh agent.
 - Approval gates and stop conditions are explicit.
 - Evidence and validation prove the outcome.
@@ -215,3 +244,5 @@ Scope checks:
 - The change does not accidentally retrofit unrelated runbooks.
 - Consumer-owned and module-owned runbooks are preserved unless the plan explicitly changes them.
 - Examples are public-safe and use placeholders or sanitized patterns.
+- Generic package-manager, runtime, and local-tool readiness guidance is centralized instead of
+  copied into every module or managed runbook.

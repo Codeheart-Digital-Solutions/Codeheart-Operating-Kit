@@ -1,4 +1,4 @@
-Last updated: 2026-06-23T14:19:31Z (UTC)
+Last updated: 2026-06-24T13:51:18Z (UTC)
 
 # Agent Interface
 
@@ -21,6 +21,7 @@ repository documents, not in the managed bootstrap text.
 - Update-check policy: `reference/update-check-policy.md`
 - Kit feedback item format: `reference/kit-feedback-item-format.md`
 - First-run onboarding: `runbooks/conduct-first-run-onboarding.md`
+- Tooling readiness: `runbooks/handle-tooling-readiness.md`
 - Root `AGENTS.md` structure: `runbooks/structure-root-agents-md.md`
 - Root `AGENTS.md` repair: `runbooks/repair-root-agents-md.md`
 - Submit kit feedback: `runbooks/submit-kit-feedback.md`
