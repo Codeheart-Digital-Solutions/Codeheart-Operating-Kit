@@ -1,6 +1,6 @@
-Last updated: 2026-06-24T14:33:10Z (UTC)
+Last updated: 2026-06-24T14:37:00Z (UTC)
 Created: 2026-06-24
-Status: active
+Status: completed
 
 # Tooling Environment Readiness Execution Log
 
@@ -17,7 +17,8 @@ Overall divergence:
 - EP-04 follows the established release-manifest split: root `manifest.yaml` records publishable
   asset hashes, while packaged `src/codeheart_operating_kit/resources/manifest.yaml` keeps
   zero-placeholder downloadable asset hashes to avoid a self-referential archive checksum.
-- Publication remains approval-gated by EP-05.
+- EP-05 publication used a separate post-release evidence update so tag `v0.1.12` stays pinned to
+  the validated release-prep commit.
 
 ## Summary
 
@@ -34,8 +35,8 @@ Implementation started from an explicitly approved activation request. The plan 
   accepted.
 - EP-04 - Mirror Resources, Tests, Docs, And Release Prep: completed locally; validation and
   review accepted.
-- EP-05 - Approval-Gated Publication And Consumer Proof: not started; blocked pending explicit
-  publication approval.
+- EP-05 - Approval-Gated Publication And Consumer Proof: completed after explicit publication
+  approval.
 
 ## Review Gate Metrics
 
@@ -46,8 +47,7 @@ Reviewer mode: read-only subagent review.
 
 Review rounds: one completed EP-01 through EP-03 review; three completed EP-04 review rounds.
 
-Material findings status: no material findings remain for EP-01 through EP-04. EP-05 remains
-approval-gated.
+Material findings status: no material findings remain. EP-01 through EP-05 are complete.
 
 ## EP-01 - Add Central Tooling Readiness Runbook
 
@@ -157,18 +157,90 @@ Final validation after Round 2 fixes:
 
 ## EP-05 - Approval-Gated Publication And Consumer Proof
 
-Status: not started. Do not publish `v0.1.12`, push release tags, create GitHub releases, or run
-consumer sync proof until explicit publication approval is granted.
+Status: completed.
+
+Publication notes:
+
+- Explicit publication approval was received in-session.
+- Validated release-prep commit: `8550225755bb08b9ee730c56a23eb314b14f0a85`.
+- Pushed `main` through validated release-prep commit `8550225755bb08b9ee730c56a23eb314b14f0a85`.
+- Created and pushed tag `v0.1.12` at `8550225755bb08b9ee730c56a23eb314b14f0a85`.
+- Published GitHub release:
+  `https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/tag/v0.1.12`.
+- Uploaded release assets:
+  - `bootstrap.md`
+  - `install.sh`
+  - `install.ps1`
+  - `release-notes.md`
+  - `manifest.yaml`
+  - `dist/codeheart-operating-kit-0.1.12-macos.tar.gz`
+  - `dist/codeheart-operating-kit-0.1.12-macos.tar.gz.sha256`
+  - `dist/codeheart-operating-kit-0.1.12-windows.zip`
+  - `dist/codeheart-operating-kit-0.1.12-windows.zip.sha256`
+
+Published asset verification:
+
+- Downloaded the published release assets from GitHub and compared every asset listed in root
+  `manifest.yaml` against its manifest checksum.
+- Verified uploaded `manifest.yaml` separately against the local release manifest.
+- Verified remote tag `v0.1.12` resolves to `8550225755bb08b9ee730c56a23eb314b14f0a85`.
+- Asset checksums:
+  - `bootstrap.md`: `8243cc10edc7acfbbc778538b60e16ec0bb956579fb710bc6806199c2e93c5a9`
+  - `install.sh`: `53d8b12ee582f9a34e2ddf7d5f9b135f15098aa71537f1c2e3488b77760d0bfb`
+  - `install.ps1`: `ecc97c5999df807197c030a3de08b86de0bd00b48038ddf6cc3863e5f9393474`
+  - `release-notes.md`: `827b903b484f76ec1130ae59bfa68fdd38e1b652aca97908d48be43c4d9d225a`
+  - `manifest.yaml`: `7cafcc1cdb5b9c862cb2d4d668af60c550b02850ed990006ff827f0103adc921`
+  - `codeheart-operating-kit-0.1.12-macos.tar.gz`:
+    `2b47c9c60da984c6187d83f3b1f20f6baa059d4681c39958d743b3c928866fe1`
+  - `codeheart-operating-kit-0.1.12-macos.tar.gz.sha256`:
+    `4f5aa051c05620995b6862a2a02301e32ebcbd06a6620d5d4851e28cdae4f3ce`
+  - `codeheart-operating-kit-0.1.12-windows.zip`:
+    `a18acc7bbb353b31cf705ab8c9a568cf14a1f2bbf54e29ca1caa1d8821ed7ccd`
+  - `codeheart-operating-kit-0.1.12-windows.zip.sha256`:
+    `29f34b27bc786f4a8cbbf4474271dbd8aa38c679a9599a70e8a71dac8bbca134`
+
+Isolated consumer proof:
+
+- Downloaded the published `bootstrap.md`, `install.sh`, macOS archive, and macOS checksum file.
+- Confirmed `bootstrap.md` contains `Version: v0.1.12`.
+- Confirmed the published installer fails closed on an intentionally wrong checksum.
+- Installed the published macOS archive into a temporary user-level install directory.
+- Installed CLI reported `codeheart-operating-kit 0.1.12`.
+- Onboarded a temporary consumer with the published CLI.
+- `codeheart-operating-kit check` returned `ok: true` and `stale_cli: false`.
+- Verified installed target:
+  `.codeheart/kit/docs/agent-interface/runbooks/handle-tooling-readiness.md`.
+- Verified the installed runbook contains `Tooling Readiness`.
+
+GitHub Actions proof:
+
+- Dispatched `Validate` workflow on tag `v0.1.12` with `release_version=v0.1.12`.
+- Workflow run:
+  `https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/actions/runs/28106384737`.
+- Result: success.
+- Jobs passed: `cli`, `native-capabilities`, `release-assets`, `macos-installer`,
+  `windows-installer`, `macos-public-release`, and `windows-public-release`.
+
+Residual risk:
+
+- GitHub Actions emitted runner warnings that Node.js 20 actions are being forced onto Node.js 24
+  and that the `macos-latest` label is migrating to macOS 26. These were warnings only; all jobs
+  passed.
+- No configured consumer repository was updated in EP-05. The proof scope was isolated consumer
+  install/onboard/check plus public GitHub Actions smoke tests.
 
 ## Final Validation
 
-Final local validation passed for EP-01 through EP-04:
+Final validation passed for EP-01 through EP-05:
 
+- `/Users/andreasbeer/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3 scripts/build-release-assets.py --output-dir dist`
 - `/Users/andreasbeer/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3 scripts/validate-markdown-headers.py`
 - `/Users/andreasbeer/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3 scripts/validate-public-core.py`
 - `/Users/andreasbeer/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3 scripts/validate-json-schemas.py`
 - `/Users/andreasbeer/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3 scripts/validate-release-manifest.py`
 - `uv run --with pytest --with setuptools --with pip python -m pytest`
 - `git diff --check`
-
-EP-05 publication and consumer proof are not validated because they are not approved to run yet.
+- Local installer bad-checksum and good-install proof passed against rebuilt macOS release assets.
+- Published asset verification passed against root `manifest.yaml` checksums.
+- Isolated consumer proof from published v0.1.12 assets passed.
+- GitHub Actions workflow run `28106384737` passed, including Windows public-release proof.

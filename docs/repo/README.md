@@ -1,4 +1,4 @@
-Last updated: 2026-06-24T13:58:40Z (UTC)
+Last updated: 2026-06-24T14:37:00Z (UTC)
 
 # Repo Documentation
 
@@ -26,7 +26,7 @@ This folder contains public repository governance for Codeheart Operating Kit.
   discovery for shared Operating Kit tooling and environment-readiness doctrine, missing-tool
   routing, module-owned tool declarations, and local readiness evidence boundaries.
 - `plans/tooling-environment-readiness/tooling-environment-readiness_implementation_doc.md`:
-  active implementation plan for one central tooling-readiness route, installed route visibility,
+  completed implementation plan for one central tooling-readiness route, installed route visibility,
   runbook-authoring and planning hooks, packaged resources, and `0.1.12` release preparation.
 - `plans/tooling-environment-readiness/tooling-environment-readiness_execution_log.md`:
   execution evidence, validation, release-readiness evidence, and review-gate log for tooling

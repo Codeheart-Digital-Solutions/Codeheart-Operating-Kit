@@ -27,12 +27,12 @@ Type: implementation-plan
 Purpose: Implement one central Operating Kit tooling-readiness route, installed route visibility,
 runbook-authoring and planning hooks, packaged-resource mirroring, tests, and `0.1.12` release
 preparation for local environment blockers encountered during module onboarding or operation.
-Status: active
+Status: completed
 Owner / repository: Codeheart-Operating-Kit
 Canonical docs:
 docs/repo/plans/tooling-environment-readiness/tooling-environment-readiness_implementation_doc.md
 Created: 2026-06-24
-Last updated: 2026-06-24T14:16:20Z (UTC)
+Last updated: 2026-06-24T14:37:00Z (UTC)
 Priority / ordering note: Should execute after OK-PR-009 is accepted and before modules depend on
 a managed Operating Kit route for missing package managers, runtimes, CLIs, PowerShell modules, or
 other local tooling blockers.
@@ -53,6 +53,9 @@ Session refs:
 - material update: 2026-06-24, not recorded, clarified EP-04 release-manifest strategy after
   review: root manifest records publishable asset hashes while packaged manifest keeps
   zero-placeholder downloadable asset hashes to avoid self-referential archive checksums.
+- completed: 2026-06-24, published Operating Kit `v0.1.12`, verified release assets, completed
+  isolated consumer proof, and passed GitHub Actions workflow run
+  `https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/actions/runs/28106384737`.
 
 Coordination note:
 - local-only
