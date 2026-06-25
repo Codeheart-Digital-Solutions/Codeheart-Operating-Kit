@@ -1,4 +1,4 @@
-Last updated: 2026-06-24T13:51:18Z (UTC)
+Last updated: 2026-06-25T13:05:46Z (UTC)
 
 # Runbook Authoring Standard
 
@@ -125,6 +125,25 @@ Required quality bar:
 Use the fresh-agent test: if another agent can only restate what must be true but still has to
 invent commands, workflow, evidence, or validation, the runbook is not specific enough.
 
+### Routing-Bearing Runbooks
+
+When an agent-facing or hybrid runbook handles a repeated routing-bearing operation, expose its
+routing contract before recipe execution begins.
+
+A runbook is routing-bearing when it selects an owner, route, execution surface, target scope,
+approval class, or external/service path for repeated work. In that case, either:
+
+- point to the owning route card or route registry; or
+- include a compact routing section that names the intent family, domain, scope, authority source,
+  execution surface, preconditions, approval class, stop conditions, and evidence expectation.
+
+Use `operation-routing-and-dispatch.md` for route-before-surface behavior, authority hierarchy,
+capability advertisements, route registries, route-card fields, ambiguity handling, and fresh
+low-context routing probes.
+
+Keep route selection separate from recipe execution. The route or route card chooses the lane and
+preconditions. The runbook recipe performs the work after routing is complete.
+
 ## Hybrid Runbooks
 
 Hybrid runbooks must separate user copy from operator-only material. Use these sections unless a
@@ -221,6 +240,9 @@ Agent-facing checks:
 - Source of truth and inputs are clear.
 - Preconditions and tool readiness checks are clear.
 - The execution lane is named.
+- Routing-bearing runbooks expose their routing contract or point to the owning route card or
+  route registry.
+- Route selection is separate from recipe execution.
 - Missing generic local tools route to the managed tooling-readiness runbook.
 - The ordered procedure is concrete enough for a fresh agent.
 - Approval gates and stop conditions are explicit.

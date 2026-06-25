@@ -1,4 +1,4 @@
-Last updated: 2026-06-24T13:51:18Z (UTC)
+Last updated: 2026-06-25T13:05:46Z (UTC)
 
 # Structure Governance
 
@@ -9,6 +9,8 @@ managed-content boundaries, and documentation index-maintenance guidance.
 
 - Use `reference/documentation-structure.md` before creating, moving, archiving, or reorganizing
   docs.
+- Use `../agent-interface/reference/operation-routing-and-dispatch.md` for route-before-surface
+  behavior, capability advertisements, route registries, and route-card field semantics.
 - Use `reference/repository-information-architecture.md` before introducing durable names, new
   folder boundaries, or externally visible identifiers.
 - Use `reference/managed-content-boundaries.md` to distinguish managed, scaffold, template,
@@ -30,6 +32,10 @@ Structure governance decides where a runbook belongs. The agent-interface runboo
 standard decides how a durable runbook should be shaped. When a runbook hits generic local tooling
 blockers, route the behavior through the managed tooling-readiness runbook instead of duplicating
 package-manager or runtime setup guidance in each location.
+
+For routing artifacts, Structure Governance owns placement and boundary rules. Agent Interface
+owns routing behavior and route-card semantics. Parent routers should advertise or link to
+capability families without copying deep route cards.
 
 When a consumer-local doc duplicates managed doctrine, convert it to a concise wrapper that points
 to managed kit doctrine and keeps only real local exceptions.

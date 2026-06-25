@@ -1,4 +1,4 @@
-Last updated: 2026-06-23T14:25:45Z (UTC)
+Last updated: 2026-06-25T13:05:46Z (UTC)
 
 # Planning Workflows
 
@@ -19,6 +19,8 @@ execution, planning document review, planning document lifecycle, and plan-regis
   registers for material planning lifecycle and relationship changes.
 - Use `../agent-interface/reference/runbook-authoring-standard.md` when plans create or
   materially change durable runbooks.
+- Use `../agent-interface/reference/operation-routing-and-dispatch.md` when plans create or
+  materially change routing-bearing surfaces.
 - Use `reference/planning-document-lifecycle.md` for planning metadata, statuses, execution logs,
   plan bundles, subplans, plan families, program folders, attachments, archives, and index
   maintenance.

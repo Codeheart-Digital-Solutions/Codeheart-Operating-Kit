@@ -1,4 +1,4 @@
-Last updated: 2026-06-21T15:11:52Z (UTC)
+Last updated: 2026-06-25T13:05:46Z (UTC)
 
 # Root AGENTS.md Contract
 
@@ -13,6 +13,24 @@ Consumer root `AGENTS.md` is the lean entry point for agents.
 The managed block stays short and contains only universal immediate rules plus direct routes into
 `.codeheart/kit/docs/`.
 
+## Compact Routing Hierarchy
+
+The managed block should expose the route-before-surface reflex without becoming a catalog of
+deep routes.
+
+Root wording should tell agents to route structural, external, sensitive, module, product, or
+ambiguous work before selecting a tool, connector, API, browser, script, or runbook. It should
+link to:
+
+```text
+.codeheart/kit/docs/agent-interface/reference/operation-routing-and-dispatch.md
+```
+
+The detailed hierarchy, trigger categories, capability advertisements, route registries, route
+cards, ambiguity handling, and probes belong in that managed Agent Interface reference. Root
+`AGENTS.md` should not list every domain route, module capability, provider, execution surface, or
+route-card field.
+
 ## Direct Managed Routes
 
 - Discovery: `.codeheart/kit/docs/planning-workflows/runbooks/discovery-workflow.md`
@@ -26,6 +44,8 @@ The managed block stays short and contains only universal immediate rules plus d
   `.codeheart/kit/docs/planning-workflows/runbooks/maintain-plan-register.md`
 - Agent memory: `.codeheart/kit/docs/agent-memory/README.md`
 - Agent interface: `.codeheart/kit/docs/agent-interface/README.md`
+- Operation routing and dispatch:
+  `.codeheart/kit/docs/agent-interface/reference/operation-routing-and-dispatch.md`
 - Structure governance: `.codeheart/kit/docs/structure-governance/README.md`
 
 Use `.codeheart/kit/README.md` as the fallback and full inventory for unclear tasks, kit

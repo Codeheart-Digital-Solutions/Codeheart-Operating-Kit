@@ -1,4 +1,4 @@
-Last updated: 2026-06-24T13:51:18Z (UTC)
+Last updated: 2026-06-25T13:05:46Z (UTC)
 
 <!-- BEGIN CODEHEART OPERATING KIT MANAGED BLOCK -->
 
@@ -15,6 +15,9 @@ Last updated: 2026-06-24T13:51:18Z (UTC)
   drift, repair, or sync work.
 - Keep reusable generic doctrine in the Operating Kit. Repository-owned sections should contain
   only local product, project, command, operational, and exception guidance.
+- For structural, external, sensitive, module, product, or ambiguous work, route before selecting
+  a tool, connector, API, browser, script, or runbook. Full routing reference:
+  `.codeheart/kit/docs/agent-interface/reference/operation-routing-and-dispatch.md`.
 - Before operating installed modules or extensions, discover the module or extension ID through
   the module system present in the repo, then check `docs/repo/state/<id>/` for committed
   non-secret routing state. Local state routes the work; live external preflight still decides.
@@ -35,6 +38,8 @@ Last updated: 2026-06-24T13:51:18Z (UTC)
   `.codeheart/kit/docs/planning-workflows/runbooks/maintain-plan-register.md`
 - Agent memory: `.codeheart/kit/docs/agent-memory/README.md`
 - Agent interface: `.codeheart/kit/docs/agent-interface/README.md`
+- Operation routing and dispatch:
+  `.codeheart/kit/docs/agent-interface/reference/operation-routing-and-dispatch.md`
 - Operating Kit feedback:
   `.codeheart/kit/docs/agent-interface/runbooks/submit-kit-feedback.md`
 - Tooling readiness:

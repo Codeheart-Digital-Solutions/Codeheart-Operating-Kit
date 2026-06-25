@@ -1,4 +1,4 @@
-Last updated: 2026-06-13T23:16:03Z (UTC)
+Last updated: 2026-06-25T14:02:30Z (UTC)
 
 # Consumer Impact Classification
 
@@ -11,9 +11,10 @@ Machine-readable consumer-impact records use `schemas/consumer-impact.schema.jso
 
 `instruction-only change`
 
-Changes managed instructions, references, runbooks, templates, or docs without changing generated
-paths, validators, safety policy, or required consumer action. Requires discoverability review and
-release notes when shipped.
+Changes managed instructions, references, runbooks, templates, or docs, including adding managed
+files under an existing component target. It does not add a new component, introduce or move
+consumer-owned scaffolds or generated paths, change validators, sync or ownership behavior, safety
+policy, or require consumer action. Requires discoverability review and release notes when shipped.
 
 `validator-only change`
 

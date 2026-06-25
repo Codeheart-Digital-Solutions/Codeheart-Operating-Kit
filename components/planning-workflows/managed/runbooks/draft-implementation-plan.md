@@ -1,4 +1,4 @@
-Last updated: 2026-06-25T12:14:15Z (UTC)
+Last updated: 2026-06-25T13:05:46Z (UTC)
 
 # Draft Implementation Plan
 
@@ -7,6 +7,26 @@ an execution-ready `*_implementation_doc.md`.
 
 An implementation plan is not a brainstorming note. It is the document a future agent or developer
 can execute linearly with low interpretation overhead.
+
+Audience: agent-facing
+
+Intent:
+Create a linear implementation plan that preserves accepted capability scope, decisions,
+dependencies, validation, and review gates so a future implementer can execute without
+reinventing the workflow.
+
+Success:
+The plan has a valid lifecycle header, complete sections, concrete epics, covered feature
+capability, explicit dependencies, validation, and no hidden blocker that prevents execution.
+
+Agent judgment boundary:
+The agent may derive safe defaults from accepted discovery, user direction, and repository
+research. It must not narrow the intended capability silently, turn discovery recommendations into
+authority without approval, or replace feature behavior with policy-only scaffolding.
+
+Stop boundary:
+Stop before normal epic drafting when discovery handoff authority is missing, capability scope is
+absent or unapproved, or a blocker prevents a single-path implementation plan.
 
 ## Trigger
 
@@ -116,6 +136,39 @@ plan must also state:
 Runbook-related acceptance criteria must cover the relevant audience checks. Do not let a plan
 deliver only routing, policy, or placeholders when the intended runbook still lacks user-facing
 flow, agent execution path, approval boundaries, stop conditions, evidence, or validation.
+
+## Routing-Standard Coverage
+
+When a plan creates or materially changes routing-bearing surfaces, cite and apply
+`../../agent-interface/reference/operation-routing-and-dispatch.md`.
+
+Routing-bearing surfaces include:
+
+- managed root routing;
+- agent-interface routing references;
+- structure-governance routing or placement rules;
+- runbook-authoring rules that affect route discovery;
+- capability advertisements;
+- route registries;
+- route cards;
+- module or extension routing state rules;
+- durable runbooks that select routes, owners, scopes, execution surfaces, or approval classes.
+
+For routing-bearing epics, the plan must state:
+
+- which routing standard sections apply;
+- the capability advertisement, route registry, route card, or routing surface being created or
+  changed;
+- which owner maintains the route after implementation;
+- whether the epic needs a fresh low-context routing probe;
+- how probe evidence will be recorded.
+
+Use a fresh low-context routing probe when the epic changes a route surface or route-selection
+behavior. Select the deepest nested realistic scenario affected by the epic, give a fresh agent a
+vague user-style request, and require it to identify the owner, discover the route or ambiguity
+question, and avoid choosing an execution surface prematurely.
+
+Mark the probe `not applicable` only when the changed work is not routing-bearing and explain why.
 
 ## File And Naming Rules
 

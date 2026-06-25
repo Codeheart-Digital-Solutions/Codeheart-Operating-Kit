@@ -33,7 +33,7 @@ Owner / repository: Codeheart-Operating-Kit
 Canonical docs:
 docs/repo/plans/operation-routing-dispatch-standard/operation-routing-dispatch-standard_implementation_doc.md
 Created: 2026-06-25
-Last updated: 2026-06-25T12:47:17Z (UTC)
+Last updated: 2026-06-25T13:14:40Z (UTC)
 Priority / ordering note: Should execute after OK-PR-012 completes because both plans touch
 planning-workflow runbooks and release surfaces.
 
@@ -55,6 +55,10 @@ Session refs:
 - material update: 2026-06-25, not recorded, changed the routing-surface inventory model to a
   two-pass flow with provisional inventory before doctrine writing and final consolidation after
   the core standard, root routing, placement rules, and planning hooks exist.
+- material update: 2026-06-25, not recorded, directly implemented selected EP-02 through EP-05
+  managed-source and packaged-resource changes with validation, fresh low-context routing probes,
+  and a new execution log while leaving full plan activation, release prep, and consumer sync
+  pending.
 
 Coordination note:
 - local-only

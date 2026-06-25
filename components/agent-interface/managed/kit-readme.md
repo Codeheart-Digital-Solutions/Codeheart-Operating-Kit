@@ -1,4 +1,4 @@
-Last updated: 2026-06-24T13:51:18Z (UTC)
+Last updated: 2026-06-25T13:05:46Z (UTC)
 
 # Codeheart Operating Kit Inventory
 
@@ -15,6 +15,11 @@ state looks missing, stale, or damaged.
 - Agent interface: `.codeheart/kit/docs/agent-interface/README.md`
 - Structure governance: `.codeheart/kit/docs/structure-governance/README.md`
 - Native Codex capabilities: `.codeheart/kit/docs/native-codex-capabilities/README.md`
+
+## Operation Routing
+
+- Route-before-surface standard:
+  `.codeheart/kit/docs/agent-interface/reference/operation-routing-and-dispatch.md`
 
 ## Generated State
 

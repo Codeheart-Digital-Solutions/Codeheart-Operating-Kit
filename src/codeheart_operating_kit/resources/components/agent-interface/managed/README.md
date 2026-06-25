@@ -1,4 +1,4 @@
-Last updated: 2026-06-24T13:51:18Z (UTC)
+Last updated: 2026-06-25T13:05:46Z (UTC)
 
 # Agent Interface
 
@@ -14,6 +14,7 @@ repository documents, not in the managed bootstrap text.
 ## Routes
 
 - Root `AGENTS.md` contract: `reference/root-agents-md-contract.md`
+- Operation routing and dispatch: `reference/operation-routing-and-dispatch.md`
 - Managed section boundaries: `reference/managed-section-boundaries.md`
 - Local extension contract: `reference/local-extension-contract.md`
 - Onboarding context contract: `reference/onboarding-context-contract.md`

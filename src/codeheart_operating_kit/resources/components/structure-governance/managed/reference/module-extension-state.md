@@ -1,4 +1,4 @@
-Last updated: 2026-06-23T18:09:34Z (UTC)
+Last updated: 2026-06-25T13:05:46Z (UTC)
 
 # Module Extension State
 
@@ -21,9 +21,15 @@ module manifest, state file, or schema.
 
 - Operating Kit owns the generic placement and routing doctrine.
 - Module systems own how installed modules and extension IDs are discovered.
-- Modules own concrete state file names, schemas, lifecycle, and validation rules.
+- Modules own concrete state file names, schemas, lifecycle, route registries, route cards, and
+  validation rules.
 - Consumer repositories own committed state contents after creation.
 - Live external systems own current truth for external resources.
+
+Use `../../agent-interface/reference/operation-routing-and-dispatch.md` for the generic routing
+sequence, capability advertisement fields, and route-card field semantics. This reference only
+defines where committed module or extension routing state belongs and how it relates to live
+preflight.
 
 ## Allowed Content
 
@@ -79,6 +85,10 @@ Before sensitive reads, writes, deletes, permission changes, tenant changes, or 
 changes, the agent must validate the relevant live system through the module's approved tool lane
 or runbook. If local state conflicts with live preflight, stop and resolve the conflict through
 the module's runbook instead of trusting the committed file.
+
+Route cards may point to committed module state as a state source. They must still name the live
+truth source, preconditions, approval class, stop conditions, and canonical runbook before any
+sensitive or external action proceeds.
 
 ## Agent Routing Rule
 

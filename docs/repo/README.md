@@ -1,4 +1,4 @@
-Last updated: 2026-06-25T12:44:58Z (UTC)
+Last updated: 2026-06-25T13:07:52Z (UTC)
 
 # Repo Documentation
 
@@ -30,6 +30,11 @@ This folder contains public repository governance for Codeheart Operating Kit.
 - `plans/operation-routing-dispatch-standard/operation-routing-dispatch-standard_discovery_doc.md`:
   discovery for generic route-before-execution-surface doctrine, capability advertisements, route
   registries, route cards, authority hierarchy, and routing-bearing validation hooks.
+- `plans/operation-routing-dispatch-standard/operation-routing-dispatch-standard_implementation_doc.md`:
+  implementation plan for the managed operation-routing standard, compact root route visibility,
+  structure-governance placement rules, planning hooks, validation, and release preparation.
+- `plans/operation-routing-dispatch-standard/operation-routing-dispatch-standard_execution_log.md`:
+  execution evidence for the selected operation-routing implementation epics and review probes.
 - `plans/tooling-environment-readiness/tooling-environment-readiness_discovery_doc.md`:
   discovery for shared Operating Kit tooling and environment-readiness doctrine, missing-tool
   routing, module-owned tool declarations, and local readiness evidence boundaries.

@@ -1,6 +1,45 @@
-Last updated: 2026-06-25T12:28:30Z (UTC)
+Last updated: 2026-06-25T14:22:17Z (UTC)
 
 # Codeheart Operating Kit Release Notes
+
+## v0.1.14 Release Notes
+
+`v0.1.14` adds the managed Operation Routing And Dispatch Standard.
+
+### Included
+
+- Agent Interface now owns the full route-before-surface standard, including the dispatch
+  sequence, authority hierarchy, ambiguity handling, capability advertisements, route registries,
+  route cards, route-card fields, fresh low-context probes, and live-preflight boundaries.
+- The managed root `AGENTS.md` block and installed fallback inventory now expose compact
+  route-before-surface guidance and point to the full operation-routing reference.
+- Structure Governance now explains where capability advertisements, route registries, route
+  cards, canonical recipes, routing state, evidence, and local wrappers belong.
+- Runbook authoring and planning workflow guidance now require routing-bearing work to apply the
+  standard and prove it with fresh low-context routing probes when route-selection behavior
+  changes.
+- The source consumer-impact classification now clarifies that additive managed instruction,
+  reference, runbook, template, or doc files under an existing component target can remain
+  `instruction-only change` when they do not add a component, create or move consumer-owned
+  scaffolds or generated paths, change validators, sync or ownership behavior, safety policy, or
+  require consumer action.
+- Packaged Agent Interface, Structure Governance, Planning Workflows, and root managed-block
+  resources include the updated managed guidance.
+
+### Consumer Impact
+
+- `instruction-only change`: installed consumers receive clearer managed routing, placement,
+  planning, and runbook-authoring guidance when they sync or update the Operating Kit.
+- No forced migration is required. Existing consumer-owned route cards, runbooks, plans, state
+  files, and local guidance are not rewritten.
+- No provider-specific route cards or consumer-owned route registries are scaffolded by this
+  release.
+- Consumers adopt the new guidance through normal sync or update.
+
+### Validation
+
+- Release-readiness validation is recorded in the operation routing and dispatch standard
+  execution log before public tagging, release publication, and consumer proof.
 
 ## v0.1.13 Release Notes
 

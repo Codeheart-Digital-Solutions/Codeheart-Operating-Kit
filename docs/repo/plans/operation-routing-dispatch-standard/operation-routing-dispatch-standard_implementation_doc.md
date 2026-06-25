@@ -1,4 +1,4 @@
-Last updated: 2026-06-25T12:47:17Z (UTC)
+Last updated: 2026-06-25T13:14:40Z (UTC)
 Created: 2026-06-25
 Status: draft
 
@@ -18,6 +18,13 @@ Execution dependency: this plan should execute after `OK-PR-012 - Discovery Hand
 Implementation` completes. `OK-PR-012` is currently active and targets `v0.1.13`; this plan
 therefore targets the next patch release, expected `v0.1.14`, unless execution finds that the
 source release state has moved and records a consistent next patch target.
+
+Selected execution note: on 2026-06-25, the user directly requested implementation of EP-02
+through EP-05 before full plan activation. Those selected epics' managed source, packaged resource
+mirrors, tests, fresh low-context probes, and review gates were implemented and recorded in
+`docs/repo/plans/operation-routing-dispatch-standard/operation-routing-dispatch-standard_execution_log.md`.
+The full plan remains `draft`; final consolidation, probe matrix attachment, release prep,
+release publication, and consumer sync remain pending.
 
 Essential context:
 
@@ -1231,3 +1238,5 @@ OQ-2 applies.
   Standard discovery capability scope.
 - 2026-06-25: Tightened EP-01 inventory scope, added EP-07 probe matrix requirements, and fixed
   EP-08 release checksum sequencing after plan review.
+- 2026-06-25: Recorded direct user-requested implementation of selected EP-02 through EP-05 while
+  keeping full plan activation, final consolidation, release prep, and consumer sync pending.

@@ -79,9 +79,16 @@ def test_onboard_yes_writes_and_creates_adoption_report(tmp_path):
     ]) == 0
     assert (tmp_path / ".codeheart/kit.lock.yaml").exists()
     assert (tmp_path / ".codeheart/reports/adoption-cleanup-report.md").exists()
+    assert (tmp_path / ".codeheart/kit/docs/agent-interface/reference/operation-routing-and-dispatch.md").exists()
     assert (tmp_path / "docs/repo/plans/plan-register.md").exists()
     assert (tmp_path / "docs/repo/plans/coordination-sync-pending.md").exists()
-    assert "local instructions" in (tmp_path / "AGENTS.md").read_text(encoding="utf-8")
+    agents_text = (tmp_path / "AGENTS.md").read_text(encoding="utf-8")
+    kit_readme_text = (tmp_path / ".codeheart/kit/README.md").read_text(encoding="utf-8")
+    assert "local instructions" in agents_text
+    assert "route before selecting" in agents_text
+    assert ".codeheart/kit/docs/agent-interface/reference/operation-routing-and-dispatch.md" in agents_text
+    assert "Route-before-surface standard" in kit_readme_text
+    assert ".codeheart/kit/docs/agent-interface/reference/operation-routing-and-dispatch.md" in kit_readme_text
     config = load_yaml(tmp_path / ".codeheart/kit.config.yaml")
     assert config["setup_purpose"] == "software-product"
     assert "portfolio" not in config

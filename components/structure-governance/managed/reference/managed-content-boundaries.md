@@ -1,4 +1,4 @@
-Last updated: 2026-06-23T18:09:34Z (UTC)
+Last updated: 2026-06-25T13:05:46Z (UTC)
 
 # Managed Content Boundaries
 
@@ -29,6 +29,8 @@ doctrine without overwriting consumer-owned state.
 - `local-user`: personal local preferences and notes that should stay ignored or local-only.
 - `generated`: machine output such as lockfiles, checksums, reports, or release assets.
 - `report`: generated or plan-scoped evidence used for review, not managed doctrine.
+- `routing artifact`: a router, capability advertisement, route registry, or route card that
+  helps agents select the owner, route, execution surface, and canonical recipe.
 
 ## Rules
 
@@ -42,6 +44,12 @@ doctrine without overwriting consumer-owned state.
   when it is non-secret, repo-owned, and useful for routing.
 - Treat committed module or extension state as routing context. Validate live external systems
   before sensitive reads, writes, permission changes, or external resource changes.
+- Keep generic routing behavior, authority hierarchy, route-card fields, and ambiguity handling in
+  managed Agent Interface doctrine.
+- Keep domain-specific capability advertisements, route registries, and route cards with the
+  repository, product, module, package, or source-area owner that can maintain them.
+- Do not store execution evidence, generated reports, raw run logs, or live external truth inside
+  route cards or committed routing state.
 - Keep local user guidance under `.codeheart/user/` and ignored by source control.
 - Treat generated reports as evidence, not as managed source of truth.
 
@@ -52,6 +60,7 @@ should:
 
 - point to the managed kit doc that owns the generic rule;
 - keep only local exceptions;
+- advertise local capability families only when the wrapper owns a real local route boundary;
 - avoid duplicating long managed doctrine;
 - state when local behavior intentionally differs from the kit.
 

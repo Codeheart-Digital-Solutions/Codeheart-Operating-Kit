@@ -1,4 +1,4 @@
-Last updated: 2026-06-25T12:14:15Z (UTC)
+Last updated: 2026-06-25T13:05:46Z (UTC)
 
 # Discovery Workflow
 
@@ -7,6 +7,26 @@ model framing, hard-to-reverse decisions, and discovery document drafting.
 
 Discovery is not a task checklist. Discovery creates enough shared understanding, evidence,
 decision state, and handoff clarity for the requested next step.
+
+Audience: agent-facing
+
+Intent:
+Guide substantial discovery through one lifecycle that clarifies intent, domain, decisions,
+evidence, recommendations, and handoff readiness without turning discovery into execution.
+
+Success:
+The discovery reaches the requested readiness target with coherent decisions, blockers, risks,
+assumptions, and implementation capability scope when handoff is needed.
+
+Agent judgment boundary:
+The agent may adapt research depth, question order, and recommendation format to the domain. It
+must not treat unapproved review-ready recommendations as implementation authority or invent
+execution tasks before the requested readiness gate.
+
+Stop boundary:
+Stop before implementation planning when required implementation-shaping decisions are unresolved,
+capability scope is absent or unapproved, or the next step is a blocker-resolution or conditional
+handoff.
 
 ## Core Model
 
@@ -58,6 +78,13 @@ Start from the available input state:
 - `review-or-cleanup`: the user wants gaps, ambiguity, or decision quality reviewed.
 - `handoff-preparation`: discovery content exists and needs to be made ready for implementation
   planning or another next step.
+
+Flag the work as `routing-bearing` when the likely next implementation will create or materially
+change managed root routing, agent-interface routing references, structure-governance routing or
+placement rules, runbook-authoring route discovery, capability advertisements, route registries,
+route cards, module-routing state, or durable operational runbooks that select routes, owners, or
+execution surfaces. Discovery should identify that scope and point to the operation-routing
+standard, but should not draft the implementation checklist.
 
 For an existing discovery document, treat the document as the state ledger. Refresh it before
 resolving new decisions. Do not assume previous content is correct without checking current

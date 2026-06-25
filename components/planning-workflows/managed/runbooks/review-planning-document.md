@@ -1,4 +1,4 @@
-Last updated: 2026-06-25T12:14:15Z (UTC)
+Last updated: 2026-06-25T13:05:46Z (UTC)
 
 # Review Planning Document
 
@@ -7,6 +7,25 @@ architecture quality, ambiguity, and execution readiness.
 
 The review output should help the owner fix the document before execution, not summarize the
 document.
+
+Audience: agent-facing
+
+Intent:
+Review discovery and implementation documents for material gaps, ambiguity, unsafe sequencing,
+weak validation, missing authority, and incomplete capability coverage before execution.
+
+Success:
+The review identifies actionable findings with severity and file or section references, or states
+that no material issues remain with residual risk.
+
+Agent judgment boundary:
+The agent may choose review depth based on blast radius and evidence. It must not rewrite the
+document unless asked, hide material risks behind summary, or treat missing handoff/probe evidence
+as ready.
+
+Stop boundary:
+Stop at a `Blocked` review result when execution depends on a user decision, missing handoff
+authority, unresolved blocker, or external condition.
 
 ## Trigger
 
@@ -111,6 +130,14 @@ For implementation docs, check whether:
   remediation paths, retry validation, and stop conditions.
 - plans that create or materially change durable runbooks route to
   `../../agent-interface/reference/runbook-authoring-standard.md`;
+- plans that create or materially change routing-bearing surfaces cite and apply
+  `../../agent-interface/reference/operation-routing-and-dispatch.md`;
+- routing-bearing epics identify affected capability advertisements, route registries, route
+  cards, owner boundaries, or routing surfaces;
+- routing-bearing epics include fresh low-context routing probes, or explicitly justify why probes
+  are not applicable;
+- probe pass criteria check that a fresh agent identifies the likely owner, discovers the route or
+  ambiguity question, and avoids choosing an execution surface prematurely;
 - affected runbooks have clear audience classes and compact intention-block requirements;
 - human-facing runbook work includes user-visible flow, question pacing, explicit action wording,
   and non-technical language boundaries;

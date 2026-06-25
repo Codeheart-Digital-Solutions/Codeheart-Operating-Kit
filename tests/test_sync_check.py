@@ -159,6 +159,8 @@ def test_sync_refreshes_existing_agents_managed_block_and_preserves_local_conten
     assert "stale managed block" not in refreshed
     assert "Plan registers and configured portfolio coordination" in refreshed
     assert ".codeheart/kit/docs/planning-workflows/runbooks/maintain-plan-register.md" in refreshed
+    assert "Operation routing and dispatch" in refreshed
+    assert ".codeheart/kit/docs/agent-interface/reference/operation-routing-and-dispatch.md" in refreshed
     assert "docs/repo/state/<id>/" in refreshed
     assert ".codeheart/kit/docs/agent-interface/runbooks/handle-tooling-readiness.md" in refreshed
 

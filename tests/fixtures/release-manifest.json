@@ -1,11 +1,11 @@
 {
   "schema_version": 1,
-  "version": "0.1.13",
-  "released_at": "2026-06-25T12:28:30Z",
+  "version": "0.1.14",
+  "released_at": "2026-06-25T14:22:17Z",
   "assets": [
     {
-      "name": "codeheart-operating-kit-0.1.13.zip",
-      "url": "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.13/codeheart-operating-kit-0.1.13.zip",
+      "name": "codeheart-operating-kit-0.1.14.zip",
+      "url": "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.14/codeheart-operating-kit-0.1.14.zip",
       "sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
       "platform": "universal"
     }
@@ -13,9 +13,9 @@
   "components": [
     {
       "id": "planning-workflows",
-      "version": "0.1.13",
+      "version": "0.1.14",
       "manifest_path": "components/planning-workflows/component.yaml",
-      "checksum_sha256": "fe02dd63c2598f423f1029388a5cd450955db4877a0dc6a3f51db1a7d647dd8c",
+      "checksum_sha256": "0eab698a5d48297fa3777bdba6e8d666497a6134f7af673a46f1009ab6249dda",
       "consumer_impact": [
         "component addition",
         "instruction-only change",
@@ -35,9 +35,9 @@
     },
     {
       "id": "agent-interface",
-      "version": "0.1.6",
+      "version": "0.1.14",
       "manifest_path": "components/agent-interface/component.yaml",
-      "checksum_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "checksum_sha256": "d3314b0c3f0454c969cd5b14a9cfbaa4db4af07151a7b45ff58ade6606c52a75",
       "consumer_impact": [
         "component addition",
         "instruction-only change",
@@ -46,9 +46,9 @@
     },
     {
       "id": "structure-governance",
-      "version": "0.1.6",
+      "version": "0.1.14",
       "manifest_path": "components/structure-governance/component.yaml",
-      "checksum_sha256": "3333333333333333333333333333333333333333333333333333333333333333",
+      "checksum_sha256": "9565fff9ade06e17f5d81fb74ad462e1a39d69f05e2dcb92928613fc3ca168f1",
       "consumer_impact": [
         "component addition",
         "instruction-only change",

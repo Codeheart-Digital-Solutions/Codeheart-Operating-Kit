@@ -1,4 +1,4 @@
-Last updated: 2026-06-23T18:09:34Z (UTC)
+Last updated: 2026-06-25T13:05:46Z (UTC)
 
 # Documentation Structure
 
@@ -20,6 +20,8 @@ boundary.
   live under `reference/`.
 - Superseded or historical docs retained for traceability live under `archive/`.
 - README files are routers. They should route, not duplicate durable doctrine.
+- Parent routers should advertise capability families and route-registry pointers, not copy deep
+  route cards or execution recipes.
 - Do not create new durable folders until there is enough material to justify a stable owner and
   boundary.
 
@@ -35,10 +37,44 @@ Use clear ownership:
 - Plans own scoped decisions, strategy, tasks, and execution state for a specific change.
 - Execution logs own goal-style implementation divergence, validation evidence, review-gate
   results, and residual risk.
+- Capability advertisements own compact boundary discoverability for repeated operations.
+- Route registries and route cards own dispatch contracts inside the owning domain.
 
 Before adding durable guidance, check the nearest README and relevant `reference/` and `runbooks/`
 folders for an existing owner. If a durable rule already has an owner, link to that owner instead
 of repeating the full rule.
+
+## Routing Artifact Placement
+
+Use `../../agent-interface/reference/operation-routing-and-dispatch.md` for routing behavior,
+authority hierarchy, capability advertisement fields, route registry expectations, route-card
+fields, ambiguity handling, and fresh low-context routing probes.
+
+Use this structure reference for placement:
+
+- Root `AGENTS.md`: compact bootstrap router and pointer to the full routing reference. It should
+  not carry full capability catalogs, route registries, or route cards.
+- README routers: local discoverability, capability advertisements, and route-registry pointers
+  for the owner boundary. They should not duplicate deep route cards or canonical recipes.
+- Capability advertisements: in the owning domain's primary README or route-registry introduction
+  when the owner handles repeated operations or deep routes that parent routers cannot enumerate.
+- Route registries: in the owning domain's `reference/`, primary README, or equivalent durable
+  docs area. Use a local convention that keeps the registry close to the owner.
+- Route cards: in the owning route registry or adjacent durable reference. Put cards where the
+  operational owner can maintain them.
+- Canonical recipes: in `runbooks/`, scripts, API procedure docs, portal procedure docs, or other
+  owner-approved procedure surfaces after routing is complete.
+- Stable route behavior and field definitions: in managed Operating Kit references unless the
+  rule is domain-specific.
+- Committed non-secret routing state: under `docs/repo/state/<module-or-extension-id>/` only when
+  the installed module or extension owns real repo state.
+- Execution evidence and blockers: in execution logs, run records, reports, or final summaries,
+  not in route-card definitions.
+- Local wrappers: in the consumer-owned repository, product, module, package, or source-area docs
+  where the local exception lives.
+
+Do not create a central repository catalog of every route card. Upper layers should expose enough
+capability information for agents to find the owner and then descend to the owner's registry.
 
 ## Generic Target Shape
 
@@ -196,6 +232,11 @@ Committed state under `docs/repo/state/<module-or-extension-id>/` is routing con
 external truth. Agents must still run live preflight before sensitive reads, writes, permission
 changes, or external system changes.
 
+Consumer-owned route cards and route registries belong with the repository, product, module,
+package, or source-area owner that maintains the operation. Keep generic route-card field
+semantics in the managed Agent Interface reference and keep local route details with the local
+owner.
+
 ## Index Maintenance
 
 Update the nearest README and parent index when discoverability changes:
@@ -205,6 +246,8 @@ Update the nearest README and parent index when discoverability changes:
 - a doc is moved, archived, or removed;
 - a product, product area, package, or module folder is created;
 - a committed module or extension state namespace is created under `docs/repo/state/`;
+- a capability advertisement, route registry, or route card is added, removed, renamed, or
+  materially changed;
 - a runbook path, command path, validator input, workflow command, or entry point changes.
 
 Index updates are not required for timestamp-only edits, local wording inside an already-linked

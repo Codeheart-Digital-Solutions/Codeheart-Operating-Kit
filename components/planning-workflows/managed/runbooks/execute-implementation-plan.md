@@ -1,4 +1,4 @@
-Last updated: 2026-06-24T13:51:18Z (UTC)
+Last updated: 2026-06-25T13:05:46Z (UTC)
 
 # Execute Implementation Plan
 
@@ -7,6 +7,26 @@ runs.
 
 Implementation plans are authoritative, but their checklists may not be exhaustive. Complete the
 stated intention and outcome of each epic, not only the literal checkbox list.
+
+Audience: agent-facing
+
+Intent:
+Execute an active implementation plan linearly, complete each epic's intended capability, record
+meaningful divergence and evidence, and stop before unapproved scope or authority changes.
+
+Success:
+The implemented plan satisfies its stated outcomes, validation and review gates pass, execution
+evidence is recorded, and lifecycle/register state is updated where required.
+
+Agent judgment boundary:
+The agent may add low-risk tasks required for the epic outcome and choose safe local defaults. It
+must not expand scope, skip validation, mark incomplete epics complete, or bypass approval,
+release, safety, or routing-standard gates.
+
+Stop boundary:
+Stop before executing draft, completed, superseded, or archived plans; before high-impact
+unplanned decisions; and before closing an epic whose evidence does not prove the intended
+capability.
 
 ## Trigger
 
@@ -134,11 +154,13 @@ For each epic:
 3. Implement planned tasks.
 4. Add required low-risk tasks omitted by the checklist.
 5. Run the smallest validation set that proves the outcome.
-6. Run the per-epic review gate.
-7. Fix material findings and repeat the review gate.
-8. Update checklist state only for completed and validated tasks.
-9. Update the execution log with meaningful divergence and review evidence.
-10. Recap whether the epic intention is achieved.
+6. For routing-bearing epics, run or verify the planned fresh low-context routing probe, or record
+   why the probe is not applicable.
+7. Run the per-epic review gate.
+8. Fix material findings and repeat the review gate.
+9. Update checklist state only for completed and validated tasks.
+10. Update the execution log with meaningful divergence and review evidence.
+11. Recap whether the epic intention is achieved.
 
 ## Per-Epic Review Gate
 
@@ -154,6 +176,7 @@ The reviewer checks the implemented epic against:
 - scope boundaries and out-of-scope guardrails;
 - delivered feature capability, not only completed checklist lines;
 - discovery capability scope when the implementation plan references one;
+- routing-standard adoption and probe evidence for routing-bearing epics;
 - accidental future-epic work.
 
 Use the same default model and reasoning mode as the implementing agent unless the user requests a
@@ -197,6 +220,8 @@ Log:
 - extra tasks added because the checklist was not exhaustive;
 - safe defaults chosen during execution;
 - validation substitutions or extensions;
+- routing-standard adoption evidence and fresh low-context probe results for routing-bearing
+  epics;
 - review-gate rounds, findings, fixes, metrics, and accepted result;
 - changed sequencing;
 - corrected assumptions;
