@@ -1,4 +1,4 @@
-Last updated: 2026-06-25T12:47:17Z (UTC)
+Last updated: 2026-06-25T13:45:59Z (UTC)
 
 # Plan Register
 
@@ -66,13 +66,13 @@ Purpose: Implement a managed planning-workflow guardrail that stops normal imple
 drafting from discovery documents whose implementation capability scope has not been approved,
 delegated, or explicitly revised; publish the instruction-only `v0.1.13` release; and sync the
 released kit into the named consumer repositories.
-Status: active
+Status: completed
 Owner / repository: Codeheart-Operating-Kit
 Canonical docs:
 docs/repo/plans/discovery-handoff-gate/discovery-handoff-gate_implementation_doc.md
 docs/repo/plans/discovery-handoff-gate/discovery-handoff-gate_execution_log.md
 Created: 2026-06-25
-Last updated: 2026-06-25T12:10:47Z (UTC)
+Last updated: 2026-06-25T13:45:59Z (UTC)
 Priority / ordering note: Should execute before drafting the Operation Routing And Dispatch
 Standard implementation plan so that discovery capability-scope approval is enforced by the
 planning workflow itself.
@@ -88,6 +88,9 @@ Session refs:
   instruction-only release execution.
 - material update: 2026-06-25, not recorded, activated the implementation plan for goal-style
   execution and created the sibling execution log.
+- completed: 2026-06-25, published Operating Kit `v0.1.13`, verified the public release
+  workflows, synced the released kit into the three named consumer repositories, and recorded final
+  review evidence in the execution log.
 
 Coordination note:
 - local-only

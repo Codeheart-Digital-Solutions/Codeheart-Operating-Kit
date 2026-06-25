@@ -1,4 +1,4 @@
-Last updated: 2026-06-25T12:56:18Z (UTC)
+Last updated: 2026-06-25T13:45:59Z (UTC)
 Created: 2026-06-25
 
 # Discovery Handoff Gate Execution Log
@@ -8,7 +8,7 @@ Plan path:
 
 Mode: goal-style implementation execution.
 
-Status: active.
+Status: completed.
 
 Overall divergence: EP-03 changed the pre-commit cleanliness check from whole-worktree status to
 staged-diff verification so unrelated untracked files can be preserved and excluded from the
@@ -29,8 +29,8 @@ Operating Kit log. Execution uses the user-identified local AWS platform consume
 | --- | --- | --- | --- |
 | EP-01 | completed | none | Ready, no findings |
 | EP-02 | completed | none | Ready after round 2 |
-| EP-03 | release prep validated, publication pending | staged-diff check and staged referenced public draft | Ready after round 3 |
-| EP-04 | pending | none | pending |
+| EP-03 | release published and public smoke validated | staged-diff check and staged referenced public draft | Ready after round 3 |
+| EP-04 | completed | pre-existing consumer worktree changes preserved | Ready |
 
 ## Review Gate Metrics
 
@@ -41,9 +41,10 @@ Reviewer mode: fresh read-only subagent per epic.
 Reviewer model or reasoning mode: inherited from main agent unless recorded otherwise in the
 per-epic section.
 
-Review rounds: EP-01 round 1 complete; EP-02 rounds 1-2 complete; EP-03 rounds 1-3 complete.
+Review rounds: EP-01 round 1 complete; EP-02 rounds 1-2 complete; EP-03 rounds 1-3 complete;
+EP-04 round 1 complete.
 
-Material findings status: none open through EP-03 pre-publication review.
+Material findings status: none open through final validation.
 
 ## EP-01 Delta - Discovery Handoff Gate In Managed Planning Workflows
 
@@ -103,7 +104,7 @@ Review gate:
 
 ## EP-03 Delta - Release Preparation And Publication
 
-Status: release prep validated, repeat pre-publication review pending.
+Status: release published and public smoke validated.
 
 Implementation summary:
 
@@ -115,6 +116,11 @@ Implementation summary:
 - Updated root `manifest.yaml` with real local hashes for `bootstrap.md`, `install.sh`,
   `install.ps1`, `release-notes.md`, release archives, and release checksum files.
 - Preserved zero-placeholder downloadable asset hashes in the packaged resource manifest.
+- Committed the validated release changes at
+  `50513cf2928686134ec4c8a5de3648036eca4bef`.
+- Created public tag `v0.1.13` at the validated release commit.
+- Published GitHub release `v0.1.13`:
+  `https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/tag/v0.1.13`.
 
 Validation:
 
@@ -130,6 +136,31 @@ Validation:
 - Local macOS install from `dist/codeheart-operating-kit-0.1.13-macos.tar.gz` with checksum file:
   passed.
 - Local macOS checksum-mismatch stop test: passed.
+- Tag-push Validate workflow:
+  `https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/actions/runs/28172025749`:
+  passed.
+- Public-release smoke workflow:
+  `https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/actions/runs/28172217266`:
+  passed, including `macos-public-release` and `windows-public-release`.
+
+Published release assets and root-manifest hashes:
+
+- `bootstrap.md`:
+  `b64918fea9732147807893d6d01e4de4878a97dc5614ade497e98b308a20e050`.
+- `install.sh`:
+  `8f2fe17e28897ae5e64537052efbbd931dc727bddc1b280b26365259be991cb5`.
+- `install.ps1`:
+  `ac005f2fdd4bd00405d4891a24422c4d800ddf37513e6c8d4bdd0450dad782ee`.
+- `release-notes.md`:
+  `b57fa8a6401f5aa68afb967dfcff2d72e674b45273819714449a1aeb1cac25c9`.
+- `codeheart-operating-kit-0.1.13-macos.tar.gz`:
+  `be0ae4c3bc6bd1a71582de06af21af2118786529cdd1ed30455de2cae7d08cdc`.
+- `codeheart-operating-kit-0.1.13-macos.tar.gz.sha256`:
+  `9697e8b1b476cd46d58a70c1d41744a0588f23b2b0e58a00187b568faabde35a`.
+- `codeheart-operating-kit-0.1.13-windows.zip`:
+  `d35a7d4bb6e50a809e46a516553b19e1a5da4e8f1a0c2adc6ed16eb9cafbebe6`.
+- `codeheart-operating-kit-0.1.13-windows.zip.sha256`:
+  `36a6b2218b9d49dad9a0b9eb9cb77c843e71d8236e3439bcf8e12173148ea1ee`.
 
 Review gate:
 
@@ -149,19 +180,88 @@ Review gate:
 - Round 3 reviewer: fresh read-only subagent `Zeno`.
 - Round 3 result: Ready.
 - Final pre-publication result: Ready after remediation.
-- Windows installer validation through GitHub Actions: pending public workflow evidence.
+- Windows installer validation through GitHub Actions: passed in tag-push and public-release
+  workflows.
+- Residual risk: consumer sync validation remains EP-04.
 
 ## EP-04 Delta - Named Consumer Repository Sync
 
-Status: pending.
+Status: completed.
 
-Planned validation:
+Implementation summary:
 
-- `codeheart-operating-kit --version`
-- Update-check, sync, and check in each named consumer repository.
-- Changed-path review for normal managed Operating Kit sync output only.
-- Fresh subagent review gate.
+- Installed the published `v0.1.13` CLI through the macOS installer path into a temporary
+  verification install directory.
+- Confirmed the published CLI reports `codeheart-operating-kit 0.1.13`.
+- Ran update-check, sync, and check in `Codeheart-HQ`.
+- Ran update-check, sync, and check in `Codeheart-Automation-Foundry`.
+- Ran update-check, sync, and check in the AWS platform consumer repository.
+- Re-ran sync/check with the freshly installed published CLI after an earlier pass used the
+  previously validated local `0.1.13` CLI.
+
+Validation:
+
+- Published CLI install: passed.
+- Published CLI version: `codeheart-operating-kit 0.1.13`.
+- `Codeheart-HQ` update-check: saw `v0.1.13` available before sync.
+- `Codeheart-HQ` sync: synced 34 managed files under `.codeheart/kit/`.
+- `Codeheart-HQ` check: `ok: true`, `drift: []`, `stale_cli: false`.
+- `Codeheart-HQ` lock state after sync: `kit_version: 0.1.13`,
+  `latest_seen_version: 0.1.13`, `update_status: current`.
+- `Codeheart-Automation-Foundry` update-check: saw `v0.1.13` available before sync.
+- `Codeheart-Automation-Foundry` sync: synced 34 managed files under `.codeheart/kit/`.
+- `Codeheart-Automation-Foundry` check: `ok: true`, `drift: []`, `stale_cli: false`.
+- `Codeheart-Automation-Foundry` lock state after sync: `kit_version: 0.1.13`,
+  `latest_seen_version: 0.1.13`, `update_status: current`.
+- AWS platform consumer repository update-check: saw `v0.1.13` available before sync.
+- AWS platform consumer repository sync: synced 34 managed files under `.codeheart/kit/`.
+- AWS platform consumer repository check: `ok: true`, `drift: []`, `stale_cli: false`.
+- AWS platform consumer repository lock state after sync: `kit_version: 0.1.13`,
+  `latest_seen_version: 0.1.13`, `update_status: current`.
+
+Changed-path review:
+
+- `Codeheart-HQ` had pre-existing Foundry module, managed-kit, `AGENTS.md`, and repository docs
+  changes before EP-04 sync. EP-04 managed sync output is limited to `.codeheart/kit/`,
+  `.codeheart/kit.lock.yaml`, and the managed `AGENTS.md` block.
+- `Codeheart-Automation-Foundry` had pre-existing managed-kit, `AGENTS.md`, and repository plan
+  changes before EP-04 sync. EP-04 managed sync output is limited to `.codeheart/kit/`,
+  `.codeheart/kit.lock.yaml`, and the managed `AGENTS.md` block.
+- AWS platform consumer repository had pre-existing managed-kit, `AGENTS.md`, repository docs,
+  and product plan changes before EP-04 sync. EP-04 managed sync output is limited to
+  `.codeheart/kit/`, `.codeheart/kit.lock.yaml`, and the managed `AGENTS.md` block.
+- No destructive action, cleanup, revert, or consumer-owned manual edit was performed in the
+  consumer repositories.
+
+Review gate:
+
+- Required: yes.
+- Reviewer: fresh read-only subagent `Huygens`.
+- Rounds: 1.
+- Result: Ready.
+- Residual risk: consumer repositories remain locally dirty from pre-existing work outside this
+  plan; consumer commits remain outside this plan.
 
 ## Final Validation
 
-Not started.
+Status: completed.
+
+Validation:
+
+- Final fresh review gate: Ready.
+- `python3 scripts/validate-markdown-headers.py`: passed.
+- `python3 scripts/validate-public-core.py`: passed.
+- `git diff --check -- docs/repo/plans/discovery-handoff-gate/discovery-handoff-gate_implementation_doc.md docs/repo/plans/discovery-handoff-gate/discovery-handoff-gate_execution_log.md docs/repo/plans/plan-register.md`:
+  passed.
+- `v0.1.13` release remains published at
+  `https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/tag/v0.1.13`.
+- Public-release workflow `28172217266` completed successfully.
+- All three named consumer repositories report `kit_version: 0.1.13`,
+  `latest_seen_version: 0.1.13`, `update_status: current`, and no managed-content drift.
+
+Residual risk:
+
+- The `v0.1.13` tag remains at the validated release commit. This close-out evidence is
+  traceability-only and does not move the release tag.
+- Consumer repository commits are outside this plan. Local consumer worktrees contain pre-existing
+  unrelated changes that were preserved.

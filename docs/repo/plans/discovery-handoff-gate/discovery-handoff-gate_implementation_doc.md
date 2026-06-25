@@ -1,6 +1,7 @@
-Last updated: 2026-06-25T12:38:30Z (UTC)
+Last updated: 2026-06-25T13:45:59Z (UTC)
 Created: 2026-06-25
-Status: active
+Status: completed
+Completed: 2026-06-25
 Execution log: docs/repo/plans/discovery-handoff-gate/discovery-handoff-gate_execution_log.md
 
 # Document Header
@@ -492,10 +493,10 @@ validated commit mismatch, or release runbook stop condition.
 - [x] Run `uv run --with pip --with setuptools --with wheel python scripts/build-release-assets.py --version 0.1.13 --output-dir dist`.
 - [x] Run `git diff --check`.
 - [x] Confirm `git diff --cached --name-status` contains only intended release and plan changes.
-- [ ] Commit the validated release changes.
-- [ ] Create public tag `v0.1.13` from the validated commit.
-- [ ] Publish GitHub release `v0.1.13` with `bootstrap.md`, `install.sh`, `install.ps1`, `release-notes.md`, `manifest.yaml`, release assets, and checksum files.
-- [ ] Record release URL, asset names, checksums, validation commands, and residual risk in the execution log.
+- [x] Commit the validated release changes.
+- [x] Create public tag `v0.1.13` from the validated commit.
+- [x] Publish GitHub release `v0.1.13` with `bootstrap.md`, `install.sh`, `install.ps1`, `release-notes.md`, `manifest.yaml`, release assets, and checksum files.
+- [x] Record release URL, asset names, checksums, validation commands, and residual risk in the execution log.
 
 ### G) Implementation Notes
 
@@ -563,20 +564,20 @@ managed sync output.
 
 ### F) Tasks Checklist
 
-- [ ] Install the published `v0.1.13` CLI through the validated macOS installer path.
-- [ ] Run `codeheart-operating-kit --version` and confirm `codeheart-operating-kit 0.1.13`.
-- [ ] Run `codeheart-operating-kit update-check <Codeheart-HQ checkout> --agent-notification`.
-- [ ] Run `codeheart-operating-kit sync <Codeheart-HQ checkout>`.
-- [ ] Run `codeheart-operating-kit check <Codeheart-HQ checkout> --json`.
-- [ ] Run `codeheart-operating-kit update-check <Codeheart-Automation-Foundry checkout> --agent-notification`.
-- [ ] Run `codeheart-operating-kit sync <Codeheart-Automation-Foundry checkout>`.
-- [ ] Run `codeheart-operating-kit check <Codeheart-Automation-Foundry checkout> --json`.
-- [ ] Run `codeheart-operating-kit update-check <AWS platform consumer checkout> --agent-notification`.
-- [ ] Run `codeheart-operating-kit sync <AWS platform consumer checkout>`.
-- [ ] Run `codeheart-operating-kit check <AWS platform consumer checkout> --json`.
-- [ ] Inspect `git status --short` in each named consumer repository.
-- [ ] Confirm each named consumer repository changed only normal managed Operating Kit paths.
-- [ ] Create `docs/repo/plans/discovery-handoff-gate/discovery-handoff-gate_execution_log.md` with release and consumer sync evidence.
+- [x] Install the published `v0.1.13` CLI through the validated macOS installer path.
+- [x] Run `codeheart-operating-kit --version` and confirm `codeheart-operating-kit 0.1.13`.
+- [x] Run `codeheart-operating-kit update-check <Codeheart-HQ checkout> --agent-notification`.
+- [x] Run `codeheart-operating-kit sync <Codeheart-HQ checkout>`.
+- [x] Run `codeheart-operating-kit check <Codeheart-HQ checkout> --json`.
+- [x] Run `codeheart-operating-kit update-check <Codeheart-Automation-Foundry checkout> --agent-notification`.
+- [x] Run `codeheart-operating-kit sync <Codeheart-Automation-Foundry checkout>`.
+- [x] Run `codeheart-operating-kit check <Codeheart-Automation-Foundry checkout> --json`.
+- [x] Run `codeheart-operating-kit update-check <AWS platform consumer checkout> --agent-notification`.
+- [x] Run `codeheart-operating-kit sync <AWS platform consumer checkout>`.
+- [x] Run `codeheart-operating-kit check <AWS platform consumer checkout> --json`.
+- [x] Inspect `git status --short` in each named consumer repository.
+- [x] Confirm each named consumer repository changed only normal managed Operating Kit paths.
+- [x] Create `docs/repo/plans/discovery-handoff-gate/discovery-handoff-gate_execution_log.md` with release and consumer sync evidence.
 
 ### G) Implementation Notes
 
@@ -613,3 +614,5 @@ OQ-2 applies.
 - 2026-06-25: Activated plan for goal-style execution and created sibling execution log.
 - 2026-06-25: Replaced the EP-03 worktree-wide status check with a staged-diff check so unrelated
   untracked files remain protected during release commit preparation.
+- 2026-06-25: Completed release publication, consumer repository sync, final review, and
+  close-out evidence.
