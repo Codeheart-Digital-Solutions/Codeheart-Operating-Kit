@@ -1,4 +1,4 @@
-Last updated: 2026-06-25T14:36:43Z (UTC)
+Last updated: 2026-06-25T14:37:35Z (UTC)
 Created: 2026-06-25
 
 # Operation Routing And Dispatch Standard Execution Log
@@ -261,13 +261,13 @@ cards, module registries, external tools, and full planning workflow, and did no
 
 ## Review Gate Metrics
 
-Review gate required: yes, for selected EP-02 through EP-07 implementation.
+Review gate required: yes, for selected EP-02 through EP-09 implementation.
 
 Reviewer mode: fresh read-only subagent.
 
 Review rounds: EP-02/EP-03 round 1 complete; EP-04/EP-05 rounds 1-2 complete; EP-06
-decision-review and post-edit review complete. EP-07 uses fresh low-context probe evidence as
-the primary gate and remains eligible for an additional epic review before release prep.
+decision-review and post-edit review complete; EP-07, EP-08, and EP-09 epic-gate reviews
+complete.
 
 Material findings status: none open.
 
