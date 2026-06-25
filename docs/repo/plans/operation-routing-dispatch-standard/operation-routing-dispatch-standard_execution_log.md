@@ -1,4 +1,4 @@
-Last updated: 2026-06-25T14:32:26Z (UTC)
+Last updated: 2026-06-25T14:36:43Z (UTC)
 Created: 2026-06-25
 
 # Operation Routing And Dispatch Standard Execution Log
@@ -49,7 +49,7 @@ EP-08 validation and review gates pass.
 | EP-06 | implemented | Decision-only inventory was completed first, then the single remaining rewording edit was applied after user approval. | Ready, no findings |
 | EP-07 | implemented | Packaged mirrors/tests were partly completed during EP-02 through EP-05; the formal probe matrix and six P-07 probes were completed here. | Ready, no findings |
 | EP-08 | implemented | Release preparation used selected patch version `0.1.14`; no tag or public release was created in this epic. | Ready, no findings |
-| EP-09 | implemented | Public release `v0.1.14` was published and a temporary local consumer proof passed. | Complete |
+| EP-09 | implemented | Public release `v0.1.14` was published and a temporary local consumer proof passed. | Ready, no findings |
 
 ## Validation
 
@@ -298,6 +298,9 @@ Review summary:
 - EP-08 gate review result: Ready, no findings. Residual risk: `uv.lock` is an untracked local
   validation artifact and is intentionally excluded from the release commit because it is not in
   the EP-08 file list.
+- EP-09 gate review result: Ready, no findings. Residual risk: Windows install validation through
+  GitHub Actions was not run locally, and this post-publication evidence is committed after the
+  `v0.1.14` release tag while the tag remains on the validated release commit.
 
 ## EP-02 Delta - Agent Interface Routing Reference
 
@@ -438,3 +441,4 @@ Implementation summary:
 - Installed the `0.1.14` macOS release asset into a temporary user-level install directory.
 - Ran temporary local consumer proof for update-check, sync, routing-reference restoration, and
   check. Result: pass.
+- Completed read-only epic-gate review for EP-09; result Ready, no findings.
