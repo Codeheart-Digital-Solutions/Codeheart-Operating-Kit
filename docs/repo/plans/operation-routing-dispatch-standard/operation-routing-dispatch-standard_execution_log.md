@@ -1,4 +1,4 @@
-Last updated: 2026-06-25T14:29:16Z (UTC)
+Last updated: 2026-06-25T14:32:26Z (UTC)
 Created: 2026-06-25
 
 # Operation Routing And Dispatch Standard Execution Log
@@ -6,7 +6,7 @@ Created: 2026-06-25
 Plan path:
 `docs/repo/plans/operation-routing-dispatch-standard/operation-routing-dispatch-standard_implementation_doc.md`
 
-Mode: direct selected-epic implementation for EP-02 through EP-08.
+Mode: direct selected-epic implementation for EP-02 through EP-09.
 
 Status: active partial implementation.
 
@@ -14,8 +14,8 @@ Overall divergence: the user explicitly requested EP-02 through EP-05 before ful
 then requested the EP-06 decision and consolidation remainder, then requested EP-07 through EP-09.
 `OK-PR-012` was still recorded as active when selected work began, so this run did not originally
 mark the full routing plan active or execute EP-00. The selected managed-source,
-packaged-resource, source-governance, test, probe, release-prep, and review work for EP-02 through EP-08 was
-still implemented and validated.
+packaged-resource, source-governance, test, probe, release-prep, release publication, and
+consumer-proof work for EP-02 through EP-09 was still implemented and validated.
 
 ## Summary
 
@@ -29,9 +29,9 @@ Execution on 2026-06-25 implemented:
   rewording.
 - EP-07 packaged-resource/test verification and formal fresh low-context probe matrix.
 - EP-08 release preparation for `v0.1.14`.
+- EP-09 release publication and temporary local consumer proof.
 
-Publication and consumer proof remain outside the completed EP-02 through EP-08 portion of this
-selected run.
+The selected EP-02 through EP-09 run is complete.
 
 EP-09 public release approval basis: on 2026-06-25, the user explicitly requested
 "please implement EP07, EP08 and EP09. You may spawn subagents for epic gate reviews." This is
@@ -49,6 +49,7 @@ EP-08 validation and review gates pass.
 | EP-06 | implemented | Decision-only inventory was completed first, then the single remaining rewording edit was applied after user approval. | Ready, no findings |
 | EP-07 | implemented | Packaged mirrors/tests were partly completed during EP-02 through EP-05; the formal probe matrix and six P-07 probes were completed here. | Ready, no findings |
 | EP-08 | implemented | Release preparation used selected patch version `0.1.14`; no tag or public release was created in this epic. | Ready, no findings |
+| EP-09 | implemented | Public release `v0.1.14` was published and a temporary local consumer proof passed. | Complete |
 
 ## Validation
 
@@ -99,6 +100,52 @@ Prepared assets:
 Packaged release manifest note: downloadable asset checksums in
 `src/codeheart_operating_kit/resources/manifest.yaml` intentionally remain placeholder zero
 hashes so packaged resources do not embed future GitHub asset checksums.
+
+## Release Publication Evidence
+
+Release URL:
+`https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/tag/v0.1.14`
+
+Release tag: `v0.1.14`
+
+Validated release commit: `a2506a0d1688a36189107ce585d6f2e8b7a662c3`
+
+Tag object: `b0496051ff7f7897300e8e09e116c91636974e1b`
+
+Published assets:
+
+- `bootstrap.md`
+- `install.sh`
+- `install.ps1`
+- `release-notes.md`
+- `manifest.yaml`
+- `codeheart-operating-kit-0.1.14-macos.tar.gz`
+- `codeheart-operating-kit-0.1.14-macos.tar.gz.sha256`
+- `codeheart-operating-kit-0.1.14-windows.zip`
+- `codeheart-operating-kit-0.1.14-windows.zip.sha256`
+
+Consumer proof:
+
+- Proof surface: temporary local consumer repository, not a named private consumer.
+- CLI used: `codeheart-operating-kit 0.1.14` installed from the built macOS release asset into a
+  temporary user-level install directory.
+- Stale baseline: proof lock was set to `0.1.13` and the new operation-routing reference was
+  removed before update/sync/check.
+- `update-check --agent-notification --json`: status `update-available`, latest seen
+  `v0.1.14`.
+- `sync --json`: refreshed managed files and set kit version to `0.1.14`.
+- Routing reference proof:
+  `.codeheart/kit/docs/agent-interface/reference/operation-routing-and-dispatch.md` was restored
+  by sync.
+- `check --json`: `ok: true`, `missing_cli: false`, `stale_cli: false`,
+  `missing_routing: false`, `missing_route_targets: []`, `missing_lock_metadata: []`,
+  `drift: []`.
+
+Residual risk:
+
+- Windows install validation through GitHub Actions was not run during this local execution.
+- Post-publication evidence is recorded in this log after the `v0.1.14` tag. The release tag
+  remains on the validated release commit; this evidence update is a follow-up repository record.
 
 ## Fresh Low-Context Routing Probes
 
@@ -375,3 +422,19 @@ Implementation summary:
   manifest keeps placeholder downloadable asset checksums.
 - Ran release-preparation validation; all commands passed.
 - Completed read-only epic-gate review for EP-08; result Ready, no findings.
+
+## EP-09 Delta - Release Publication And First-Consumer Proof
+
+Status: implemented.
+
+Implementation summary:
+
+- Recorded explicit public release approval based on the user's request to implement EP-09.
+- Committed the validated release state as
+  `a2506a0d1688a36189107ce585d6f2e8b7a662c3`.
+- Created and pushed annotated tag `v0.1.14`.
+- Published the GitHub release with release notes, manifest, bootstrap, installers, release
+  archives, and checksum files.
+- Installed the `0.1.14` macOS release asset into a temporary user-level install directory.
+- Ran temporary local consumer proof for update-check, sync, routing-reference restoration, and
+  check. Result: pass.
