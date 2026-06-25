@@ -1,6 +1,36 @@
-Last updated: 2026-06-24T13:58:40Z (UTC)
+Last updated: 2026-06-25T12:28:30Z (UTC)
 
 # Codeheart Operating Kit Release Notes
+
+## v0.1.13 Release Notes
+
+`v0.1.13` adds a managed discovery-handoff gate for implementation planning.
+
+### Included
+
+- `draft-implementation-plan.md` now requires agents to check discovery handoff state before
+  drafting normal implementation epics from a discovery document.
+- Discovery-derived normal implementation plans now require implementation-handoff-ready
+  discovery or recorded user approval, delegation, or revision of relevant
+  `Implementation Capability Scope` blocks.
+- `discovery-workflow.md` now points to the implementation-plan drafting runbook as the handoff
+  enforcement point.
+- `review-planning-document.md` now checks that discovery-derived plans do not bypass capability
+  scope approval.
+- Packaged planning-workflow resources include the updated managed runbooks.
+
+### Consumer Impact
+
+- `instruction-only change`: installed consumers receive clearer managed planning guidance when
+  they sync or update the Operating Kit.
+- No forced migration is required. Existing consumer-owned plans, execution logs, runbooks, and
+  local state files are not rewritten.
+- Consumers adopt the new guidance through normal sync or update.
+
+### Validation
+
+- Release-readiness validation is recorded in the discovery handoff gate execution log before
+  public tagging, release publication, and named consumer sync.
 
 ## v0.1.12 Release Notes
 

@@ -131,7 +131,7 @@ def write_checksum(path: Path) -> Path:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Build Codeheart Operating Kit release assets.")
-    parser.add_argument("--version", default="0.1.12")
+    parser.add_argument("--version", default="0.1.13")
     parser.add_argument("--output-dir", default="dist")
     args = parser.parse_args()
     actual_version = package_version()

@@ -1,4 +1,4 @@
-Last updated: 2026-06-24T14:37:00Z (UTC)
+Last updated: 2026-06-25T12:44:58Z (UTC)
 
 # Docs Index
 
@@ -23,6 +23,12 @@ This folder contains public Codeheart Operating Kit documentation.
 - Kit feedback triage runbook: `docs/repo/runbooks/triage-kit-feedback.md`
 - Repo plans: `docs/repo/plans/README.md`
 - Repo plan register: `docs/repo/plans/plan-register.md`
+- Discovery handoff gate implementation plan:
+  `docs/repo/plans/discovery-handoff-gate/discovery-handoff-gate_implementation_doc.md`
+- Discovery handoff gate execution log:
+  `docs/repo/plans/discovery-handoff-gate/discovery-handoff-gate_execution_log.md`
+- Operation routing and dispatch standard discovery:
+  `docs/repo/plans/operation-routing-dispatch-standard/operation-routing-dispatch-standard_discovery_doc.md`
 - Tooling environment readiness discovery:
   `docs/repo/plans/tooling-environment-readiness/tooling-environment-readiness_discovery_doc.md`
 - Tooling environment readiness implementation plan:

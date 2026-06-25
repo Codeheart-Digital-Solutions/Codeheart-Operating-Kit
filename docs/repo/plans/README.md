@@ -1,4 +1,4 @@
-Last updated: 2026-06-24T13:58:40Z (UTC)
+Last updated: 2026-06-25T12:44:58Z (UTC)
 
 # Repo Plans
 
@@ -7,6 +7,12 @@ This folder contains Codeheart Operating Kit repository-level discovery and impl
 ## Current Plans
 
 - Plan register: `plan-register.md`
+- Discovery handoff gate implementation plan:
+  `discovery-handoff-gate/discovery-handoff-gate_implementation_doc.md`
+- Discovery handoff gate execution log:
+  `discovery-handoff-gate/discovery-handoff-gate_execution_log.md`
+- Operation routing and dispatch standard discovery:
+  `operation-routing-dispatch-standard/operation-routing-dispatch-standard_discovery_doc.md`
 - Tooling environment readiness discovery:
   `tooling-environment-readiness/tooling-environment-readiness_discovery_doc.md`
 - Tooling environment readiness implementation plan:

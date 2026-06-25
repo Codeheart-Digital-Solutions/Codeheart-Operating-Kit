@@ -1,4 +1,4 @@
-Last updated: 2026-06-22T18:05:35Z (UTC)
+Last updated: 2026-06-25T12:14:15Z (UTC)
 
 # Discovery Workflow
 
@@ -170,6 +170,10 @@ epics, execution checklists, or sentence-level implementation tasks to discovery
 capability cannot be summarized concretely enough for a single-path plan, label the output as
 `blocked handoff`, `conditional handoff`, or `blocker-resolution handoff` instead of normal
 implementation-handoff-ready.
+
+`draft-implementation-plan.md` enforces this handoff before normal implementation epics are
+drafted from discovery. A manual-review-ready discovery is not normal implementation authority
+until the implementation capability scope is approved, delegated, or revised by the user.
 
 If the user explicitly asks to carry a blocker forward, label the handoff as `blocked handoff`,
 `conditional handoff`, or `blocker-resolution handoff`. Do not label it as a normal single-path

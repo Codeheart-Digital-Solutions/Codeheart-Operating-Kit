@@ -1,4 +1,4 @@
-Last updated: 2026-06-24T13:51:18Z (UTC)
+Last updated: 2026-06-25T12:14:15Z (UTC)
 
 # Draft Implementation Plan
 
@@ -32,6 +32,44 @@ Prefer inputs in this order:
 Discovery is recommended but not mandatory for straightforward work. When no discovery document
 exists, record the baseline problem, constraints, and assumptions in Sections 1 and 2 before
 drafting execution tasks.
+
+## Discovery Handoff Preflight
+
+Before drafting normal implementation epics from a discovery document, verify the discovery
+handoff state.
+
+Use this preflight when the user asks to convert discovery into an implementation plan, cites a
+`*_discovery_doc.md`, or the intended plan depends on decisions recorded in discovery.
+
+Normal implementation-plan drafting may proceed only when one of these is true:
+
+- the discovery document is explicitly implementation-handoff-ready;
+- the user has approved the implementation capability scope after manual review;
+- the user has delegated or revised the implementation capability scope and the revision is
+  recorded in the current planning artifact;
+- the user requests a blocker-resolution or conditional handoff plan and the plan scope is limited
+  to that handoff type.
+
+For a normal implementation plan derived from discovery, the discovery must include
+`Implementation Capability Scope - <group name>` blocks for implementation-relevant decision
+groups. Use those blocks as the primary capability source for Section 1 goals, Section 2 scope
+decisions, and Section 3 epic outcomes.
+
+Stop before normal epic drafting when:
+
+- the discovery is only draft-ready or manual-review-ready and no approved, delegated, or revised
+  capability-scope handoff is recorded;
+- required `Implementation Capability Scope` blocks are absent for discovery-owned capability;
+- an unresolved `BLOCKER: yes` prevents a single-path implementation plan;
+- the discovery labels the next step as blocked handoff, conditional handoff, or
+  blocker-resolution handoff and the requested plan would exceed that limited scope.
+
+When this gate stops the plan, update or review the discovery document first. Do not silently
+convert review-ready recommendations into implementation authority.
+
+Discovery is still optional for straightforward work. When no discovery document exists and the
+work is simple enough to plan directly, derive capability from the user request, targeted
+repository research, and recorded assumptions.
 
 ## Feature Capability Coverage
 

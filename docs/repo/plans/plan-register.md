@@ -1,4 +1,4 @@
-Last updated: 2026-06-24T14:16:20Z (UTC)
+Last updated: 2026-06-25T12:47:17Z (UTC)
 
 # Plan Register
 
@@ -20,6 +20,131 @@ entered during plan-register adoption. Earlier repository plans may be added dur
 maintenance.
 
 ## Entries
+
+## OK-PR-013 - Operation Routing And Dispatch Standard Implementation
+
+Type: implementation-plan
+Purpose: Implement managed Operating Kit operation-routing and dispatch doctrine, including a
+two-pass routing-surface inventory and consolidation flow, Agent Interface routing reference,
+compact root route, Structure Governance placement rules, runbook and planning hooks, fresh
+low-context routing probes, packaged-resource mirrors, validation, and release preparation.
+Status: draft
+Owner / repository: Codeheart-Operating-Kit
+Canonical docs:
+docs/repo/plans/operation-routing-dispatch-standard/operation-routing-dispatch-standard_implementation_doc.md
+Created: 2026-06-25
+Last updated: 2026-06-25T12:47:17Z (UTC)
+Priority / ordering note: Should execute after OK-PR-012 completes because both plans touch
+planning-workflow runbooks and release surfaces.
+
+Relations:
+- depends-on: OK-PR-011 - Operation Routing And Dispatch Standard Discovery
+- depends-on: OK-PR-012 - Discovery Handoff Gate Implementation
+- related: OK-PR-005 - Runbook Authoring Standards Discovery
+- related: OK-PR-006 - Module Extension State Routing Discovery
+- related: OK-PR-009 - Tooling Environment Readiness Discovery
+- related: future module route-registry adoption work
+
+Session refs:
+- created: 2026-06-25, not recorded, drafted implementation plan from the approved routing
+  discovery capability scope with inventory-first sequencing, routing-bearing workflow hooks, and
+  fresh low-context routing probe validation.
+- material update: 2026-06-25, not recorded, tightened the implementation plan after review by
+  adding source-governance inventory tasks, a fresh low-context probe matrix attachment
+  requirement, and explicit release checksum sequencing.
+- material update: 2026-06-25, not recorded, changed the routing-surface inventory model to a
+  two-pass flow with provisional inventory before doctrine writing and final consolidation after
+  the core standard, root routing, placement rules, and planning hooks exist.
+
+Coordination note:
+- local-only
+
+## OK-PR-012 - Discovery Handoff Gate Implementation
+
+Type: implementation-plan
+Purpose: Implement a managed planning-workflow guardrail that stops normal implementation-plan
+drafting from discovery documents whose implementation capability scope has not been approved,
+delegated, or explicitly revised; publish the instruction-only `v0.1.13` release; and sync the
+released kit into the named consumer repositories.
+Status: active
+Owner / repository: Codeheart-Operating-Kit
+Canonical docs:
+docs/repo/plans/discovery-handoff-gate/discovery-handoff-gate_implementation_doc.md
+docs/repo/plans/discovery-handoff-gate/discovery-handoff-gate_execution_log.md
+Created: 2026-06-25
+Last updated: 2026-06-25T12:10:47Z (UTC)
+Priority / ordering note: Should execute before drafting the Operation Routing And Dispatch
+Standard implementation plan so that discovery capability-scope approval is enforced by the
+planning workflow itself.
+
+Relations:
+- related: OK-PR-011 - Operation Routing And Dispatch Standard Discovery
+- related: OK-PR-002 - Codeheart Operating Kit Implementation-Planning Quality
+- related: managed planning-workflows release path
+
+Session refs:
+- created: 2026-06-25, not recorded, drafted a narrow implementation plan for the discovery
+  handoff gate, embedded release and named consumer sync approval, and planned `v0.1.13`
+  instruction-only release execution.
+- material update: 2026-06-25, not recorded, activated the implementation plan for goal-style
+  execution and created the sibling execution log.
+
+Coordination note:
+- local-only
+
+## OK-PR-011 - Operation Routing And Dispatch Standard Discovery
+
+Type: discovery-plan
+Purpose: Discover shared Operating Kit doctrine for pre-execution routing and dispatch, including
+authority hierarchy, capability advertisements, route registries, route cards, ambiguity handling,
+and the split between generic Operating Kit routing behavior and domain-owned route details.
+Status: draft
+Owner / repository: Codeheart-Operating-Kit
+Canonical docs:
+docs/repo/plans/operation-routing-dispatch-standard/operation-routing-dispatch-standard_discovery_doc.md
+Created: 2026-06-25
+Last updated: 2026-06-25T12:18:33Z (UTC)
+Priority / ordering note: Should precede module-specific adoption work that depends on a shared
+route-before-execution-surface standard.
+
+Relations:
+- related: OK-PR-005 - Runbook Authoring Standards Discovery
+- related: OK-PR-006 - Module Extension State Routing Discovery
+- related: OK-PR-009 - Tooling Environment Readiness Discovery
+- related: future module route-registry adoption work
+
+Session refs:
+- created: 2026-06-25, not recorded, drafted first discovery for generic operation routing and
+  dispatch doctrine after module-operation routing discussions identified the need for a reusable
+  Kit-owned standard.
+- material update: 2026-06-25, not recorded, added an existing routing-surface inventory and
+  consolidation requirement before implementation planning.
+- material update: 2026-06-25, not recorded, added routing trigger categories, simple
+  authority-conflict handling, fresh-agent validation expectations, and capability-advertisement
+  maintenance requirements.
+- material update: 2026-06-25, not recorded, added a candidate authority hierarchy, resolved the
+  inventory granularity question as a dedicated implementation epic, and defined fresh
+  low-context routing probes as a planning/review hook for routing-bearing epics.
+- material update: 2026-06-25, not recorded, clarified that the candidate authority hierarchy is
+  an Operating Kit routing heuristic and does not replace native Codex instruction priority.
+- material update: 2026-06-25, not recorded, added compact root `AGENTS.md` hierarchy
+  requirement, minimum capability-advertisement fields, route-card `not applicable` allowance, and
+  candidate implementation sequence.
+- material update: 2026-06-25, not recorded, moved `Intent aliases` into the minimum V1
+  capability advertisement field set.
+- material update: 2026-06-25, not recorded, resolved primary owner, route-card field set, and
+  capability-advertisement placement as accepted defaults and marked the discovery
+  implementation-handoff-ready.
+- material update: 2026-06-25, not recorded, added formal implementation capability scope and
+  corrected discovery status back to manual-review-ready until scope approval or revision.
+- material update: 2026-06-25, not recorded, added future implementation standard-adoption scope
+  so routing-bearing implementation work must apply the established routing standard, with a
+  light discovery hook and stronger implementation-planning/review hooks.
+- material update: 2026-06-25, not recorded, recorded user approval of the implementation
+  capability scope and marked the discovery implementation-handoff-ready.
+
+Coordination note:
+- local-only
 
 ## OK-PR-010 - Tooling Environment Readiness Implementation
 

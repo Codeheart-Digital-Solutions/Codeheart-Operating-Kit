@@ -1,4 +1,4 @@
-Last updated: 2026-06-24T13:51:18Z (UTC)
+Last updated: 2026-06-25T12:14:15Z (UTC)
 
 # Review Planning Document
 
@@ -100,6 +100,9 @@ For implementation docs, check whether:
   scaffolding, gates, schemas, stubs, or validation shells;
 - the plan preserves accepted discovery goals, non-goals, decisions, blockers, and capability scope
   when a discovery document exists;
+- a discovery-derived normal implementation plan has implementation-handoff-ready discovery or
+  recorded user approval, delegation, or revision of the relevant `Implementation Capability
+  Scope` blocks;
 - omitted capability areas are explicitly out of scope, deferred, or blocked;
 - a lazy implementer cannot complete every checklist item while delivering only scaffolding,
   policy, stubs, validation shells, or a narrow slice that does not fulfill the intended feature

@@ -1,4 +1,4 @@
-Last updated: 2026-06-24T14:37:00Z (UTC)
+Last updated: 2026-06-25T12:44:58Z (UTC)
 
 # Repo Documentation
 
@@ -22,6 +22,14 @@ This folder contains public repository governance for Codeheart Operating Kit.
   issues.
 - `plans/README.md`: repository-level discovery and implementation plans.
 - `plans/plan-register.md`: lightweight index of registered Operating Kit repository plans.
+- `plans/discovery-handoff-gate/discovery-handoff-gate_implementation_doc.md`: active
+  implementation plan for the discovery capability-scope handoff gate, `v0.1.13` release, and
+  named consumer repository sync.
+- `plans/discovery-handoff-gate/discovery-handoff-gate_execution_log.md`: execution evidence and
+  review-gate log for the discovery handoff gate release.
+- `plans/operation-routing-dispatch-standard/operation-routing-dispatch-standard_discovery_doc.md`:
+  discovery for generic route-before-execution-surface doctrine, capability advertisements, route
+  registries, route cards, authority hierarchy, and routing-bearing validation hooks.
 - `plans/tooling-environment-readiness/tooling-environment-readiness_discovery_doc.md`:
   discovery for shared Operating Kit tooling and environment-readiness doctrine, missing-tool
   routing, module-owned tool declarations, and local readiness evidence boundaries.
