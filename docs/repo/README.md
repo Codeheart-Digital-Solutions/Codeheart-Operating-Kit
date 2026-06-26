@@ -1,4 +1,4 @@
-Last updated: 2026-06-26T15:57:38Z (UTC)
+Last updated: 2026-06-26T20:49:25Z (UTC)
 
 # Repo Documentation
 
@@ -37,6 +37,12 @@ This folder contains public repository governance for Codeheart Operating Kit.
   Operating Kit installs.
 - `plans/runtime-materialization-hardening/runtime-materialization-hardening_execution_log.md`:
   execution evidence for consumer runtime materialization and visible-terminal handoff hardening.
+- `plans/business-docs-placement-clarity/business-docs-placement-clarity_implementation_doc.md`:
+  completed implementation plan for clarifying the managed `docs/business/` placement rule so it
+  means company or organization business-operating records, not software architecture or
+  business-logic documentation.
+- `plans/business-docs-placement-clarity/business-docs-placement-clarity_execution_log.md`:
+  execution evidence for the business docs placement clarity implementation.
 - `plans/operational-recipe-maturity-standard`: HQ-owned completed implementation plan pointer for
   the generic Operating Kit operational recipe maturity standard. Canonical plan:
   `Codeheart-HQ:docs/repo/plans/operational-recipe-maturity-standard/operational-recipe-maturity-standard_implementation_doc.md`.

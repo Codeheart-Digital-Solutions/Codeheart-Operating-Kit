@@ -166,8 +166,11 @@ source-area folders until the repository has a real owner and use for them.
   is known.
 - `docs/agent-memory/`: curated agent memory state. This is demand-driven context recovery, not a
   default read for every task.
-- `docs/business/`: business operating docs when the consumer repository intentionally stores
-  business records.
+- `docs/business/`: company or organization business-operating records when the consumer
+  repository intentionally stores business records, such as ventures, procurement, meetings,
+  decisions, or business research. Software product architecture, module design, platform
+  solution design, application business logic, and implementation planning belong with the owning
+  repository, product, module, package, or source-area docs instead.
 - `docs/research/`: non-product research that is intentionally separate from product
   implementation authority and business operating docs.
 - `products/`: product roots when the repository contains product-owned source or product-owned

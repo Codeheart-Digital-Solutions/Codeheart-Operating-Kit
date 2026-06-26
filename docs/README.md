@@ -1,4 +1,4 @@
-Last updated: 2026-06-26T15:57:38Z (UTC)
+Last updated: 2026-06-26T20:49:25Z (UTC)
 
 # Docs Index
 
@@ -33,6 +33,10 @@ This folder contains public Codeheart Operating Kit documentation.
   `docs/repo/plans/runtime-materialization-hardening/runtime-materialization-hardening_implementation_doc.md`
 - Consumer runtime materialization hardening execution log:
   `docs/repo/plans/runtime-materialization-hardening/runtime-materialization-hardening_execution_log.md`
+- Business docs placement clarity implementation plan:
+  `docs/repo/plans/business-docs-placement-clarity/business-docs-placement-clarity_implementation_doc.md`
+- Business docs placement clarity execution log:
+  `docs/repo/plans/business-docs-placement-clarity/business-docs-placement-clarity_execution_log.md`
 - Discovery handoff gate implementation plan:
   `docs/repo/plans/discovery-handoff-gate/discovery-handoff-gate_implementation_doc.md`
 - Discovery handoff gate execution log:

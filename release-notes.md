@@ -1,6 +1,32 @@
-Last updated: 2026-06-26T16:09:07Z (UTC)
+Last updated: 2026-06-26T21:01:15Z (UTC)
 
 # Codeheart Operating Kit Release Notes
+
+## v0.1.16 Release Notes
+
+`v0.1.16` clarifies that managed `docs/business/` placement is for company or organization
+business-operating records, not software architecture or application business-logic documentation.
+
+### Included
+
+- Structure Governance now describes `docs/business/` as company or organization
+  business-operating records when a consumer repository intentionally stores them.
+- Structure Governance now explicitly routes software product architecture, module design,
+  platform solution design, application business logic, and implementation planning to the owning
+  repository, product, module, package, or source-area docs.
+- Packaged Structure Governance resources include the same wording.
+
+### Consumer Impact
+
+- `instruction-only change`: installed consumers receive clearer managed placement guidance when
+  they sync or update the Operating Kit.
+- No forced migration is required. Existing consumer-owned business docs, product/module docs,
+  planning docs, scaffolds, sync behavior, schemas, validators, and CLI behavior are not changed.
+
+### Validation
+
+- Release-readiness validation is recorded in the business docs placement clarity execution log
+  before public tagging and publication.
 
 ## v0.1.15 Release Notes
 

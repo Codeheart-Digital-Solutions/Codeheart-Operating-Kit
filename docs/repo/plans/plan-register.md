@@ -1,4 +1,4 @@
-Last updated: 2026-06-26T15:57:38Z (UTC)
+Last updated: 2026-06-26T21:05:06Z (UTC)
 
 # Plan Register
 
@@ -17,9 +17,46 @@ maintenance.
 
 Coverage note: This register currently lists public Operating Kit repository plans that have been
 entered during plan-register adoption. Earlier repository plans may be added during later register
-maintenance.
+maintenance. `OK-PR-018` is the completed implementation plan for clarifying the managed
+`docs/business/` placement rule after consumer feedback exposed ambiguity between business
+operating records and software/module architecture documentation.
 
 ## Entries
+
+## OK-PR-018 - Business Docs Placement Clarity Implementation
+
+Type: implementation-plan
+Purpose: Clarify the managed Structure Governance `docs/business/` placement rule so it means
+company or organization business-operating records when a consumer repository intentionally stores
+them, and explicitly does not mean software product architecture, module design, platform solution
+design, application business logic, or implementation planning.
+Status: completed
+Owner / repository: Codeheart-Operating-Kit
+Canonical docs:
+docs/repo/plans/business-docs-placement-clarity/business-docs-placement-clarity_implementation_doc.md
+docs/repo/plans/business-docs-placement-clarity/business-docs-placement-clarity_execution_log.md
+Created: 2026-06-26
+Last updated: 2026-06-26T21:05:06Z (UTC)
+Priority / ordering note: Instruction-only managed doctrine clarification. No scaffold, sync,
+schema, validator, CLI, or consumer migration behavior should change.
+
+Relations:
+- related: OK-PR-013 - Operation Routing And Dispatch Standard Implementation
+- related: OK-PR-017 - Consumer Runtime Materialization Hardening Implementation
+- related: CODEHEART-AUTOMATION-FOUNDRY-PR-009 - Relational Workspace View Module Discovery
+
+Session refs:
+- created: 2026-06-26, not recorded, drafted after a Codeheart-HQ placement correction moved a
+  reusable relational workspace view module discovery from HQ business docs into the Foundry repo.
+- completed: 2026-06-26, not recorded, activated and completed the instruction-only managed
+  wording clarification with release-note, mirror, index, register, execution-log, and validation
+  evidence.
+- material update: 2026-06-26, not recorded, prepared Operating Kit `v0.1.16` release surfaces,
+  assets, installer proof, and release-readiness validation.
+
+Coordination note:
+- Canonical plan is Operating Kit-owned.
+- Triggering consumer clarification was applied ad hoc in Codeheart-HQ local docs.
 
 ## OK-PR-017 - Consumer Runtime Materialization Hardening Implementation
 
@@ -31,13 +68,13 @@ global runtime mutation, and so runbooks use visible-terminal handoff for user-e
 prompts instead of hidden agent tool prompts; release the Operating Kit update; apply the first
 adopter through an AI Execution module release; refresh the HQ AI Execution snapshot; and sync the
 released kit into HQ, Foundry, the named private platform repository, and Operating Kit repos.
-Status: active
+Status: completed
 Owner / repository: Codeheart-Operating-Kit
 Canonical docs:
 docs/repo/plans/runtime-materialization-hardening/runtime-materialization-hardening_implementation_doc.md
 docs/repo/plans/runtime-materialization-hardening/runtime-materialization-hardening_execution_log.md
 Created: 2026-06-26
-Last updated: 2026-06-26T15:57:38Z (UTC)
+Last updated: 2026-06-26T16:33:33Z (UTC)
 Priority / ordering note: Should execute after OK-PR-016 because it hardens the newly established
 `.codeheart/local/` and `python-runtime` lane. It should execute before retrying AI Execution
 auth setup in HQ so `foundry-ai` does not depend on editable-install metadata in the managed
@@ -59,6 +96,9 @@ Session refs:
   doctrine for runbooks that require user-entered terminal input.
 - material update: 2026-06-26, not recorded, activated the implementation plan and created the
   execution log.
+- completed: 2026-06-26, not recorded, released Operating Kit `v0.1.15`, released and proved AI
+  Execution `0.1.1` through HQ's repo-local runtime, synced the released kit into all named repos,
+  resolved final review findings, and marked the execution log complete.
 
 Coordination note:
 - promoted into the Codeheart-HQ coordination register as CODEHEART-OPERATING-KIT-PR-017.

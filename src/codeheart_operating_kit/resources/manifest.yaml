@@ -1,45 +1,45 @@
 schema_version: 1
-version: 0.1.15
-released_at: "2026-06-26T16:09:07Z"
+version: 0.1.16
+released_at: "2026-06-26T21:01:15Z"
 assets:
   -
     name: bootstrap.md
-    url: "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.15/bootstrap.md"
+    url: "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.16/bootstrap.md"
     sha256: "0000000000000000000000000000000000000000000000000000000000000000"
     platform: universal
   -
     name: install.sh
-    url: "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.15/install.sh"
+    url: "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.16/install.sh"
     sha256: "0000000000000000000000000000000000000000000000000000000000000000"
     platform: macos
   -
     name: install.ps1
-    url: "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.15/install.ps1"
+    url: "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.16/install.ps1"
     sha256: "0000000000000000000000000000000000000000000000000000000000000000"
     platform: windows
   -
     name: release-notes.md
-    url: "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.15/release-notes.md"
+    url: "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.16/release-notes.md"
     sha256: "0000000000000000000000000000000000000000000000000000000000000000"
     platform: universal
   -
-    name: codeheart-operating-kit-0.1.15-macos.tar.gz
-    url: "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.15/codeheart-operating-kit-0.1.15-macos.tar.gz"
+    name: codeheart-operating-kit-0.1.16-macos.tar.gz
+    url: "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.16/codeheart-operating-kit-0.1.16-macos.tar.gz"
     sha256: "0000000000000000000000000000000000000000000000000000000000000000"
     platform: macos
   -
-    name: codeheart-operating-kit-0.1.15-macos.tar.gz.sha256
-    url: "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.15/codeheart-operating-kit-0.1.15-macos.tar.gz.sha256"
+    name: codeheart-operating-kit-0.1.16-macos.tar.gz.sha256
+    url: "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.16/codeheart-operating-kit-0.1.16-macos.tar.gz.sha256"
     sha256: "0000000000000000000000000000000000000000000000000000000000000000"
     platform: macos
   -
-    name: codeheart-operating-kit-0.1.15-windows.zip
-    url: "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.15/codeheart-operating-kit-0.1.15-windows.zip"
+    name: codeheart-operating-kit-0.1.16-windows.zip
+    url: "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.16/codeheart-operating-kit-0.1.16-windows.zip"
     sha256: "0000000000000000000000000000000000000000000000000000000000000000"
     platform: windows
   -
-    name: codeheart-operating-kit-0.1.15-windows.zip.sha256
-    url: "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.15/codeheart-operating-kit-0.1.15-windows.zip.sha256"
+    name: codeheart-operating-kit-0.1.16-windows.zip.sha256
+    url: "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.16/codeheart-operating-kit-0.1.16-windows.zip.sha256"
     sha256: "0000000000000000000000000000000000000000000000000000000000000000"
     platform: windows
 components:
@@ -72,9 +72,9 @@ components:
       - consumer migration required
   -
     id: structure-governance
-    version: 0.1.15
+    version: 0.1.16
     manifest_path: components/structure-governance/component.yaml
-    checksum_sha256: 701ceb375cd4bc8449db0a5e93462310877737e449d129f9ce9306caaa9f524f
+    checksum_sha256: a499ea4287befdf3cc68801f295351d0eb07d11d7bb2840b34be54a54d33cc63
     consumer_impact:
       - component addition
       - instruction-only change
