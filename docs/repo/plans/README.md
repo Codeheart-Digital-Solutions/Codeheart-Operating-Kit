@@ -1,4 +1,4 @@
-Last updated: 2026-06-25T13:07:52Z (UTC)
+Last updated: 2026-06-26T15:57:38Z (UTC)
 
 # Repo Plans
 
@@ -7,6 +7,16 @@ This folder contains Codeheart Operating Kit repository-level discovery and impl
 ## Current Plans
 
 - Plan register: `plan-register.md`
+- Local runtime environment standard discovery:
+  `local-runtime-environment-standard/local-runtime-environment-standard_discovery_doc.md`
+- Local runtime environment standard implementation plan:
+  `local-runtime-environment-standard/local-runtime-environment-standard_implementation_doc.md`
+- Local runtime environment standard execution log:
+  `local-runtime-environment-standard/local-runtime-environment-standard_execution_log.md`
+- Consumer runtime materialization hardening implementation plan:
+  `runtime-materialization-hardening/runtime-materialization-hardening_implementation_doc.md`
+- Consumer runtime materialization hardening execution log:
+  `runtime-materialization-hardening/runtime-materialization-hardening_execution_log.md`
 - Discovery handoff gate implementation plan:
   `discovery-handoff-gate/discovery-handoff-gate_implementation_doc.md`
 - Discovery handoff gate execution log:

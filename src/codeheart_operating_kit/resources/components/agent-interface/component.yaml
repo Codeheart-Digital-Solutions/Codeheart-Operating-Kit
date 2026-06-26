@@ -1,7 +1,7 @@
 schema_version: 1
 component:
   id: agent-interface
-  version: "0.1.14"
+  version: "0.1.15"
   name: Agent Interface
   description: Managed root AGENTS contract, onboarding, update-check, and repair guidance.
   profiles:
@@ -34,6 +34,9 @@ component:
       ownership: managed
     - source: components/agent-interface/managed/reference/onboarding-context-contract.md
       target: .codeheart/kit/docs/agent-interface/reference/onboarding-context-contract.md
+      ownership: managed
+    - source: components/agent-interface/managed/reference/operational-recipe-maturity.md
+      target: .codeheart/kit/docs/agent-interface/reference/operational-recipe-maturity.md
       ownership: managed
     - source: components/agent-interface/managed/reference/runbook-authoring-standard.md
       target: .codeheart/kit/docs/agent-interface/reference/runbook-authoring-standard.md

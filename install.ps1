@@ -1,7 +1,7 @@
-# Last updated: 2026-06-25T14:22:17Z (UTC)
+# Last updated: 2026-06-26T16:09:07Z (UTC)
 [CmdletBinding()]
 param(
-    [string]$Version = "0.1.14",
+    [string]$Version = "0.1.15",
     [string]$InstallDir = "$env:LOCALAPPDATA\Codeheart\OperatingKit",
     [string]$AssetUrl = "",
     [string]$AssetFile = "",
@@ -19,7 +19,7 @@ function Show-Usage {
 Install or repair codeheart-operating-kit for the current Windows user.
 
 Options:
-  -Version VERSION       Release version to install. Default: 0.1.14
+  -Version VERSION       Release version to install. Default: 0.1.15
   -InstallDir PATH       User-level install root. Default: %LOCALAPPDATA%\Codeheart\OperatingKit
   -AssetUrl URL          Release asset URL. Defaults to the GitHub release asset.
   -AssetFile PATH        Local release asset path for validation or offline repair.

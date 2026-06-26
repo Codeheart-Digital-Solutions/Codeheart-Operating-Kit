@@ -1,4 +1,4 @@
-Last updated: 2026-06-25T13:05:46Z (UTC)
+Last updated: 2026-06-26T14:30:34Z (UTC)
 
 <!-- BEGIN CODEHEART OPERATING KIT MANAGED BLOCK -->
 
@@ -21,9 +21,9 @@ Last updated: 2026-06-25T13:05:46Z (UTC)
 - Before operating installed modules or extensions, discover the module or extension ID through
   the module system present in the repo, then check `docs/repo/state/<id>/` for committed
   non-secret routing state. Local state routes the work; live external preflight still decides.
-- When a module onboarding or operation is blocked by missing local tooling, follow the managed
-  tooling readiness route before installing, repairing, improvising setup, or declaring the
-  capability unavailable.
+- When a repository, module, extension, or agent task is blocked by missing local tooling, follow
+  the managed tooling readiness route before installing, repairing, improvising setup, or
+  declaring the capability unavailable.
 
 ## Managed Routes
 

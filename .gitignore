@@ -27,3 +27,10 @@ node_modules/
 !.codeheart/user/README.md
 !.codeheart/user/examples/
 !.codeheart/user/examples/**
+
+# Codeheart Operating Kit local user layer
+.codeheart/user/preferences.yaml
+.codeheart/user/*.local.yaml
+.codeheart/user/feedback/
+# Codeheart Operating Kit local machine layer
+.codeheart/local/

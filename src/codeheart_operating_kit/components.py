@@ -18,6 +18,11 @@ LOCAL_USER_GITIGNORE_LINES = [
     ".codeheart/user/*.local.yaml",
     ".codeheart/user/feedback/",
 ]
+LOCAL_MACHINE_GITIGNORE_LINES = [
+    "# Codeheart Operating Kit local machine layer",
+    ".codeheart/local/",
+]
+LOCAL_GITIGNORE_LINES = LOCAL_USER_GITIGNORE_LINES + LOCAL_MACHINE_GITIGNORE_LINES
 
 
 def copy_managed_files(root: Path, profile_id: str = "standard") -> list[dict[str, Any]]:
@@ -109,7 +114,7 @@ def ensure_gitignore(root: Path) -> bool:
     path = root / ".gitignore"
     text = path.read_text(encoding="utf-8") if path.exists() else ""
     lines = text.splitlines()
-    missing = [line for line in LOCAL_USER_GITIGNORE_LINES if line not in lines]
+    missing = [line for line in LOCAL_GITIGNORE_LINES if line not in lines]
     if not missing:
         return False
     additions = []
@@ -177,6 +182,7 @@ def write_default_state(root: Path, project_name: str, purpose: str | None, sele
             "repo_docs_path": "docs/repo/",
             "agent_memory_path": "docs/agent-memory/",
             "user_layer_path": ".codeheart/user/",
+            "local_machine_layer_path": ".codeheart/local/",
         },
         "component_settings": {},
     }

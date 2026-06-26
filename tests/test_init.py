@@ -36,15 +36,19 @@ def test_init_writes_standard_surfaces(tmp_path):
     assert ".codeheart/user/preferences.yaml" in gitignore
     assert ".codeheart/user/*.local.yaml" in gitignore
     assert ".codeheart/user/feedback/" in gitignore
+    assert ".codeheart/local/" in gitignore
+    assert not (tmp_path / ".codeheart/local").exists()
     lock = read_lock(tmp_path)
     assert lock["selected_profile"] == "standard"
     assert ".codeheart/kit/README.md" in {item["path"] for item in lock["managed_paths"]}
     generated = {item["path"] for item in lock["generated_surfaces"]}
     assert "docs/repo/plans/plan-register.md" in generated
     assert "docs/repo/plans/coordination-sync-pending.md" in generated
+    assert ".codeheart/local/" not in generated
     assert set(lock["native_capabilities"]) == {"documents", "spreadsheets", "presentations", "browser", "pdf"}
     config = load_yaml(tmp_path / ".codeheart/kit.config.yaml")
     assert config["setup_purpose"] == "company-automation"
+    assert config["local_consumer_layer"]["local_machine_layer_path"] == ".codeheart/local/"
     assert "portfolio" not in config
 
 
@@ -67,4 +71,6 @@ def test_gitignore_adds_feedback_draft_path_to_existing_local_user_block(tmp_pat
 
     gitignore = (tmp_path / ".gitignore").read_text(encoding="utf-8")
     assert ".codeheart/user/feedback/" in gitignore
+    assert ".codeheart/local/" in gitignore
     assert gitignore.count("# Codeheart Operating Kit local user layer") == 1
+    assert gitignore.count("# Codeheart Operating Kit local machine layer") == 1

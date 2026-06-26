@@ -1,4 +1,4 @@
-Last updated: 2026-06-25T13:05:46Z (UTC)
+Last updated: 2026-06-26T15:57:38Z (UTC)
 
 # Managed Content Boundaries
 
@@ -13,6 +13,7 @@ doctrine without overwriting consumer-owned state.
 - `.codeheart/kit.lock.yaml`: generated installed-state and update-check metadata.
 - `.codeheart/kit.config.yaml`: shared non-secret consumer configuration.
 - `.codeheart/user/`: ignored local user layer.
+- `.codeheart/local/`: ignored local machine/runtime layer.
 - `docs/repo/`: consumer-owned repository-specific documentation scaffold.
 - `docs/repo/state/`: consumer-owned committed state for installed modules and extensions.
 - `docs/agent-memory/`: consumer-owned agent memory state scaffold.
@@ -27,6 +28,8 @@ doctrine without overwriting consumer-owned state.
 - `committed module state`: non-secret repository-owned routing state under
   `docs/repo/state/<module-or-extension-id>/`.
 - `local-user`: personal local preferences and notes that should stay ignored or local-only.
+- `local-machine`: generated runtime/tooling state that is specific to one checkout, ignored by
+  source control, and recreated from committed instructions or runbooks.
 - `generated`: machine output such as lockfiles, checksums, reports, or release assets.
 - `report`: generated or plan-scoped evidence used for review, not managed doctrine.
 - `routing artifact`: a router, capability advertisement, route registry, or route card that
@@ -51,6 +54,9 @@ doctrine without overwriting consumer-owned state.
 - Do not store execution evidence, generated reports, raw run logs, or live external truth inside
   route cards or committed routing state.
 - Keep local user guidance under `.codeheart/user/` and ignored by source control.
+- Keep local machine/runtime state under `.codeheart/local/` and ignored by source control. Do not
+  commit virtual environments, local caches, temporary files, generated shims, package artifacts,
+  generated install metadata, or editable-install artifacts.
 - Treat generated reports as evidence, not as managed source of truth.
 
 ## Local Wrappers

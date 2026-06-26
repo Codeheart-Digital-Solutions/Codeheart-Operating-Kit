@@ -1,6 +1,47 @@
-Last updated: 2026-06-25T14:22:17Z (UTC)
+Last updated: 2026-06-26T16:09:07Z (UTC)
 
 # Codeheart Operating Kit Release Notes
+
+## v0.1.15 Release Notes
+
+`v0.1.15` hardens local runtime materialization and user-entered terminal prompt handling for
+consumer repositories.
+
+### Included
+
+- Tooling readiness now defines consumer-mode runtime materialization: repo-local tooling is
+  installed into ignored local runtime state such as `.codeheart/local/envs/python/`, not
+  editable-linked from durable managed snapshots or mutable source checkouts.
+- The baseline tooling catalog now carries the Python runtime lane rule: consumer-mode Python
+  package installs are non-editable, while editable/source-linked installs are development-mode
+  only in the owning source repository.
+- Runbook authoring now defines visible-terminal handoff for terminal prompts that require user
+  input, especially secrets, passwords, API keys, MFA codes, and keychain prompts.
+- Tooling readiness and operation routing now tell agents to route owner/scope first, then handle
+  local blockers through the shared readiness route, and to avoid hidden agent prompts for
+  user-entered terminal values.
+- Managed boundary and placement guidance now clarifies that generated install metadata belongs in
+  ignored local runtime state, not committed or managed snapshots.
+- Planning workflows, route guidance, packaged resources, and installed fallback inventory include
+  the updated guidance.
+
+### Consumer Impact
+
+- `instruction-only change`: installed consumers receive clearer managed tooling-readiness,
+  runbook-authoring, routing, and placement guidance when they sync or update the Operating Kit.
+- `backwards-compatible scaffold addition`: prior `v0.1.14` consumers that missed the local
+  runtime standard receive the existing `.codeheart/local/` ignore/config behavior through normal
+  sync/update.
+- No forced migration is required. Existing consumer-owned runbooks, module snapshots, plans,
+  local user guidance, and runtime directories are not rewritten.
+- No default local tool installation is performed. The baseline tooling catalog remains on-demand.
+- Modules still own concrete package names, versions, entrypoints, smoke validation, service auth,
+  and live provider preflight.
+
+### Validation
+
+- Release-readiness validation is recorded in the consumer runtime materialization hardening
+  execution log before public tagging, release publication, and named consumer sync.
 
 ## v0.1.14 Release Notes
 

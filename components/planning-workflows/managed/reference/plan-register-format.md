@@ -1,4 +1,4 @@
-Last updated: 2026-06-22T20:58:22Z (UTC)
+Last updated: 2026-06-26T14:30:34Z (UTC)
 
 # Plan Register Format
 
@@ -34,6 +34,11 @@ The register location does not require every canonical planning document to live
 Canonical planning documents may live in any repository-owned planning root, including
 `docs/repo/plans/`, `docs/business/plans/`, product docs, module docs, or source-area planning
 folders. The register points to those canonical homes instead of moving or duplicating them.
+
+When work spans multiple repositories, the canonical planning document should live in the
+repository that owns the work boundary, implementation authority, and validation evidence.
+Coordination-home registers represent that work with explicit pointers; they do not become the
+canonical home for member-repository plans by default.
 
 Use repo-relative paths for canonical documents owned by the same repository. Use explicit
 repository/path pointers for member-repository entries represented in a coordination-home

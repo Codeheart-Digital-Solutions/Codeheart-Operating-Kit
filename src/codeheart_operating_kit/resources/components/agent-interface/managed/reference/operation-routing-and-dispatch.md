@@ -1,4 +1,4 @@
-Last updated: 2026-06-25T13:05:46Z (UTC)
+Last updated: 2026-06-26T15:57:38Z (UTC)
 
 # Operation Routing And Dispatch
 
@@ -286,6 +286,14 @@ Keep recipe details in runbooks, scripts, API procedures, portal procedures, or 
 docs. Use the route card to select the recipe, name preconditions, and define stop conditions and
 evidence. Avoid copying long recipe steps into every parent router or capability advertisement.
 
+When the selected recipe contains repeatable operational logic, executable blocks, expected
+markers, structured output, blocker classes, validation tests, or promotion decisions, apply the
+operational recipe maturity reference after route selection. Installed path:
+`.codeheart/kit/docs/agent-interface/reference/operational-recipe-maturity.md`.
+
+Recipe maturity governs the selected recipe's execution shape, validation, evidence, and
+promotion boundary. It does not replace this routing sequence.
+
 ## Live Preflight And Approval Boundary
 
 Capability advertisements, route registries, route cards, and committed routing state help choose
@@ -349,6 +357,10 @@ Durable documentation path:
 Local tooling blocker:
 
 - Request: "Run the module operation."
-- Correct routing behavior: select the module route first; if the route is blocked by missing
-  local tooling, use the managed tooling-readiness runbook.
+- Correct routing behavior: select the repository, module, extension, or product route first; if
+  that route is blocked by missing local tooling, use the managed tooling-readiness runbook. For
+  repo-local Python tooling, prefer the standard `.codeheart/local/envs/python/` virtual
+  environment convention and consumer-mode non-editable package materialization unless the calling
+  owner documents an exception. If the route requires user-entered terminal input, use
+  visible-terminal handoff instead of an agent-hidden prompt.
 - Incorrect behavior: silently install a tool before the route or approval class is known.

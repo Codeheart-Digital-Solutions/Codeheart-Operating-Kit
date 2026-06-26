@@ -1,4 +1,4 @@
-Last updated: 2026-06-13T22:55:57Z (UTC)
+Last updated: 2026-06-26T15:57:38Z (UTC)
 
 # Local Extension Contract
 
@@ -13,6 +13,16 @@ validation policy, local doc routing, cloud account rules, and domain-specific s
 
 Use `.codeheart/user/` for ignored local preferences and personal notes. Do not commit secrets,
 tokens, credentials, or private machine state.
+
+## Local Machine State
+
+Use `.codeheart/local/` for ignored generated runtime and tooling state that is specific to one
+checkout and can be recreated. Examples include repo-local virtual environments, local caches,
+temporary files, generated shims, package artifacts, generated install metadata, and
+editable-install artifacts.
+
+Do not put human preferences, personal notes, secrets, credentials, durable repo state, managed
+snapshots, or live external truth under `.codeheart/local/`.
 
 ## Conflict Handling
 

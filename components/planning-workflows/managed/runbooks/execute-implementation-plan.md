@@ -1,4 +1,4 @@
-Last updated: 2026-06-25T13:05:46Z (UTC)
+Last updated: 2026-06-25T20:35:28Z (UTC)
 
 # Execute Implementation Plan
 
@@ -123,6 +123,29 @@ Verify the changed runbook surface against the plan and standard:
 Fix gaps within the approved epic scope before completing the epic. If the fix requires a broader
 runbook audit, durable format change, ownership change, or new authority decision, stop and amend
 the plan instead of expanding execution ad hoc.
+
+## Recipe-Maturity Execution
+
+When an epic creates or materially changes durable operational recipes, route-selected recipes,
+executable script blocks, expected markers, structured summary or blocker output, promoted recipe
+assets, or recipe validation expectations, use
+`.codeheart/kit/docs/agent-interface/reference/operational-recipe-maturity.md` before marking
+that epic complete.
+
+Verify the changed recipe surface against the plan and reference:
+
+- target maturity state is named and reflected in the artifact;
+- recipe metadata, validation tier, evidence shape, and blocker shape match the planned level;
+- promotion destination or non-promotion decision is recorded;
+- promoted assets have an owner, placement boundary, validation path, and discoverability route;
+- runbooks remain the operator-facing entry point after promotion;
+- domain blocker classes and concrete package layouts remain with the owning domain when they are
+  outside the generic plan;
+- approval, secrets, public-core, and external-state boundaries are preserved.
+
+Record recipe validation evidence in the execution log. Include fresh-agent executability review,
+non-live tests, dry-run or preflight, and approval-gated live validation only where the plan and
+approval class require them.
 
 ## Safe Defaults
 

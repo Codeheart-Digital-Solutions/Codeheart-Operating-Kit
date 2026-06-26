@@ -1,4 +1,4 @@
-Last updated: 2026-06-23T18:09:34Z (UTC)
+Last updated: 2026-06-26T15:57:38Z (UTC)
 
 # Placement Contract
 
@@ -28,6 +28,7 @@ The Operating Kit may create or manage these consumer paths when the CLI is impl
   update-check state.
 - `.codeheart/kit.config.yaml`: shared non-secret consumer configuration.
 - `.codeheart/user/`: ignored local user layer.
+- `.codeheart/local/`: ignored local machine/runtime state.
 - `docs/repo/`: consumer-owned repository-specific documentation scaffold.
 - `docs/repo/state/`: consumer-owned committed state for installed modules and extensions.
 - `docs/agent-memory/`: consumer-owned agent memory state scaffold.
@@ -41,6 +42,8 @@ The Operating Kit may create or manage these consumer paths when the CLI is impl
   after creation.
 - `template`: available as a starter or example, but installed only when a command explicitly uses
   it.
+- `local-machine`: ignored generated runtime/tooling state that is specific to one checkout and
+  can be recreated.
 
 ## Component Target Rules
 
@@ -62,6 +65,8 @@ The Operating Kit may create or manage these consumer paths when the CLI is impl
 - Root `AGENTS.md` receives the Operating Kit managed block from the agent-interface template while
   preserving repository-owned and local-user sections.
 - Local user guidance targets `.codeheart/user/` and must stay ignored or local-only.
+- Local machine/runtime state targets `.codeheart/local/` and must stay ignored or local-only.
+  Init and sync may add the ignore rule without creating the directory by default.
 - G1 does not define or scaffold `docs/workspace/`.
 
 ## Consumer-Owned Boundaries
@@ -74,6 +79,9 @@ The Operating Kit may create or manage these consumer paths when the CLI is impl
 - Product or module docs: local product, package, module, or source-area guidance owned by the
   consumer repository.
 - `.codeheart/user/`: personal local preferences and notes.
+- `.codeheart/local/`: generated local runtime/tooling state, such as repo-local virtual
+  environments, caches, temporary files, generated shims, package artifacts, or generated install
+  metadata. It is machine-local, ignored, and recreatable.
 - `.codeheart/kit.config.yaml`: shared non-secret setup configuration.
 - `.codeheart/kit.lock.yaml`: generated installed-state and update-check metadata.
 

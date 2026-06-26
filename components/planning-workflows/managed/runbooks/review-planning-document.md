@@ -1,4 +1,4 @@
-Last updated: 2026-06-25T13:05:46Z (UTC)
+Last updated: 2026-06-25T20:35:28Z (UTC)
 
 # Review Planning Document
 
@@ -155,6 +155,16 @@ For implementation docs, check whether:
   across multiple managed runbooks;
 - runbook plans do not hide missing user-facing flow or agent execution detail behind routing,
   policy, placeholders, or broad future audits.
+- recipe-bearing plans cite
+  `.codeheart/kit/docs/agent-interface/reference/operational-recipe-maturity.md`;
+- recipe-bearing epics name target maturity state, validation tier, evidence shape, and promotion
+  boundary;
+- recipe-bearing plans preserve `do not promote yet` as a valid outcome when justified;
+- promoted recipe assets have owner, placement boundary, validation path, and discoverability
+  route;
+- recipe plans do not promote scripts, commands, wrappers, or APIs prematurely;
+- recipe plans do not hide executable behavior, structured blockers, markers, or validation
+  expectations inside vague prose.
 
 For discovery docs, check whether:
 

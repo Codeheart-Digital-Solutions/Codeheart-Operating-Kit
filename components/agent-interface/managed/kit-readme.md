@@ -1,4 +1,4 @@
-Last updated: 2026-06-25T13:05:46Z (UTC)
+Last updated: 2026-06-26T15:57:38Z (UTC)
 
 # Codeheart Operating Kit Inventory
 
@@ -26,6 +26,7 @@ state looks missing, stale, or damaged.
 - Lock metadata: `.codeheart/kit.lock.yaml`
 - Shared non-secret config: `.codeheart/kit.config.yaml`
 - Local user layer: `.codeheart/user/`
+- Local machine/runtime layer: `.codeheart/local/`
 
 ## Module And Extension State
 
@@ -45,10 +46,14 @@ state looks missing, stale, or damaged.
 
 - Runbook authoring standard:
   `.codeheart/kit/docs/agent-interface/reference/runbook-authoring-standard.md`
+- User-entered terminal prompt standard:
+  `.codeheart/kit/docs/agent-interface/reference/runbook-authoring-standard.md`
 
 ## Tooling Readiness
 
 - Missing local tooling route:
+  `.codeheart/kit/docs/agent-interface/runbooks/handle-tooling-readiness.md`
+- Consumer runtime materialization route:
   `.codeheart/kit/docs/agent-interface/runbooks/handle-tooling-readiness.md`
 
 ## Operating Rule

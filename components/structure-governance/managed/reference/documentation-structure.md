@@ -1,4 +1,4 @@
-Last updated: 2026-06-25T13:05:46Z (UTC)
+Last updated: 2026-06-25T20:37:11Z (UTC)
 
 # Documentation Structure
 
@@ -75,6 +75,30 @@ Use this structure reference for placement:
 
 Do not create a central repository catalog of every route card. Upper layers should expose enough
 capability information for agents to find the owner and then descend to the owner's registry.
+
+## Promoted Operational Recipe Assets
+
+Use `.codeheart/kit/docs/agent-interface/reference/operational-recipe-maturity.md` for recipe
+maturity states, metadata, validation tiers, evidence shape, blocker shape, promotion triggers,
+and non-promotion decisions.
+
+Use this structure reference for placement:
+
+- Promoted recipe assets live under the owning route, recipe, package, module, product,
+  repository, or source-area boundary.
+- The owning runbook remains the operator-facing entry point after promotion.
+- Temporary execution scripts stay temporary and are not committed.
+- Reusable scripts, tests, fixtures, schemas, wrappers, and API surfaces need an obvious owner,
+  validation path, and discoverability route.
+- README routers should link to promoted assets when they become durable entry points, but they
+  should not copy full script or command internals.
+- Sensitive outputs, secrets, token caches, raw sensitive content, raw logs, local session paths,
+  and downloaded sensitive artifacts must not be committed as recipe evidence.
+
+This generic reference does not define concrete Foundry, module, script, test, fixture, wrapper,
+or API folder paths. Owner-specific conventions may specialize placement after they define a
+clear owner, validation path, and discoverability route, and they must not silently weaken the
+Operating Kit standard.
 
 ## Generic Target Shape
 

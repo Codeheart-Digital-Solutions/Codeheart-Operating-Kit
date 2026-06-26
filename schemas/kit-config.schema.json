@@ -28,7 +28,8 @@
       "properties": {
         "repo_docs_path": { "type": "string", "const": "docs/repo/" },
         "agent_memory_path": { "type": "string", "const": "docs/agent-memory/" },
-        "user_layer_path": { "type": "string", "const": ".codeheart/user/" }
+        "user_layer_path": { "type": "string", "const": ".codeheart/user/" },
+        "local_machine_layer_path": { "type": "string", "const": ".codeheart/local/" }
       }
     },
     "component_settings": {

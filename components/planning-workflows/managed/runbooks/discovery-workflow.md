@@ -1,4 +1,4 @@
-Last updated: 2026-06-25T13:05:46Z (UTC)
+Last updated: 2026-06-26T14:30:34Z (UTC)
 
 # Discovery Workflow
 
@@ -85,6 +85,13 @@ placement rules, runbook-authoring route discovery, capability advertisements, r
 route cards, module-routing state, or durable operational runbooks that select routes, owners, or
 execution surfaces. Discovery should identify that scope and point to the operation-routing
 standard, but should not draft the implementation checklist.
+
+Flag the work as `recipe-bearing` when the likely next implementation will create or materially
+change durable operational recipes, executable script blocks, expected markers, structured
+summary or blocker output, promoted recipe assets, or recipe validation expectations. Discovery
+should identify the recipe-maturity scope and point to
+`.codeheart/kit/docs/agent-interface/reference/operational-recipe-maturity.md`, but should leave
+exact epics and checklists to implementation planning.
 
 For an existing discovery document, treat the document as the state ledger. Refresh it before
 resolving new decisions. Do not assume previous content is correct without checking current
@@ -894,6 +901,11 @@ Do not add revision notes for typo fixes, formatting-only edits, or timestamp-on
 ## Discovery Document Shape
 
 Use the repository or workspace documentation placement rules when they exist.
+
+When discovery spans multiple repositories, identify the repository that owns the work boundary
+before creating the canonical discovery document. Place the canonical discovery in that owning
+repository's planning root. Use local or coordination-home plan registers as pointers to the
+canonical document, not as the canonical home by default.
 
 Default discovery filename:
 

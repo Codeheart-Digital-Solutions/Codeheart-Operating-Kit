@@ -71,6 +71,7 @@ def base_config():
             "repo_docs_path": "docs/repo/",
             "agent_memory_path": "docs/agent-memory/",
             "user_layer_path": ".codeheart/user/",
+            "local_machine_layer_path": ".codeheart/local/",
         },
         "component_settings": {},
     }
@@ -137,6 +138,20 @@ def test_kit_config_schema_accepts_no_portfolio_block():
     config = base_config()
 
     assert_config_valid(config)
+
+
+def test_kit_config_schema_accepts_old_config_without_local_machine_layer_path():
+    config = base_config()
+    del config["local_consumer_layer"]["local_machine_layer_path"]
+
+    assert_config_valid(config)
+
+
+def test_kit_config_schema_rejects_wrong_local_machine_layer_path():
+    config = base_config()
+    config["local_consumer_layer"]["local_machine_layer_path"] = ".codeheart/envs/"
+
+    assert_config_invalid(config, "expected const .codeheart/local/")
 
 
 def test_kit_config_schema_accepts_valid_member_portfolio_config():

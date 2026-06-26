@@ -1,4 +1,4 @@
-Last updated: 2026-06-25T13:45:59Z (UTC)
+Last updated: 2026-06-26T15:57:38Z (UTC)
 
 # Plan Register
 
@@ -20,6 +20,165 @@ entered during plan-register adoption. Earlier repository plans may be added dur
 maintenance.
 
 ## Entries
+
+## OK-PR-017 - Consumer Runtime Materialization Hardening Implementation
+
+Type: implementation-plan
+Purpose: Harden the Operating Kit local tooling and agent-interface standards so consumer-mode
+runtime tooling is materialized from durable module/package content into ignored local runtime
+state without editable development links, generated install metadata in managed snapshots, or
+global runtime mutation, and so runbooks use visible-terminal handoff for user-entered terminal
+prompts instead of hidden agent tool prompts; release the Operating Kit update; apply the first
+adopter through an AI Execution module release; refresh the HQ AI Execution snapshot; and sync the
+released kit into HQ, Foundry, the named private platform repository, and Operating Kit repos.
+Status: active
+Owner / repository: Codeheart-Operating-Kit
+Canonical docs:
+docs/repo/plans/runtime-materialization-hardening/runtime-materialization-hardening_implementation_doc.md
+docs/repo/plans/runtime-materialization-hardening/runtime-materialization-hardening_execution_log.md
+Created: 2026-06-26
+Last updated: 2026-06-26T15:57:38Z (UTC)
+Priority / ordering note: Should execute after OK-PR-016 because it hardens the newly established
+`.codeheart/local/` and `python-runtime` lane. It should execute before retrying AI Execution
+auth setup in HQ so `foundry-ai` does not depend on editable-install metadata in the managed
+snapshot.
+
+Relations:
+- depends-on: OK-PR-016 - Local Runtime Environment Standard Implementation
+- related: OK-PR-009 - Tooling Environment Readiness Discovery
+- related: OK-PR-010 - Tooling Environment Readiness Implementation
+- related: OK-PR-005 - Runbook Authoring Standards Discovery
+- related: OK-PR-007 - Runbook Authoring Standards Implementation
+- related: CODEHEART-AUTOMATION-FOUNDRY-PR-007 - Foundry AI Execution Module Implementation Plan
+
+Session refs:
+- created: 2026-06-26, not recorded, drafted implementation plan from user-approved direction
+  after AI Execution auth setup exposed brittle editable-install behavior in a managed consumer
+  snapshot.
+- material update: 2026-06-26, not recorded, expanded scope to include visible-terminal handoff
+  doctrine for runbooks that require user-entered terminal input.
+- material update: 2026-06-26, not recorded, activated the implementation plan and created the
+  execution log.
+
+Coordination note:
+- promoted into the Codeheart-HQ coordination register as CODEHEART-OPERATING-KIT-PR-017.
+
+## OK-PR-016 - Local Runtime Environment Standard Implementation
+
+Type: implementation-plan
+Purpose: Implement the accepted Operating Kit local runtime standard, including `.codeheart/local/`
+as ignored local machine/runtime state, `.codeheart/local/envs/python/` as the default Python venv,
+additive kit config/schema behavior, init/sync `.gitignore` readiness, managed readiness doctrine,
+tests, packaged-resource mirrors, and downstream Foundry AI Execution handoff.
+Status: completed
+Owner / repository: Codeheart-Operating-Kit
+Canonical docs:
+docs/repo/plans/local-runtime-environment-standard/local-runtime-environment-standard_implementation_doc.md
+docs/repo/plans/local-runtime-environment-standard/local-runtime-environment-standard_execution_log.md
+Created: 2026-06-26
+Last updated: 2026-06-26T14:38:50Z (UTC)
+Priority / ordering note: Should execute after the accepted local runtime discovery and before
+patching Foundry AI Execution onboarding against the shared `.codeheart/local/envs/python/`
+convention.
+
+Relations:
+- child: OK-PR-017 - Consumer Runtime Materialization Hardening Implementation
+- depends-on: OK-PR-015 - Local Runtime Environment Standard Discovery
+- related: OK-PR-009 - Tooling Environment Readiness Discovery
+- related: OK-PR-010 - Tooling Environment Readiness Implementation
+- related: OK-PR-005 - Runbook Authoring Standards Discovery
+- related: OK-PR-007 - Runbook Authoring Standards Implementation
+- related: Foundry AI Execution Module Implementation Plan
+
+Session refs:
+- created: 2026-06-26, not recorded, drafted implementation plan from the accepted discovery
+  capability scope with generated behavior, managed doctrine, validation, packaging, coordination,
+  and downstream Foundry handoff sequencing.
+- material update: 2026-06-26, not recorded, added a narrow managed planning-workflow
+  clarification so discovery and implementation plan drafting selects the canonical owning
+  repository before using coordination-home register pointers.
+- material update: 2026-06-26, not recorded, activated the implementation plan, created the
+  sibling execution log, and began source implementation for generated behavior, managed doctrine,
+  packaging parity, validation, and HQ coordination pointers.
+- completed: 2026-06-26, not recorded, implemented the source standard, validated focused and
+  full test suites, recorded the fresh low-context routing probe, and left public release
+  publication, named consumer sync, and downstream AI Execution module adoption deferred.
+
+Coordination note:
+- promoted into the Codeheart-HQ coordination register as CODEHEART-OPERATING-KIT-PR-016.
+
+## OK-PR-015 - Local Runtime Environment Standard Discovery
+
+Type: discovery-plan
+Purpose: Discover a reusable Operating Kit convention for ignored repo-local machine/runtime state,
+including the default Python virtual environment path for Foundry and Operating Kit tooling such as
+`foundry-ai`, and clarify how generic environment-readiness routing handles missing local tools in
+any blocked agent interaction.
+Status: draft
+Owner / repository: Codeheart-Operating-Kit
+Canonical docs:
+docs/repo/plans/local-runtime-environment-standard/local-runtime-environment-standard_discovery_doc.md
+Created: 2026-06-26
+Last updated: 2026-06-26T14:10:39Z (UTC)
+Priority / ordering note: Accepted discovery should precede implementation-plan drafting for the
+generic local runtime standard, then AI Execution onboarding can be patched against the shared
+`.codeheart/local/envs/python/` convention.
+
+Relations:
+- child: OK-PR-016 - Local Runtime Environment Standard Implementation
+- related: OK-PR-009 - Tooling Environment Readiness Discovery
+- related: OK-PR-010 - Tooling Environment Readiness Implementation
+- related: OK-PR-005 - Runbook Authoring Standards Discovery
+- related: OK-PR-007 - Runbook Authoring Standards Implementation
+- related: Foundry AI Execution Module Implementation Plan
+
+Session refs:
+- created: 2026-06-26, not recorded, moved the discovery from HQ into the Operating Kit source
+  repo after confirming the canonical scope is reusable managed Operating Kit doctrine.
+- material update: 2026-06-26, not recorded, broadened scope from Python venv placement to
+  generic local tooling blocker routing, machine/user-level baseline tooling, and
+  shared-vs-purpose-specific Python venv defaults.
+- material update: 2026-06-26, not recorded, accepted recommended defaults for `.codeheart/local/`,
+  `.codeheart/local/envs/python/`, `.gitignore` handling, optional
+  `local_machine_layer_path`, on-demand first-run behavior, governed machine/user-level tooling,
+  and generic blocker routing.
+
+Coordination note:
+- promoted into the Codeheart-HQ coordination register as CODEHEART-OPERATING-KIT-PR-015.
+
+## OK-PR-014 - Operational Recipe Maturity Standard Implementation Pointer
+
+Type: implementation-plan
+Purpose: Compact source-repo pointer to the HQ-owned implementation plan that adds a generic
+Operating Kit standard for identifying, structuring, validating, reviewing, and deliberately
+promoting operational recipes inside runbooks without forcing premature scripts, commands,
+wrappers, APIs, Foundry packaging conventions, or M365 module adoption.
+Status: completed
+Owner / repository: Codeheart-HQ
+Canonical docs:
+Codeheart-HQ:docs/repo/plans/operational-recipe-maturity-standard/operational-recipe-maturity-standard_discovery_doc.md
+Codeheart-HQ:docs/repo/plans/operational-recipe-maturity-standard/operational-recipe-maturity-standard_implementation_doc.md
+Codeheart-HQ:docs/repo/plans/operational-recipe-maturity-standard/operational-recipe-maturity-standard_execution_log.md
+Created: 2026-06-25
+Last updated: 2026-06-25T20:42:30Z (UTC)
+Priority / ordering note: Source implementation touches this repository, but the accepted
+discovery and canonical execution log live in Codeheart-HQ. This entry is a pointer only and does
+not duplicate the full plan.
+
+Relations:
+- related: OK-PR-013 - Operation Routing And Dispatch Standard Implementation
+- related: OK-PR-007 - Runbook Authoring Standards Implementation
+- related: OK-PR-008 - Module Extension State Routing Implementation
+
+Session refs:
+- created: 2026-06-25, not recorded, added compact source-repo pointer during HQ-owned plan
+  activation.
+- completed: 2026-06-25, not recorded, source implementation completed under HQ-owned plan.
+  Release publication and consumer sync remain deferred.
+
+Coordination note:
+- canonical plan is HQ-owned
+- local-only source-repo pointer
 
 ## OK-PR-013 - Operation Routing And Dispatch Standard Implementation
 

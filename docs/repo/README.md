@@ -1,4 +1,4 @@
-Last updated: 2026-06-25T13:07:52Z (UTC)
+Last updated: 2026-06-26T15:57:38Z (UTC)
 
 # Repo Documentation
 
@@ -22,6 +22,24 @@ This folder contains public repository governance for Codeheart Operating Kit.
   issues.
 - `plans/README.md`: repository-level discovery and implementation plans.
 - `plans/plan-register.md`: lightweight index of registered Operating Kit repository plans.
+- `plans/local-runtime-environment-standard/local-runtime-environment-standard_discovery_doc.md`:
+  discovery for ignored repo-local machine/runtime state, the default Python venv path, governed
+  machine/user-level tooling, and generic local tooling blocker routing.
+- `plans/local-runtime-environment-standard/local-runtime-environment-standard_implementation_doc.md`:
+  completed implementation plan for `.codeheart/local/`, `.codeheart/local/envs/python/`, additive
+  config/schema behavior, gitignore sync behavior, managed readiness doctrine, tests, and
+  packaged-resource mirrors.
+- `plans/local-runtime-environment-standard/local-runtime-environment-standard_execution_log.md`:
+  execution evidence for the local runtime environment standard source implementation.
+- `plans/runtime-materialization-hardening/runtime-materialization-hardening_implementation_doc.md`:
+  active implementation plan for consumer runtime materialization and visible-terminal handoff
+  hardening, Operating Kit release, AI Execution adopter release, HQ snapshot proof, and named
+  Operating Kit installs.
+- `plans/runtime-materialization-hardening/runtime-materialization-hardening_execution_log.md`:
+  execution evidence for consumer runtime materialization and visible-terminal handoff hardening.
+- `plans/operational-recipe-maturity-standard`: HQ-owned completed implementation plan pointer for
+  the generic Operating Kit operational recipe maturity standard. Canonical plan:
+  `Codeheart-HQ:docs/repo/plans/operational-recipe-maturity-standard/operational-recipe-maturity-standard_implementation_doc.md`.
 - `plans/discovery-handoff-gate/discovery-handoff-gate_implementation_doc.md`: active
   implementation plan for the discovery capability-scope handoff gate, `v0.1.13` release, and
   named consumer repository sync.

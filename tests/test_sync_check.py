@@ -84,7 +84,9 @@ def test_sync_adds_feedback_draft_gitignore_to_existing_install(tmp_path):
 
     text = gitignore.read_text(encoding="utf-8")
     assert ".codeheart/user/feedback/" in text
+    assert ".codeheart/local/" in text
     assert text.count("# Codeheart Operating Kit local user layer") == 1
+    assert text.count("# Codeheart Operating Kit local machine layer") == 1
 
 
 def test_sync_creates_missing_plan_state_files_and_merges_lock_records(tmp_path):

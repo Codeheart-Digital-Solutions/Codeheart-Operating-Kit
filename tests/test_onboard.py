@@ -87,8 +87,11 @@ def test_onboard_yes_writes_and_creates_adoption_report(tmp_path):
     assert "local instructions" in agents_text
     assert "route before selecting" in agents_text
     assert ".codeheart/kit/docs/agent-interface/reference/operation-routing-and-dispatch.md" in agents_text
+    assert "repository, module, extension, or agent task is blocked by missing local tooling" in agents_text
+    assert ".codeheart/kit/docs/agent-interface/runbooks/handle-tooling-readiness.md" in agents_text
     assert "Route-before-surface standard" in kit_readme_text
     assert ".codeheart/kit/docs/agent-interface/reference/operation-routing-and-dispatch.md" in kit_readme_text
+    assert "Local machine/runtime layer" in kit_readme_text
     config = load_yaml(tmp_path / ".codeheart/kit.config.yaml")
     assert config["setup_purpose"] == "software-product"
     assert "portfolio" not in config

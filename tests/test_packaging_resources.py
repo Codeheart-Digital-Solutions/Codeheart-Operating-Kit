@@ -33,14 +33,17 @@ def test_packaged_resource_fallback(monkeypatch, tmp_path):
     assert (tmp_path / ".codeheart/kit/docs/agent-interface/runbooks/handle-tooling-readiness.md").exists()
     assert (tmp_path / ".codeheart/kit/docs/agent-interface/reference/kit-feedback-item-format.md").exists()
     assert (tmp_path / ".codeheart/kit/docs/agent-interface/reference/operation-routing-and-dispatch.md").exists()
+    assert (tmp_path / ".codeheart/kit/docs/agent-interface/reference/operational-recipe-maturity.md").exists()
     assert (tmp_path / ".codeheart/kit/docs/agent-interface/reference/runbook-authoring-standard.md").exists()
     assert (tmp_path / ".codeheart/kit/docs/structure-governance/reference/module-extension-state.md").exists()
     assert (tmp_path / "AGENTS.md").exists()
     assert (tmp_path / "docs/repo/plans/plan-register.md").exists()
     assert (tmp_path / "docs/repo/plans/coordination-sync-pending.md").exists()
     assert not (tmp_path / "docs/repo/state").exists()
+    assert not (tmp_path / ".codeheart/local").exists()
     gitignore = (tmp_path / ".gitignore").read_text(encoding="utf-8")
     assert ".codeheart/user/feedback/" in gitignore
+    assert ".codeheart/local/" in gitignore
 
 
 def test_changed_source_and_packaged_resources_match():
@@ -59,7 +62,9 @@ def test_changed_source_and_packaged_resources_match():
         "components/agent-interface/component.yaml",
         "components/agent-interface/managed/README.md",
         "components/agent-interface/managed/kit-readme.md",
+        "components/agent-interface/managed/reference/local-extension-contract.md",
         "components/agent-interface/managed/reference/operation-routing-and-dispatch.md",
+        "components/agent-interface/managed/reference/operational-recipe-maturity.md",
         "components/agent-interface/managed/reference/runbook-authoring-standard.md",
         "components/agent-interface/managed/reference/root-agents-md-contract.md",
         "components/agent-interface/managed/runbooks/handle-tooling-readiness.md",

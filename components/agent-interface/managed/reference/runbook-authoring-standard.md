@@ -1,4 +1,4 @@
-Last updated: 2026-06-25T13:05:46Z (UTC)
+Last updated: 2026-06-26T15:57:38Z (UTC)
 
 # Runbook Authoring Standard
 
@@ -83,6 +83,7 @@ Required quality bar:
 - Explain how the user can find values they may not know.
 - Ask explicit approval before writes, sign-ins, installs, external changes, destructive actions,
   or sensitive reads.
+- Use visible-terminal handoff when the user must type or paste values into a terminal prompt.
 - Route missing local tooling through `../runbooks/handle-tooling-readiness.md` and offer
   blocker-specific choices instead of broad "install tools" prompts.
 - End with a clear result and next step.
@@ -117,6 +118,7 @@ Required quality bar:
   where applicable.
 - State approval gates before external-state-changing, destructive, sensitive, release, or
   security-relevant actions.
+- Use visible-terminal handoff before any step that requires user-entered terminal input.
 - State stop conditions.
 - Define evidence and run-record requirements.
 - Define validation that proves the requested outcome, not only that commands ran.
@@ -124,6 +126,16 @@ Required quality bar:
 
 Use the fresh-agent test: if another agent can only restate what must be true but still has to
 invent commands, workflow, evidence, or validation, the runbook is not specific enough.
+
+### Recipe-Bearing Runbooks
+
+When a runbook section becomes a repeatable operational recipe with inputs, preconditions,
+execution, evidence, and validation, apply the operational recipe maturity reference. Installed
+path: `.codeheart/kit/docs/agent-interface/reference/operational-recipe-maturity.md`.
+
+Use that reference to distinguish ordinary guidance from L1 structured recipes and L2+ executable
+recipe assets, to name validation tiers, and to record promotion or non-promotion decisions. Do
+not copy the full maturity model into each runbook.
 
 ### Routing-Bearing Runbooks
 
@@ -161,6 +173,26 @@ User-facing flow owns what the user sees. Operator notes own internal state, fil
 configuration, tool selection, and implementation cautions. Execution path owns the work. Stop
 conditions and evidence must be visible enough for reviewers to confirm the runbook is safe.
 
+## Visible-Terminal Handoff
+
+Agent-run terminal tools are execution surfaces. A durable runbook must not assume the user can see
+or interact with an agent tool terminal, even when that terminal can display an interactive prompt
+to the agent.
+
+Use visible-terminal handoff whenever the user must type or paste a value into a terminal prompt,
+especially for secrets, passwords, API keys, MFA codes, or local keychain prompts. The runbook
+should tell the agent to:
+
+1. prepare the command and working directory;
+2. use a user-visible terminal surface when one is safely available, or provide the exact command
+   and working directory for the user to run in their own terminal;
+3. tell the user exactly what remains to type or paste and when to press Enter;
+4. wait for the user to report completion before continuing or validating.
+
+Do not ask the user to paste sensitive values into chat. Do not ask the user to interact with a
+hidden agent tool prompt. Normal noninteractive commands may still run through the agent's shell or
+tooling surface when no user-entered terminal input is required.
+
 ## Maintainer-Facing Runbooks
 
 Maintainer-facing runbooks may be concise when the procedure is low risk, familiar, and
@@ -195,20 +227,28 @@ When a durable runbook can encounter missing local tooling, keep the responsibil
 - the runbook names required tools, capability unlocked, readiness checks, and module-owned
   service preflight;
 - `../runbooks/handle-tooling-readiness.md` owns the generic missing-tool conversation, approval
-  gate, blocker-specific user choices, and return-to-runbook behavior;
-- module-owned runbooks and references own concrete module-specific install commands, versions,
-  and service caveats;
+  gate, blocker-specific user choices, local machine layer, default repo-local Python venv
+  convention, consumer-mode runtime materialization rule, visible-terminal handoff pattern for
+  local-tooling prompts, and return-to-runbook behavior;
+- module-owned runbooks and references own concrete module-specific package names, version
+  requirements, entrypoints, smoke validation commands, service caveats, and source-development
+  setup when needed;
 - structure governance owns where the runbook belongs, not the internal runbook shape.
 
 Do not duplicate generic package-manager, runtime, or local-tool setup guidance across multiple
 managed Operating Kit runbooks. Use a concise route to the tooling-readiness runbook unless the
 implementation plan explicitly creates or changes the shared readiness route itself.
 
+Consumer-mode module runbooks should declare package facts and validation commands without
+teaching generic environment procedure. Editable or source-linked installs belong only in
+development-mode guidance for the owning source repository.
+
 Local environment blockers include missing package managers, shell runtimes, CLIs, PowerShell
 runtime, PowerShell modules, PATH discovery, browser automation prerequisites, and document/PDF
-tools. Service blockers such as external sign-in, tenant consent, admin roles, mailbox access,
-SharePoint permissions, licenses, app readiness, API authorization, or live external preflight
-remain module-owned.
+tools. They also include repo-local Python package setup blocked by an externally managed Python.
+Service blockers such as external sign-in, tenant consent, admin roles, mailbox access, SharePoint
+permissions, licenses, app readiness, API authorization, or live external preflight remain
+module-owned.
 
 ## Review Checklist
 
@@ -231,6 +271,7 @@ Human-facing checks:
 - Help text exists for hard-to-find values.
 - Approval wording is explicit before writes, sign-ins, installs, external changes, or sensitive
   reads.
+- User-entered terminal prompts use visible-terminal handoff.
 - Language preference is reused when a readable local `language` preference exists.
 - Missing local tooling routes to the managed tooling-readiness runbook with concrete user
   choices.
@@ -245,7 +286,9 @@ Agent-facing checks:
 - Route selection is separate from recipe execution.
 - Missing generic local tools route to the managed tooling-readiness runbook.
 - The ordered procedure is concrete enough for a fresh agent.
+- Recipe-bearing sections follow the operational recipe maturity reference.
 - Approval gates and stop conditions are explicit.
+- User-entered terminal prompts use visible-terminal handoff.
 - Evidence and validation prove the outcome.
 - Cleanup, retain, rollback, or offboarding is covered when relevant.
 
@@ -268,3 +311,4 @@ Scope checks:
 - Examples are public-safe and use placeholders or sanitized patterns.
 - Generic package-manager, runtime, and local-tool readiness guidance is centralized instead of
   copied into every module or managed runbook.
+- Consumer-mode runtime setup does not rely on editable installs from managed snapshots.

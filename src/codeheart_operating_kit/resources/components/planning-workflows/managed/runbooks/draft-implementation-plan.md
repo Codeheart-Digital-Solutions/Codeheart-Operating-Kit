@@ -1,4 +1,4 @@
-Last updated: 2026-06-25T13:05:46Z (UTC)
+Last updated: 2026-06-26T14:30:34Z (UTC)
 
 # Draft Implementation Plan
 
@@ -137,6 +137,28 @@ Runbook-related acceptance criteria must cover the relevant audience checks. Do 
 deliver only routing, policy, or placeholders when the intended runbook still lacks user-facing
 flow, agent execution path, approval boundaries, stop conditions, evidence, or validation.
 
+## Recipe-Maturity Coverage
+
+When a plan creates or materially changes durable operational recipes, route-selected recipes,
+executable script blocks, expected markers, structured summary or blocker output, promoted recipe
+assets, or recipe validation expectations, cite and apply
+`.codeheart/kit/docs/agent-interface/reference/operational-recipe-maturity.md`.
+
+For recipe-bearing epics, the plan must state:
+
+- target maturity state, such as below recipe threshold, L1 structured recipe, L2 tested script
+  block, L3 reusable script asset, L4 thin command wrapper, or L5 mature API/tool surface;
+- validation tier, such as fresh-agent executability review, non-live test, dry-run or preflight,
+  or approval-gated live validation;
+- evidence shape and blocker shape when structured output is expected;
+- promotion destination or explicit non-promotion decision;
+- placement boundary for any promoted recipe asset;
+- whether module-owned blocker classes, concrete package layouts, or domain-specific live
+  validation are intentionally outside scope.
+
+Do not treat the maturity states as a required ladder. `Do not promote yet` is a valid planned
+outcome when the recipe is safe, testable, reviewable, and ergonomic at its current level.
+
 ## Routing-Standard Coverage
 
 When a plan creates or materially changes routing-bearing surfaces, cite and apply
@@ -176,6 +198,10 @@ Mark the probe `not applicable` only when the changed work is not routing-bearin
 - Reuse the discovery slug when a matching `<feature-slug>_discovery_doc.md` exists.
 - Use lowercase hyphen-separated slugs.
 - Remove special characters and collapse duplicate hyphens.
+- When implementation work spans multiple repositories, identify the repository that owns the work
+  boundary before creating the canonical implementation plan. Place the canonical plan in that
+  owning repository's planning root. Use local or coordination-home plan registers as pointers to
+  the canonical plan, not as the canonical home by default.
 - Put the plan in the owning `plans/` folder or plan bundle according to the planning lifecycle
   reference.
 

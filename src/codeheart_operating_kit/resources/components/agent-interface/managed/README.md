@@ -1,4 +1,4 @@
-Last updated: 2026-06-25T13:05:46Z (UTC)
+Last updated: 2026-06-25T20:21:49Z (UTC)
 
 # Agent Interface
 
@@ -18,6 +18,7 @@ repository documents, not in the managed bootstrap text.
 - Managed section boundaries: `reference/managed-section-boundaries.md`
 - Local extension contract: `reference/local-extension-contract.md`
 - Onboarding context contract: `reference/onboarding-context-contract.md`
+- Operational recipe maturity: `reference/operational-recipe-maturity.md`
 - Runbook authoring standard: `reference/runbook-authoring-standard.md`
 - Update-check policy: `reference/update-check-policy.md`
 - Kit feedback item format: `reference/kit-feedback-item-format.md`

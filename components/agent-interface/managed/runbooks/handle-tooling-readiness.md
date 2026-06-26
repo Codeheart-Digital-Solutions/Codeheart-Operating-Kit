@@ -1,4 +1,4 @@
-Last updated: 2026-06-24T13:51:18Z (UTC)
+Last updated: 2026-06-26T15:57:38Z (UTC)
 
 # Handle Tooling Readiness
 
@@ -22,19 +22,21 @@ or treat local tool readiness as external service authorization.
 
 Stop boundary:
 Stop before installing, repairing, changing PATH or shell startup files, accepting permission
-prompts, using unofficial install sources, handling secrets, bypassing device policy, or touching
-external services without the calling runbook's approval gate.
+prompts, using unofficial install sources, handling secrets, asking the user to enter terminal
+input into an agent-hidden prompt, bypassing device policy, or touching external services without
+the calling runbook's approval gate.
 
-Use this runbook when a module onboarding or operation reaches a local environment blocker. It is
-not a default setup checklist and not a command wrapper.
+Use this runbook when a repository task, module task, extension task, or agent-facing runbook
+reaches a local environment blocker. It is not a default setup checklist and not a command
+wrapper.
 
 ## Trigger
 
 Use this runbook when:
 
-- a module onboarding runbook reports a missing local package manager, runtime, CLI, PowerShell
-  module, install path, or required local tool;
-- a module operation reports the same local blocker after onboarding;
+- a repository task, module onboarding runbook, module operation, extension task, or agent-facing
+  runbook reports a missing local package manager, runtime, CLI, PowerShell module, install path,
+  or required local tool;
 - the user explicitly asks to install or repair a tool required by the current repository or
   module;
 - an agent-facing runbook declares a required tool and the read-only check reports `missing`,
@@ -98,7 +100,7 @@ software.
 
 ## Execution Path
 
-1. Identify the calling runbook, module, extension, or repository task.
+1. Identify the calling runbook, module, extension, repository task, or agent task.
 2. Identify the required capability and the missing local tool.
 3. Classify the blocker as local environment or module-owned service state.
 4. If it is module-owned service state, return to the calling module runbook.
@@ -109,12 +111,84 @@ software.
    permission prompts, or sensitive reads.
 9. Use an official vendor source, system package manager, or module-owned runbook for concrete
    commands.
-10. Recheck readiness with a read-only check.
-11. Return to the calling runbook when readiness is available.
-12. Record a capability blocker and stop when readiness remains unavailable.
+10. When a command requires user-entered terminal input, use visible-terminal handoff instead of
+    an agent-hidden terminal prompt.
+11. Recheck readiness with a read-only check.
+12. Return to the calling runbook when readiness is available.
+13. Record a capability blocker and stop when readiness remains unavailable.
 
 Do not write durable readiness state in V1. If the active task requires a run record, record only a
 short non-secret blocker summary in that task's execution log or final summary.
+
+## Local Machine Layer
+
+Use `.codeheart/local/` for ignored generated runtime and tooling state that is specific to one
+checkout and can be recreated. Do not store human preferences, personal notes, secrets,
+credentials, durable repo state, managed snapshots, raw provider responses, or live external truth
+there.
+
+Default repo-local Python virtual environment:
+
+```text
+.codeheart/local/envs/python/
+```
+
+Use a purpose-specific virtual environment only when there is a concrete Python-version,
+dependency, security, lifecycle, or isolation conflict:
+
+```text
+.codeheart/local/envs/<purpose>/
+```
+
+When creating or repairing repo-local Python tooling, prefer a virtual environment under the local
+machine layer. Do not install repo-specific Python packages globally, use `sudo pip`,
+`--break-system-packages`, or mutate an externally managed Python installation as the normal path.
+
+## Runtime Materialization
+
+Runtime tooling for consumer-mode work is materialized into ignored local runtime state, not
+editable-linked from durable managed snapshots or mutable source checkouts.
+
+Use these mode boundaries:
+
+- `consumer-mode`: install tooling into `.codeheart/local/` or another caller-approved ignored
+  runtime location without relying on editable source links, generated install metadata inside
+  managed content, or mutable development checkouts;
+- `development-mode`: editable or source-linked installs are allowed only when the task explicitly
+  targets source development in the owning source repository.
+
+The calling repository, module, or package declares concrete package facts: package name, source or
+artifact path, version requirements, entrypoint, and smoke validation. This runbook owns the
+generic local-machine boundary, approval gate, baseline lane selection, and return-to-calling-task
+behavior.
+
+Typical POSIX command shape:
+
+```sh
+python3 -m venv .codeheart/local/envs/python
+.codeheart/local/envs/python/bin/python -m pip install <module-or-package-path-or-spec>
+.codeheart/local/envs/python/bin/<tool-command> --help
+```
+
+The non-editable package install shape above is the consumer-mode default. If a source repository
+development runbook needs an editable install, that runbook must say it is development-mode work
+in the owning source repository.
+
+## Visible-Terminal Handoff
+
+Agent-run terminal tools are execution surfaces. Do not assume the user can see or interact with an
+agent tool prompt.
+
+When a tooling-readiness step needs the user to type or paste a value into a terminal prompt:
+
+1. Prepare the working directory and command.
+2. Use a user-visible terminal surface when one is safely available, or provide the exact command
+   and working directory for the user to run in their own terminal.
+3. Tell the user exactly what remains for them to type or paste and when to press Enter.
+4. Wait for the user to report completion before rechecking readiness.
+
+Never ask the user to paste secrets, passwords, API keys, MFA codes, or other sensitive values into
+chat or into an agent-hidden terminal prompt.
 
 ## Baseline Tooling Catalog
 
@@ -126,9 +200,11 @@ This catalog is on-demand. Do not install all baseline tools during onboarding.
 | `powershell-runtime` | PowerShell itself is missing or not runnable. | Check `pwsh` availability and version when the command exists. | Operating Kit owns the generic readiness route. Modules own why PowerShell is needed. |
 | `powershell-module` | PowerShell exists but a required module is missing. | Check whether the requested module is installed or importable. | Operating Kit owns the generic module-readiness pattern. Modules own concrete module names, versions, and install commands. |
 | `node-runtime` | Node.js or its package manager is missing. | Check `node` and package-manager availability when requested by the repo or module. | Operating Kit owns the generic lane. Repositories or modules own exact version requirements. |
-| `python-runtime` | Python or its package manager is missing. | Check the relevant Python command and package tool availability. | Operating Kit owns the generic lane. Repositories or modules own exact version and virtual environment requirements. |
+| `python-runtime` | Python, package tooling, or repo-local Python tooling is missing or blocked by an externally managed Python. | Check the relevant Python command, package tool availability, and repo-local venv command when requested by the calling runbook. | Operating Kit owns the generic lane, default `.codeheart/local/envs/python/` convention, and consumer-mode non-editable package materialization rule. Repositories or modules own exact version, package, entrypoint, and smoke-validation requirements. Editable installs are development-mode only. |
 | `browser-automation` | A local browser automation prerequisite is missing. | Check the browser or automation tool named by the calling runbook. | Operating Kit owns the generic lane. Browser tooling, plugins, or modules own concrete setup. |
 | `document-pdf-tooling` | Document conversion, PDF rendering, or office-file tooling is missing. | Check the exact command or package named by the calling runbook. | Operating Kit owns the generic lane. Document/PDF skills or modules own exact tool requirements. |
+
+Add future runtime lanes here before duplicating generic environment guidance in module runbooks.
 
 ## Official Source Rule
 
@@ -211,3 +287,6 @@ Do not record:
 - The readiness recheck proves the local blocker is resolved before returning to the module.
 - No durable machine-readiness state is committed.
 - The module still owns module-specific commands and external service validation.
+- Consumer-mode runtime materialization does not rely on editable installs or generated metadata
+  inside managed snapshots.
+- User-entered terminal prompts use visible-terminal handoff, not hidden agent tool prompts.
