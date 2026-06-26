@@ -1,4 +1,4 @@
-Last updated: 2026-06-26T21:05:06Z (UTC)
+Last updated: 2026-06-26T21:09:26Z (UTC)
 
 # Plan Register
 
@@ -36,7 +36,7 @@ Canonical docs:
 docs/repo/plans/business-docs-placement-clarity/business-docs-placement-clarity_implementation_doc.md
 docs/repo/plans/business-docs-placement-clarity/business-docs-placement-clarity_execution_log.md
 Created: 2026-06-26
-Last updated: 2026-06-26T21:05:06Z (UTC)
+Last updated: 2026-06-26T21:09:26Z (UTC)
 Priority / ordering note: Instruction-only managed doctrine clarification. No scaffold, sync,
 schema, validator, CLI, or consumer migration behavior should change.
 
@@ -53,6 +53,8 @@ Session refs:
   evidence.
 - material update: 2026-06-26, not recorded, prepared Operating Kit `v0.1.16` release surfaces,
   assets, installer proof, and release-readiness validation.
+- material update: 2026-06-26, not recorded, published Operating Kit `v0.1.16` and recorded
+  GitHub release plus workflow validation evidence in the execution log.
 
 Coordination note:
 - Canonical plan is Operating Kit-owned.

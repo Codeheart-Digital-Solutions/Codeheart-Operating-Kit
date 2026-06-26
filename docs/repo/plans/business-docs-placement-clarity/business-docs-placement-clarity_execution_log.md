@@ -1,4 +1,4 @@
-Last updated: 2026-06-26T21:05:06Z (UTC)
+Last updated: 2026-06-26T21:09:26Z (UTC)
 Created: 2026-06-26
 Status: completed
 
@@ -118,6 +118,30 @@ Release-preparation validation:
   passed.
 - `install.ps1` local install from the Windows zip with checksum file under local `pwsh`: passed
   and reported `codeheart-operating-kit 0.1.16`.
+
+## Release Publication Evidence
+
+- Release commit: `7d6220a39f158a0b3de5e30618f5bae90d732bd4`.
+- Release tag: `v0.1.16`.
+- GitHub release:
+  `https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/tag/v0.1.16`.
+- Published at: `2026-06-26T21:08:05Z`.
+- Published assets:
+  - `bootstrap.md`
+  - `install.sh`
+  - `install.ps1`
+  - `release-notes.md`
+  - `manifest.yaml`
+  - `codeheart-operating-kit-0.1.16-macos.tar.gz`
+  - `codeheart-operating-kit-0.1.16-macos.tar.gz.sha256`
+  - `codeheart-operating-kit-0.1.16-windows.zip`
+  - `codeheart-operating-kit-0.1.16-windows.zip.sha256`
+- Published macOS install proof passed and reported `codeheart-operating-kit 0.1.16`.
+- GitHub Actions `Validate` workflow dispatch run `28265395980` passed for `release_version=v0.1.16`:
+  `https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/actions/runs/28265395980`.
+- Push-triggered `Validate` runs for `main` and `v0.1.16` also passed.
+- Non-blocking workflow annotations: GitHub Actions reported Node.js 20 action-runtime
+  deprecation and an upcoming `macos-latest` image migration notice.
 
 ## Residual Risk And Follow-Ups
 
