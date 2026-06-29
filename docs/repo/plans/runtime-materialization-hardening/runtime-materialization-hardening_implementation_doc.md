@@ -1,6 +1,6 @@
-Last updated: 2026-06-26T16:18:05Z (UTC)
+Last updated: 2026-06-29T15:06:25Z (UTC)
 Created: 2026-06-26
-Status: active
+Status: completed
 Execution log: runtime-materialization-hardening_execution_log.md
 
 # Document Header
@@ -645,11 +645,11 @@ state.
 - [x] Select and apply the next Operating Kit patch version after checking current tags.
 - [x] Build release assets.
 - [x] Validate release manifest and asset checksums.
-- [ ] Validate installer fail-closed behavior.
-- [ ] Validate a temporary macOS consumer install from release assets.
+- [x] Validate installer fail-closed behavior.
+- [x] Validate a temporary macOS consumer install from release assets.
 - [x] Run full source validation.
-- [ ] Publish GitHub release after approval gates pass.
-- [ ] Record release URL, tag, commit, asset hashes, and validation evidence in the execution log.
+- [x] Publish GitHub release after approval gates pass.
+- [x] Record release URL, tag, commit, asset hashes, and validation evidence in the execution log.
 
 ### G) Implementation Notes
 
@@ -826,18 +826,18 @@ validation have passed. Do not run hidden interactive auth prompts that the user
 
 ### F) Tasks Checklist
 
-- [ ] Confirm AI Execution source tree is clean or record approved source-tree state.
-- [ ] Export the hardened snapshot into HQ using the cache-excluding snapshot command.
-- [ ] Generate HQ AI Execution snapshot manifest and manifest hash.
-- [ ] Update HQ `foundry.lock.yaml` for the AI Execution release.
-- [ ] Confirm HQ root routes discover AI Execution.
-- [ ] Create or reuse `.codeheart/local/envs/python/` in HQ.
-- [ ] Install AI Execution into the HQ venv using consumer-mode non-editable install.
-- [ ] Confirm the install does not leave generated metadata in the managed snapshot.
-- [ ] Run `foundry-ai --help`.
-- [ ] Run dry-run smoke against the installed smoke manifest and confirm no provider request.
-- [ ] Run `foundry-ai auth status --json`.
-- [ ] If requested, start `foundry-ai auth setup` only after the previous checks pass and only
+- [x] Confirm AI Execution source tree is clean or record approved source-tree state.
+- [x] Export the hardened snapshot into HQ using the cache-excluding snapshot command.
+- [x] Generate HQ AI Execution snapshot manifest and manifest hash.
+- [x] Update HQ `foundry.lock.yaml` for the AI Execution release.
+- [x] Confirm HQ root routes discover AI Execution.
+- [x] Create or reuse `.codeheart/local/envs/python/` in HQ.
+- [x] Install AI Execution into the HQ venv using consumer-mode non-editable install.
+- [x] Confirm the install does not leave generated metadata in the managed snapshot.
+- [x] Run `foundry-ai --help`.
+- [x] Run dry-run smoke against the installed smoke manifest and confirm no provider request.
+- [x] Run `foundry-ai auth status --json`.
+- [x] If requested, start `foundry-ai auth setup` only after the previous checks pass and only
   with visible-terminal handoff instructions.
 
 ### G) Implementation Notes
@@ -920,14 +920,14 @@ release proof unless explicitly recorded as a local pre-release smoke.
 
 ### F) Tasks Checklist
 
-- [ ] Install/sync released Operating Kit into Codeheart-HQ.
-- [ ] Install/sync released Operating Kit into Codeheart-Automation-Foundry.
-- [ ] Install/sync released Operating Kit into the named private platform repository.
-- [ ] Install/sync released Operating Kit into Codeheart-Operating-Kit.
-- [ ] Run `codeheart-operating-kit check` in each repo.
-- [ ] Verify installed tooling-readiness runtime materialization wording in each repo.
-- [ ] Verify `.codeheart/local/` ignore/config route in each repo.
-- [ ] Record dirty-work preservation notes for each repo.
+- [x] Install/sync released Operating Kit into Codeheart-HQ.
+- [x] Install/sync released Operating Kit into Codeheart-Automation-Foundry.
+- [x] Install/sync released Operating Kit into the named private platform repository.
+- [x] Install/sync released Operating Kit into Codeheart-Operating-Kit.
+- [x] Run `codeheart-operating-kit check` in each repo.
+- [x] Verify installed tooling-readiness runtime materialization wording in each repo.
+- [x] Verify `.codeheart/local/` ignore/config route in each repo.
+- [x] Record dirty-work preservation notes for each repo.
 
 ### G) Implementation Notes
 
@@ -998,17 +998,17 @@ not duplicate release logs.
 
 ### F) Tasks Checklist
 
-- [ ] Add or update `OK-PR-017` in the Operating Kit register.
-- [ ] Add relation from `OK-PR-016` to `OK-PR-017`.
-- [ ] Add `CODEHEART-OPERATING-KIT-PR-017` to the HQ coordination register.
-- [ ] Add or refresh the HQ work board entry.
-- [ ] Add a Foundry plan-register pointer or module-release entry for the AI Execution adopter
+- [x] Add or update `OK-PR-017` in the Operating Kit register.
+- [x] Add relation from `OK-PR-016` to `OK-PR-017`.
+- [x] Add `CODEHEART-OPERATING-KIT-PR-017` to the HQ coordination register.
+- [x] Add or refresh the HQ work board entry.
+- [x] Add a Foundry plan-register pointer or module-release entry for the AI Execution adopter
   release.
-- [ ] Create execution log before marking epics complete.
-- [ ] Run final source, release, module, consumer, and install validation.
-- [ ] Run `git diff --check` in every touched repo.
-- [ ] Run a review gate over the cross-repo diff.
-- [ ] Mark plan/register/work-board statuses complete only after all accepted scope passes.
+- [x] Create execution log before marking epics complete.
+- [x] Run final source, release, module, consumer, and install validation.
+- [x] Run `git diff --check` in every touched repo.
+- [x] Run a review gate over the cross-repo diff.
+- [x] Mark plan/register/work-board statuses complete only after all accepted scope passes.
 
 ### G) Implementation Notes
 
@@ -1054,8 +1054,8 @@ Operating Kit cloud or hosted runtime policy:
 
 - If multiple Foundry modules adopt the same runtime declaration shape, promote a lightweight
   module runtime requirement schema into Foundry or Operating Kit doctrine.
-- If install commands keep becoming large runbook snippets, consider an L2 tested script block or
-  L3 reusable script asset under Operating Kit.
+- If install commands keep becoming large runbook snippets, consider a reusable script asset under
+  the Operating Kit runbook-to-script promotion standard.
 - If the same consumer-mode/development-mode distinction appears outside tooling readiness, add a
   short reference page and keep the runbook as the operational route.
 
@@ -1068,3 +1068,6 @@ Operating Kit cloud or hosted runtime policy:
 - 2026-06-26: Added Operating Kit visible-terminal handoff hardening so runbooks do not ask users
   to type secrets or other values into hidden agent tool terminals.
 - 2026-06-26: Activated for execution and created the sibling execution log.
+- 2026-06-29: Reworded a forward-looking future consideration to use the current reusable script
+  asset vocabulary after the runbook-to-script promotion standard retired tested inline-block
+  maturity.

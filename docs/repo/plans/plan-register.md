@@ -1,4 +1,4 @@
-Last updated: 2026-06-26T21:09:26Z (UTC)
+Last updated: 2026-06-29T15:01:31Z (UTC)
 
 # Plan Register
 
@@ -17,11 +17,169 @@ maintenance.
 
 Coverage note: This register currently lists public Operating Kit repository plans that have been
 entered during plan-register adoption. Earlier repository plans may be added during later register
-maintenance. `OK-PR-018` is the completed implementation plan for clarifying the managed
-`docs/business/` placement rule after consumer feedback exposed ambiguity between business
-operating records and software/module architecture documentation.
+maintenance. `OK-PR-022` is the completed implementation plan for generic runbook-to-script
+promotion doctrine, including reusable script asset guidance, current doctrine alignment, and
+instruction-only release readiness. `OK-PR-021` is the draft implementation plan for Operating Kit-guided repo
+feedback capture with check-first GitHub Issues availability and demand-driven issue-intake setup.
 
 ## Entries
+
+## OK-PR-022 - Runbook-To-Script Promotion Standard Implementation
+
+Type: implementation-plan
+Purpose: Implement managed Operating Kit doctrine for promoting fragile, repeated, or
+evidence-bearing runbook mechanics into reusable script assets without turning whole runbooks into
+premature CLIs, APIs, or broad automation wrappers.
+Status: completed
+Owner / repository: Codeheart-Operating-Kit
+Canonical docs:
+docs/repo/plans/runbook-to-script-promotion-standard/runbook-to-script-promotion-standard_implementation_doc.md
+docs/repo/plans/runbook-to-script-promotion-standard/runbook-to-script-promotion-standard_execution_log.md
+Created: 2026-06-29
+Last updated: 2026-06-29T15:01:31Z (UTC)
+Priority / ordering note: Should execute after `OK-PR-019` recommendation approval and before
+downstream Foundry, Microsoft 365, AI Execution, or consumer repositories adopt script promotion
+rules.
+
+Relations:
+- depends-on: OK-PR-019 - Runbook-To-Script Promotion Standard Discovery
+- related: OK-PR-014 - Operational Recipe Maturity Standard Implementation Pointer
+- related: OK-PR-005 - Runbook Authoring Standards Discovery
+- related: OK-PR-007 - Runbook Authoring Standards Implementation
+- related: OK-PR-011 - Operation Routing And Dispatch Standard Discovery
+- related: OK-PR-013 - Operation Routing And Dispatch Standard Implementation
+- related: OK-PR-017 - Consumer Runtime Materialization Hardening Implementation
+
+Session refs:
+- created: 2026-06-29, not recorded, drafted after the user approved the recommended defaults
+  for output contract, script placement, helper policy, validator scope, adoption scope, migration
+  rule, and review gates.
+- material update: 2026-06-29, not recorded, activated for implementation and began source
+  managed doctrine changes.
+- completed: 2026-06-29, not recorded, completed the instruction-only source implementation,
+  resource mirrors, indexes, stale-vocabulary review, validation, and low-context routing probe.
+
+Coordination note:
+- Generic Operating Kit implementation candidate.
+- Consumer impact classification: instruction-only change.
+- Release notes are required when shipped.
+- No consumer migration is required in this implementation scope.
+
+## OK-PR-021 - Repo Feedback Capture And Issue Intake Implementation
+
+Type: implementation-plan
+Purpose: Implement managed Operating Kit repo feedback capture by adding optional `repo_feedback`
+config schema support, capture and setup runbooks, item-format guidance, installed root route
+visibility, packaged-resource mirrors, validation, release surfaces, and fresh-repo proof while
+keeping GitHub issue creation and repository setup approval-gated.
+Status: draft
+Owner / repository: Codeheart-Operating-Kit
+Canonical docs:
+docs/repo/plans/repo-feedback-capture/repo-feedback-capture_implementation_doc.md
+Created: 2026-06-29
+Last updated: 2026-06-29T13:58:49Z (UTC)
+Priority / ordering note: Should execute after `OK-PR-020` capability scope approval and before
+agents are expected to use repo feedback capture in consumer repositories.
+
+Relations:
+- depends-on: OK-PR-020 - Repo Feedback Capture And Issue Intake Discovery
+- related: docs/repo/plans/kit-feedback-intake/kit-feedback-intake_implementation_doc.md
+- related: OK-PR-011 - Operation Routing And Dispatch Standard Discovery
+- related: OK-PR-013 - Operation Routing And Dispatch Standard Implementation
+- related: OK-PR-005 - Runbook Authoring Standards Discovery
+- related: OK-PR-007 - Runbook Authoring Standards Implementation
+- related: OK-PR-010 - Tooling Environment Readiness Implementation
+
+Session refs:
+- created: 2026-06-29, not recorded, drafted after user approved the repo feedback capture
+  recommendations, including check-first GitHub Issues behavior, demand-driven setup,
+  disabled/suppressed state after decline, and missing-label fallback.
+
+Coordination note:
+- Generic Operating Kit implementation candidate. Execution should not configure GitHub Issues,
+  labels, templates, or live issues in consumer repositories; it should ship managed guidance and
+  schema support first.
+
+## OK-PR-020 - Repo Feedback Capture And Issue Intake Discovery
+
+Type: discovery-plan
+Purpose: Discover a reusable Operating Kit standard for how agents recognize repo-specific
+feedback during runbook execution, check whether the owning repository's GitHub Issues intake
+already works, route to it when available, handle demand-driven setup only when issue intake is
+unavailable or incomplete, suppress repeated prompts after user decline, classify issues, protect
+privacy, and promote accepted feedback into direct patches, batches, discovery, or implementation
+planning.
+Status: draft
+Owner / repository: Codeheart-Operating-Kit
+Canonical docs:
+docs/repo/plans/repo-feedback-capture/repo-feedback-capture_discovery_doc.md
+Created: 2026-06-29
+Last updated: 2026-06-29T13:50:21Z (UTC)
+Priority / ordering note: Should be reviewed before implementing managed repo-feedback capture
+routes, check-first GitHub issue availability, issue-intake setup runbooks, config schema support,
+or prompt-suppression behavior.
+
+Relations:
+- child: OK-PR-021 - Repo Feedback Capture And Issue Intake Implementation
+- related: docs/repo/plans/kit-feedback-intake/kit-feedback-intake_discovery_doc.md
+- related: docs/repo/plans/kit-feedback-intake/kit-feedback-intake_implementation_doc.md
+- related: OK-PR-011 - Operation Routing And Dispatch Standard Discovery
+- related: OK-PR-013 - Operation Routing And Dispatch Standard Implementation
+- related: OK-PR-005 - Runbook Authoring Standards Discovery
+- related: OK-PR-007 - Runbook Authoring Standards Implementation
+- related: OK-PR-009 - Tooling Environment Readiness Discovery
+- related: OK-PR-010 - Tooling Environment Readiness Implementation
+
+Session refs:
+- created: 2026-06-29, not recorded, drafted from user discussion about repo-specific feedback
+  capture, GitHub Issues as durable inbox, demand-driven setup, suppression after decline,
+  classification, privacy, and triage promotion.
+- material update: 2026-06-29, not recorded, clarified that agents should check whether GitHub
+  Issues already works before offering setup, following the Operating Kit feedback intake
+  precedent where Issues were already enabled.
+
+Coordination note:
+- Generic Operating Kit doctrine candidate. Repo-specific issue destinations and GitHub settings
+  should remain owned by the target repository and require explicit approval before external
+  changes.
+
+## OK-PR-019 - Runbook-To-Script Promotion Standard Discovery
+
+Type: discovery-plan
+Purpose: Discover a reusable Operating Kit standard for deciding when runbook steps or
+operational recipes should be promoted to scripts, what first-script scaffolding is required, when
+infrastructure helpers or domain folders are justified, when package/CLI promotion is warranted,
+and how promoted scripts preserve runbook approval, safety, output, and testing expectations.
+Status: draft
+Owner / repository: Codeheart-Operating-Kit
+Canonical docs:
+docs/repo/plans/runbook-to-script-promotion-standard/runbook-to-script-promotion-standard_discovery_doc.md
+Created: 2026-06-29
+Last updated: 2026-06-29T14:30:44Z (UTC)
+Priority / ordering note: Should be accepted and implemented in the Operating Kit before
+downstream repositories or modules use it to promote deterministic runbook recipes into scripts.
+
+Relations:
+- child: OK-PR-022 - Runbook-To-Script Promotion Standard Implementation
+- related: OK-PR-014 - Operational Recipe Maturity Standard Implementation Pointer
+- related: OK-PR-005 - Runbook Authoring Standards Discovery
+- related: OK-PR-007 - Runbook Authoring Standards Implementation
+- related: OK-PR-011 - Operation Routing And Dispatch Standard Discovery
+- related: OK-PR-013 - Operation Routing And Dispatch Standard Implementation
+- related: OK-PR-009 - Tooling Environment Readiness Discovery
+- related: OK-PR-017 - Consumer Runtime Materialization Hardening Implementation
+
+Session refs:
+- created: 2026-06-29, not recorded, drafted from user discussion about generic script
+  promotion triggers, first-script quality scaffolding, helper abstraction timing, domain folder
+  triggers, and package/CLI maturity.
+- material update: 2026-06-29, not recorded, refined the discovery to remove tested inline block
+  maturity, add current doctrine alignment inventory, and define the mechanical script output
+  contract.
+
+Coordination note:
+- Generic Operating Kit doctrine candidate. Foundry and Microsoft 365 module adoption should be
+  handled by separate downstream work only after this standard is accepted and implemented.
 
 ## OK-PR-018 - Business Docs Placement Clarity Implementation
 

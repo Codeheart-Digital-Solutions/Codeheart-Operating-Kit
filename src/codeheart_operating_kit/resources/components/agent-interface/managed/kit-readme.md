@@ -1,4 +1,4 @@
-Last updated: 2026-06-26T15:57:38Z (UTC)
+Last updated: 2026-06-29T14:49:19Z (UTC)
 
 # Codeheart Operating Kit Inventory
 
@@ -46,6 +46,10 @@ state looks missing, stale, or damaged.
 
 - Runbook authoring standard:
   `.codeheart/kit/docs/agent-interface/reference/runbook-authoring-standard.md`
+- Runbook-to-script promotion standard:
+  `.codeheart/kit/docs/agent-interface/reference/runbook-to-script-promotion-standard.md`
+- Promote runbook recipe to script:
+  `.codeheart/kit/docs/agent-interface/runbooks/promote-runbook-recipe-to-script.md`
 - User-entered terminal prompt standard:
   `.codeheart/kit/docs/agent-interface/reference/runbook-authoring-standard.md`
 

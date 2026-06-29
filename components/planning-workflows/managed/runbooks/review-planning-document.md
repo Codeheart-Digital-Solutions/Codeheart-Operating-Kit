@@ -1,4 +1,4 @@
-Last updated: 2026-06-25T20:35:28Z (UTC)
+Last updated: 2026-06-29T14:49:19Z (UTC)
 
 # Review Planning Document
 
@@ -159,12 +159,20 @@ For implementation docs, check whether:
   `.codeheart/kit/docs/agent-interface/reference/operational-recipe-maturity.md`;
 - recipe-bearing epics name target maturity state, validation tier, evidence shape, and promotion
   boundary;
+- reusable-script-asset epics cite
+  `.codeheart/kit/docs/agent-interface/reference/runbook-to-script-promotion-standard.md`;
+- reusable-script-asset epics name the runbook caller, script owner, placement boundary, output
+  contract, output safety behavior, tests or fixtures, and review flags;
 - recipe-bearing plans preserve `do not promote yet` as a valid outcome when justified;
 - promoted recipe assets have owner, placement boundary, validation path, and discoverability
   route;
 - recipe plans do not promote scripts, commands, wrappers, or APIs prematurely;
 - recipe plans do not hide executable behavior, structured blockers, markers, or validation
   expectations inside vague prose.
+- recipe plans do not preserve long inline implementations as durable assets when reusable script
+  assets are the safer execution surface;
+- recipe plans do not hide approval behavior, target broadening, raw sensitive output, or missing
+  tests behind reusable-script language.
 
 For discovery docs, check whether:
 

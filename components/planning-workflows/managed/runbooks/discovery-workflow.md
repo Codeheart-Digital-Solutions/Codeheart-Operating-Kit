@@ -1,4 +1,4 @@
-Last updated: 2026-06-26T14:30:34Z (UTC)
+Last updated: 2026-06-29T14:49:19Z (UTC)
 
 # Discovery Workflow
 
@@ -87,11 +87,14 @@ execution surfaces. Discovery should identify that scope and point to the operat
 standard, but should not draft the implementation checklist.
 
 Flag the work as `recipe-bearing` when the likely next implementation will create or materially
-change durable operational recipes, executable script blocks, expected markers, structured
-summary or blocker output, promoted recipe assets, or recipe validation expectations. Discovery
-should identify the recipe-maturity scope and point to
-`.codeheart/kit/docs/agent-interface/reference/operational-recipe-maturity.md`, but should leave
-exact epics and checklists to implementation planning.
+change durable operational recipes, durable executable mechanics, expected markers, structured
+summary or blocker output, reusable script assets, promoted recipe assets, or recipe validation
+expectations. Discovery should identify the recipe-maturity scope and point to
+`.codeheart/kit/docs/agent-interface/reference/operational-recipe-maturity.md`. When mechanics are
+fragile, repeated, or evidence-bearing, discovery should also point to
+`.codeheart/kit/docs/agent-interface/reference/runbook-to-script-promotion-standard.md` and ask
+whether the correct initial surface is a reusable script asset. Discovery should leave exact epics
+and checklists to implementation planning.
 
 For an existing discovery document, treat the document as the state ledger. Refresh it before
 resolving new decisions. Do not assume previous content is correct without checking current

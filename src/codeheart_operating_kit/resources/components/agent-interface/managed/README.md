@@ -1,4 +1,4 @@
-Last updated: 2026-06-25T20:21:49Z (UTC)
+Last updated: 2026-06-29T14:49:19Z (UTC)
 
 # Agent Interface
 
@@ -19,11 +19,13 @@ repository documents, not in the managed bootstrap text.
 - Local extension contract: `reference/local-extension-contract.md`
 - Onboarding context contract: `reference/onboarding-context-contract.md`
 - Operational recipe maturity: `reference/operational-recipe-maturity.md`
+- Runbook-to-script promotion standard: `reference/runbook-to-script-promotion-standard.md`
 - Runbook authoring standard: `reference/runbook-authoring-standard.md`
 - Update-check policy: `reference/update-check-policy.md`
 - Kit feedback item format: `reference/kit-feedback-item-format.md`
 - First-run onboarding: `runbooks/conduct-first-run-onboarding.md`
 - Tooling readiness: `runbooks/handle-tooling-readiness.md`
+- Promote runbook recipe to script: `runbooks/promote-runbook-recipe-to-script.md`
 - Root `AGENTS.md` structure: `runbooks/structure-root-agents-md.md`
 - Root `AGENTS.md` repair: `runbooks/repair-root-agents-md.md`
 - Submit kit feedback: `runbooks/submit-kit-feedback.md`

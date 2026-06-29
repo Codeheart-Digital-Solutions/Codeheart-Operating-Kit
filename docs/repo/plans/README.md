@@ -1,4 +1,4 @@
-Last updated: 2026-06-26T20:49:25Z (UTC)
+Last updated: 2026-06-29T15:01:31Z (UTC)
 
 # Repo Plans
 
@@ -7,6 +7,12 @@ This folder contains Codeheart Operating Kit repository-level discovery and impl
 ## Current Plans
 
 - Plan register: `plan-register.md`
+- Runbook-to-script promotion standard discovery:
+  `runbook-to-script-promotion-standard/runbook-to-script-promotion-standard_discovery_doc.md`
+- Runbook-to-script promotion standard implementation plan:
+  `runbook-to-script-promotion-standard/runbook-to-script-promotion-standard_implementation_doc.md`
+- Runbook-to-script promotion standard execution log:
+  `runbook-to-script-promotion-standard/runbook-to-script-promotion-standard_execution_log.md`
 - Local runtime environment standard discovery:
   `local-runtime-environment-standard/local-runtime-environment-standard_discovery_doc.md`
 - Local runtime environment standard implementation plan:
@@ -53,6 +59,10 @@ This folder contains Codeheart Operating Kit repository-level discovery and impl
   `plan-register-portfolio-doctrine-refinement/plan-register-portfolio-doctrine-refinement_implementation_doc.md`
 - Kit feedback intake discovery:
   `kit-feedback-intake/kit-feedback-intake_discovery_doc.md`
+- Repo feedback capture discovery:
+  `repo-feedback-capture/repo-feedback-capture_discovery_doc.md`
+- Repo feedback capture implementation plan:
+  `repo-feedback-capture/repo-feedback-capture_implementation_doc.md`
 - Portfolio coordination and plan-register model discovery:
   `portfolio-coordination-plan-register/portfolio-coordination-plan-register_discovery_doc.md`
 - Portfolio coordination and plan-register implementation plan:

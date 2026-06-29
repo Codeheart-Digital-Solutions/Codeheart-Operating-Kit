@@ -1,6 +1,6 @@
-Last updated: 2026-06-26T16:18:05Z (UTC)
+Last updated: 2026-06-26T16:33:33Z (UTC)
 Created: 2026-06-26
-Status: active
+Status: completed
 
 # Consumer Runtime Materialization And Terminal Handoff Hardening Execution Log
 
@@ -22,11 +22,11 @@ read-only review gates through subagents.
 | --- | --- | --- |
 | EP-01 | completed | Doctrine, packaged mirrors, focused validation, fresh probe, and rerun review gate passed. |
 | EP-02 | completed | Doctrine, packaged mirrors, focused validation, fresh probe, and rerun review gate passed. |
-| EP-03 | active | Version bump, release notes, asset build, release manifest validation, and full source validation complete; release publication pending. |
+| EP-03 | completed | Operating Kit `v0.1.15` source commit, tag, GitHub release, assets, installer checks, and published macOS install proof complete. |
 | EP-04 | completed | Foundry AI Execution adopter patch, source tests, smoke validation, fix review, and rerun review gate passed. |
-| EP-05 | pending | HQ AI Execution snapshot and runtime proof pending. |
-| EP-06 | pending | Named Operating Kit installs pending. |
-| EP-07 | active | Lifecycle activation and execution log created. |
+| EP-05 | completed | Foundry AI Execution source commit, HQ snapshot, lock update, repo-local venv install, dry-run smoke, auth status, and snapshot hygiene proof complete. |
+| EP-06 | completed | Released Operating Kit `0.1.15` synced/initialized into HQ, Foundry, the named private platform repository, and Operating Kit; `check` passed in all four repos. |
+| EP-07 | completed | Registers, work board, final validation, review gate, reviewer finding resolution, and completion status updates complete. |
 
 ## Activation Notes
 
@@ -147,6 +147,21 @@ Evidence cited by the probe:
   `.codeheart/local/`.
 - EP-04 rerun read-only review agent `019f04b5-e40b-7740-b0a0-d0581afb9144`: no material
   findings. Prior `uv.lock` and editable metadata finding is resolved.
+- Final cross-repo read-only review agent `019f04c3-27a4-7943-8001-707a8c001e3a`: found two
+  material issues, both resolved before completion:
+  - P1: HQ, Foundry, and the named private platform repository lockfiles had `kit_version:
+    0.1.15` but stale `release.asset_url` metadata pointing at the `0.1.14` macOS release asset.
+    Fix: repaired the lockfile release blocks to point at the `0.1.15` macOS asset and checksum,
+    then reran `codeheart-operating-kit check` and verified the lock URLs.
+  - P2: HQ coordination register and portfolio work board disagreed on
+    `CODEHEART-OPERATING-KIT-PR-017` status. Fix: updated HQ register and work board, the
+    Operating Kit register, and the Foundry pointer to completed after validation passed.
+  Residual risk noted by the reviewer remains: native Windows install was not run in this session.
+- Final focused rerun review agent `019f04c9-858d-7660-a053-4f0bd1e6f35c`: verified the prior
+  runtime-hardening lockfile/status fixes, then found an adjacent HQ planning-surface inconsistency
+  for `CODEHEART-HQ-PR-002`. Fix: aligned the HQ Portfolio Work Board's two `CODEHEART-HQ-PR-002`
+  status mentions and the canonical Portfolio Planning Surfaces discovery header to completed,
+  matching the HQ plan register.
 
 ## EP-03 Operating Kit Release Prep Evidence
 
@@ -171,3 +186,121 @@ Evidence cited by the probe:
   - `uv run --with pytest --with pip --with setuptools --with wheel python -m pytest tests`:
     passed, 92 tests.
   - `git diff --check`: passed.
+- Release source commit: `3a4332078d1b8d36b5fc50c2886668ae0c22896a`.
+- Release tag: `v0.1.15`.
+- Release URL:
+  `https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/tag/v0.1.15`.
+- Release asset hashes:
+  - `bootstrap.md`:
+    `1e50c5099427edd0c85c4f386c9e51df755de2cb2d0836ced913e726882a97b1`
+  - `install.sh`:
+    `14bb968a3b74c29dbd7596b130cdadbcbdc4eb9b5ceb649e7773ba1f55c17bac`
+  - `install.ps1`:
+    `22796b95ebece6f4ef135eb014081c03bca17fcdf105d03456a9bdeb8fd03ea1`
+  - `release-notes.md`:
+    `6f7103d1b17c125b51851a6194b3b13246f0baa2ca03e73deb62b6c1ba2f7142`
+  - `codeheart-operating-kit-0.1.15-macos.tar.gz`:
+    `ceadfb5f81725b0575ff4a883af41e8bb1bffd9e2b77aa6f4f61497283853ea5`
+  - `codeheart-operating-kit-0.1.15-macos.tar.gz.sha256`:
+    `c4d2473b2d973073e7c48e8573a3c2fd022b0ae197a5ccdcac1733bbb08c6230`
+  - `codeheart-operating-kit-0.1.15-windows.zip`:
+    `4baaeed6ae7d0e71caa3cc398b952550d807efd2d958329dfbf5505d277a87e6`
+  - `codeheart-operating-kit-0.1.15-windows.zip.sha256`:
+    `50822de74e51b1a0bc7933d91c0540418671a8327aad875794ed829d4d6ca1fa`
+- `install.sh` fail-closed checksum mismatch check passed.
+- `install.ps1` fail-closed checksum mismatch check passed under local `pwsh`.
+- Temporary macOS install from local `dist/` asset passed and reported
+  `codeheart-operating-kit 0.1.15`.
+- Temporary PowerShell install from local Windows asset passed under local `pwsh`.
+- Published-release macOS install using the default GitHub release URL passed and reported
+  `codeheart-operating-kit 0.1.15`.
+- Residual Windows release risk: the Windows installer was validated through PowerShell on macOS,
+  but not through a native Windows runner in this session.
+
+## EP-05 AI Execution Release And HQ Consumer Proof Evidence
+
+- Final Foundry AI Execution source commit:
+  `54072cff5023dd69ce872ee6120ee2e23b7db435`.
+- Foundry source tree was clean when the final HQ snapshot source commit was recorded.
+- Foundry AI Execution `0.1.1` release source was pushed to
+  `Codeheart-Digital-Solutions/Codeheart-Automation-Foundry`.
+- During HQ consumer install proof, the first local wheel build failed because ambient pip
+  configuration pointed build isolation at a private CodeArtifact index. Fix applied in the
+  Foundry source and HQ snapshot: consumer wheel build now uses `PIP_CONFIG_FILE=/dev/null` and
+  `--no-build-isolation` for the no-dependency local wheel build.
+- HQ managed snapshot was refreshed from the final Foundry source commit with cache/build metadata
+  exclusions including `__pycache__/`, `.pytest_cache/`, `*.pyc`, `*.egg-info/`, `.venv/`,
+  `uv.lock`, and `tmp/`.
+- HQ AI Execution snapshot manifest contains 70 files and has manifest hash
+  `988eb2c976320d1ff72f8937ecba35c99b5456d9d5c13aa88db772cade22b1f4`.
+- HQ `.codeheart/foundry/foundry.lock.yaml` now records AI Execution `0.1.1`, source plan
+  `CODEHEART-AUTOMATION-FOUNDRY-PR-008`, source tree state `clean`, source commit
+  `54072cff5023dd69ce872ee6120ee2e23b7db435`, and the new snapshot manifest hash.
+- HQ repo-local venv at `.codeheart/local/envs/python/` was reused.
+- Consumer-mode non-editable install proof built a wheel from
+  `.codeheart/local/build/ai-execution/source/`, installed
+  `foundry_ai_execution-0.1.1-py3-none-any.whl`, and `foundry-ai version` reported `0.1.1`.
+- `foundry-ai --help` and `python -m foundry_ai_execution --help` passed from the HQ venv.
+- `foundry-ai run --dry-run --manifest
+  .codeheart/foundry/modules/ai-execution/templates/smoke-input-manifest.yaml` reported
+  `sends_provider_request: false`.
+- `foundry-ai auth status --json` reported secret-safe status `ready` from `os-keychain`. The
+  expected `missing` pre-key state did not apply because the OS keychain already has credentials.
+- Auth setup was not started; no secret prompt was opened and no key was entered in chat or an
+  agent-hidden terminal.
+- Post-install snapshot hygiene check found zero generated artifacts in the managed snapshot.
+
+## EP-06 Named Operating Kit Install Evidence
+
+- User-level `codeheart-operating-kit` was updated from `0.1.14` to `0.1.15` using the published
+  release installer.
+- `codeheart-operating-kit sync . --json` was run in:
+  - Codeheart-HQ;
+  - Codeheart-Automation-Foundry;
+  - named private platform repository.
+- `codeheart-operating-kit init . --project-name Codeheart-Operating-Kit --json` was run in
+  Codeheart-Operating-Kit because the self-install state was absent after release-staging cleanup.
+- `codeheart-operating-kit check . --json` passed in all four repos with `ok: true`, no drift, no
+  missing route targets, no missing routing, and `stale_cli: false`.
+- After final review, HQ, Foundry, and the named private platform repository lockfiles were
+  repaired so their `release.asset_url` and `checksum_sha256` point at
+  `codeheart-operating-kit-0.1.15-macos.tar.gz`:
+  `ceadfb5f81725b0575ff4a883af41e8bb1bffd9e2b77aa6f4f61497283853ea5`.
+- `codeheart-operating-kit check . --json` was rerun in HQ, Foundry, the named private platform
+  repository, and Operating Kit after the lockfile release metadata repair; all four passed.
+- Installed `AGENTS.md` managed blocks in synced repos include the missing-local-tooling route to
+  the managed tooling-readiness runbook.
+- Installed tooling-readiness runbooks in synced repos include the runtime materialization
+  hardening and visible-terminal handoff route through the `0.1.15` managed content.
+- `.codeheart/local/` ignore/config route was preserved or added by sync/init:
+  - HQ: already present; preserved.
+  - Foundry: `.gitignore` changed during sync.
+  - named private platform repository: already present; preserved.
+  - Operating Kit: initialized with `.codeheart/local/` ignored.
+- Dirty-work preservation notes:
+  - HQ had existing M365, Operating Kit sync, planning/work-board, and module-state changes; they
+    were preserved while AI Execution and Operating Kit sync changes were added.
+  - Foundry and the named private platform repository had existing Operating Kit sync-state
+    changes; sync updated them to `0.1.15` without unrelated source edits.
+  - Operating Kit release source commit stayed tagged at `v0.1.15`; subsequent self-install state
+    and execution-log updates remain post-release working-tree changes.
+
+## EP-07 Final Register, Work Board, And Validation Evidence
+
+- Operating Kit plan register marks `OK-PR-017` completed and relates `OK-PR-016` to `OK-PR-017`.
+- HQ coordination register marks `CODEHEART-OPERATING-KIT-PR-017` completed.
+- HQ work board marks `CODEHEART-OPERATING-KIT-PR-017` completed under Operating Kit And Foundry
+  System Model.
+- Foundry plan register marks `CODEHEART-AUTOMATION-FOUNDRY-PR-008` completed as the local
+  AI Execution adopter/release pointer.
+- Final `git diff --check` passed in HQ, Foundry, the named private platform repository, and
+  Operating Kit.
+- Final Operating Kit validations passed:
+  - `python3 scripts/validate-markdown-headers.py`
+  - `python3 scripts/validate-public-core.py`
+  - `python3 scripts/validate-json-schemas.py`
+  - `python3 scripts/validate-release-manifest.py`
+  - `uv run --with pytest --with pip --with setuptools --with wheel python -m pytest tests`:
+    passed, 92 tests.
+- Generated `uv.lock` from the final `uv run` validation was removed from the public Operating Kit
+  working tree before completion.

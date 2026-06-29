@@ -1,4 +1,4 @@
-Last updated: 2026-06-26T15:57:38Z (UTC)
+Last updated: 2026-06-29T14:49:19Z (UTC)
 
 # Operation Routing And Dispatch
 
@@ -286,13 +286,18 @@ Keep recipe details in runbooks, scripts, API procedures, portal procedures, or 
 docs. Use the route card to select the recipe, name preconditions, and define stop conditions and
 evidence. Avoid copying long recipe steps into every parent router or capability advertisement.
 
-When the selected recipe contains repeatable operational logic, executable blocks, expected
-markers, structured output, blocker classes, validation tests, or promotion decisions, apply the
-operational recipe maturity reference after route selection. Installed path:
+When the selected recipe contains repeatable operational logic, durable executable mechanics,
+expected markers, structured output, blocker classes, validation tests, or promotion decisions,
+apply the operational recipe maturity reference after route selection. Installed path:
 `.codeheart/kit/docs/agent-interface/reference/operational-recipe-maturity.md`.
 
 Recipe maturity governs the selected recipe's execution shape, validation, evidence, and
 promotion boundary. It does not replace this routing sequence.
+
+When the selected recipe has fragile, repeated, or evidence-bearing mechanics that may become a
+reusable script asset, apply the runbook-to-script promotion standard after recipe maturity and
+route selection. Installed path:
+`.codeheart/kit/docs/agent-interface/reference/runbook-to-script-promotion-standard.md`.
 
 ## Live Preflight And Approval Boundary
 

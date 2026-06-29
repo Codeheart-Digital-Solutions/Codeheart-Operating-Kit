@@ -3,7 +3,7 @@ set -euo pipefail
 export LC_ALL=C
 export LANG=C
 
-VERSION="0.1.16"
+VERSION="0.1.17"
 INSTALL_DIR="${CODEHEART_OPERATING_KIT_HOME:-$HOME/.codeheart/operating-kit}"
 ASSET_URL=""
 ASSET_FILE=""
@@ -16,7 +16,7 @@ usage() {
 Install or repair codeheart-operating-kit for the current macOS user.
 
 Options:
-  --version VERSION          Release version to install. Default: 0.1.16
+  --version VERSION          Release version to install. Default: 0.1.17
   --install-dir PATH         User-level install root. Default: $HOME/.codeheart/operating-kit
   --asset-url URL            Release asset URL. Defaults to the GitHub release asset.
   --asset-file PATH          Local release asset path for validation or offline repair.

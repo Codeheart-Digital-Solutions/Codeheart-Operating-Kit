@@ -1,4 +1,4 @@
-Last updated: 2026-06-26T20:49:25Z (UTC)
+Last updated: 2026-06-29T15:01:31Z (UTC)
 
 # Docs Index
 
@@ -23,6 +23,12 @@ This folder contains public Codeheart Operating Kit documentation.
 - Kit feedback triage runbook: `docs/repo/runbooks/triage-kit-feedback.md`
 - Repo plans: `docs/repo/plans/README.md`
 - Repo plan register: `docs/repo/plans/plan-register.md`
+- Runbook-to-script promotion standard discovery:
+  `docs/repo/plans/runbook-to-script-promotion-standard/runbook-to-script-promotion-standard_discovery_doc.md`
+- Runbook-to-script promotion standard implementation plan:
+  `docs/repo/plans/runbook-to-script-promotion-standard/runbook-to-script-promotion-standard_implementation_doc.md`
+- Runbook-to-script promotion standard execution log:
+  `docs/repo/plans/runbook-to-script-promotion-standard/runbook-to-script-promotion-standard_execution_log.md`
 - Local runtime environment standard discovery:
   `docs/repo/plans/local-runtime-environment-standard/local-runtime-environment-standard_discovery_doc.md`
 - Local runtime environment standard implementation plan:
@@ -69,6 +75,10 @@ This folder contains public Codeheart Operating Kit documentation.
   `docs/repo/plans/plan-register-portfolio-doctrine-refinement/plan-register-portfolio-doctrine-refinement_implementation_doc.md`
 - Kit feedback intake discovery:
   `docs/repo/plans/kit-feedback-intake/kit-feedback-intake_discovery_doc.md`
+- Repo feedback capture discovery:
+  `docs/repo/plans/repo-feedback-capture/repo-feedback-capture_discovery_doc.md`
+- Repo feedback capture implementation plan:
+  `docs/repo/plans/repo-feedback-capture/repo-feedback-capture_implementation_doc.md`
 - Portfolio coordination and plan-register model discovery:
   `docs/repo/plans/portfolio-coordination-plan-register/portfolio-coordination-plan-register_discovery_doc.md`
 - Portfolio coordination and plan-register implementation plan:

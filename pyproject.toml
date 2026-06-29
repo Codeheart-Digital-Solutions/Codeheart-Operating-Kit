@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "codeheart-operating-kit"
-version = "0.1.16"
+version = "0.1.17"
 description = "Public Codeheart Operating Kit CLI"
 readme = "README.md"
 requires-python = ">=3.11"

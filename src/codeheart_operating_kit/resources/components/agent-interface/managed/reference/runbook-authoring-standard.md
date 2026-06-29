@@ -1,4 +1,4 @@
-Last updated: 2026-06-26T15:57:38Z (UTC)
+Last updated: 2026-06-29T14:49:19Z (UTC)
 
 # Runbook Authoring Standard
 
@@ -133,9 +133,11 @@ When a runbook section becomes a repeatable operational recipe with inputs, prec
 execution, evidence, and validation, apply the operational recipe maturity reference. Installed
 path: `.codeheart/kit/docs/agent-interface/reference/operational-recipe-maturity.md`.
 
-Use that reference to distinguish ordinary guidance from L1 structured recipes and L2+ executable
-recipe assets, to name validation tiers, and to record promotion or non-promotion decisions. Do
-not copy the full maturity model into each runbook.
+Use that reference to distinguish ordinary guidance, structured runbook recipes, reusable script
+assets, command wrappers, and mature API or tool surfaces. Use
+`runbook-to-script-promotion-standard.md` when deterministic mechanics are fragile, repeated,
+evidence-bearing, or likely to become a reusable script asset. Do not copy either full model into
+each runbook.
 
 ### Routing-Bearing Runbooks
 
@@ -287,6 +289,10 @@ Agent-facing checks:
 - Missing generic local tools route to the managed tooling-readiness runbook.
 - The ordered procedure is concrete enough for a fresh agent.
 - Recipe-bearing sections follow the operational recipe maturity reference.
+- Fragile, repeated, or evidence-bearing mechanics follow the runbook-to-script promotion
+  standard.
+- Long inline implementations are replaced by reusable script asset invocations when a script
+  exists.
 - Approval gates and stop conditions are explicit.
 - User-entered terminal prompts use visible-terminal handoff.
 - Evidence and validation prove the outcome.

@@ -1,6 +1,43 @@
-Last updated: 2026-06-26T21:01:15Z (UTC)
+Last updated: 2026-06-29T15:32:06Z (UTC)
 
 # Codeheart Operating Kit Release Notes
+
+## v0.1.17 Release Notes
+
+`v0.1.17` adds the managed runbook-to-script promotion standard. The release keeps runbooks as
+the policy, UX, routing, approval, and judgment layer while making reusable script assets the first
+durable executable surface for fragile, repeated, or evidence-bearing mechanics.
+
+### Included
+
+- Agent Interface now includes `runbook-to-script-promotion-standard.md`, defining promotion
+  triggers, non-promotion triggers, first-script scaffolding, helper/folder maturity, output
+  contracts, tests, and review flags.
+- Agent Interface now includes `promote-runbook-recipe-to-script.md`, an agent-facing workflow
+  for promoting one deterministic runbook recipe into a tested reusable script asset without
+  creating premature wrappers, CLIs, APIs, or broad automation surfaces.
+- Operational Recipe Maturity now removes `Tested script block` as a durable maturity state and
+  treats reusable script assets as the first durable executable form when justified.
+- Planning workflows now require recipe-bearing plans and execution logs to name script
+  placement, runbook caller, output contract, tests or fixtures, approval boundaries, and target
+  scope when reusable script assets are involved.
+- Structure Governance now points concrete script promotion, first-script scaffolding, and helper
+  timing questions to the new promotion standard.
+- The agent-interface component manifest now materializes the new managed reference and runbook
+  during normal install or sync.
+
+### Consumer Impact
+
+- `instruction-only change`: installed consumers receive clearer managed guidance when they sync
+  or update the Operating Kit.
+- No forced migration is required. Existing consumer-owned runbooks, scripts, local state,
+  scaffolds, modules, validators, and CLI behavior are not rewritten.
+- Consumers adopt the new guidance through normal sync or update.
+
+### Validation
+
+- Release-readiness validation is recorded in the runbook-to-script promotion standard execution
+  log before public tagging and publication.
 
 ## v0.1.16 Release Notes
 

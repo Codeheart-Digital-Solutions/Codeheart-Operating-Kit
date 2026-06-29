@@ -1,4 +1,4 @@
-Last updated: 2026-06-26T20:49:25Z (UTC)
+Last updated: 2026-06-29T15:06:25Z (UTC)
 
 # Repo Documentation
 
@@ -22,6 +22,15 @@ This folder contains public repository governance for Codeheart Operating Kit.
   issues.
 - `plans/README.md`: repository-level discovery and implementation plans.
 - `plans/plan-register.md`: lightweight index of registered Operating Kit repository plans.
+- `plans/runbook-to-script-promotion-standard/runbook-to-script-promotion-standard_discovery_doc.md`:
+  discovery for reusable runbook-to-script promotion triggers, first-script scaffolding, helper
+  rules, domain folder triggers, package/CLI promotion, output contracts, and script testing
+  expectations.
+- `plans/runbook-to-script-promotion-standard/runbook-to-script-promotion-standard_implementation_doc.md`:
+  completed instruction-only implementation plan for managed promotion doctrine, a recipe-to-script
+  promotion runbook, current doctrine alignment, resource copies, indexes, and validation.
+- `plans/runbook-to-script-promotion-standard/runbook-to-script-promotion-standard_execution_log.md`:
+  execution evidence for the runbook-to-script promotion standard source implementation.
 - `plans/local-runtime-environment-standard/local-runtime-environment-standard_discovery_doc.md`:
   discovery for ignored repo-local machine/runtime state, the default Python venv path, governed
   machine/user-level tooling, and generic local tooling blocker routing.
@@ -32,7 +41,7 @@ This folder contains public repository governance for Codeheart Operating Kit.
 - `plans/local-runtime-environment-standard/local-runtime-environment-standard_execution_log.md`:
   execution evidence for the local runtime environment standard source implementation.
 - `plans/runtime-materialization-hardening/runtime-materialization-hardening_implementation_doc.md`:
-  active implementation plan for consumer runtime materialization and visible-terminal handoff
+  completed implementation plan for consumer runtime materialization and visible-terminal handoff
   hardening, Operating Kit release, AI Execution adopter release, HQ snapshot proof, and named
   Operating Kit installs.
 - `plans/runtime-materialization-hardening/runtime-materialization-hardening_execution_log.md`:
@@ -89,6 +98,12 @@ This folder contains public repository governance for Codeheart Operating Kit.
   repository-qualified ID guidance, canonical pointer examples, and relation ownership doctrine.
 - `plans/kit-feedback-intake/kit-feedback-intake_discovery_doc.md`: discovery for a safe
   consumer feedback intake and maintainer backlog workflow.
+- `plans/repo-feedback-capture/repo-feedback-capture_discovery_doc.md`: discovery for
+  Operating Kit-guided repo feedback capture, demand-driven GitHub Issues setup, prompt
+  suppression after decline, classification, privacy, and triage promotion.
+- `plans/repo-feedback-capture/repo-feedback-capture_implementation_doc.md`: draft
+  implementation plan for managed repo feedback capture runbooks, optional config schema support,
+  check-first GitHub issue availability, setup guidance, validation, and release surfaces.
 - `plans/portfolio-coordination-plan-register/portfolio-coordination-plan-register_discovery_doc.md`:
   discovery for a reusable plan-register model and optional multi-repository portfolio
   coordination.

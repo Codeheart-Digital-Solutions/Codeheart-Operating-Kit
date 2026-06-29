@@ -1,4 +1,4 @@
-Last updated: 2026-06-26T14:30:34Z (UTC)
+Last updated: 2026-06-29T14:49:19Z (UTC)
 
 # Draft Implementation Plan
 
@@ -140,14 +140,19 @@ flow, agent execution path, approval boundaries, stop conditions, evidence, or v
 ## Recipe-Maturity Coverage
 
 When a plan creates or materially changes durable operational recipes, route-selected recipes,
-executable script blocks, expected markers, structured summary or blocker output, promoted recipe
-assets, or recipe validation expectations, cite and apply
+durable executable mechanics, expected markers, structured summary or blocker output, reusable
+script assets, promoted recipe assets, or recipe validation expectations, cite and apply
 `.codeheart/kit/docs/agent-interface/reference/operational-recipe-maturity.md`.
+
+When a plan creates or materially changes reusable script assets, first-script scaffolding,
+script output contracts, script tests, script helper rules, or script-promotion review criteria,
+also cite and apply
+`.codeheart/kit/docs/agent-interface/reference/runbook-to-script-promotion-standard.md`.
 
 For recipe-bearing epics, the plan must state:
 
-- target maturity state, such as below recipe threshold, L1 structured recipe, L2 tested script
-  block, L3 reusable script asset, L4 thin command wrapper, or L5 mature API/tool surface;
+- target maturity state, such as below recipe threshold, L1 structured runbook recipe, L2
+  reusable script asset, L3 thin command wrapper, or L4 mature API/tool surface;
 - validation tier, such as fresh-agent executability review, non-live test, dry-run or preflight,
   or approval-gated live validation;
 - evidence shape and blocker shape when structured output is expected;
@@ -155,6 +160,17 @@ For recipe-bearing epics, the plan must state:
 - placement boundary for any promoted recipe asset;
 - whether module-owned blocker classes, concrete package layouts, or domain-specific live
   validation are intentionally outside scope.
+
+For reusable script asset epics, the plan must state:
+
+- runbook caller;
+- script owner and placement boundary;
+- first-script scaffolding path when applicable;
+- output contract, including common fields and domain-shaped `data`;
+- output safety behavior;
+- proportional tests or fixtures;
+- review criteria for hidden approvals, target broadening, raw output, and premature wrappers or
+  APIs.
 
 Do not treat the maturity states as a required ladder. `Do not promote yet` is a valid planned
 outcome when the recipe is safe, testable, reviewable, and ergonomic at its current level.

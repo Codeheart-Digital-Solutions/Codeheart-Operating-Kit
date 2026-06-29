@@ -1,4 +1,4 @@
-Last updated: 2026-06-25T20:35:28Z (UTC)
+Last updated: 2026-06-29T14:49:19Z (UTC)
 
 # Execute Implementation Plan
 
@@ -127,10 +127,15 @@ the plan instead of expanding execution ad hoc.
 ## Recipe-Maturity Execution
 
 When an epic creates or materially changes durable operational recipes, route-selected recipes,
-executable script blocks, expected markers, structured summary or blocker output, promoted recipe
-assets, or recipe validation expectations, use
+durable executable mechanics, expected markers, structured summary or blocker output, reusable
+script assets, promoted recipe assets, or recipe validation expectations, use
 `.codeheart/kit/docs/agent-interface/reference/operational-recipe-maturity.md` before marking
 that epic complete.
+
+When an epic creates or materially changes reusable script assets, first-script scaffolding,
+script output contracts, script tests, script helper rules, or script-promotion review criteria,
+use `.codeheart/kit/docs/agent-interface/reference/runbook-to-script-promotion-standard.md`
+before marking that epic complete.
 
 Verify the changed recipe surface against the plan and reference:
 
@@ -142,6 +147,17 @@ Verify the changed recipe surface against the plan and reference:
 - domain blocker classes and concrete package layouts remain with the owning domain when they are
   outside the generic plan;
 - approval, secrets, public-core, and external-state boundaries are preserved.
+
+For reusable script assets, also verify:
+
+- runbook caller exists and does not duplicate full script internals;
+- script placement follows the owning area's convention;
+- first-script scaffolding exists when this is the first script in the owner area;
+- output contract includes required common fields;
+- output safety describes emitted-output behavior;
+- proportional tests or fixtures prove the contract;
+- script does not broaden approval or target scope;
+- wrapper, package, CLI, or API promotion has repeated-use rationale.
 
 Record recipe validation evidence in the execution log. Include fresh-agent executability review,
 non-live tests, dry-run or preflight, and approval-gated live validation only where the plan and

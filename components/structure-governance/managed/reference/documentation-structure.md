@@ -1,4 +1,4 @@
-Last updated: 2026-06-25T20:37:11Z (UTC)
+Last updated: 2026-06-29T14:49:19Z (UTC)
 
 # Documentation Structure
 
@@ -81,6 +81,10 @@ capability information for agents to find the owner and then descend to the owne
 Use `.codeheart/kit/docs/agent-interface/reference/operational-recipe-maturity.md` for recipe
 maturity states, metadata, validation tiers, evidence shape, blocker shape, promotion triggers,
 and non-promotion decisions.
+
+Use `.codeheart/kit/docs/agent-interface/reference/runbook-to-script-promotion-standard.md` for
+reusable script asset promotion, first-script scaffolding, helper and domain-folder triggers,
+script output contracts, and review flags.
 
 Use this structure reference for placement:
 
