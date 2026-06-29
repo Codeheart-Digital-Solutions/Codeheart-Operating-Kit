@@ -1,4 +1,4 @@
-Last updated: 2026-06-29T15:01:31Z (UTC)
+Last updated: 2026-06-29T15:40:55Z (UTC)
 
 # Plan Register
 
@@ -58,6 +58,9 @@ Session refs:
   managed doctrine changes.
 - completed: 2026-06-29, not recorded, completed the instruction-only source implementation,
   resource mirrors, indexes, stale-vocabulary review, validation, and low-context routing probe.
+- material update: 2026-06-29, not recorded, released Operating Kit `v0.1.17` with the
+  runbook-to-script promotion standard and recorded release validation evidence in the execution
+  log.
 
 Coordination note:
 - Generic Operating Kit implementation candidate.

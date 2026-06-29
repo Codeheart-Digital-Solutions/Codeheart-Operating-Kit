@@ -1,4 +1,4 @@
-Last updated: 2026-06-29T15:36:56Z (UTC)
+Last updated: 2026-06-29T15:40:55Z (UTC)
 Created: 2026-06-29
 Status: completed
 
@@ -29,6 +29,8 @@ references, runbooks, indexes, and packaged resources only.
 - 2026-06-29T15:08:46Z: Reran validation after the review follow-up patches.
 - 2026-06-29T15:36:56Z: Prepared Operating Kit `v0.1.17` release surfaces, release assets,
   release manifest, installer checks, and source validation before tagging.
+- 2026-06-29T15:40:55Z: Published Operating Kit `v0.1.17`, validated published macOS install,
+  and completed dispatched GitHub Actions release smoke validation.
 
 ## Validation Results
 
@@ -97,10 +99,10 @@ Probe result:
 
 ## Residual Risk
 
-- This is an instruction-only source implementation. Consumers will not see the new managed docs
-  until an Operating Kit release and consumer sync/install refresh occurs. The source
-  agent-interface component manifest now includes the new files so future materialization can copy
-  them into installed `.codeheart/kit/` content.
+- This is an instruction-only source implementation. Consumers see the new managed docs after
+  adopting Operating Kit `v0.1.17` through sync or install refresh. The source agent-interface
+  component manifest includes the new files so materialization can copy them into installed
+  `.codeheart/kit/` content.
 - No validators or scaffolds were added. Future adopters still rely on review discipline until a
   later implementation proves and enforces validator rules.
 - The current local installed `.codeheart/kit/` copy in this repository is stale relative to the
@@ -162,3 +164,34 @@ Release residual risk:
 
 - Native Windows install validation has not yet run in a Windows environment. Local PowerShell
   install validation passed on macOS.
+
+## Release Publication Evidence
+
+- Release source commit: `a4e4aab6e5e8f1c2160aa550b71b7a96c6e7edf7`.
+- Release tag: `v0.1.17`.
+- Release URL:
+  `https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/tag/v0.1.17`.
+- Published at: `2026-06-29T15:38:40Z`.
+- Uploaded release assets:
+  - `bootstrap.md`
+  - `install.sh`
+  - `install.ps1`
+  - `release-notes.md`
+  - `manifest.yaml`
+  - `codeheart-operating-kit-0.1.17-macos.tar.gz`
+  - `codeheart-operating-kit-0.1.17-macos.tar.gz.sha256`
+  - `codeheart-operating-kit-0.1.17-windows.zip`
+  - `codeheart-operating-kit-0.1.17-windows.zip.sha256`
+- Published macOS install proof passed from the GitHub release URL and reported
+  `codeheart-operating-kit 0.1.17`.
+- GitHub Actions `Validate` workflow dispatch run `28384097511` passed for
+  `release_version=v0.1.17`:
+  `https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/actions/runs/28384097511`.
+- Push-triggered `Validate` run for `main` passed:
+  `https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/actions/runs/28384045057`.
+- Push-triggered `Validate` run for tag `v0.1.17` passed:
+  `https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/actions/runs/28384047459`.
+- The dispatched workflow included native Windows installer and Windows public-release smoke jobs;
+  both passed.
+- Release residual risk after publication: consumers still need to sync or install `v0.1.17` to
+  receive the new managed docs in their local `.codeheart/kit/` content.
