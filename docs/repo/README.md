@@ -1,4 +1,4 @@
-Last updated: 2026-06-29T15:06:25Z (UTC)
+Last updated: 2026-06-29T20:06:45Z (UTC)
 
 # Repo Documentation
 
@@ -104,6 +104,11 @@ This folder contains public repository governance for Codeheart Operating Kit.
 - `plans/repo-feedback-capture/repo-feedback-capture_implementation_doc.md`: draft
   implementation plan for managed repo feedback capture runbooks, optional config schema support,
   check-first GitHub issue availability, setup guidance, validation, and release surfaces.
+- `plans/plan-register-dirty-target-safety/plan-register-dirty-target-safety_implementation_doc.md`:
+  completed implementation plan for dirty target-register compatibility rules before falling back
+  to coordination-home pending sync.
+- `plans/plan-register-dirty-target-safety/plan-register-dirty-target-safety_execution_log.md`:
+  execution evidence for dirty target-register compatibility rules.
 - `plans/portfolio-coordination-plan-register/portfolio-coordination-plan-register_discovery_doc.md`:
   discovery for a reusable plan-register model and optional multi-repository portfolio
   coordination.

@@ -1,9 +1,10 @@
-Last updated: 2026-06-21T14:53:02Z (UTC)
+Last updated: 2026-06-29T19:58:26Z (UTC)
 
 # Coordination Sync Pending
 
 This kit-initialized consumer state file records portfolio coordination-home updates that could not
-be applied because the configured coordination home was unavailable or unsafe to edit.
+be applied because the configured coordination-home register was unavailable, unwritable, or unsafe
+under the target-register compatibility test.
 
 Operating Kit owns the file contract and format. This repository owns the pending-sync entries
 after creation. Sync may recreate this baseline when the file is absent, but it must not overwrite
@@ -32,6 +33,6 @@ Session ref: <session ID, not recorded, or unavailable>
 Status: pending
 
 Notes:
-- <brief note about why the coordination home was unavailable or unsafe to edit>
+- <brief note about why the coordination-home register was unavailable, unwritable, or unsafe under
+  the target-register compatibility test>
 ```
-

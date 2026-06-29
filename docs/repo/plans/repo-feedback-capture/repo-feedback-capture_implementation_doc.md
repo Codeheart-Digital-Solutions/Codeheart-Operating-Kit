@@ -1,4 +1,4 @@
-Last updated: 2026-06-29T14:19:10Z (UTC)
+Last updated: 2026-06-29T16:07:49Z (UTC)
 Created: 2026-06-29
 Status: draft
 
@@ -26,7 +26,8 @@ changes, and repository setting changes remain explicit user-approved actions.
 | `docs/repo/plans/kit-feedback-intake/kit-feedback-intake_execution_log.md` | Evidence that GitHub Issues were checked first, already enabled, and labels/forms were handled as governance. |
 | `components/agent-interface/managed/reference/runbook-authoring-standard.md` | Required quality bar for the new durable runbooks. |
 | `components/agent-interface/managed/reference/operation-routing-and-dispatch.md` | Route-before-surface doctrine for the new feedback route and fresh-agent probe. |
-| `components/agent-interface/managed/reference/operational-recipe-maturity.md` | Required maturity reference for the repeated capture/setup recipes and non-promotion boundary. |
+| `components/agent-interface/managed/reference/operational-recipe-maturity.md` | Authoring source for installed `.codeheart/kit/docs/agent-interface/reference/operational-recipe-maturity.md`; required maturity reference for repeated capture/setup recipes and non-promotion boundary. |
+| `components/agent-interface/managed/reference/runbook-to-script-promotion-standard.md` | Authoring source for installed `.codeheart/kit/docs/agent-interface/reference/runbook-to-script-promotion-standard.md`; required reference for consciously keeping v1 runbook-only and not creating reusable script assets. |
 | `components/agent-interface/managed/runbooks/submit-kit-feedback.md` | Existing route for feedback about the Operating Kit itself; repo feedback must not replace it. |
 | `components/agent-interface/managed/reference/kit-feedback-item-format.md` | Existing feedback item format precedent. |
 | `docs/repo/reference/consumer-impact-classification.md` | Canonical release and manifest impact class vocabulary. |
@@ -80,7 +81,9 @@ Completion is proven when:
 - validation covers Markdown headers, public-core hygiene, schema behavior, route targets,
   packaged resources, release manifests, focused tests, full tests, and a fresh low-context
   routing probe;
-- repeated capture/setup recipes record L1 structured-recipe maturity and no-promotion evidence;
+- repeated capture/setup recipes record L1 structured-recipe maturity, validation tier, evidence
+  shape, blocker shape, and no-promotion evidence;
+- v1 creates no reusable script asset, CLI command, wrapper, API, or durable executable helper;
 - release notes record instruction, schema, and safety-policy impact.
 
 ## 1.2 Project And Problem Context
@@ -133,6 +136,7 @@ Consumer impact record:
 - No consumer migration required.
 - No new scaffold path required.
 - No new CLI behavior in v1.
+- No reusable script asset in v1.
 
 # Section 2 - Strategy
 
@@ -490,7 +494,8 @@ tests/
 - Capture runbook routes feedback about the Operating Kit itself to `submit-kit-feedback.md`.
 - Item-format reference includes title shape, required body fields, privacy confirmation,
   classification, label fallback, and triage promotion.
-- Capture runbook records L1 structured-recipe maturity and no-promotion boundary.
+- Capture runbook records L1 structured-recipe maturity, fresh-agent executability validation
+  tier, evidence shape, blocker shape, and no-promotion boundary.
 
 ### E) Dependencies And Critical-Path Notes
 
@@ -509,7 +514,8 @@ Depends on `E2`. The runbook must use the schema semantics from `E2`.
 - [ ] Add issue-creation approval gate to `capture-repo-feedback.md` before `gh issue create --repo <owner/repo> --title <title> --body-file <body-file>`.
 - [ ] Add decline-suppression procedure to `capture-repo-feedback.md` requiring user approval before writing `repo_feedback.mode: disabled`.
 - [ ] Add Operating Kit boundary procedure to `capture-repo-feedback.md` routing generic kit feedback to `submit-kit-feedback.md`.
-- [ ] Add L1 structured-recipe maturity and no-promotion note to `capture-repo-feedback.md`.
+- [ ] Add L1 structured-recipe metadata to `capture-repo-feedback.md` covering recipe ID, purpose, inputs, preconditions, approval class, execution surface, evidence output, validation, and stop conditions.
+- [ ] Add no-promotion note to `capture-repo-feedback.md` stating v1 creates no reusable script asset, CLI command, wrapper, API, durable helper, package, and tool surface.
 - [ ] Create `components/agent-interface/managed/reference/repo-feedback-item-format.md` with required issue body fields, title prefix guidance, privacy confirmation, and sensitive-disclosure stop boundary.
 - [ ] Update `components/agent-interface/managed/README.md` with routes for capture runbook and item-format reference.
 - [ ] Update `components/agent-interface/managed/kit-readme.md` with installed fallback route for repo feedback capture.
@@ -525,6 +531,19 @@ This runbook is routing-bearing. Apply `operation-routing-and-dispatch.md` and k
 selection separate from issue creation. Apply `operational-recipe-maturity.md`, keep the capture
 workflow at L1 structured-recipe maturity, and record that v1 does not promote the workflow into a
 script, CLI command, wrapper, or API.
+
+Capture recipe validation tier: fresh-agent executability review plus non-live command-shape
+review for documented `gh` examples.
+
+Capture evidence shape: sanitized issue draft, privacy confirmation, selected existing labels,
+read-only issue-availability preflight summary, approval prompt text, and recorded destination or
+suppression state.
+
+Capture blocker shape: non-secret blocker class, recipe phase, target repository, preflight
+command or route attempted, sanitized reason, fallback route, and user decision needed.
+
+Runbook `gh` command lines are invocation examples inside the L1 runbook recipe. They are not
+reusable script assets, promoted helpers, wrappers, CLI behavior, or APIs.
 
 The setup runbook route becomes public in E4 after the setup runbook exists, so E3 does not
 temporarily advertise a missing installed target.
@@ -574,6 +593,8 @@ components/
 - Setup runbook routes missing `gh` through tooling readiness and provides browser setup fallback.
 - Capture runbook points to the setup runbook only after the setup runbook exists.
 - Managed indexes and installed fallback docs expose the setup route after the target exists.
+- Setup runbook records L1 structured-recipe maturity, fresh-agent executability validation tier,
+  evidence shape, blocker shape, and no-promotion boundary.
 
 ### E) Dependencies And Critical-Path Notes
 
@@ -596,6 +617,8 @@ to this runbook.
 - [ ] Add config recording section for `repo_feedback.mode: github_issues` and `repo_feedback.github_standardization`.
 - [ ] Add decline recording section for `repo_feedback.mode: disabled` with `disabled_reason: user_declined_issue_intake`.
 - [ ] Add validation section requiring a second `gh repo view` check, label list check, and `git diff --check` for any repo-owned template file change.
+- [ ] Add L1 structured-recipe metadata to `enable-github-issues-feedback-intake.md` covering recipe ID, purpose, inputs, preconditions, approval class, execution surface, evidence output, validation, and stop conditions.
+- [ ] Add no-promotion note to `enable-github-issues-feedback-intake.md` stating v1 creates no reusable script asset, CLI command, wrapper, API, durable helper, package, and tool surface.
 - [ ] Add setup handoff procedure to `capture-repo-feedback.md` pointing to `enable-github-issues-feedback-intake.md` for disabled Issues, unavailable Issues, and missing user-requested standardization.
 - [ ] Update `components/agent-interface/managed/README.md` with the setup runbook route.
 - [ ] Update `components/agent-interface/managed/kit-readme.md` with the setup runbook route.
@@ -607,6 +630,17 @@ to this runbook.
 The setup runbook documents future external changes; executing this Operating Kit implementation
 must not enable Issues, create labels, create templates, or create test issues in consumer repos.
 The only live GitHub command expected during this implementation is read-only command-shape proof.
+
+Setup recipe validation tier: fresh-agent executability review plus read-only command-shape proof.
+
+Setup evidence shape: target repository, read-only issue availability preflight, approval packet,
+approved action summary, config-state diff summary, and validation summary.
+
+Setup blocker shape: non-secret blocker class, recipe phase, target repository, missing tool,
+missing permission, unavailable Issues state, fallback route, and user decision needed.
+
+The setup runbook may include short `gh` invocation examples. It must not promote those examples
+into reusable script assets, helpers, wrappers, CLI behavior, packages, or APIs in v1.
 
 ### H) Open Questions
 
@@ -671,7 +705,7 @@ Depends on `E3` and `E4`.
 ### F) Tasks Checklist
 
 - [ ] Add `capture-repo-feedback.md`, `enable-github-issues-feedback-intake.md`, and `repo-feedback-item-format.md` entries to `components/agent-interface/component.yaml`.
-- [ ] Bump `components/agent-interface/component.yaml` version from `0.1.15` to the next patch version recorded in the execution log.
+- [ ] Bump `components/agent-interface/component.yaml` from the current source version at execution time to the next patch version recorded in the execution log.
 - [ ] Copy updated agent-interface managed files into `src/codeheart_operating_kit/resources/components/agent-interface/managed/`.
 - [ ] Copy updated `components/agent-interface/component.yaml` into `src/codeheart_operating_kit/resources/components/agent-interface/component.yaml`.
 - [ ] Copy updated `templates/agents/AGENTS.managed-block.md` into `src/codeheart_operating_kit/resources/templates/agents/AGENTS.managed-block.md`.
@@ -770,6 +804,8 @@ ignored local state and record that in the execution log.
 
 - CLI-assisted issue drafting is deferred until manual repo feedback capture produces real issue
   examples and stable fields.
+- Reusable script assets for feedback drafting and setup are deferred until repeated usage proves
+  deterministic mechanics that are safer as tested scripts than as L1 runbook recipes.
 - Label/template sync automation is deferred until repeated repo drift makes manual setup costly.
 - Cross-repo batch setup is deferred until Codeheart identifies a concrete repo cohort and
   approval model.
@@ -797,3 +833,5 @@ ignored local state and record that in the execution log.
 - 2026-06-29: Patched review findings for schema partial states, sensitive-disclosure stop
   boundary, setup-route sequencing, canonical consumer-impact wording, and recipe-maturity
   evidence.
+- 2026-06-29: Patched Operating Kit 0.1.17 alignment for current component-version baseline,
+  recipe validation tier, evidence shape, blocker shape, and explicit no-script-promotion scope.

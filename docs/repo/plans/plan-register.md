@@ -1,4 +1,4 @@
-Last updated: 2026-06-29T15:40:55Z (UTC)
+Last updated: 2026-06-29T20:06:45Z (UTC)
 
 # Plan Register
 
@@ -23,6 +23,44 @@ instruction-only release readiness. `OK-PR-021` is the draft implementation plan
 feedback capture with check-first GitHub Issues availability and demand-driven issue-intake setup.
 
 ## Entries
+
+## OK-PR-023 - Plan Register Dirty Target Safety Implementation
+
+Type: implementation-plan
+Purpose: Clarify managed plan-register doctrine so agents distinguish unrelated dirty repository
+state from target-register conflicts before deciding whether to update a coordination-home
+register directly or record pending sync.
+Status: completed
+Owner / repository: Codeheart-Operating-Kit
+Canonical docs:
+docs/repo/plans/plan-register-dirty-target-safety/plan-register-dirty-target-safety_implementation_doc.md
+docs/repo/plans/plan-register-dirty-target-safety/plan-register-dirty-target-safety_execution_log.md
+Created: 2026-06-29
+Last updated: 2026-06-29T20:06:45Z (UTC)
+Priority / ordering note: Completed instruction-only source implementation. The refined dirty
+target-register rule takes effect for consumers after a release and sync/install refresh.
+
+Relations:
+- related: OK-PR-013 - Operation Routing And Dispatch Standard Implementation
+- related: OK-PR-004 - Plan Register Portfolio Doctrine Refinement
+- related: OK-PR-003 - Coordination Home Register ID Namespace
+- related: OK-PR-022 - Runbook-To-Script Promotion Standard Implementation
+
+Session refs:
+- created: 2026-06-29, not recorded, drafted after user discussion clarified that unrelated dirty
+  worktree state should not block compatible coordination-home register updates.
+- material update: 2026-06-29, not recorded, activated implementation and created the execution
+  log.
+- material update: 2026-06-29, not recorded, accepted review-gate finding and aligned the
+  existing pending-sync scaffold wording without adding a new scaffold path.
+- completed: 2026-06-29, not recorded, completed managed doctrine, hook, scaffold wording,
+  packaged-resource mirror, validation, and review-gate closeout.
+
+Coordination note:
+- Generic Operating Kit implementation candidate.
+- Consumer impact classification: instruction-only change.
+- Work-board behavior is explicitly out of scope.
+- Release notes are required when shipped.
 
 ## OK-PR-022 - Runbook-To-Script Promotion Standard Implementation
 

@@ -1,6 +1,40 @@
-Last updated: 2026-06-29T15:32:06Z (UTC)
+Last updated: 2026-06-29T20:17:11Z (UTC)
 
 # Codeheart Operating Kit Release Notes
+
+## v0.1.18 Release Notes
+
+`v0.1.18` refines managed plan-register and portfolio coordination guidance so agents inspect the
+target register before falling back to pending sync.
+
+### Included
+
+- Planning Workflows now requires agents to inspect the target coordination register and classify
+  whether the intended plan-register change is compatible with current dirty state before choosing
+  direct coordination-home updates or pending sync.
+- Discovery, implementation planning, and implementation execution runbooks now point to the
+  same compatibility test when a configured coordination home is present.
+- The plan-register format reference now records that coordination-home sync requires a direct
+  update, a pending-sync entry, or a recorded reason why neither applies.
+- The `coordination-sync-pending` scaffold now uses clearer vocabulary for unavailable or unsafe
+  coordination-home updates.
+- Repository planning records include the completed plan-register dirty-target safety plan and an
+  updated future repo-feedback-capture planning refinement.
+
+### Consumer Impact
+
+- `instruction-only change`: installed consumers receive clearer managed plan-register,
+  coordination-home, and pending-sync guidance when they sync or update the Operating Kit.
+- Existing consumer-owned `docs/repo/plans/coordination-sync-pending.md` files are not
+  overwritten by sync. Consumers without that scaffold receive the clarified baseline when it is
+  created.
+- No forced migration is required. Existing consumer-owned plans, plan registers, pending-sync
+  files, local state, validators, and CLI behavior are not rewritten.
+
+### Validation
+
+- Release-readiness validation is recorded in the plan-register dirty-target safety execution log
+  before public tagging and publication.
 
 ## v0.1.17 Release Notes
 

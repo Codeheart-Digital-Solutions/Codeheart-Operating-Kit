@@ -1,4 +1,4 @@
-Last updated: 2026-06-26T14:30:34Z (UTC)
+Last updated: 2026-06-29T19:51:37Z (UTC)
 
 # Plan Register Format
 
@@ -272,6 +272,11 @@ Examples:
 
 Detailed pending sync belongs in `docs/repo/plans/coordination-sync-pending.md`, not in the main
 register entry.
+
+Use `coordination-sync-pending` only when a configured coordination-home register is unavailable,
+unwritable, or unsafe under the target-register compatibility test in
+`../runbooks/maintain-plan-register.md`. Do not use it merely because unrelated files in the
+coordination-home repository are dirty.
 
 ## Local Entry Shape
 

@@ -1,53 +1,53 @@
 schema_version: 1
-version: 0.1.17
-released_at: "2026-06-29T15:32:06Z"
+version: 0.1.18
+released_at: "2026-06-29T20:17:11Z"
 assets:
   -
     name: bootstrap.md
-    url: "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.17/bootstrap.md"
-    sha256: 27b8f2419aeb9ed95097ae3a75f7f2c6034fc60067a8f9b33549c4ff2c4dfac1
+    url: "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.18/bootstrap.md"
+    sha256: c03363e9c5841d9670e6755024aca36bf02a7197e2a1dcccba4fc3a63d8b9964
     platform: universal
   -
     name: install.sh
-    url: "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.17/install.sh"
-    sha256: 3dae5955af49eb66bb18b7ad2dd4ba0d0feb1a4dabffa96c67ed2b2f9789c918
+    url: "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.18/install.sh"
+    sha256: da69e4a43d0fdc4946fb86fdd67ecb6df8f7d369136090cdd15a1ada73c3a817
     platform: macos
   -
     name: install.ps1
-    url: "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.17/install.ps1"
-    sha256: f553df5af4e2e47d23a060f30c3796dc05fc397b81dcc7ead6b7e1d3585c5b29
+    url: "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.18/install.ps1"
+    sha256: c2e0b6558eb0414cb99c2706f3875c7b3d0db1d3bcdbef63f19ee20725cd8ccc
     platform: windows
   -
     name: release-notes.md
-    url: "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.17/release-notes.md"
-    sha256: fa5e16c58eeeead7cc6477e8f3deb65fe66bd258960d2547249e7d7c2955b071
+    url: "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.18/release-notes.md"
+    sha256: 095337a8e0d9db2fb8b7344206e17f8670b40a07e5140de6b1c5b7c457b0a900
     platform: universal
   -
-    name: codeheart-operating-kit-0.1.17-macos.tar.gz
-    url: "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.17/codeheart-operating-kit-0.1.17-macos.tar.gz"
-    sha256: d9097abdd878db4d5267bd4b4d5a2f09137ad234a1cce112f32b29fbdbc30ae2
+    name: codeheart-operating-kit-0.1.18-macos.tar.gz
+    url: "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.18/codeheart-operating-kit-0.1.18-macos.tar.gz"
+    sha256: 8a6ffbd8796acb310e2ac85e72157db6c3bee598c47b02fd6b0e2dee54b029a0
     platform: macos
   -
-    name: codeheart-operating-kit-0.1.17-macos.tar.gz.sha256
-    url: "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.17/codeheart-operating-kit-0.1.17-macos.tar.gz.sha256"
-    sha256: bedbbfd9b570d7610bfdfaa872e00b006cdb967f43d4831bd2ae601b79f9ceb5
+    name: codeheart-operating-kit-0.1.18-macos.tar.gz.sha256
+    url: "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.18/codeheart-operating-kit-0.1.18-macos.tar.gz.sha256"
+    sha256: 270050a91f021661e06d14eeded17fa62e9b050ac26caae77df6311ec263197e
     platform: macos
   -
-    name: codeheart-operating-kit-0.1.17-windows.zip
-    url: "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.17/codeheart-operating-kit-0.1.17-windows.zip"
-    sha256: 10b9b28ede9ccf8e8ed788c4e414dab865ac7e0d15b3df265937fdf725fcad98
+    name: codeheart-operating-kit-0.1.18-windows.zip
+    url: "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.18/codeheart-operating-kit-0.1.18-windows.zip"
+    sha256: 4648b272acd926cba79b64702d43505bdc6df6dd87fa6526e868bf14c2e5d490
     platform: windows
   -
-    name: codeheart-operating-kit-0.1.17-windows.zip.sha256
-    url: "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.17/codeheart-operating-kit-0.1.17-windows.zip.sha256"
-    sha256: 1babda81378b556ecef4df4bb6620786713949ecaaa7b3ebfa8cfac90f3e2e15
+    name: codeheart-operating-kit-0.1.18-windows.zip.sha256
+    url: "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.18/codeheart-operating-kit-0.1.18-windows.zip.sha256"
+    sha256: 2a1c6f9e2714c16734caa49b0f88f4ff216ef4615c7e070f984a9d4c7fb5f796
     platform: windows
 components:
   -
     id: planning-workflows
-    version: 0.1.17
+    version: 0.1.18
     manifest_path: components/planning-workflows/component.yaml
-    checksum_sha256: 04142ccd50832d996dfb59e43aca665c8ee265ef58cf31dfba2c9f9832ddd67a
+    checksum_sha256: 310bd3bc834c37d352e68dd7e0bf646535e9f1cf7c24c7f073421c5d410bf091
     consumer_impact:
       - component addition
       - instruction-only change

@@ -1,4 +1,4 @@
-Last updated: 2026-06-29T14:49:19Z (UTC)
+Last updated: 2026-06-29T19:51:37Z (UTC)
 
 # Discovery Workflow
 
@@ -1017,11 +1017,14 @@ Use `maintain-plan-register.md` for the procedure and `../reference/plan-registe
 entry shape. The sequence is:
 
 1. Update `docs/repo/plans/plan-register.md` in the local repository.
-2. When portfolio coordination is configured and the coordination home is available and safe to
-   edit, update the configured coordination-home register.
-3. When portfolio coordination is configured but the coordination home is unavailable or unsafe to
-   edit, record pending sync in `docs/repo/plans/coordination-sync-pending.md` and continue the
-   local discovery task.
+2. When portfolio coordination is configured, use the target-register compatibility test in
+   `maintain-plan-register.md` before choosing direct coordination-home update versus pending
+   sync.
+3. When the coordination-home register update is compatible, update the configured
+   coordination-home register.
+4. When the coordination home is unavailable, unwritable, or unsafe under that compatibility test,
+   record pending sync in `docs/repo/plans/coordination-sync-pending.md` and continue the local
+   discovery task.
 
 Record creating or material-update session refs when a session ID is available. Do not block
 discovery when no session ID is available.

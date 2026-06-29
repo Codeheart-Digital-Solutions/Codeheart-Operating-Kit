@@ -1,4 +1,4 @@
-Last updated: 2026-06-22T20:58:22Z (UTC)
+Last updated: 2026-06-29T19:51:37Z (UTC)
 
 # Maintain Plan Register
 
@@ -68,10 +68,12 @@ For `portfolio.role: member`:
    into the coordination-home register as the coordination-home ID.
 6. Preserve the member repository's source local ID in `Coordination note` as
    `Source local register ID: <ID>`.
-7. If the coordination home is locally available and safe to edit, update the coordination-home
-   register using the same entry format and the coordination-home ID.
-8. If the coordination home is missing, inaccessible, outside the agent's writable scope, or
-   otherwise unsafe to edit, record pending sync locally and continue the local planning task.
+7. Evaluate the coordination-home register with the dirty target-register safety test below.
+8. If the coordination-home register is locally available and the intended update is compatible,
+   update it using the same entry format and the coordination-home ID.
+9. If the coordination home is missing, inaccessible, outside the agent's writable scope, or the
+   intended target-register update is unsafe or ambiguous, record pending sync locally and continue
+   the local planning task.
 
 For `portfolio.role: coordination-home`:
 
@@ -94,10 +96,50 @@ IDs. Use explicit repository/path pointers when a related member plan is not rep
 coordination-home entry. Keep detailed dependency rationale and execution evidence in canonical
 planning documents and execution logs.
 
+## Dirty Target-Register Safety Test
+
+A dirty coordination-home repository is not automatically unsafe. Judge safety by the intended
+target-register edit, not by unrelated dirty worktree state.
+
+Before updating a coordination-home register:
+
+1. Inspect whether the target register has uncommitted changes.
+2. Check whether the intended entry ID, title, canonical path, lifecycle state, relations, or
+   coordination note already appears in the dirty diff.
+3. Preserve all existing dirty content. Do not normalize, reorder, reformat, or reconcile
+   unrelated register entries while applying the current update.
+
+Treat the update as compatible when one of these is true:
+
+- the target register is clean;
+- unrelated dirty files exist outside the target register;
+- the target register is dirty, but the intended entry ID and canonical path are absent and the
+  update is a unique, non-overlapping insert;
+- the target register is dirty, but the intended field refresh does not touch lines already
+  changed by another uncommitted edit and the canonical plan directly supports the new value.
+
+Treat the update as unsafe or ambiguous when any of these is true:
+
+- the intended entry, ID, title, canonical path, lifecycle state, relation set, or coordination
+  note is already modified in the dirty target-register diff;
+- duplicate IDs or canonical paths exist;
+- the intended update would require reordering, renumbering, normalizing, or reconciling existing
+  dirty register content;
+- the canonical plan and dirty register content disagree in a way that changes lifecycle,
+  relationship, scope, readiness, review outcome, or implementation-path meaning;
+- local instructions, permissions, or user direction make the coordination-home edit unsafe.
+
+When the target register had existing dirty content but the update is compatible, update carefully
+and mention in the task summary that only the compatible register change was applied.
+
+When compatibility cannot be established, ask one targeted question or record pending sync. Do not
+use pending sync merely because unrelated files in the coordination-home repository are dirty.
+
 ## Pending Sync Fallback
 
 When a member repository has configured portfolio coordination but the coordination-home register
-cannot be updated, write a pending item to
+cannot be updated because it is unavailable, unwritable, or unsafe under the dirty target-register
+safety test, write a pending item to
 `docs/repo/plans/coordination-sync-pending.md`.
 
 Use this entry shape:
@@ -117,7 +159,8 @@ Session ref: session <session-id> | not recorded | ambiguous: <reason> | not con
 Status: pending
 
 Notes:
-- <brief note about why the coordination home was unavailable or unsafe to edit>
+- <brief note about why the coordination-home register was unavailable, unwritable, or unsafe under
+  the target-register compatibility test>
 ```
 
 When the pending sync is later applied:
@@ -205,8 +248,8 @@ Use short notes. Do not add session summaries.
 
 - Never overwrite existing register or pending-sync content.
 - Do not move or rewrite unrelated local state files while maintaining the register.
-- Do not write to a coordination home when its local instructions, worktree state, permissions, or
-  user direction make the change unsafe.
+- Do not write to a coordination home when its local instructions, target-register state,
+  permissions, or user direction make the change unsafe.
 - Do not add private repository topology, customer names, tenant details, credentials, account
   IDs, or local machine details to managed Operating Kit doctrine.
 - Use generic repository examples in managed docs and templates.
