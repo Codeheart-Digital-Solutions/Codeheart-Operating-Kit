@@ -1,4 +1,4 @@
-Last updated: 2026-06-29T20:06:45Z (UTC)
+Last updated: 2026-06-29T20:23:54Z (UTC)
 
 # Plan Register
 
@@ -36,9 +36,9 @@ Canonical docs:
 docs/repo/plans/plan-register-dirty-target-safety/plan-register-dirty-target-safety_implementation_doc.md
 docs/repo/plans/plan-register-dirty-target-safety/plan-register-dirty-target-safety_execution_log.md
 Created: 2026-06-29
-Last updated: 2026-06-29T20:06:45Z (UTC)
-Priority / ordering note: Completed instruction-only source implementation. The refined dirty
-target-register rule takes effect for consumers after a release and sync/install refresh.
+Last updated: 2026-06-29T20:23:54Z (UTC)
+Priority / ordering note: Completed and shipped in Operating Kit `v0.1.18`. Consumers receive the
+refined dirty target-register rule after normal install, update, or sync.
 
 Relations:
 - related: OK-PR-013 - Operation Routing And Dispatch Standard Implementation
@@ -55,12 +55,14 @@ Session refs:
   existing pending-sync scaffold wording without adding a new scaffold path.
 - completed: 2026-06-29, not recorded, completed managed doctrine, hook, scaffold wording,
   packaged-resource mirror, validation, and review-gate closeout.
+- material update: 2026-06-29, not recorded, released Operating Kit `v0.1.18`, published the
+  GitHub release, and recorded release validation evidence in the execution log.
 
 Coordination note:
 - Generic Operating Kit implementation candidate.
 - Consumer impact classification: instruction-only change.
 - Work-board behavior is explicitly out of scope.
-- Release notes are required when shipped.
+- Released in Operating Kit `v0.1.18`.
 
 ## OK-PR-022 - Runbook-To-Script Promotion Standard Implementation
 
