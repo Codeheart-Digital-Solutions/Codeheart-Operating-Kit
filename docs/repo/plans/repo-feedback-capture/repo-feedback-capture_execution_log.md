@@ -1,6 +1,6 @@
 Last updated: 2026-07-02T13:16:41Z (UTC)
 Created: 2026-07-02
-Status: release-candidate
+Status: completed
 
 # Repo Feedback Capture And Issue Intake Execution Log
 
@@ -44,8 +44,8 @@ unless a later epic explicitly owns a change.
 | E3 - Managed Capture Route, Runbook, And Item Format | completed | Root route, capture runbook, and repo feedback item-format reference were added and validated. |
 | E4 - GitHub Issue-Intake Setup Runbook | completed | Maintainer-facing setup runbook added with explicit approval gates and no-fallback authorization behavior. |
 | E5 - Packaged Resources, Manifests, Release Surfaces, And Indexes | completed | Packaged-resource mirrors, version metadata, release notes, manifests, bootstrap, installers, indexes, and tests were updated for `v0.1.19`. |
-| E6 - Validation, Fresh-Repo Proof, Routing Probe, Review, And Release-Candidate Handoff | completed | Full validation passed after review-gate fix; plan is release-candidate. |
-| E7 - Release And Approved Consumer Sync | pending | Release publication and consumer sync begin after the validated commit is created. |
+| E6 - Validation, Fresh-Repo Proof, Routing Probe, Review, And Release-Candidate Handoff | completed | Full validation passed after review-gate fix. |
+| E7 - Release And Approved Consumer Sync | completed | Release published, public release smoke passed, and approved consumer sync completed. |
 
 ## Implementation Evidence
 
@@ -128,11 +128,51 @@ assets, refreshed root manifest checksums, and reran validation.
 
 ## Release And Consumer Sync Evidence
 
-Release and consumer sync evidence pending E7.
+Release source commit: `7963070ee127b83f49731fabd1b2aa1580fe553a`
+
+Release tag: `v0.1.19`
+
+Release URL:
+`https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/tag/v0.1.19`
+
+Release assets attached:
+
+- `manifest.yaml`
+- `bootstrap.md`
+- `install.sh`
+- `install.ps1`
+- `release-notes.md`
+- `codeheart-operating-kit-0.1.19-macos.tar.gz`
+- `codeheart-operating-kit-0.1.19-macos.tar.gz.sha256`
+- `codeheart-operating-kit-0.1.19-windows.zip`
+- `codeheart-operating-kit-0.1.19-windows.zip.sha256`
+
+Installer validation:
+
+- Checksum-mismatch fail-closed behavior passed locally for the macOS installer path.
+- macOS local release-asset install from the built asset passed and reported
+  `codeheart-operating-kit 0.1.19`.
+- Push workflow validation passed for release source commit `7963070`, including
+  `windows-installer`, `macos-installer`, `release-assets`, `cli`, and `native-capabilities`.
+- Public release smoke validation passed after publication for `v0.1.19`, including macOS and
+  Windows public release install paths.
+
+Consumer sync:
+
+- Three approved Codeheart consumer repositories were synced to `kit_version: 0.1.19`.
+- Each consumer sync validated with `ok: true`, no Operating Kit drift, no missing route targets,
+  and the repo feedback route present in the managed root route surface.
+- Two consumer sync commits were pushed directly to their `main` branches under their local
+  policy.
+- One consumer sync used the stricter branch and PR flow; required checks passed and the PR was
+  merged.
+- Pre-existing unrelated dirty consumer worktree changes were preserved and not included in the
+  sync commits.
 
 ## Residual Risk
 
-- Windows installer validation still needs GitHub Actions or explicit release-blocker evidence in
-  E7 before release publication.
-- Consumer sync must inspect each target repository's local instructions and worktree state before
-  applying the released kit.
+- No release blockers remain.
+- The Operating Kit repository still has pre-existing untracked local state that was deliberately
+  excluded from the release commits.
+- Approved consumer repositories still contain unrelated pre-existing dirty worktree changes that
+  were deliberately preserved outside the sync commits.

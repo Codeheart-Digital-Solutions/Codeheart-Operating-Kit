@@ -1,6 +1,6 @@
 Last updated: 2026-07-02T13:16:41Z (UTC)
 Created: 2026-06-29
-Status: release-candidate
+Status: completed
 
 # Document Header
 

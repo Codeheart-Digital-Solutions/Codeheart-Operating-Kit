@@ -101,7 +101,7 @@ This folder contains public repository governance for Codeheart Operating Kit.
 - `plans/repo-feedback-capture/repo-feedback-capture_discovery_doc.md`: discovery for
   Operating Kit-guided repo feedback capture, demand-driven GitHub Issues setup, prompt
   suppression after decline, classification, privacy, and triage promotion.
-- `plans/repo-feedback-capture/repo-feedback-capture_implementation_doc.md`: release-candidate
+- `plans/repo-feedback-capture/repo-feedback-capture_implementation_doc.md`: completed
   implementation plan for managed repo feedback capture runbooks, optional config schema support,
   Codeheart organization membership gating, check-first GitHub issue availability, setup guidance,
   validation, release, and approved consumer sync.

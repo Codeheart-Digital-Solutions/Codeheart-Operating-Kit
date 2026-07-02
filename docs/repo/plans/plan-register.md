@@ -19,7 +19,7 @@ Coverage note: This register currently lists public Operating Kit repository pla
 entered during plan-register adoption. Earlier repository plans may be added during later register
 maintenance. `OK-PR-022` is the completed implementation plan for generic runbook-to-script
 promotion doctrine, including reusable script asset guidance, current doctrine alignment, and
-instruction-only release readiness. `OK-PR-021` is the release-candidate implementation plan for Operating Kit-guided repo
+instruction-only release readiness. `OK-PR-021` is the completed implementation plan for Operating Kit-guided repo
 feedback capture with Codeheart organization membership gating, check-first GitHub Issues
 availability, demand-driven issue-intake setup, release, and approved consumer sync scope.
 
@@ -116,7 +116,7 @@ Purpose: Implement managed Operating Kit repo feedback capture by adding optiona
 config schema support, capture and setup runbooks, item-format guidance, installed root route
 visibility, packaged-resource mirrors, validation, release surfaces, and fresh-repo proof while
 keeping GitHub issue creation and repository setup approval-gated.
-Status: release-candidate
+Status: completed
 Owner / repository: Codeheart-Operating-Kit
 Canonical docs:
 docs/repo/plans/repo-feedback-capture/repo-feedback-capture_implementation_doc.md
@@ -145,6 +145,9 @@ Session refs:
 - material update: 2026-07-02, active goal, completed source implementation, validation,
   packaged-resource proof, GitHub authorization proof, routing probe, and review-gate fix before
   release execution.
+- completed: 2026-07-02, active goal, released Operating Kit `v0.1.19`, validated public release
+  install paths, and synced approved consumer repositories while preserving unrelated worktree
+  changes.
 
 Coordination note:
 - Generic Operating Kit implementation candidate.
@@ -152,6 +155,7 @@ Coordination note:
   safety policy change.
 - Execution should not create live repo feedback issues. Release and consumer sync are in scope
   after validation and explicit release authority.
+- Released in Operating Kit `v0.1.19`.
 
 ## OK-PR-020 - Repo Feedback Capture And Issue Intake Discovery
 
