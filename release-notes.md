@@ -1,6 +1,47 @@
-Last updated: 2026-06-29T20:17:11Z (UTC)
+Last updated: 2026-07-02T13:16:41Z (UTC)
 
 # Codeheart Operating Kit Release Notes
+
+## v0.1.19 Release Notes
+
+`v0.1.19` adds managed repo feedback capture for verified Codeheart GitHub organization members.
+It gives agents a safe route for turning repo-specific runbook friction, script failures, docs
+conflicts, and repeated detours into sanitized GitHub Issues without prompting non-technical or
+unauthorized users.
+
+### Included
+
+- Agent Interface now includes `capture-repo-feedback.md`, an agent-facing runbook for detecting
+  repo-owned feedback candidates, silently verifying existing `gh` auth and active Codeheart
+  organization membership, checking GitHub Issues availability, drafting sanitized feedback, and
+  asking before issue creation.
+- Agent Interface now includes `enable-github-issues-feedback-intake.md`, a maintainer-facing
+  setup runbook for approval-gated GitHub Issues enablement, label creation, issue-template
+  guidance, and repo-feedback config recording.
+- Agent Interface now includes `repo-feedback-item-format.md`, defining sanitized issue fields,
+  title shape, recommended labels, forbidden content, and triage promotion routes.
+- Root managed routes now expose repo feedback capture separately from Operating Kit feedback.
+- The consumer config schema now accepts optional `repo_feedback` states for configured GitHub
+  Issues destinations and disabled/suppressed feedback intake.
+- Fresh installs still omit `repo_feedback`; absence means authorization-gated auto-check on
+  first real feedback need.
+
+### Consumer Impact
+
+- `instruction-only change`: installed consumers receive repo feedback capture and setup guidance
+  through normal sync or update.
+- `validator-only change`: `.codeheart/kit.config.yaml` schema validation now understands
+  optional `repo_feedback` config.
+- `security or safety policy change`: agents must not prompt, install `gh`, use browser/manual
+  fallback, create local drafts, or offer any feedback mechanism when `gh`, authentication, or
+  active Codeheart organization membership cannot be positively verified.
+- No forced migration is required. Existing consumer-owned files, local state, runbooks, modules,
+  and repo-specific GitHub settings are not rewritten.
+
+### Validation
+
+- Release-readiness validation is recorded in the repo feedback capture execution log before
+  public tagging and publication.
 
 ## v0.1.18 Release Notes
 

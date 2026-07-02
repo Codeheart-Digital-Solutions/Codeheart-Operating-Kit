@@ -163,8 +163,12 @@ def test_sync_refreshes_existing_agents_managed_block_and_preserves_local_conten
     assert ".codeheart/kit/docs/planning-workflows/runbooks/maintain-plan-register.md" in refreshed
     assert "Operation routing and dispatch" in refreshed
     assert ".codeheart/kit/docs/agent-interface/reference/operation-routing-and-dispatch.md" in refreshed
+    assert "Repo feedback capture" in refreshed
+    assert ".codeheart/kit/docs/agent-interface/runbooks/capture-repo-feedback.md" in refreshed
     assert "docs/repo/state/<id>/" in refreshed
     assert ".codeheart/kit/docs/agent-interface/runbooks/handle-tooling-readiness.md" in refreshed
+
+    assert (tmp_path / ".codeheart/kit/docs/agent-interface/runbooks/capture-repo-feedback.md").exists()
 
 
 def test_sync_installs_module_extension_state_reference_without_state_scaffold(tmp_path):

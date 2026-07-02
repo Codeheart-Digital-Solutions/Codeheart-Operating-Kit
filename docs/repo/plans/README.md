@@ -1,4 +1,4 @@
-Last updated: 2026-06-29T19:42:32Z (UTC)
+Last updated: 2026-07-02T13:16:41Z (UTC)
 
 # Repo Plans
 
@@ -63,6 +63,8 @@ This folder contains Codeheart Operating Kit repository-level discovery and impl
   `repo-feedback-capture/repo-feedback-capture_discovery_doc.md`
 - Repo feedback capture implementation plan:
   `repo-feedback-capture/repo-feedback-capture_implementation_doc.md`
+- Repo feedback capture execution log:
+  `repo-feedback-capture/repo-feedback-capture_execution_log.md`
 - Plan-register dirty target safety implementation plan:
   `plan-register-dirty-target-safety/plan-register-dirty-target-safety_implementation_doc.md`
 - Plan-register dirty target safety execution log:

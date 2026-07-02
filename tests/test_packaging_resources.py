@@ -30,8 +30,11 @@ def test_packaged_resource_fallback(monkeypatch, tmp_path):
     assert (tmp_path / ".codeheart/kit/README.md").exists()
     assert (tmp_path / ".codeheart/kit/docs/agent-interface/README.md").exists()
     assert (tmp_path / ".codeheart/kit/docs/agent-interface/runbooks/submit-kit-feedback.md").exists()
+    assert (tmp_path / ".codeheart/kit/docs/agent-interface/runbooks/capture-repo-feedback.md").exists()
+    assert (tmp_path / ".codeheart/kit/docs/agent-interface/runbooks/enable-github-issues-feedback-intake.md").exists()
     assert (tmp_path / ".codeheart/kit/docs/agent-interface/runbooks/handle-tooling-readiness.md").exists()
     assert (tmp_path / ".codeheart/kit/docs/agent-interface/reference/kit-feedback-item-format.md").exists()
+    assert (tmp_path / ".codeheart/kit/docs/agent-interface/reference/repo-feedback-item-format.md").exists()
     assert (tmp_path / ".codeheart/kit/docs/agent-interface/reference/operation-routing-and-dispatch.md").exists()
     assert (tmp_path / ".codeheart/kit/docs/agent-interface/reference/operational-recipe-maturity.md").exists()
     assert (tmp_path / ".codeheart/kit/docs/agent-interface/reference/runbook-authoring-standard.md").exists()
@@ -65,8 +68,11 @@ def test_changed_source_and_packaged_resources_match():
         "components/agent-interface/managed/reference/local-extension-contract.md",
         "components/agent-interface/managed/reference/operation-routing-and-dispatch.md",
         "components/agent-interface/managed/reference/operational-recipe-maturity.md",
+        "components/agent-interface/managed/reference/repo-feedback-item-format.md",
         "components/agent-interface/managed/reference/runbook-authoring-standard.md",
         "components/agent-interface/managed/reference/root-agents-md-contract.md",
+        "components/agent-interface/managed/runbooks/capture-repo-feedback.md",
+        "components/agent-interface/managed/runbooks/enable-github-issues-feedback-intake.md",
         "components/agent-interface/managed/runbooks/handle-tooling-readiness.md",
         "components/structure-governance/component.yaml",
         "components/structure-governance/managed/README.md",
@@ -83,3 +89,14 @@ def test_changed_source_and_packaged_resources_match():
         "templates/consumer-docs/repo/README.md",
     ]:
         assert_packaged_resource_matches(source)
+
+
+def test_repo_feedback_runbook_prefers_configured_destination():
+    text = (
+        ROOT / "components/agent-interface/managed/runbooks/capture-repo-feedback.md"
+    ).read_text(encoding="utf-8")
+    configured_index = text.index("repo_feedback.destination.owner")
+    fallback_index = text.index("resolve the GitHub remote")
+
+    assert configured_index < fallback_index
+    assert "repo_feedback.destination.repo" in text

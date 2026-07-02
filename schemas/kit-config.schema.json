@@ -73,6 +73,147 @@
           }
         }
       ]
+    },
+    "repo_feedback": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode"],
+      "properties": {
+        "mode": {
+          "type": "string",
+          "enum": ["github_issues", "disabled"]
+        },
+        "destination": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["type", "owner", "repo"],
+          "properties": {
+            "type": { "type": "string", "const": "github_issues" },
+            "owner": { "type": "string", "minLength": 1 },
+            "repo": { "type": "string", "minLength": 1 }
+          }
+        },
+        "authorization": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "organization",
+            "require_verified_membership",
+            "require_gh_cli",
+            "unavailable_behavior"
+          ],
+          "properties": {
+            "organization": { "type": "string", "const": "Codeheart-Digital-Solutions" },
+            "require_verified_membership": { "const": true },
+            "require_gh_cli": { "const": true },
+            "unavailable_behavior": { "type": "string", "const": "silent" }
+          }
+        },
+        "github_standardization": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["labels", "issue_templates"],
+          "properties": {
+            "labels": {
+              "type": "string",
+              "enum": ["configured", "not_configured", "declined"]
+            },
+            "issue_templates": {
+              "type": "string",
+              "enum": ["configured", "not_configured", "declined"]
+            }
+          }
+        },
+        "disabled_reason": {
+          "type": "string",
+          "enum": [
+            "verified_maintainer_declined_issue_intake",
+            "repo_owner_policy",
+            "issues_unavailable",
+            "other"
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "mode": { "const": "github_issues" } },
+            "required": ["mode"]
+          },
+          "then": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["mode", "destination", "authorization"],
+            "properties": {
+              "mode": { "type": "string", "const": "github_issues" },
+              "destination": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["type", "owner", "repo"],
+                "properties": {
+                  "type": { "type": "string", "const": "github_issues" },
+                  "owner": { "type": "string", "minLength": 1 },
+                  "repo": { "type": "string", "minLength": 1 }
+                }
+              },
+              "authorization": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "organization",
+                  "require_verified_membership",
+                  "require_gh_cli",
+                  "unavailable_behavior"
+                ],
+                "properties": {
+                  "organization": { "type": "string", "const": "Codeheart-Digital-Solutions" },
+                  "require_verified_membership": { "const": true },
+                  "require_gh_cli": { "const": true },
+                  "unavailable_behavior": { "type": "string", "const": "silent" }
+                }
+              },
+              "github_standardization": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["labels", "issue_templates"],
+                "properties": {
+                  "labels": {
+                    "type": "string",
+                    "enum": ["configured", "not_configured", "declined"]
+                  },
+                  "issue_templates": {
+                    "type": "string",
+                    "enum": ["configured", "not_configured", "declined"]
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": { "mode": { "const": "disabled" } },
+            "required": ["mode"]
+          },
+          "then": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["mode", "disabled_reason"],
+            "properties": {
+              "mode": { "type": "string", "const": "disabled" },
+              "disabled_reason": {
+                "type": "string",
+                "enum": [
+                  "verified_maintainer_declined_issue_intake",
+                  "repo_owner_policy",
+                  "issues_unavailable",
+                  "other"
+                ]
+              }
+            }
+          }
+        }
+      ]
     }
   }
 }

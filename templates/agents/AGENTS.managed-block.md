@@ -1,4 +1,4 @@
-Last updated: 2026-06-26T14:30:34Z (UTC)
+Last updated: 2026-07-02T13:16:41Z (UTC)
 
 <!-- BEGIN CODEHEART OPERATING KIT MANAGED BLOCK -->
 
@@ -40,6 +40,8 @@ Last updated: 2026-06-26T14:30:34Z (UTC)
 - Agent interface: `.codeheart/kit/docs/agent-interface/README.md`
 - Operation routing and dispatch:
   `.codeheart/kit/docs/agent-interface/reference/operation-routing-and-dispatch.md`
+- Repo feedback capture:
+  `.codeheart/kit/docs/agent-interface/runbooks/capture-repo-feedback.md`
 - Operating Kit feedback:
   `.codeheart/kit/docs/agent-interface/runbooks/submit-kit-feedback.md`
 - Tooling readiness:

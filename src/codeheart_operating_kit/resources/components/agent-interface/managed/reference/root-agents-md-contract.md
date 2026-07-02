@@ -1,4 +1,4 @@
-Last updated: 2026-06-25T13:05:46Z (UTC)
+Last updated: 2026-07-02T13:16:41Z (UTC)
 
 # Root AGENTS.md Contract
 
@@ -46,6 +46,12 @@ route-card field.
 - Agent interface: `.codeheart/kit/docs/agent-interface/README.md`
 - Operation routing and dispatch:
   `.codeheart/kit/docs/agent-interface/reference/operation-routing-and-dispatch.md`
+- Repo feedback capture:
+  `.codeheart/kit/docs/agent-interface/runbooks/capture-repo-feedback.md`
+- Operating Kit feedback:
+  `.codeheart/kit/docs/agent-interface/runbooks/submit-kit-feedback.md`
+- Tooling readiness:
+  `.codeheart/kit/docs/agent-interface/runbooks/handle-tooling-readiness.md`
 - Structure governance: `.codeheart/kit/docs/structure-governance/README.md`
 
 Use `.codeheart/kit/README.md` as the fallback and full inventory for unclear tasks, kit

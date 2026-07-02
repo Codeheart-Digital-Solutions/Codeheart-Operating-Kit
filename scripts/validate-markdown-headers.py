@@ -11,6 +11,7 @@ HEADER = re.compile(r"^Last updated: \d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z \(UTC\
 EXCLUDED_PARTS = {
     ".git",
     ".pytest_cache",
+    ".venv",
     "__pycache__",
     "build",
     "dist",

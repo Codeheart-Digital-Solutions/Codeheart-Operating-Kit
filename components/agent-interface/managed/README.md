@@ -1,4 +1,4 @@
-Last updated: 2026-06-29T14:49:19Z (UTC)
+Last updated: 2026-07-02T13:16:41Z (UTC)
 
 # Agent Interface
 
@@ -23,10 +23,13 @@ repository documents, not in the managed bootstrap text.
 - Runbook authoring standard: `reference/runbook-authoring-standard.md`
 - Update-check policy: `reference/update-check-policy.md`
 - Kit feedback item format: `reference/kit-feedback-item-format.md`
+- Repo feedback item format: `reference/repo-feedback-item-format.md`
 - First-run onboarding: `runbooks/conduct-first-run-onboarding.md`
 - Tooling readiness: `runbooks/handle-tooling-readiness.md`
 - Promote runbook recipe to script: `runbooks/promote-runbook-recipe-to-script.md`
 - Root `AGENTS.md` structure: `runbooks/structure-root-agents-md.md`
 - Root `AGENTS.md` repair: `runbooks/repair-root-agents-md.md`
 - Submit kit feedback: `runbooks/submit-kit-feedback.md`
+- Capture repo feedback: `runbooks/capture-repo-feedback.md`
+- Enable GitHub Issues feedback intake: `runbooks/enable-github-issues-feedback-intake.md`
 - Installed fallback inventory: `.codeheart/kit/README.md`

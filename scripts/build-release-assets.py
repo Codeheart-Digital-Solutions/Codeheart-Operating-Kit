@@ -131,10 +131,12 @@ def write_checksum(path: Path) -> Path:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Build Codeheart Operating Kit release assets.")
-    parser.add_argument("--version", default="0.1.18")
+    parser.add_argument("--version", default=None)
     parser.add_argument("--output-dir", default="dist")
     args = parser.parse_args()
     actual_version = package_version()
+    if args.version is None:
+        args.version = actual_version
     if args.version != actual_version:
         raise SystemExit(
             f"requested release version {args.version} does not match package version {actual_version}"

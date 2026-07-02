@@ -1,20 +1,24 @@
-Last updated: 2026-06-29T16:07:49Z (UTC)
+Last updated: 2026-07-02T13:16:41Z (UTC)
 Created: 2026-06-29
-Status: draft
+Status: release-candidate
 
 # Document Header
 
 ## Overview
 
 This implementation plan turns the approved repo feedback capture discovery into a shippable
-Operating Kit v1. It adds managed agent guidance for capturing repo-specific feedback, a
-check-first GitHub Issues flow, demand-driven setup guidance, optional repo-feedback config
+Operating Kit v1. It adds managed agent guidance for capturing repo-specific feedback as a
+Codeheart GitHub organization member feature, a check-first GitHub Issues flow behind an existing
+authenticated `gh` gate, demand-driven maintainer setup guidance, optional repo-feedback config
 schema support, route visibility for fresh installs, packaged-resource mirrors, validation, and
 release notes.
 
 The first release deliberately avoids a new CLI command and avoids automatic GitHub changes.
-Agents may draft issues and run read-only preflight checks, but issue creation, label/template
-changes, and repository setting changes remain explicit user-approved actions.
+Agents may run read-only `gh` authorization and issue preflight checks, but only existing
+authenticated `gh` is allowed. Missing `gh`, missing authentication, or unverifiable
+`Codeheart-Digital-Solutions` organization membership makes repo feedback capture unavailable
+without user-facing fallback. Issue creation, label/template changes, and repository setting
+changes remain explicit user-approved actions for verified Codeheart maintainers.
 
 ## Essential Context Reference Files
 
@@ -24,8 +28,10 @@ changes, and repository setting changes remain explicit user-approved actions.
 | `docs/repo/plans/repo-feedback-capture/repo-feedback-capture_discovery_doc.md` | Approved capability scope, decisions, non-goals, and handoff requirements. |
 | `docs/repo/plans/kit-feedback-intake/kit-feedback-intake_implementation_doc.md` | Precedent for Operating Kit feedback intake, issue forms, labels, managed guidance, and triage. |
 | `docs/repo/plans/kit-feedback-intake/kit-feedback-intake_execution_log.md` | Evidence that GitHub Issues were checked first, already enabled, and labels/forms were handled as governance. |
+| `docs/repo/runbooks/release-operating-kit.md` | Public release procedure, asset, checksum, tag, GitHub release, and evidence requirements. |
 | `components/agent-interface/managed/reference/runbook-authoring-standard.md` | Required quality bar for the new durable runbooks. |
 | `components/agent-interface/managed/reference/operation-routing-and-dispatch.md` | Route-before-surface doctrine for the new feedback route and fresh-agent probe. |
+| `components/agent-interface/managed/reference/root-agents-md-contract.md` | Contract for direct managed routes that may appear in the installed root `AGENTS.md` managed block. |
 | `components/agent-interface/managed/reference/operational-recipe-maturity.md` | Authoring source for installed `.codeheart/kit/docs/agent-interface/reference/operational-recipe-maturity.md`; required maturity reference for repeated capture/setup recipes and non-promotion boundary. |
 | `components/agent-interface/managed/reference/runbook-to-script-promotion-standard.md` | Authoring source for installed `.codeheart/kit/docs/agent-interface/reference/runbook-to-script-promotion-standard.md`; required reference for consciously keeping v1 runbook-only and not creating reusable script assets. |
 | `components/agent-interface/managed/runbooks/submit-kit-feedback.md` | Existing route for feedback about the Operating Kit itself; repo feedback must not replace it. |
@@ -37,11 +43,14 @@ changes, and repository setting changes remain explicit user-approved actions.
 | `components/agent-interface/managed/kit-readme.md` | Installed fallback inventory for managed routes. |
 | `schemas/kit-config.schema.json` | Optional `repo_feedback` config contract. |
 | `src/codeheart_operating_kit/components.py` | Fresh install config writer; v1 must keep `repo_feedback` absent by default. |
+| `src/codeheart_operating_kit/__init__.py` | Package runtime version used by the CLI and release asset validation. |
+| `pyproject.toml` | Python package version consumed by the release asset builder. |
 | `tests/test_json_schemas.py` | Focused schema tests for optional `repo_feedback` states. |
 | `tests/test_init.py` | Fresh install tests for no default `repo_feedback` block and route target presence. |
 | `tests/test_sync_check.py` | Sync/check route target validation. |
 | `tests/test_packaging_resources.py` | Packaged resource fallback coverage. |
 | `release-notes.md` | Release-facing consumer-impact notes. |
+| `scripts/build-release-assets.py` | Release asset builder and checksum generator. |
 
 ## Table Of Contents
 
@@ -64,18 +73,20 @@ Completion is proven when:
   feedback;
 - installed managed docs include a repo feedback capture runbook, GitHub issue-intake setup
   runbook, and repo feedback item-format reference;
-- the capture runbook tells agents to check config, GitHub remote, and live issue availability
-  before offering setup;
-- missing `repo_feedback` config means unconfigured auto-check, not disabled;
+- the capture runbook tells agents to silently verify existing `gh`, GitHub CLI authentication,
+  and active `Codeheart-Digital-Solutions` organization membership before any feedback prompt;
+- missing `repo_feedback` config means authorization-gated auto-check, not disabled;
 - GitHub Issues capture works without standard labels/templates by putting classification in the
   issue body and using only labels that exist;
 - sensitive, private, and security-disclosure material stops before GitHub issue creation and is
   not stored in feedback drafts;
-- setup is offered only when Issues are unavailable, disabled, or the user wants missing standard
-  labels/templates;
+- missing `gh`, missing authentication, or unverifiable organization membership stops silently and
+  does not route to tooling readiness, browser fallback, manual fallback, or local drafts;
+- setup is offered only to verified Codeheart maintainers when Issues are unavailable, disabled,
+  or the maintainer wants missing standard labels/templates;
 - decline can be recorded as disabled/suppressed state after explicit user approval;
-- `schemas/kit-config.schema.json` accepts optional configured, disabled, and local-draft states
-  while preserving old config validity;
+- `schemas/kit-config.schema.json` accepts optional configured and disabled states, including the
+  Codeheart authorization policy, while preserving old config validity;
 - fresh install tests prove no `repo_feedback` block is written by default;
 - packaged-resource fallback installs the new runbooks and reference files;
 - validation covers Markdown headers, public-core hygiene, schema behavior, route targets,
@@ -84,7 +95,10 @@ Completion is proven when:
 - repeated capture/setup recipes record L1 structured-recipe maturity, validation tier, evidence
   shape, blocker shape, and no-promotion evidence;
 - v1 creates no reusable script asset, CLI command, wrapper, API, or durable executable helper;
-- release notes record instruction, schema, and safety-policy impact.
+- release notes record instruction, schema, and safety-policy impact;
+- the Operating Kit release is published from the validated commit;
+- approved consumer repositories are synced to the released version or have explicit blockers
+  recorded.
 
 ## 1.2 Project And Problem Context
 
@@ -98,9 +112,11 @@ affected artifact. Without a managed route, agents can solve the immediate issue
 the reusable maintenance signal.
 
 The approved direction is to make the Operating Kit own the generic capture route while each
-repository owns its feedback destination and issue triage. A fresh repo should not need feedback
-setup during onboarding. When a real feedback item appears, the agent checks whether GitHub
-Issues already works, drafts an issue when it does, and offers setup only when needed.
+repository owns its feedback destination and issue triage. The feature is internal to Codeheart
+maintainers and must not burden non-technical users. A fresh repo should not need feedback setup
+during onboarding. When a real feedback item appears, the agent first verifies existing `gh`,
+GitHub authentication, and Codeheart organization membership. Only then does it check whether
+GitHub Issues already works, draft an issue when it does, and offer setup only when needed.
 
 ## 1.3 Current State Analysis
 
@@ -120,10 +136,12 @@ Existing state:
 
 Target state:
 
-- Missing `repo_feedback` config remains valid and means auto-check on first feedback trigger.
-- Optional `repo_feedback` config records durable preferences after first use, setup, local draft
-  opt-in, or decline.
-- Managed runbooks describe the exact check-first, draft, approval, setup, and suppression flow.
+- Missing `repo_feedback` config remains valid and means authorization-gated auto-check on first
+  feedback trigger.
+- Optional `repo_feedback` config records durable preferences after first use, setup, or verified
+  maintainer decline.
+- Managed runbooks describe the exact `gh`/organization gate, check-first, draft, approval, setup,
+  no-fallback, and suppression flow.
 - Fresh installs receive the route and docs through normal managed agent-interface sync.
 - Standard labels/templates are useful setup, not prerequisites for creating a feedback issue.
 
@@ -151,6 +169,7 @@ Codeheart-Operating-Kit/
         README.md                                         # modify
         kit-readme.md                                     # modify
         reference/
+          root-agents-md-contract.md                      # modify
           repo-feedback-item-format.md                    # create
         runbooks/
           capture-repo-feedback.md                        # create
@@ -158,8 +177,10 @@ Codeheart-Operating-Kit/
   templates/
     agents/
       AGENTS.managed-block.md                             # modify
+  pyproject.toml                                          # modify package version
   src/
     codeheart_operating_kit/
+      __init__.py                                         # modify runtime version
       resources/
         components/agent-interface/...                    # mirror created and modified files
         templates/agents/AGENTS.managed-block.md          # mirror modified template
@@ -182,8 +203,9 @@ Codeheart-Operating-Kit/
           repo-feedback-capture_discovery_doc.md          # modify status and handoff
           repo-feedback-capture_implementation_doc.md     # this plan
           repo-feedback-capture_execution_log.md          # create at activation
-  manifest.yaml                                           # modify release impact
-  release-notes.md                                        # modify
+manifest.yaml                                           # modify release impact
+release-notes.md                                        # modify
+pyproject.toml                                          # modify package version
 ```
 
 ## 2.2 Open Questions And Assumptions Requiring Clarification
@@ -191,8 +213,9 @@ Codeheart-Operating-Kit/
 `OQ-1`: Exact release version.
 
 - `BLOCKER: no`
-- Affects: `E6`
-- Unlocks: release notes and release manifest wording.
+- Affects: `E5`, `E6`, `E7`
+- Unlocks: package version bump, release notes, release manifest wording, release asset names,
+  tag, and consumer sync target.
 - Recommended default: use the next patch release available at execution time and record the
   exact version in the execution log.
 
@@ -201,10 +224,12 @@ Codeheart-Operating-Kit/
 - `BLOCKER: no`
 - Affects: `E3`, `E4`, `E6`
 - Unlocks: preflight and setup command lane.
-- Recommended default: make `gh` the default command lane because it supports `gh repo view
-  --json hasIssuesEnabled`, `gh repo edit --enable-issues`, `gh label list`, `gh label create`,
-  and `gh issue create`; route missing local `gh` through tooling readiness and provide browser
-  issue creation as the non-CLI fallback.
+- Recommended default: use existing authenticated `gh` as the only command lane because it
+  supports organization membership verification, `gh repo view --json hasIssuesEnabled`,
+  `gh repo edit --enable-issues`, `gh label list`, `gh label create`, and `gh issue create`.
+  Missing local `gh`, missing auth, or unverifiable `Codeheart-Digital-Solutions` membership is
+  silent unavailability. Do not route missing `gh` through tooling readiness and do not provide
+  browser, manual, or local-draft fallback.
 
 `OQ-3`: Standard issue template installation in consumer repos.
 
@@ -228,11 +253,13 @@ Codeheart-Operating-Kit/
 5. Alternatives considered: a new `repo-feedback` component was rejected because it adds profile
    and release complexity before behavior is proven.
 
-`AD-2`: Missing `repo_feedback` config means auto-check.
+`AD-2`: Missing `repo_feedback` config means authorization-gated auto-check.
 
 1. Problem being solved: fresh repos must work without onboarding-time feedback setup.
 2. Simplest working solution: keep `repo_feedback` optional; absence means the capture runbook
-   checks the GitHub remote and live issue availability when a real feedback item appears.
+   first verifies existing `gh`, GitHub authentication, and active Codeheart organization
+   membership, then checks the GitHub remote and live issue availability when a real feedback item
+   appears.
 3. What may change in 6-12 months: onboarding may offer feedback setup after usage data proves it
    is worth front-loading.
 4. Rationale: this preserves lightweight onboarding and matches the Operating Kit feedback
@@ -240,11 +267,13 @@ Codeheart-Operating-Kit/
 5. Alternatives considered: writing `repo_feedback.mode: auto_check` during init was rejected
    because it creates config churn without adding capability.
 
-`AD-3`: Schema records preferences, not behavior automation.
+`AD-3`: Schema records preferences and authorization policy, not behavior automation.
 
-1. Problem being solved: agents need durable state for configured destinations and declined setup.
+1. Problem being solved: agents need durable state for configured destinations, Codeheart-only
+   authorization policy, and declined setup.
 2. Simplest working solution: add an optional `repo_feedback` schema with `github_issues`,
-   `disabled`, and `local_draft_only` states.
+   `disabled`, and authorization-policy fields requiring existing `gh`, verified
+   `Codeheart-Digital-Solutions` membership, and silent unavailability.
 3. What may change in 6-12 months: a CLI command may write or validate the block directly.
 4. Rationale: v1 can rely on agent-runbook edits with approval while still validating the shape.
 5. Alternatives considered: no schema was rejected because disabled/suppressed state would be
@@ -261,22 +290,26 @@ Codeheart-Operating-Kit/
 5. Alternatives considered: requiring standard labels first was rejected because it turns a
    working issue surface into a setup blocker.
 
-`AD-5`: Use `gh` as the default command lane and keep browser fallback.
+`AD-5`: Use existing authenticated `gh` as the only command lane.
 
-1. Problem being solved: agents need exact, testable preflight and setup commands.
+1. Problem being solved: agents need exact, testable preflight and setup commands without
+   prompting non-technical users into GitHub tooling setup.
 2. Simplest working solution: document `gh repo view`, `gh issue create`, `gh repo edit`, and
-   `gh label` commands, with approval gates before write commands.
+   `gh label` commands, plus `gh auth status` and `gh api user/memberships/orgs/Codeheart-Digital-Solutions`,
+   with approval gates before write commands.
 3. What may change in 6-12 months: a connector or CLI wrapper may provide a cleaner interface.
 4. Rationale: `gh` is already available in the maintainer environment and is the direct GitHub
-   governance lane.
-5. Alternatives considered: a new Operating Kit CLI command was rejected for v1 because the manual
-   route needs real usage first.
+   governance lane. Missing `gh` means repo feedback capture is unavailable; it is not a tooling
+   readiness blocker.
+5. Alternatives considered: a new Operating Kit CLI command was rejected for v1 because the
+   maintainer-run route needs real usage first. Browser/manual fallback was rejected because it
+   would surface feedback administration to non-technical users.
 
 `AD-6`: Treat setup as repository governance.
 
 1. Problem being solved: enabling Issues, labels, and templates changes shared repository state.
-2. Simplest working solution: the setup runbook preflights, explains the change, asks approval,
-   executes the approved change, then verifies it.
+2. Simplest working solution: the setup runbook first verifies Codeheart organization membership,
+   preflights, explains the change, asks approval, executes the approved change, then verifies it.
 3. What may change in 6-12 months: repo-wide setup could be batched by a separate governance
    plan.
 4. Rationale: this matches the kit-feedback-intake precedent and avoids silent external changes.
@@ -306,7 +339,8 @@ Codeheart-Operating-Kit/
 | `E3` | Managed capture route, runbook, and item-format reference are installed for fresh repos. | M | `E2` |
 | `E4` | GitHub issue-intake setup runbook covers Issues, labels, templates, approval, and suppression. | M | `E2`, `E3` |
 | `E5` | Packaged resources, component manifests, release surfaces, and indexes are synchronized. | M | `E3`, `E4` |
-| `E6` | Validation, fresh-repo proof, routing probe, review, and closeout evidence are complete. | M | `E5` |
+| `E6` | Validation, fresh-repo proof, routing probe, review, and release-candidate evidence are complete. | M | `E5` |
+| `E7` | Operating Kit release is published and approved consumer repositories are synced or blocked with evidence. | M | `E6` |
 
 ## E1 - Activation, Baseline Evidence, And Handoff State
 
@@ -370,9 +404,9 @@ work unless the execution plan explicitly owns them.
 
 `E2` - Config Schema And Fresh-Install Semantics.
 
-Outcome: `.codeheart/kit.config.yaml` accepts optional repo feedback preferences, while fresh
-installs still omit `repo_feedback` and therefore use auto-check behavior on first feedback
-trigger.
+Outcome: `.codeheart/kit.config.yaml` accepts optional repo feedback preferences and Codeheart
+authorization policy, while fresh installs still omit `repo_feedback` and therefore use
+authorization-gated auto-check behavior on first feedback trigger.
 
 ### B) Scope
 
@@ -396,9 +430,10 @@ tests/
 - Size: `M`
 - Existing config files without `repo_feedback` remain valid.
 - Fresh installs do not write a `repo_feedback` block.
-- Valid `github_issues` config includes destination owner and repo.
-- Valid `disabled` config records decline or owner-policy reason.
-- Valid `local_draft_only` config is explicit and local-user-owned.
+- Valid `github_issues` config includes destination owner, repo, and Codeheart authorization
+  policy.
+- Valid `disabled` config records decline or owner-policy reason, and `mode: disabled` itself is
+  the suppression state.
 - Invalid partial and mode-incompatible states fail schema tests.
 
 ### E) Dependencies And Critical-Path Notes
@@ -408,20 +443,26 @@ Depends on `E1`. This epic establishes config semantics that runbooks reference.
 ### F) Tasks Checklist
 
 - [ ] Add optional top-level `repo_feedback` to `schemas/kit-config.schema.json`.
-- [ ] Add `repo_feedback.mode` enum values `github_issues`, `disabled`, and `local_draft_only` to `schemas/kit-config.schema.json`.
+- [ ] Add `repo_feedback.mode` enum values `github_issues` and `disabled` to `schemas/kit-config.schema.json`.
 - [ ] Add `repo_feedback.destination.type` const `github_issues` plus `owner` and `repo` string fields for `github_issues` mode.
+- [ ] Add `repo_feedback.authorization.organization` const `Codeheart-Digital-Solutions` for `github_issues` mode.
+- [ ] Add `repo_feedback.authorization.require_verified_membership` const `true` for `github_issues` mode.
+- [ ] Add `repo_feedback.authorization.require_gh_cli` const `true` for `github_issues` mode.
+- [ ] Add `repo_feedback.authorization.unavailable_behavior` const `silent` for `github_issues` mode.
 - [ ] Add `repo_feedback.github_standardization.labels` and `repo_feedback.github_standardization.issue_templates` enum values `configured`, `not_configured`, and `declined`.
-- [ ] Add `repo_feedback.disabled_reason` enum values `user_declined_issue_intake`, `repo_owner_policy`, `issues_unavailable`, and `other` for `disabled` mode.
-- [ ] Add `repo_feedback.draft_path` const `.codeheart/user/feedback/` for `local_draft_only` mode.
+- [ ] Add `repo_feedback.disabled_reason` enum values `verified_maintainer_declined_issue_intake`, `repo_owner_policy`, `issues_unavailable`, and `other` for `disabled` mode.
+- [ ] Do not add a separate `suppress_prompts` field; `repo_feedback.mode: disabled` implies suppression.
 - [ ] Keep `src/codeheart_operating_kit/components.py` fresh install config output unchanged for default `repo_feedback` absence.
 - [ ] Add `tests/test_json_schemas.py` coverage for missing `repo_feedback` config validity.
-- [ ] Add `tests/test_json_schemas.py` coverage for valid `github_issues`, `disabled`, and `local_draft_only` config blocks.
+- [ ] Add `tests/test_json_schemas.py` coverage for valid `github_issues` and `disabled` config blocks.
 - [ ] Add `tests/test_json_schemas.py` coverage rejecting `github_issues` without `destination.type`.
 - [ ] Add `tests/test_json_schemas.py` coverage rejecting `github_issues` without destination owner and repo.
+- [ ] Add `tests/test_json_schemas.py` coverage rejecting `github_issues` without the Codeheart authorization policy block.
+- [ ] Add `tests/test_json_schemas.py` coverage rejecting `github_issues` with any organization other than `Codeheart-Digital-Solutions`.
+- [ ] Add `tests/test_json_schemas.py` coverage rejecting `github_issues` when `require_verified_membership`, `require_gh_cli`, or `unavailable_behavior: silent` are missing or false.
 - [ ] Add `tests/test_json_schemas.py` coverage rejecting `disabled` without `disabled_reason`.
-- [ ] Add `tests/test_json_schemas.py` coverage rejecting `local_draft_only` without `draft_path`.
 - [ ] Add `tests/test_json_schemas.py` coverage rejecting invalid `github_standardization.labels` and `github_standardization.issue_templates` enum values.
-- [ ] Add `tests/test_json_schemas.py` coverage rejecting mode-incompatible fields across `github_issues`, `disabled`, and `local_draft_only`.
+- [ ] Add `tests/test_json_schemas.py` coverage rejecting mode-incompatible fields across `github_issues` and `disabled`.
 - [ ] Add `tests/test_json_schemas.py` coverage rejecting unknown `repo_feedback.mode` values.
 - [ ] Add `tests/test_init.py` assertion that new installs do not write a `repo_feedback` block.
 - [ ] Run `python3 scripts/validate-json-schemas.py schemas/kit-config.schema.json`.
@@ -466,6 +507,7 @@ components/
       README.md                                      # modify
       kit-readme.md                                  # modify
       reference/
+        root-agents-md-contract.md                    # modify
         repo-feedback-item-format.md                 # create
       runbooks/
         capture-repo-feedback.md                     # create
@@ -481,13 +523,20 @@ tests/
 
 - Size: `M`
 - Root managed block routes repo feedback capture separately from Operating Kit feedback.
+- Root `AGENTS.md` contract explicitly allows the repo feedback route as a direct managed route.
 - Capture runbook has the runbook-authoring compact intention block.
 - Capture runbook states triggers, prompt timing, and stop conditions.
-- Capture runbook states missing config means auto-check.
-- Capture runbook tells agents to check config, GitHub remote, and live issue availability before
-  offering setup.
+- Capture runbook states missing config means authorization-gated auto-check.
+- Capture runbook tells agents to silently check existing `gh`, GitHub authentication, and active
+  `Codeheart-Digital-Solutions` organization membership before any user-facing feedback prompt.
+- Capture runbook states missing `gh`, missing auth, or unverifiable Codeheart organization
+  membership means silent unavailability, not tooling readiness.
+- Capture runbook tells agents to check config, GitHub remote, and live issue availability only
+  after the authorization gate passes.
 - Capture runbook states missing labels/templates do not block issue capture.
 - Capture runbook requires explicit approval before issue creation.
+- Capture runbook provides no browser fallback, manual fallback, local draft fallback, `gh`
+  install prompt, or auth-repair prompt when the authorization gate fails.
 - Capture runbook stops before GitHub issue creation for security vulnerabilities, sensitive
   disclosures, secrets, credentials, customer or tenant details, account identifiers, raw logs,
   local machine state, private strategy, and raw private evidence.
@@ -506,23 +555,26 @@ Depends on `E2`. The runbook must use the schema semantics from `E2`.
 - [ ] Create `components/agent-interface/managed/runbooks/capture-repo-feedback.md` with audience `agent-facing`.
 - [ ] Add compact intention block to `capture-repo-feedback.md` covering intent, success, agent judgment boundary, and stop boundary.
 - [ ] Add trigger section to `capture-repo-feedback.md` for blockers, runbook failures, script failures, workarounds, user dissatisfaction, docs conflicts, undocumented overrides, missing guidance, and repeated friction.
-- [ ] Add prompt-timing section to `capture-repo-feedback.md` for blocker report, direct dissatisfaction, checkpoint, and final summary.
-- [ ] Add destination-resolution procedure to `capture-repo-feedback.md` covering `repo_feedback.mode`, missing config auto-check, GitHub remote detection, and `gh repo view <owner/repo> --json nameWithOwner,hasIssuesEnabled,viewerPermission,isPrivate`.
+- [ ] Add prompt-timing section to `capture-repo-feedback.md` for blocker report, direct dissatisfaction, checkpoint, and final summary after the authorization gate passes.
+- [ ] Add authorization gate requiring existing `gh`, successful `gh auth status`, and active membership from `gh api user/memberships/orgs/Codeheart-Digital-Solutions --jq .state`.
+- [ ] Add explicit rule that failed authorization gate stops silently and must not route to tooling readiness, `gh` install, auth repair, browser fallback, manual fallback, local draft, or any other feedback mechanism.
+- [ ] Add destination-resolution procedure to `capture-repo-feedback.md` covering `repo_feedback.mode`, missing config authorization-gated auto-check, GitHub remote detection, and `gh repo view <owner/repo> --json nameWithOwner,hasIssuesEnabled,viewerPermission,isPrivate`.
 - [ ] Add issue-draft procedure to `capture-repo-feedback.md` requiring sanitized title, sanitized body, classification fields, and no raw sensitive evidence.
 - [ ] Add sensitive-disclosure stop boundary to `capture-repo-feedback.md` covering security vulnerabilities, sensitive disclosures, secrets, credentials, customer and tenant details, account identifiers, raw logs, local machine state, private strategy, and raw private evidence.
 - [ ] Add label fallback procedure to `capture-repo-feedback.md` requiring `gh label list --repo <owner/repo> --limit 200 --json name` and use of existing labels only.
 - [ ] Add issue-creation approval gate to `capture-repo-feedback.md` before `gh issue create --repo <owner/repo> --title <title> --body-file <body-file>`.
-- [ ] Add decline-suppression procedure to `capture-repo-feedback.md` requiring user approval before writing `repo_feedback.mode: disabled`.
+- [ ] Add decline-suppression procedure to `capture-repo-feedback.md` requiring verified maintainer approval before writing `repo_feedback.mode: disabled`.
 - [ ] Add Operating Kit boundary procedure to `capture-repo-feedback.md` routing generic kit feedback to `submit-kit-feedback.md`.
 - [ ] Add L1 structured-recipe metadata to `capture-repo-feedback.md` covering recipe ID, purpose, inputs, preconditions, approval class, execution surface, evidence output, validation, and stop conditions.
 - [ ] Add no-promotion note to `capture-repo-feedback.md` stating v1 creates no reusable script asset, CLI command, wrapper, API, durable helper, package, and tool surface.
 - [ ] Create `components/agent-interface/managed/reference/repo-feedback-item-format.md` with required issue body fields, title prefix guidance, privacy confirmation, and sensitive-disclosure stop boundary.
+- [ ] Update `components/agent-interface/managed/reference/root-agents-md-contract.md` so direct managed routes include repo feedback capture separately from Operating Kit feedback.
 - [ ] Update `components/agent-interface/managed/README.md` with routes for capture runbook and item-format reference.
 - [ ] Update `components/agent-interface/managed/kit-readme.md` with installed fallback route for repo feedback capture.
 - [ ] Update `templates/agents/AGENTS.managed-block.md` with a concise `Repo feedback capture` managed route.
 - [ ] Update `tests/test_sync_check.py` to assert refreshed root `AGENTS.md` contains the repo feedback route and the route target exists.
 - [ ] Run `python3 scripts/validate-markdown-headers.py components/agent-interface/managed/runbooks/capture-repo-feedback.md components/agent-interface/managed/reference/repo-feedback-item-format.md`.
-- [ ] Run `python3 scripts/validate-public-core.py components/agent-interface/managed/runbooks/capture-repo-feedback.md components/agent-interface/managed/reference/repo-feedback-item-format.md templates/agents/AGENTS.managed-block.md`.
+- [ ] Run `python3 scripts/validate-public-core.py components/agent-interface/managed/runbooks/capture-repo-feedback.md components/agent-interface/managed/reference/repo-feedback-item-format.md components/agent-interface/managed/reference/root-agents-md-contract.md templates/agents/AGENTS.managed-block.md`.
 - [ ] Run `PYTHONPATH=src python3 -m pytest tests/test_sync_check.py -q`.
 
 ### G) Implementation Notes
@@ -535,12 +587,13 @@ script, CLI command, wrapper, or API.
 Capture recipe validation tier: fresh-agent executability review plus non-live command-shape
 review for documented `gh` examples.
 
-Capture evidence shape: sanitized issue draft, privacy confirmation, selected existing labels,
-read-only issue-availability preflight summary, approval prompt text, and recorded destination or
-suppression state.
+Capture evidence shape: authorization gate result without exposing sensitive auth data, sanitized
+issue draft, privacy confirmation, selected existing labels, read-only issue-availability
+preflight summary, approval prompt text, and recorded destination or suppression state.
 
 Capture blocker shape: non-secret blocker class, recipe phase, target repository, preflight
-command or route attempted, sanitized reason, fallback route, and user decision needed.
+command or route attempted, sanitized reason, and user decision needed. Failed authorization gate
+is not a blocker to present to the user during normal work; it is silent unavailability.
 
 Runbook `gh` command lines are invocation examples inside the L1 runbook recipe. They are not
 reusable script assets, promoted helpers, wrappers, CLI behavior, or APIs.
@@ -550,7 +603,8 @@ temporarily advertise a missing installed target.
 
 ### H) Open Questions
 
-- `OQ-2` does not block because the runbook has a `gh` lane and browser fallback.
+- `OQ-2` does not block because the runbook uses existing authenticated `gh` only and has an
+  explicit no-fallback rule.
 
 ## E4 - GitHub Issue-Intake Setup Runbook
 
@@ -558,14 +612,16 @@ temporarily advertise a missing installed target.
 
 `E4` - GitHub Issue-Intake Setup Runbook.
 
-Outcome: agents have a managed, approval-gated setup path for repositories where Issues are
-disabled, unavailable, or missing user-approved standard labels/templates.
+Outcome: verified Codeheart organization members have a managed, approval-gated setup path for
+repositories where Issues are disabled, unavailable, or missing maintainer-approved standard
+labels/templates.
 
 ### B) Scope
 
-Add the setup runbook. It is maintainer-facing and external-state-changing. It defines read-only
-preflight, approval gates, Issues enablement, standard label verification/creation, issue-template
-file guidance, config recording, validation, and stop conditions.
+Add the setup runbook. It is maintainer-facing and external-state-changing. It defines
+authorization preflight for verified Codeheart GitHub organization members, read-only repo
+preflight, approval gates, Issues enablement, standard label verification/creation,
+issue-template file guidance, config recording, validation, and stop conditions.
 
 ### C) Files Touched
 
@@ -583,14 +639,18 @@ components/
 ### D) Acceptance Criteria And Size
 
 - Size: `M`
-- Setup runbook has a compact intention block and maintainer-facing audience.
-- Setup runbook checks GitHub remote and `gh` auth before writes.
+- Setup runbook has a compact intention block and `maintainer-facing` audience.
+- Setup runbook checks existing `gh`, GitHub authentication, active
+  `Codeheart-Digital-Solutions` organization membership, and GitHub remote before writes.
+- Setup runbook states missing `gh`, auth, or Codeheart organization membership stops silently in
+  normal capture and stops setup without install/browser/manual fallback.
 - Setup runbook requires explicit approval before `gh repo edit --enable-issues`.
 - Setup runbook requires explicit approval before label creation.
 - Setup runbook treats issue-template file creation as repo-owned source change requiring
   approval.
 - Setup runbook records configured, declined, and disabled config states.
-- Setup runbook routes missing `gh` through tooling readiness and provides browser setup fallback.
+- Setup runbook does not route missing `gh` through tooling readiness and provides no browser or
+  manual setup fallback.
 - Capture runbook points to the setup runbook only after the setup runbook exists.
 - Managed indexes and installed fallback docs expose the setup route after the target exists.
 - Setup runbook records L1 structured-recipe maturity, fresh-agent executability validation tier,
@@ -605,17 +665,17 @@ to this runbook.
 
 - [ ] Create `components/agent-interface/managed/runbooks/enable-github-issues-feedback-intake.md` with audience `maintainer-facing`.
 - [ ] Add compact intention block to `enable-github-issues-feedback-intake.md` covering setup scope, approval gates, and stop boundary.
-- [ ] Add required inputs section for target repository, feedback trigger summary, desired setup level, and privacy confirmation.
-- [ ] Add read-only preflight procedure using `git remote get-url origin` and `gh repo view <owner/repo> --json nameWithOwner,hasIssuesEnabled,viewerPermission,isPrivate`.
-- [ ] Add missing-tool route for absent `gh` through `handle-tooling-readiness.md`.
-- [ ] Add browser fallback path for users who prefer GitHub web setup.
+- [ ] Add required inputs section for target repository, feedback trigger summary, desired setup level, authorization-gate evidence, and privacy confirmation.
+- [ ] Add authorization preflight requiring existing `gh`, successful `gh auth status`, and active membership from `gh api user/memberships/orgs/Codeheart-Digital-Solutions --jq .state`.
+- [ ] Add read-only repo preflight procedure using `git remote get-url origin` and `gh repo view <owner/repo> --json nameWithOwner,hasIssuesEnabled,viewerPermission,isPrivate`.
+- [ ] Add explicit no-fallback rule for absent `gh`, failed auth, or unverifiable Codeheart membership: do not use tooling readiness, do not offer install/repair, do not use browser/manual fallback, and stop setup.
 - [ ] Add approval packet for enabling Issues with command `gh repo edit <owner/repo> --enable-issues`.
 - [ ] Add standard label inventory with `feedback-intake`, `kind-runbook-gap`, `kind-tooling-gap`, `kind-docs-conflict`, `kind-bug`, `kind-feature`, `source-agent-runbook`, `source-user-feedback`, `privacy-sanitized`, and `needs-triage`.
 - [ ] Add label verification command `gh label list --repo <owner/repo> --limit 200 --json name`.
 - [ ] Add approval packet for creating missing labels with `gh label create <name> --repo <owner/repo> --description <description> --color <hex>`.
 - [ ] Add repo-owned issue-template section for `.github/ISSUE_TEMPLATE/repo-feedback.yml` creation after explicit approval.
 - [ ] Add config recording section for `repo_feedback.mode: github_issues` and `repo_feedback.github_standardization`.
-- [ ] Add decline recording section for `repo_feedback.mode: disabled` with `disabled_reason: user_declined_issue_intake`.
+- [ ] Add decline recording section for `repo_feedback.mode: disabled` with `disabled_reason: verified_maintainer_declined_issue_intake`.
 - [ ] Add validation section requiring a second `gh repo view` check, label list check, and `git diff --check` for any repo-owned template file change.
 - [ ] Add L1 structured-recipe metadata to `enable-github-issues-feedback-intake.md` covering recipe ID, purpose, inputs, preconditions, approval class, execution surface, evidence output, validation, and stop conditions.
 - [ ] Add no-promotion note to `enable-github-issues-feedback-intake.md` stating v1 creates no reusable script asset, CLI command, wrapper, API, durable helper, package, and tool surface.
@@ -633,11 +693,14 @@ The only live GitHub command expected during this implementation is read-only co
 
 Setup recipe validation tier: fresh-agent executability review plus read-only command-shape proof.
 
-Setup evidence shape: target repository, read-only issue availability preflight, approval packet,
-approved action summary, config-state diff summary, and validation summary.
+Setup evidence shape: target repository, authorization gate result without exposing sensitive auth
+data, read-only issue availability preflight, approval packet, approved action summary,
+config-state diff summary, and validation summary.
 
-Setup blocker shape: non-secret blocker class, recipe phase, target repository, missing tool,
-missing permission, unavailable Issues state, fallback route, and user decision needed.
+Setup blocker shape: non-secret blocker class, recipe phase, target repository, missing
+permission, unavailable Issues state, and user decision needed. Missing `gh`, failed auth, or
+unverifiable Codeheart membership is setup unavailability and must not become an install or
+browser/manual fallback prompt.
 
 The setup runbook may include short `gh` invocation examples. It must not promote those examples
 into reusable script assets, helpers, wrappers, CLI behavior, packages, or APIs in v1.
@@ -659,8 +722,8 @@ indexes, and release surfaces are synchronized.
 ### B) Scope
 
 Add the new managed files to component manifests, mirror authoring files into packaged resources,
-refresh package manifest checksums and consumer-impact records, update docs indexes, update
-release notes, and add packaged-resource tests.
+refresh package and release manifest versions/checksums and consumer-impact records, update docs
+indexes, update release notes, and add packaged-resource tests.
 
 ### C) Files Touched
 
@@ -670,6 +733,7 @@ components/
     component.yaml                                      # modify
 src/
   codeheart_operating_kit/
+    __init__.py                                         # modify runtime version
     resources/
       components/agent-interface/component.yaml         # mirror
       components/agent-interface/managed/...            # mirror
@@ -684,6 +748,7 @@ docs/
       plan-register.md                                  # modify
 manifest.yaml                                           # modify
 release-notes.md                                        # modify
+pyproject.toml                                          # modify package version
 tests/
   test_packaging_resources.py                           # modify
 ```
@@ -692,6 +757,8 @@ tests/
 
 - Size: `M`
 - Component manifest includes new capture/setup runbooks and item-format reference.
+- Package metadata version, runtime `__version__`, component version, and release manifests align
+  with the selected release version.
 - Packaged resources match authored source files.
 - Installed fallback test covers new files.
 - Root and packaged manifests include the correct component checksum and impact classes.
@@ -706,6 +773,8 @@ Depends on `E3` and `E4`.
 
 - [ ] Add `capture-repo-feedback.md`, `enable-github-issues-feedback-intake.md`, and `repo-feedback-item-format.md` entries to `components/agent-interface/component.yaml`.
 - [ ] Bump `components/agent-interface/component.yaml` from the current source version at execution time to the next patch version recorded in the execution log.
+- [ ] Bump `pyproject.toml` project version to the selected release version recorded in the execution log.
+- [ ] Bump `src/codeheart_operating_kit/__init__.py` `__version__` to the selected release version recorded in the execution log.
 - [ ] Copy updated agent-interface managed files into `src/codeheart_operating_kit/resources/components/agent-interface/managed/`.
 - [ ] Copy updated `components/agent-interface/component.yaml` into `src/codeheart_operating_kit/resources/components/agent-interface/component.yaml`.
 - [ ] Copy updated `templates/agents/AGENTS.managed-block.md` into `src/codeheart_operating_kit/resources/templates/agents/AGENTS.managed-block.md`.
@@ -726,30 +795,31 @@ repo feedback state file.
 
 ### H) Open Questions
 
-- `OQ-1` is resolved during execution by recording the release version chosen for this change.
+- `OQ-1` is resolved in this epic by recording the selected release version; E7 confirms that
+  the package metadata, tag, assets, manifests, and GitHub release all use that same version.
 
-## E6 - Validation, Fresh-Repo Proof, Routing Probe, Review, And Closeout
+## E6 - Validation, Fresh-Repo Proof, Routing Probe, Review, And Release-Candidate Handoff
 
 ### A) Epic ID, Title, And Outcome
 
-`E6` - Validation, Fresh-Repo Proof, Routing Probe, Review, And Closeout.
+`E6` - Validation, Fresh-Repo Proof, Routing Probe, Review, And Release-Candidate Handoff.
 
 Outcome: the implementation is validated locally, route behavior is probed, review evidence is
-recorded, and the plan is ready for PR/release handoff.
+recorded, and the validated commit is ready for release execution.
 
 ### B) Scope
 
 Run focused validation, full validation, read-only GitHub command proof, fresh install proof,
-fresh low-context routing probe, review gate, execution-log closeout, and final register/index
-refresh.
+fresh low-context routing probe, review gate, execution-log validation evidence, and
+release-candidate register/index refresh.
 
 ### C) Files Touched
 
 ```text
 docs/repo/plans/repo-feedback-capture/
-  repo-feedback-capture_implementation_doc.md       # modify status at completion
+  repo-feedback-capture_implementation_doc.md       # modify status at release-candidate checkpoint
   repo-feedback-capture_execution_log.md            # modify
-docs/repo/plans/plan-register.md                    # modify lifecycle snapshot
+docs/repo/plans/plan-register.md                    # modify release-candidate lifecycle snapshot
 ```
 
 ### D) Acceptance Criteria And Size
@@ -761,8 +831,10 @@ docs/repo/plans/plan-register.md                    # modify lifecycle snapshot
   written.
 - Read-only GitHub command proof confirms command shape for issue availability checks.
 - Fresh low-context routing probe shows correct route selection.
+- Negative safety probe confirms missing `gh`, missing auth, or unverifiable Codeheart
+  organization membership produces no feedback prompt and no fallback path.
 - Review gate has no unresolved material findings.
-- Execution log records validation, residual risk, and release handoff.
+- Execution log records validation, residual risk, and release-candidate handoff.
 
 ### E) Dependencies And Critical-Path Notes
 
@@ -777,15 +849,19 @@ Depends on `E5`.
 - [ ] Run `git diff --check`.
 - [ ] Run `PYTHONPATH=src python3 -m pytest tests/test_json_schemas.py tests/test_init.py tests/test_sync_check.py tests/test_packaging_resources.py -q`.
 - [ ] Run `PYTHONPATH=src python3 -m pytest -q`.
-- [ ] Run `gh repo view Codeheart-Digital-Solutions/Codeheart-Operating-Kit --json nameWithOwner,hasIssuesEnabled,viewerPermission,isPrivate` as read-only command proof.
+- [ ] Run `gh auth status` as read-only command proof when `gh` already exists.
+- [ ] Run `gh api user/memberships/orgs/Codeheart-Digital-Solutions --jq .state` as read-only membership-gate proof when `gh` is already authenticated.
+- [ ] Run `gh repo view Codeheart-Digital-Solutions/Codeheart-Operating-Kit --json nameWithOwner,hasIssuesEnabled,viewerPermission,isPrivate` as read-only issue-surface proof after the membership gate passes.
 - [ ] Record fresh install proof from `tests/test_init.py` and packaged fallback proof from `tests/test_packaging_resources.py` in the execution log.
 - [ ] Run a fresh low-context routing probe with a prompt about an unclear repo runbook default in a newly installed Operating Kit repo.
-- [ ] Record probe outcome showing repo feedback capture route, check-first GitHub behavior, and no confusion with Operating Kit feedback.
+- [ ] Record probe outcome showing repo feedback capture route, Codeheart membership gate, check-first GitHub behavior, no fallback prompt when the gate fails, and no confusion with Operating Kit feedback.
+- [ ] Run a negative fresh-agent probe or equivalent isolated command-path review where `gh` is unavailable, unauthenticated, or organization membership is unverifiable.
+- [ ] Record negative-probe outcome showing no repo feedback prompt, no tooling-readiness route, no `gh` install or auth-repair suggestion, no browser/manual fallback, and no local-draft fallback.
 - [ ] Run a read-only review of the implementation against the discovery capability scope and this implementation plan.
 - [ ] Resolve material review findings in source files and record the resolution in the execution log.
-- [ ] Update `docs/repo/plans/repo-feedback-capture/repo-feedback-capture_execution_log.md` with validation summaries and residual risks.
-- [ ] Update `docs/repo/plans/repo-feedback-capture/repo-feedback-capture_implementation_doc.md` status to `completed` after all acceptance criteria pass.
-- [ ] Update `docs/repo/plans/plan-register.md` with completed lifecycle snapshot after completion.
+- [ ] Update `docs/repo/plans/repo-feedback-capture/repo-feedback-capture_execution_log.md` with validation summaries, residual risks, and release-candidate handoff.
+- [ ] Update `docs/repo/plans/repo-feedback-capture/repo-feedback-capture_implementation_doc.md` status to `release-candidate` after E6 acceptance criteria pass.
+- [ ] Update `docs/repo/plans/plan-register.md` with release-candidate lifecycle snapshot after validation.
 - [ ] Run final `git status --short` and record changed files in the execution log.
 
 ### G) Implementation Notes
@@ -798,12 +874,123 @@ ignored local state and record that in the execution log.
 
 - None.
 
+## E7 - Release And Approved Consumer Sync
+
+### A) Epic ID, Title, And Outcome
+
+`E7` - Release And Approved Consumer Sync.
+
+Outcome: the validated Operating Kit release is published, release evidence is recorded, and
+approved consumer repositories are synced to the released version or have explicit blockers
+recorded.
+
+### B) Scope
+
+Follow the Operating Kit release runbook after E6 succeeds. Build and validate release assets,
+publish the Git tag and GitHub release from the validated commit, then sync approved consumer
+repositories through their local Operating Kit update/sync route. Consumer repository names,
+private paths, and repo-specific evidence stay out of this public plan; record them in the
+execution log only in public-safe form.
+
+### C) Files Touched
+
+```text
+docs/repo/plans/repo-feedback-capture/
+  repo-feedback-capture_implementation_doc.md       # modify status at release completion
+  repo-feedback-capture_execution_log.md            # modify release and sync evidence
+docs/repo/plans/plan-register.md                    # modify completed lifecycle snapshot
+
+external release state:
+  git tag v<version>                                # create after validated commit
+  GitHub release v<version>                         # publish after release validation
+  release assets and checksums                      # build and attach
+
+approved consumer repositories:
+  AGENTS.md                                         # sync managed block when changed
+  .codeheart/kit/**                                 # sync managed kit content
+  .codeheart/kit.lock.yaml                          # update installed version/checksums
+```
+
+### D) Acceptance Criteria And Size
+
+- Size: `M`
+- Release runbook has been followed from the E6 validated commit.
+- Release version is recorded and matches package metadata, release assets, manifests, tag, and
+  GitHub release.
+- Release notes cover instruction, validator, and security/safety policy impact.
+- Release assets and checksum files are built and recorded.
+- Installer checksum-mismatch failure and macOS release-asset install validation are recorded.
+- Windows validation is recorded through GitHub Actions or a release blocker is recorded.
+- Git tag and GitHub release point to the validated commit.
+- Approved consumer repositories are synced to the released version, committed/pushed according
+  to each repository's policy, or recorded with explicit blockers.
+- Consumer sync evidence confirms installed kit version, route target presence, and no unwanted
+  consumer-owned overwrite.
+- Implementation document, execution log, and plan register reflect completed release and sync.
+
+### E) Dependencies And Critical-Path Notes
+
+Depends on `E6`. Stop before release publication if the source tree changes after E6 validation
+without rerunning the affected validation. Stop before consumer sync when a consumer repository
+has unrelated dirty state that makes managed sync unsafe under that repository's local
+instructions.
+
+### F) Tasks Checklist
+
+- [ ] Read `docs/repo/runbooks/release-operating-kit.md` before release work.
+- [ ] Confirm release authority, target version, target commit, and consumer-sync scope in the execution log.
+- [ ] Re-run release-critical validation if any source file changed after E6.
+- [ ] Run `python3 scripts/build-release-assets.py --version <version> --output-dir dist`.
+- [ ] Record release asset filenames and checksum filenames.
+- [ ] Verify checksum-mismatch failure behavior for the installer path covered by the release runbook.
+- [ ] Validate macOS install from the built release asset in an isolated temporary repository.
+- [ ] Validate Windows install through GitHub Actions, or stop and record a release blocker.
+- [ ] Confirm release notes and manifests reference the final version and asset checksums.
+- [ ] Create the Git tag `v<version>` from the validated commit.
+- [ ] Publish the GitHub release with release notes, manifests, assets, installers, and checksums.
+- [ ] Record release URL, tag, asset URLs, checksums, validation evidence, and residual risk in the execution log.
+- [ ] For each approved consumer repository, read its local `AGENTS.md` before syncing.
+- [ ] For each approved consumer repository, record `git status --short` and preserve unrelated changes.
+- [ ] For each approved consumer repository, run the Operating Kit update/sync path to the released version.
+- [ ] For each approved consumer repository, validate `.codeheart/kit.lock.yaml` records the released version and the repo feedback route targets exist.
+- [ ] For each approved consumer repository, run `git diff --check` for touched files.
+- [ ] For each approved consumer repository, commit and push the sync changes according to local repository policy, or record the branch/PR/blocker handoff.
+- [ ] Update `docs/repo/plans/repo-feedback-capture/repo-feedback-capture_execution_log.md` with release and consumer-sync evidence.
+- [ ] Update `docs/repo/plans/repo-feedback-capture/repo-feedback-capture_implementation_doc.md` status to `completed`.
+- [ ] Update `docs/repo/plans/plan-register.md` with completed lifecycle snapshot.
+- [ ] Run final `git status --short` in the Operating Kit repo and record changed files in the execution log.
+
+### G) Implementation Notes
+
+Release and GitHub publication are external-state-changing actions. Do not create tags, publish
+GitHub releases, or mutate consumer repositories unless release authority and consumer-sync scope
+are explicit in the execution log.
+
+Consumer sync must use each repository's own instructions and preserve unrelated work. If managed
+sync is compatible with dirty unrelated files, update carefully and record the evidence. If the
+target managed files are dirty or intent is unclear, stop for that repository and record the
+blocker rather than overwriting.
+
+Keep public-core safety: do not add private consumer repo names, local machine paths, secrets,
+tokens, raw local logs, or private business context to public release notes, manifests, or this
+plan. The execution log may record sanitized consumer-sync evidence.
+
+Release URLs and consumer-sync outcomes are post-release evidence. If recording them changes docs
+after the release tag is published, treat that follow-up as documentation-only closeout evidence;
+do not change release behavior after tagging without rerunning validation and publishing a new
+release.
+
+### H) Open Questions
+
+- `OQ-1` release version is resolved in this epic by the confirmed target version.
+- Consumer-sync repository list is resolved at execution time from explicit release authority.
+
 # Section 4 - Future Planning
 
 ## 4.1 Deferred Tasks
 
-- CLI-assisted issue drafting is deferred until manual repo feedback capture produces real issue
-  examples and stable fields.
+- CLI-assisted issue drafting is deferred until maintainer-run repo feedback capture produces real
+  issue examples and stable fields.
 - Reusable script assets for feedback drafting and setup are deferred until repeated usage proves
   deterministic mechanics that are safer as tested scripts than as L1 runbook recipes.
 - Label/template sync automation is deferred until repeated repo drift makes manual setup costly.
@@ -812,8 +999,9 @@ ignored local state and record that in the execution log.
 - GitHub Projects, dashboards, and milestone automation are deferred until feedback volume
   justifies them.
 - Private security disclosure handling is deferred to a separate security disclosure discovery.
-- Local draft workflow automation is deferred because local drafts are explicit opt-in and not
-  the preferred durable inbox.
+- Local draft workflow automation is deferred because local drafts are not part of v1 and should
+  not become a fallback for missing `gh`, missing authentication, or unverifiable Codeheart
+  organization membership.
 
 ## 4.2 Future Considerations
 
@@ -835,3 +1023,9 @@ ignored local state and record that in the execution log.
   evidence.
 - 2026-06-29: Patched Operating Kit 0.1.17 alignment for current component-version baseline,
   recipe validation tier, evidence shape, blocker shape, and explicit no-script-promotion scope.
+- 2026-07-02: Patched review findings for disabled-mode suppression semantics, root
+  `AGENTS.md` contract coverage, canonical maintainer-facing audience, authorization-gate
+  evidence wording, and negative no-fallback validation.
+- 2026-07-02: Added explicit release and approved consumer-sync epic, including package-version
+  alignment, release asset validation, GitHub publication, and consumer sync evidence.
+- 2026-07-02: Activated implementation after explicit user goal to implement the plan.

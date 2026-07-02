@@ -1,4 +1,4 @@
-Last updated: 2026-06-29T19:42:32Z (UTC)
+Last updated: 2026-07-02T13:16:41Z (UTC)
 
 # Docs Index
 
@@ -79,6 +79,8 @@ This folder contains public Codeheart Operating Kit documentation.
   `docs/repo/plans/repo-feedback-capture/repo-feedback-capture_discovery_doc.md`
 - Repo feedback capture implementation plan:
   `docs/repo/plans/repo-feedback-capture/repo-feedback-capture_implementation_doc.md`
+- Repo feedback capture execution log:
+  `docs/repo/plans/repo-feedback-capture/repo-feedback-capture_execution_log.md`
 - Plan-register dirty target safety implementation plan:
   `docs/repo/plans/plan-register-dirty-target-safety/plan-register-dirty-target-safety_implementation_doc.md`
 - Plan-register dirty target safety execution log:

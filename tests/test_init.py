@@ -50,6 +50,7 @@ def test_init_writes_standard_surfaces(tmp_path):
     assert config["setup_purpose"] == "company-automation"
     assert config["local_consumer_layer"]["local_machine_layer_path"] == ".codeheart/local/"
     assert "portfolio" not in config
+    assert "repo_feedback" not in config
 
 
 def test_init_can_omit_purpose_metadata(tmp_path):

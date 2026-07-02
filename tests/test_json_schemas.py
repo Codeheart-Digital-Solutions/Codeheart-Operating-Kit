@@ -77,6 +77,27 @@ def base_config():
     }
 
 
+def github_repo_feedback():
+    return {
+        "mode": "github_issues",
+        "destination": {
+            "type": "github_issues",
+            "owner": "Codeheart-Digital-Solutions",
+            "repo": "Codeheart-Operating-Kit",
+        },
+        "authorization": {
+            "organization": "Codeheart-Digital-Solutions",
+            "require_verified_membership": True,
+            "require_gh_cli": True,
+            "unavailable_behavior": "silent",
+        },
+        "github_standardization": {
+            "labels": "not_configured",
+            "issue_templates": "not_configured",
+        },
+    }
+
+
 def kit_config_schema():
     return json.loads((ROOT / "schemas/kit-config.schema.json").read_text(encoding="utf-8"))
 
@@ -138,6 +159,125 @@ def test_kit_config_schema_accepts_no_portfolio_block():
     config = base_config()
 
     assert_config_valid(config)
+
+
+def test_kit_config_schema_accepts_no_repo_feedback_block():
+    config = base_config()
+
+    assert_config_valid(config)
+
+
+def test_kit_config_schema_accepts_valid_repo_feedback_github_issues_config():
+    config = base_config()
+    config["repo_feedback"] = github_repo_feedback()
+
+    assert_config_valid(config)
+
+
+def test_kit_config_schema_accepts_valid_repo_feedback_disabled_config():
+    config = base_config()
+    config["repo_feedback"] = {
+        "mode": "disabled",
+        "disabled_reason": "verified_maintainer_declined_issue_intake",
+    }
+
+    assert_config_valid(config)
+
+
+def test_kit_config_schema_rejects_repo_feedback_github_issues_without_destination_type():
+    config = base_config()
+    config["repo_feedback"] = github_repo_feedback()
+    del config["repo_feedback"]["destination"]["type"]
+
+    assert_config_invalid(config, "missing type")
+
+
+def test_kit_config_schema_rejects_repo_feedback_github_issues_without_destination_owner_or_repo():
+    for missing_field in ["owner", "repo"]:
+        config = base_config()
+        config["repo_feedback"] = github_repo_feedback()
+        del config["repo_feedback"]["destination"][missing_field]
+
+        assert_config_invalid(config, f"missing {missing_field}")
+
+
+def test_kit_config_schema_rejects_repo_feedback_github_issues_without_authorization_policy():
+    config = base_config()
+    config["repo_feedback"] = github_repo_feedback()
+    del config["repo_feedback"]["authorization"]
+
+    assert_config_invalid(config, "missing authorization")
+
+
+def test_kit_config_schema_rejects_repo_feedback_github_issues_with_wrong_organization():
+    config = base_config()
+    config["repo_feedback"] = github_repo_feedback()
+    config["repo_feedback"]["authorization"]["organization"] = "Other-Organization"
+
+    assert_config_invalid(config, "expected const Codeheart-Digital-Solutions")
+
+
+def test_kit_config_schema_rejects_repo_feedback_github_issues_with_missing_or_false_authorization_policy():
+    for field, value in [
+        ("require_verified_membership", False),
+        ("require_gh_cli", False),
+        ("unavailable_behavior", "prompt"),
+    ]:
+        config = base_config()
+        config["repo_feedback"] = github_repo_feedback()
+        config["repo_feedback"]["authorization"][field] = value
+
+        assert_config_invalid(config, "expected const")
+
+        config = base_config()
+        config["repo_feedback"] = github_repo_feedback()
+        del config["repo_feedback"]["authorization"][field]
+
+        assert_config_invalid(config, f"missing {field}")
+
+
+def test_kit_config_schema_rejects_repo_feedback_disabled_without_reason():
+    config = base_config()
+    config["repo_feedback"] = {"mode": "disabled"}
+
+    assert_config_invalid(config, "missing disabled_reason")
+
+
+def test_kit_config_schema_rejects_invalid_repo_feedback_github_standardization_values():
+    for field in ["labels", "issue_templates"]:
+        config = base_config()
+        config["repo_feedback"] = github_repo_feedback()
+        config["repo_feedback"]["github_standardization"][field] = "required"
+
+        assert_config_invalid(config, "invalid enum required")
+
+
+def test_kit_config_schema_rejects_repo_feedback_mode_incompatible_fields():
+    config = base_config()
+    config["repo_feedback"] = github_repo_feedback()
+    config["repo_feedback"]["disabled_reason"] = "other"
+
+    assert_config_invalid(config, "unknown disabled_reason")
+
+    config = base_config()
+    config["repo_feedback"] = {
+        "mode": "disabled",
+        "disabled_reason": "other",
+        "destination": {
+            "type": "github_issues",
+            "owner": "Codeheart-Digital-Solutions",
+            "repo": "Codeheart-Operating-Kit",
+        },
+    }
+
+    assert_config_invalid(config, "unknown destination")
+
+
+def test_kit_config_schema_rejects_unknown_repo_feedback_mode():
+    config = base_config()
+    config["repo_feedback"] = {"mode": "local_draft_only"}
+
+    assert_config_invalid(config, "invalid enum local_draft_only")
 
 
 def test_kit_config_schema_accepts_old_config_without_local_machine_layer_path():

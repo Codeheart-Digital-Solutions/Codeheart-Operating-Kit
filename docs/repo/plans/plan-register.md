@@ -1,4 +1,4 @@
-Last updated: 2026-06-29T20:23:54Z (UTC)
+Last updated: 2026-07-02T13:16:41Z (UTC)
 
 # Plan Register
 
@@ -19,8 +19,9 @@ Coverage note: This register currently lists public Operating Kit repository pla
 entered during plan-register adoption. Earlier repository plans may be added during later register
 maintenance. `OK-PR-022` is the completed implementation plan for generic runbook-to-script
 promotion doctrine, including reusable script asset guidance, current doctrine alignment, and
-instruction-only release readiness. `OK-PR-021` is the draft implementation plan for Operating Kit-guided repo
-feedback capture with check-first GitHub Issues availability and demand-driven issue-intake setup.
+instruction-only release readiness. `OK-PR-021` is the release-candidate implementation plan for Operating Kit-guided repo
+feedback capture with Codeheart organization membership gating, check-first GitHub Issues
+availability, demand-driven issue-intake setup, release, and approved consumer sync scope.
 
 ## Entries
 
@@ -115,12 +116,13 @@ Purpose: Implement managed Operating Kit repo feedback capture by adding optiona
 config schema support, capture and setup runbooks, item-format guidance, installed root route
 visibility, packaged-resource mirrors, validation, release surfaces, and fresh-repo proof while
 keeping GitHub issue creation and repository setup approval-gated.
-Status: draft
+Status: release-candidate
 Owner / repository: Codeheart-Operating-Kit
 Canonical docs:
 docs/repo/plans/repo-feedback-capture/repo-feedback-capture_implementation_doc.md
+docs/repo/plans/repo-feedback-capture/repo-feedback-capture_execution_log.md
 Created: 2026-06-29
-Last updated: 2026-06-29T13:58:49Z (UTC)
+Last updated: 2026-07-02T13:16:41Z (UTC)
 Priority / ordering note: Should execute after `OK-PR-020` capability scope approval and before
 agents are expected to use repo feedback capture in consumer repositories.
 
@@ -137,11 +139,19 @@ Session refs:
 - created: 2026-06-29, not recorded, drafted after user approved the repo feedback capture
   recommendations, including check-first GitHub Issues behavior, demand-driven setup,
   disabled/suppressed state after decline, and missing-label fallback.
+- material update: 2026-07-02, active goal, activated implementation and created the execution
+  log after plan refinements for Codeheart organization membership gating, no-fallback behavior,
+  release, and approved consumer sync.
+- material update: 2026-07-02, active goal, completed source implementation, validation,
+  packaged-resource proof, GitHub authorization proof, routing probe, and review-gate fix before
+  release execution.
 
 Coordination note:
-- Generic Operating Kit implementation candidate. Execution should not configure GitHub Issues,
-  labels, templates, or live issues in consumer repositories; it should ship managed guidance and
-  schema support first.
+- Generic Operating Kit implementation candidate.
+- Consumer impact classification: instruction-only change, validator-only change, and security or
+  safety policy change.
+- Execution should not create live repo feedback issues. Release and consumer sync are in scope
+  after validation and explicit release authority.
 
 ## OK-PR-020 - Repo Feedback Capture And Issue Intake Discovery
 
@@ -152,12 +162,12 @@ already works, route to it when available, handle demand-driven setup only when 
 unavailable or incomplete, suppress repeated prompts after user decline, classify issues, protect
 privacy, and promote accepted feedback into direct patches, batches, discovery, or implementation
 planning.
-Status: draft
+Status: implementation-handoff-ready
 Owner / repository: Codeheart-Operating-Kit
 Canonical docs:
 docs/repo/plans/repo-feedback-capture/repo-feedback-capture_discovery_doc.md
 Created: 2026-06-29
-Last updated: 2026-06-29T13:50:21Z (UTC)
+Last updated: 2026-07-02T13:16:41Z (UTC)
 Priority / ordering note: Should be reviewed before implementing managed repo-feedback capture
 routes, check-first GitHub issue availability, issue-intake setup runbooks, config schema support,
 or prompt-suppression behavior.
@@ -180,6 +190,8 @@ Session refs:
 - material update: 2026-06-29, not recorded, clarified that agents should check whether GitHub
   Issues already works before offering setup, following the Operating Kit feedback intake
   precedent where Issues were already enabled.
+- material update: 2026-07-02, active goal, handed off to active implementation in `OK-PR-021`
+  after Codeheart organization membership gating and no-fallback behavior were accepted.
 
 Coordination note:
 - Generic Operating Kit doctrine candidate. Repo-specific issue destinations and GitHub settings

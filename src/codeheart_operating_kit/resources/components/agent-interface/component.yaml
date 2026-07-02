@@ -1,7 +1,7 @@
 schema_version: 1
 component:
   id: agent-interface
-  version: "0.1.17"
+  version: "0.1.19"
   name: Agent Interface
   description: Managed root AGENTS contract, onboarding, update-check, and repair guidance.
   profiles:
@@ -9,7 +9,8 @@ component:
   consumer_impact:
     - "component addition"
     - "instruction-only change"
-    - "consumer migration required"
+    - "validator-only change"
+    - "security or safety policy change"
   ownership_modes:
     - managed
     - template
@@ -50,6 +51,9 @@ component:
     - source: components/agent-interface/managed/reference/kit-feedback-item-format.md
       target: .codeheart/kit/docs/agent-interface/reference/kit-feedback-item-format.md
       ownership: managed
+    - source: components/agent-interface/managed/reference/repo-feedback-item-format.md
+      target: .codeheart/kit/docs/agent-interface/reference/repo-feedback-item-format.md
+      ownership: managed
     - source: components/agent-interface/managed/runbooks/conduct-first-run-onboarding.md
       target: .codeheart/kit/docs/agent-interface/runbooks/conduct-first-run-onboarding.md
       ownership: managed
@@ -67,6 +71,12 @@ component:
       ownership: managed
     - source: components/agent-interface/managed/runbooks/submit-kit-feedback.md
       target: .codeheart/kit/docs/agent-interface/runbooks/submit-kit-feedback.md
+      ownership: managed
+    - source: components/agent-interface/managed/runbooks/capture-repo-feedback.md
+      target: .codeheart/kit/docs/agent-interface/runbooks/capture-repo-feedback.md
+      ownership: managed
+    - source: components/agent-interface/managed/runbooks/enable-github-issues-feedback-intake.md
+      target: .codeheart/kit/docs/agent-interface/runbooks/enable-github-issues-feedback-intake.md
       ownership: managed
     - source: templates/agents/AGENTS.managed-block.md
       target: AGENTS.md
