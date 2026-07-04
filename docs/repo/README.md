@@ -1,4 +1,4 @@
-Last updated: 2026-07-04T22:00:01Z (UTC)
+Last updated: 2026-07-04T23:31:11Z (UTC)
 
 # Repo Documentation
 
@@ -23,9 +23,9 @@ This folder contains public repository governance for Codeheart Operating Kit.
 - `plans/README.md`: repository-level discovery and implementation plans.
 - `plans/plan-register.md`: lightweight index of registered Operating Kit repository plans.
 - `plans/operating-kit-self-contained-bootstrap/operating-kit-self-contained-bootstrap_implementation_doc.md`:
-  active implementation plan for a self-contained Go CLI, macOS and Windows binary release packs,
-  legacy Python-wheel migration, explicit behavior parity tests, and release-stage validation for
-  the Operating Kit bootstrap.
+  completed implementation plan for the released self-contained Go CLI, macOS and Windows binary
+  release packs, legacy Python-wheel migration, explicit behavior parity tests, and release-stage
+  validation for the Operating Kit bootstrap.
 - `plans/operating-kit-self-contained-bootstrap/operating-kit-self-contained-bootstrap_execution_log.md`:
   execution evidence and per-epic review log for the self-contained bootstrap implementation.
 - `plans/runbook-to-script-promotion-standard/runbook-to-script-promotion-standard_discovery_doc.md`:

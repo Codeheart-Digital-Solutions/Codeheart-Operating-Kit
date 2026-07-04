@@ -1,4 +1,4 @@
-Last updated: 2026-07-04T22:31:35Z (UTC)
+Last updated: 2026-07-04T23:31:11Z (UTC)
 Created: 2026-07-04
 Status: completed
 
@@ -931,12 +931,97 @@ EP-09:
     and staged pack hashes.
   - Verdict: pass.
 
+## Release Evidence
+
+Release run:
+
+- User approval: explicit chat request to make the new release.
+- Release version: `v0.1.20`.
+- Release source commit: `e3acfb2717d707ff9a5f523db9440e9da8d34834`.
+- Release source commit message: `Release Operating Kit 0.1.20 self-contained bootstrap`.
+- Release tag: `v0.1.20`, pushed to GitHub.
+- Release URL:
+  `https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/tag/v0.1.20`.
+- Published at: `2026-07-04T23:28:52Z`.
+- `main` was fast-forwarded to the validated release source commit before tagging and publishing.
+
+Published assets:
+
+- `manifest.yaml`
+- `bootstrap.md`
+- `install.sh`
+- `install.ps1`
+- `release-notes.md`
+- `codeheart-operating-kit-0.1.20-macos-universal.zip`
+- `codeheart-operating-kit-0.1.20-macos-universal.zip.sha256`
+- `codeheart-operating-kit-0.1.20-windows-x64.zip`
+- `codeheart-operating-kit-0.1.20-windows-x64.zip.sha256`
+
+Live manifest checksums:
+
+- `bootstrap.md`:
+  `33337c85754ddf8e838af8d5cf4fced19ed7e3c9dcb68d49e75398d18e750ad8`
+- `install.sh`:
+  `ee8a975f81454ee8c18cc4bcea21c984e85029696bc862b7ce8249b32e56104c`
+- `install.ps1`:
+  `1db4ba0a2c7c3a1073672a4b6ff634e682e8795336009e7b94c6b2f8ffbb4758`
+- `release-notes.md`:
+  `fc0930d36058e0e560b6d99bea71d56df58370a1b44facd1345f45b0fb6a9e2a`
+- `codeheart-operating-kit-0.1.20-macos-universal.zip`:
+  `19eafcfbcfffe7daa1baf256d6b05aee356417d1939c8f302e7015105061036e`
+- `codeheart-operating-kit-0.1.20-macos-universal.zip.sha256`:
+  `97eaaf2b13c999852509345114a336c36018b05502693a4c2cb60fe76d6f3cec`
+- `codeheart-operating-kit-0.1.20-windows-x64.zip`:
+  `b3d9c32d1b06fc60ced465eefc07d27078b69f09dc3902260defccd7a928c799`
+- `codeheart-operating-kit-0.1.20-windows-x64.zip.sha256`:
+  `4188a17bc28e200b81166a121950156dd72401f6d62ca2215339dab08204c382`
+
+Release-source validation:
+
+- Local `python3 scripts/build-release-assets.py --output-dir dist`: passed and produced the
+  macOS universal and Windows x64 packs.
+- Local `go test -count=1 ./...`: passed.
+- Local `uv run --no-project --with pytest --with pip --with setuptools --with wheel python -m
+  pytest tests/test_go_cli_parity.py tests/test_release_assets.py tests/test_install_metadata.py
+  -q`: passed, 31 tests.
+- Local `python3 scripts/validate-public-core.py`: passed.
+- Local `python3 scripts/validate-markdown-headers.py`: passed.
+- Local `python3 scripts/validate-json-schemas.py`: passed.
+- Local `python3 scripts/validate-release-manifest.py`: passed.
+- Local `git diff --check`: passed.
+- Local macOS restricted-path staged install: passed with `python`, `python3`, `pip`, and `pip3`
+  absent from installer `PATH`; bad checksum failed closed; valid install succeeded; installed
+  binary reported `codeheart-operating-kit 0.1.20`.
+- Branch Validate run before `main` fast-forward:
+  `https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/actions/runs/28723014116`
+  passed for commit `e3acfb2717d707ff9a5f523db9440e9da8d34834`.
+- `main` push Validate run:
+  `https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/actions/runs/28723062205`
+  passed for commit `e3acfb2717d707ff9a5f523db9440e9da8d34834`.
+- Public release smoke workflow-dispatch run:
+  `https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/actions/runs/28723075077`
+  passed with `release_version=v0.1.20`, including macOS and Windows public release download
+  checks plus normal macOS and Windows validation lanes.
+
+Signing and distribution boundary:
+
+- `v0.1.20` is published as an unsigned internal/prototype Operating Kit release.
+- The release is not Apple-notarized and does not include Windows Authenticode signing.
+- The installer trust gate for this release is the published SHA-256 manifest, checksum sidecars,
+  and staged binary smoke tests.
+- Broad external distribution remains gated on a later signing/notarization decision.
+
+Consumer sync:
+
+- Named consumer repository sync was not performed in this release run.
+- Consumers can install or repair through the published `v0.1.20` bootstrap and platform packs.
+
 ## Residual Risk
 
-- Operating Kit `v0.1.19` is available for this checkout, but applying it is outside this
-  implementation scope unless the user explicitly requests the update.
 - Go was installed locally with explicit user approval as a maintainer source-build prerequisite.
   This remains a maintainer dependency only, not a consumer install prerequisite.
 - Go fallback version synchronization is not yet automatically guarded against future release
   metadata drift.
-- Public release publication remains deferred to a later explicit release run.
+- `v0.1.20` is unsigned and not notarized; broad external distribution should wait for a signing
+  and notarization decision.
+- Consumer repository sync remains separate work and was not performed during this release run.
