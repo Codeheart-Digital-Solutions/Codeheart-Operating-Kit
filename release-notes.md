@@ -1,12 +1,12 @@
-Last updated: 2026-07-04T22:26:18Z (UTC)
+Last updated: 2026-07-04T23:21:37Z (UTC)
 
 # Codeheart Operating Kit Release Notes
 
-## Unreleased Source Notes
+## v0.1.20 Release Notes
 
-These notes describe source changes prepared for the self-contained bootstrap release run. They are
-not a public release announcement, and staged local `dist/` assets are not live public release
-assets until the release run publishes them.
+`v0.1.20` introduces the self-contained Operating Kit bootstrap path. New macOS and Windows
+installers install a compiled CLI release pack, so fresh consumers do not need Python, pip, Go, or
+a package manager to complete base onboarding.
 
 ### Included
 
@@ -41,11 +41,10 @@ assets until the release run publishes them.
 - Source validation covers Go tests, Python parity tests, installer tests, release asset tests,
   release manifest validation, public-core validation, and Markdown timestamp validation before a
   public release run.
-- GitHub Actions Validate run `28721439492` passed macOS and Windows validation, including staged
-  installers with Python and pip absent from the installer `PATH`.
-- Release-candidate packs are generated as staged evidence only. Public release publication,
-  release URLs, live manifest checksums, and signing/notarization status are recorded during the
-  later release run.
+- GitHub Actions Validate run `28721777479` passed macOS and Windows source validation, including
+  staged installers with Python and pip absent from the installer `PATH`.
+- Public release publication records the final release URL, live manifest checksums, and
+  signing/notarization boundary in the implementation execution log.
 
 ## v0.1.19 Release Notes
 

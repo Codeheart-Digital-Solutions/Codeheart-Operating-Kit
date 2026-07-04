@@ -160,10 +160,10 @@ def test_current_dist_assets_match_root_manifest_when_present():
         "install.sh": ROOT / "install.sh",
         "install.ps1": ROOT / "install.ps1",
         "release-notes.md": ROOT / "release-notes.md",
-        f"codeheart-operating-kit-{__version__}-macos.tar.gz": ROOT / "dist" / f"codeheart-operating-kit-{__version__}-macos.tar.gz",
-        f"codeheart-operating-kit-{__version__}-macos.tar.gz.sha256": ROOT / "dist" / f"codeheart-operating-kit-{__version__}-macos.tar.gz.sha256",
-        f"codeheart-operating-kit-{__version__}-windows.zip": ROOT / "dist" / f"codeheart-operating-kit-{__version__}-windows.zip",
-        f"codeheart-operating-kit-{__version__}-windows.zip.sha256": ROOT / "dist" / f"codeheart-operating-kit-{__version__}-windows.zip.sha256",
+        f"codeheart-operating-kit-{__version__}-macos-universal.zip": ROOT / "dist" / f"codeheart-operating-kit-{__version__}-macos-universal.zip",
+        f"codeheart-operating-kit-{__version__}-macos-universal.zip.sha256": ROOT / "dist" / f"codeheart-operating-kit-{__version__}-macos-universal.zip.sha256",
+        f"codeheart-operating-kit-{__version__}-windows-x64.zip": ROOT / "dist" / f"codeheart-operating-kit-{__version__}-windows-x64.zip",
+        f"codeheart-operating-kit-{__version__}-windows-x64.zip.sha256": ROOT / "dist" / f"codeheart-operating-kit-{__version__}-windows-x64.zip.sha256",
     }
     missing = [path for path in local_paths.values() if not path.exists()]
     if missing:
