@@ -1,6 +1,49 @@
-Last updated: 2026-07-02T13:16:41Z (UTC)
+Last updated: 2026-07-04T22:00:01Z (UTC)
 
 # Codeheart Operating Kit Release Notes
+
+## Unreleased Source Notes
+
+These notes describe source changes prepared for the self-contained bootstrap release run. They are
+not a public release announcement, and staged local `dist/` assets are not live public release
+assets until the release run publishes them.
+
+### Included
+
+- The root CLI has a self-contained Go implementation for `onboard`, `inspect`, `init`, `sync`,
+  `check`, and `update-check`, with Python-vs-Go behavior parity tests for the current command
+  contract.
+- macOS release candidates build
+  `codeheart-operating-kit-<version>-macos-universal.zip` with a universal
+  `bin/codeheart-operating-kit` binary.
+- Windows release candidates build `codeheart-operating-kit-<version>-windows-x64.zip` with
+  `bin/codeheart-operating-kit.exe`.
+- macOS and Windows installers verify checksums, extract staged release packs, smoke-test the
+  staged binary, and only then replace the runnable command.
+- Legacy Python-wheel installs are migrated by installing the self-contained binary as the new
+  runnable command while preserving existing legacy files for a later cleanup path.
+- Base onboarding no longer offers, checks, installs, or repairs optional native capability tools.
+  Optional tooling readiness remains task-specific and route-driven.
+
+### Consumer Impact
+
+- `consumer migration required`: consumers with an existing Python-wheel CLI install must run the
+  installer repair or migration path to make the self-contained binary the runnable command.
+- `validator-only change`: release manifest and release asset validation now accept
+  `macos-universal` and `windows-x64` binary pack platforms.
+- `instruction-only change`: bootstrap and release guidance describe self-contained platform
+  packs and the no-Python base onboarding path.
+- `security or safety policy change`: installers fail closed on checksum mismatch and staged
+  binary validation failure, and the release runbook records the unsigned staged-asset boundary.
+
+### Validation
+
+- Source validation covers Go tests, Python parity tests, installer tests, release asset tests,
+  release manifest validation, public-core validation, and Markdown timestamp validation before a
+  public release run.
+- Release-candidate packs are generated as staged evidence only. Public release publication,
+  release URLs, live manifest checksums, and signing/notarization status are recorded during the
+  later release run.
 
 ## v0.1.19 Release Notes
 

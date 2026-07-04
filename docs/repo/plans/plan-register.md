@@ -1,4 +1,4 @@
-Last updated: 2026-07-02T13:16:41Z (UTC)
+Last updated: 2026-07-04T20:27:00Z (UTC)
 
 # Plan Register
 
@@ -17,13 +17,59 @@ maintenance.
 
 Coverage note: This register currently lists public Operating Kit repository plans that have been
 entered during plan-register adoption. Earlier repository plans may be added during later register
-maintenance. `OK-PR-022` is the completed implementation plan for generic runbook-to-script
-promotion doctrine, including reusable script asset guidance, current doctrine alignment, and
-instruction-only release readiness. `OK-PR-021` is the completed implementation plan for Operating Kit-guided repo
-feedback capture with Codeheart organization membership gating, check-first GitHub Issues
-availability, demand-driven issue-intake setup, release, and approved consumer sync scope.
+maintenance. `OK-PR-024` is the draft implementation plan for removing Python/pip from the base
+Operating Kit bootstrap by porting root commands to a self-contained Go CLI, adding macOS and
+Windows binary release packs, legacy Python-wheel migration, and explicit behavior parity tests.
+`OK-PR-022` is the completed implementation plan for generic runbook-to-script promotion doctrine,
+including reusable script asset guidance, current doctrine alignment, and instruction-only release
+readiness. `OK-PR-021` is the completed implementation plan for Operating Kit-guided repo feedback
+capture with Codeheart organization membership gating, check-first GitHub Issues availability,
+demand-driven issue-intake setup, release, and approved consumer sync scope.
 
 ## Entries
+
+## OK-PR-024 - Operating Kit Self-Contained Bootstrap Implementation
+
+Type: implementation-plan
+Purpose: Implement a self-contained Operating Kit bootstrap for fresh macOS and Windows machines
+by replacing the Python-wheel-first root CLI distribution with a Go CLI, binary release packs,
+legacy Python-wheel migration, and behavior parity tests against the current Python CLI.
+Status: active
+Owner / repository: Codeheart-Operating-Kit
+Canonical docs:
+docs/repo/plans/operating-kit-self-contained-bootstrap/operating-kit-self-contained-bootstrap_implementation_doc.md
+Created: 2026-07-04
+Last updated: 2026-07-04T20:27:00Z (UTC)
+Priority / ordering note: Drafted from the accepted HQ discovery capability scope. This plan
+should be reviewed before changing release assets, installers, root CLI distribution, or
+cross-platform bootstrap behavior.
+
+Relations:
+- depends-on: Codeheart-HQ:CODEHEART-HQ-PR-009 - Operating Kit Self-Contained Bootstrap Discovery
+- related: OK-PR-017 - Consumer Runtime Materialization Hardening Implementation
+- related: OK-PR-010 - Tooling Environment Readiness Implementation
+- related: docs/repo/runbooks/change-operating-kit.md
+- related: docs/repo/runbooks/release-operating-kit.md
+
+Session refs:
+- created: 2026-07-04, not recorded, drafted after the user approved the discovery capability
+  scope, including Go as the root CLI implementation language, macOS and Windows first-class
+  support, legacy Python-wheel migration, release-stage trust gates, and explicit behavior parity
+  tests.
+- material update: 2026-07-04, not recorded, revised the draft after planning review and user
+  approval to clarify release-candidate boundaries, setup-only onboarding for optional native
+  capabilities, incremental parity baselines, atomic installer migration, mandatory macOS
+  universal assets, and Python installer flag removal or deprecation behavior.
+- material update: 2026-07-04, active goal, activated the implementation plan, created the
+  execution log, recorded source preflight evidence, and confirmed publication remains out of
+  scope.
+
+Coordination note:
+- Canonical source implementation plan for the HQ-owned discovery.
+- Public release publication, tagging, and named consumer sync are not in this implementation plan
+  unless separately approved through the release runbook.
+- Consumer impact classification: migration required, validator-only change, instruction-only
+  change, and security or safety policy change.
 
 ## OK-PR-023 - Plan Register Dirty Target Safety Implementation
 

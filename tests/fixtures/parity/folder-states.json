@@ -1,0 +1,37 @@
+[
+  {
+    "id": "missing-folder",
+    "setup": "missing",
+    "expected_mode": "new-folder-setup"
+  },
+  {
+    "id": "empty-folder",
+    "setup": "empty",
+    "expected_mode": "new-folder-setup"
+  },
+  {
+    "id": "existing-folder",
+    "setup": "existing",
+    "expected_mode": "existing-folder-setup"
+  },
+  {
+    "id": "technical-project",
+    "setup": "technical",
+    "expected_mode": "existing-technical-project-adoption"
+  },
+  {
+    "id": "existing-kit",
+    "setup": "existing-kit",
+    "expected_mode": "existing-operating-kit-repair"
+  },
+  {
+    "id": "file-path",
+    "setup": "file",
+    "expected_mode": "ambiguous-folder-stop"
+  },
+  {
+    "id": "many-file-folder",
+    "setup": "many-files",
+    "expected_mode": "ambiguous-folder-stop"
+  }
+]

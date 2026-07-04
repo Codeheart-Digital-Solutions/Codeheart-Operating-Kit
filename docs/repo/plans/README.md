@@ -1,4 +1,4 @@
-Last updated: 2026-07-02T13:16:41Z (UTC)
+Last updated: 2026-07-04T22:00:01Z (UTC)
 
 # Repo Plans
 
@@ -7,6 +7,10 @@ This folder contains Codeheart Operating Kit repository-level discovery and impl
 ## Current Plans
 
 - Plan register: `plan-register.md`
+- Operating Kit self-contained bootstrap implementation plan:
+  `operating-kit-self-contained-bootstrap/operating-kit-self-contained-bootstrap_implementation_doc.md`
+- Operating Kit self-contained bootstrap execution log:
+  `operating-kit-self-contained-bootstrap/operating-kit-self-contained-bootstrap_execution_log.md`
 - Runbook-to-script promotion standard discovery:
   `runbook-to-script-promotion-standard/runbook-to-script-promotion-standard_discovery_doc.md`
 - Runbook-to-script promotion standard implementation plan:

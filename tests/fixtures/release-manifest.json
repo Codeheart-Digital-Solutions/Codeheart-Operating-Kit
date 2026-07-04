@@ -4,10 +4,16 @@
   "released_at": "2026-06-25T14:22:17Z",
   "assets": [
     {
-      "name": "codeheart-operating-kit-0.1.14.zip",
-      "url": "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.14/codeheart-operating-kit-0.1.14.zip",
+      "name": "codeheart-operating-kit-0.1.14-macos-universal.zip",
+      "url": "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.14/codeheart-operating-kit-0.1.14-macos-universal.zip",
       "sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
-      "platform": "universal"
+      "platform": "macos-universal"
+    },
+    {
+      "name": "codeheart-operating-kit-0.1.14-windows-x64.zip",
+      "url": "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.14/codeheart-operating-kit-0.1.14-windows-x64.zip",
+      "sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "platform": "windows-x64"
     }
   ],
   "components": [

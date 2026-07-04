@@ -1,4 +1,4 @@
-Last updated: 2026-07-02T13:16:41Z (UTC)
+Last updated: 2026-07-04T22:00:01Z (UTC)
 
 # Bootstrap Codeheart Operating Kit
 
@@ -14,7 +14,10 @@ Release URL: https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-
 
 ## Install The CLI
 
-macOS installs into a user-level Operating Kit folder:
+macOS installs into a user-level Operating Kit folder. The installer verifies and installs the
+self-contained platform release pack named
+`codeheart-operating-kit-0.1.19-macos-universal.zip`; the pack contains
+`bin/codeheart-operating-kit`.
 
 ```sh
 curl -fsSLO https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.19/install.sh
@@ -27,7 +30,10 @@ The default command installs the CLI under:
 $HOME/.codeheart/operating-kit/bin/codeheart-operating-kit
 ```
 
-Windows installs into the current user's local application data folder:
+Windows installs into the current user's local application data folder. The installer verifies and
+installs the self-contained platform release pack named
+`codeheart-operating-kit-0.1.19-windows-x64.zip`; the pack contains
+`bin/codeheart-operating-kit.exe` and the installer writes the `.cmd` shim.
 
 ```powershell
 Invoke-WebRequest -Uri "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.19/install.ps1" -OutFile install.ps1
@@ -40,8 +46,10 @@ The default command installs the CLI under:
 %LOCALAPPDATA%\Codeheart\OperatingKit\bin\codeheart-operating-kit.cmd
 ```
 
-Both installers download the pinned release asset for the selected version and verify its SHA-256
-checksum before installing or repairing the CLI. A checksum mismatch stops installation.
+Both installers download the pinned platform release pack for the selected version and verify its
+SHA-256 checksum before installing or repairing the CLI. A checksum mismatch stops installation.
+Base bootstrap installs only the Operating Kit CLI and does not require a package manager or
+language runtime setup from the user.
 
 ## Agent Contract
 
@@ -50,6 +58,7 @@ Follow this contract exactly during first-run setup:
 - Read this public bootstrap before taking setup action.
 - Install or repair `codeheart-operating-kit` before running kit commands.
 - Verify release checksums before trusting downloaded release assets.
+- Use the self-contained platform release pack for the user's operating system.
 - Start onboarding after the CLI is installed.
 - Ask the user for language before continuing with user-facing setup prompts.
 - Ask the user before deciding the Codex project name.
@@ -61,6 +70,7 @@ Follow this contract exactly during first-run setup:
 - Do not use non-interactive flags to fill missing user decisions.
 - Do not use `--yes` unless the user already supplied every required setup decision and approved
   writing files.
+- Do not offer optional native capability installation during base onboarding.
 - Keep current update-check results silent and mention only available updates.
 
 For `v0.1.19`, `codeheart-operating-kit onboard` is an agent-guided script and setup-plan renderer.
@@ -320,7 +330,6 @@ I will check:
 - Agent instruction routing
 - Setup information
 - Update-check information
-- Native Codex capability status
 
 I will show repair findings before changing files.
 ```
@@ -338,25 +347,9 @@ Should I continue with this setup?
 
 If the user stops, do not write setup files.
 
-## Native Capabilities
-
-After setup writes complete, ask:
-
-```text
-I can check whether Codex has the tools for documents, spreadsheets, presentations, browser work,
-and PDFs.
-
-Should I check and set up these tools now?
-
-1. Yes, check these tools
-2. No, skip this for now
-```
-
-Unavailable tools are recorded as degraded state, not treated as setup failure.
-
 ## Update Checks
 
-After setup and capability checks, show:
+After setup writes or repair checks, show:
 
 ```text
 Operating Kit setup includes quiet weekly update checking.

@@ -9,7 +9,8 @@ ASSET_URL=""
 ASSET_FILE=""
 CHECKSUM=""
 CHECKSUM_FILE=""
-PYTHON_BIN="${PYTHON:-python3}"
+DEPRECATED_PYTHON=""
+STAGING_DIR=""
 
 usage() {
   cat <<'USAGE'
@@ -22,39 +23,60 @@ Options:
   --asset-file PATH          Local release asset path for validation or offline repair.
   --checksum SHA256          Expected asset SHA-256.
   --checksum-file PATH       File containing the expected SHA-256.
-  --python PATH              Python executable to use. Default: python3
   -h, --help                 Show this help.
 USAGE
+}
+
+need_value() {
+  if [[ $# -lt 2 || "$2" == -* ]]; then
+    echo "Option $1 requires a value." >&2
+    exit 2
+  fi
+}
+
+file_url_path() {
+  local path="${1#file://}"
+  if [[ "$path" == localhost/* ]]; then
+    path="/${path#localhost/}"
+  fi
+  printf '%b' "${path//%/\\x}"
 }
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --version)
+      need_value "$@"
       VERSION="$2"
       shift 2
       ;;
     --install-dir)
+      need_value "$@"
       INSTALL_DIR="$2"
       shift 2
       ;;
     --asset-url)
+      need_value "$@"
       ASSET_URL="$2"
       shift 2
       ;;
     --asset-file)
+      need_value "$@"
       ASSET_FILE="$2"
       shift 2
       ;;
     --checksum)
+      need_value "$@"
       CHECKSUM="$2"
       shift 2
       ;;
     --checksum-file)
+      need_value "$@"
       CHECKSUM_FILE="$2"
       shift 2
       ;;
     --python)
-      PYTHON_BIN="$2"
+      need_value "$@"
+      DEPRECATED_PYTHON="$2"
       shift 2
       ;;
     -h|--help)
@@ -69,8 +91,12 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
+if [[ -n "$DEPRECATED_PYTHON" ]]; then
+  echo "Warning: --python is deprecated and ignored; the Operating Kit installer uses a self-contained binary." >&2
+fi
+
 RELEASE_BASE_URL="https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v${VERSION}"
-ASSET_NAME="codeheart-operating-kit-${VERSION}-macos.tar.gz"
+ASSET_NAME="codeheart-operating-kit-${VERSION}-macos-universal.zip"
 if [[ -z "$ASSET_URL" ]]; then
   ASSET_URL="${RELEASE_BASE_URL}/${ASSET_NAME}"
 fi
@@ -78,6 +104,9 @@ fi
 TMP_DIR="$(mktemp -d)"
 cleanup() {
   rm -rf "$TMP_DIR"
+  if [[ -n "$STAGING_DIR" ]]; then
+    rm -rf "$STAGING_DIR"
+  fi
 }
 trap cleanup EXIT
 
@@ -85,7 +114,7 @@ ASSET_PATH="$TMP_DIR/$ASSET_NAME"
 if [[ -n "$ASSET_FILE" ]]; then
   cp "$ASSET_FILE" "$ASSET_PATH"
 elif [[ "$ASSET_URL" == file://* ]]; then
-  cp "${ASSET_URL#file://}" "$ASSET_PATH"
+  cp "$(file_url_path "$ASSET_URL")" "$ASSET_PATH"
 else
   curl -fsSL "$ASSET_URL" -o "$ASSET_PATH"
 fi
@@ -94,8 +123,7 @@ if [[ -z "$CHECKSUM" ]]; then
   if [[ -n "$CHECKSUM_FILE" ]]; then
     CHECKSUM="$(awk '{print $1}' "$CHECKSUM_FILE")"
   elif [[ "$ASSET_URL" == file://* ]]; then
-    CHECKSUM_URL="${ASSET_URL}.sha256"
-    CHECKSUM_PATH="${CHECKSUM_URL#file://}"
+    CHECKSUM_PATH="$(file_url_path "${ASSET_URL}.sha256")"
     CHECKSUM="$(awk '{print $1}' "$CHECKSUM_PATH")"
   else
     curl -fsSL "${ASSET_URL}.sha256" -o "$TMP_DIR/$ASSET_NAME.sha256"
@@ -116,38 +144,61 @@ if [[ "$ACTUAL_LOWER" != "$EXPECTED_LOWER" ]]; then
   exit 1
 fi
 
+if ! command -v unzip >/dev/null 2>&1; then
+  echo "unzip is required to extract the Operating Kit release pack." >&2
+  exit 1
+fi
+
 EXTRACT_DIR="$TMP_DIR/extract"
 mkdir -p "$EXTRACT_DIR"
-tar -xzf "$ASSET_PATH" -C "$EXTRACT_DIR"
-WHEEL_PATH="$(find "$EXTRACT_DIR" -name 'codeheart_operating_kit-*.whl' -type f | head -n 1)"
-if [[ -z "$WHEEL_PATH" ]]; then
-  echo "Release asset did not contain a codeheart-operating-kit wheel." >&2
+if ! unzip -q "$ASSET_PATH" -d "$EXTRACT_DIR"; then
+  echo "Release asset could not be extracted; installation stopped." >&2
+  exit 1
+fi
+
+BINARY_PATH="$(find "$EXTRACT_DIR" -path "*/bin/codeheart-operating-kit" -type f | head -n 1)"
+if [[ -z "$BINARY_PATH" ]]; then
+  echo "Release asset did not contain bin/codeheart-operating-kit." >&2
   exit 1
 fi
 
 BIN_DIR="$INSTALL_DIR/bin"
 LIB_DIR="$INSTALL_DIR/lib"
-mkdir -p "$BIN_DIR" "$LIB_DIR"
-PIP_LOG="$TMP_DIR/pip-install.log"
-if ! PIP_CONFIG_FILE=/dev/null \
-  PIP_DISABLE_PIP_VERSION_CHECK=1 \
-  PIP_NO_CACHE_DIR=1 \
-  PIP_NO_INDEX=1 \
-  PIP_NO_INPUT=1 \
-  PYTHONNOUSERSITE=1 \
-    "$PYTHON_BIN" -m pip install --no-index --no-deps --upgrade --target "$LIB_DIR" "$WHEEL_PATH" > "$PIP_LOG" 2>&1; then
-  cat "$PIP_LOG" >&2
+TARGET_BINARY="$BIN_DIR/codeheart-operating-kit"
+mkdir -p "$BIN_DIR"
+
+LEGACY_FOUND=0
+if [[ -f "$TARGET_BINARY" ]] && head -n 20 "$TARGET_BINARY" | grep -Eq 'python|codeheart_operating_kit'; then
+  LEGACY_FOUND=1
+fi
+if compgen -G "$LIB_DIR/codeheart_operating_kit*" >/dev/null 2>&1; then
+  LEGACY_FOUND=1
+fi
+if [[ "$LEGACY_FOUND" == "1" ]]; then
+  echo "Legacy Python install detected; installing the self-contained binary and preserving legacy files."
+fi
+
+STAGING_DIR="$(mktemp -d "$INSTALL_DIR/.staging.XXXXXX")"
+STAGED_BINARY="$STAGING_DIR/codeheart-operating-kit"
+cp "$BINARY_PATH" "$STAGED_BINARY"
+chmod 0755 "$STAGED_BINARY"
+
+SMOKE_LOG="$TMP_DIR/staged-version.log"
+if ! "$STAGED_BINARY" --version >"$SMOKE_LOG" 2>&1; then
+  cat "$SMOKE_LOG" >&2
+  echo "Staged binary validation failed; previous runnable command preserved." >&2
   exit 1
 fi
 
-WRAPPER="$BIN_DIR/codeheart-operating-kit"
-cat > "$WRAPPER" <<EOF
-#!/usr/bin/env sh
-CODEHEART_OPERATING_KIT_CLI=1 PYTHONPATH="$LIB_DIR\${PYTHONPATH:+:\$PYTHONPATH}" exec "$PYTHON_BIN" -m codeheart_operating_kit.cli "\$@"
-EOF
-chmod +x "$WRAPPER"
+mv -f "$STAGED_BINARY" "$TARGET_BINARY"
+chmod 0755 "$TARGET_BINARY"
+rm -rf "$STAGING_DIR"
+STAGING_DIR=""
 
-echo "codeheart-operating-kit installed at $WRAPPER"
+echo "codeheart-operating-kit installed at $TARGET_BINARY"
+if [[ "$LEGACY_FOUND" == "1" ]]; then
+  echo "Legacy Python files were preserved under $INSTALL_DIR for later cleanup."
+fi
 case ":$PATH:" in
   *":$BIN_DIR:"*) ;;
   *) echo "Add this folder to PATH to run it by name: $BIN_DIR" ;;

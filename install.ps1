@@ -1,4 +1,4 @@
-# Last updated: 2026-07-02T13:16:41Z (UTC)
+# Last updated: 2026-07-04T21:42:59Z (UTC)
 [CmdletBinding()]
 param(
     [string]$Version = "0.1.19",
@@ -7,7 +7,7 @@ param(
     [string]$AssetFile = "",
     [string]$Checksum = "",
     [string]$ChecksumFile = "",
-    [string]$Python = "python",
+    [string]$Python = "",
     [switch]$Help
 )
 
@@ -25,51 +25,8 @@ Options:
   -AssetFile PATH        Local release asset path for validation or offline repair.
   -Checksum SHA256       Expected asset SHA-256.
   -ChecksumFile PATH     File containing the expected SHA-256.
-  -Python PATH           Python executable to use. Default: python
   -Help                  Show this help.
 "@
-}
-
-function Invoke-SanitizedPipInstall {
-    param(
-        [string]$PythonCommand,
-        [string]$TargetDirectory,
-        [string]$WheelPath
-    )
-
-    $PipEnvNames = @(
-        "PIP_CONFIG_FILE",
-        "PIP_DISABLE_PIP_VERSION_CHECK",
-        "PIP_EXTRA_INDEX_URL",
-        "PIP_INDEX_URL",
-        "PIP_NO_CACHE_DIR",
-        "PIP_NO_INDEX",
-        "PIP_NO_INPUT",
-        "PYTHONNOUSERSITE"
-    )
-    $PreviousValues = @{}
-    foreach ($Name in $PipEnvNames) {
-        $PreviousValues[$Name] = [Environment]::GetEnvironmentVariable($Name, "Process")
-        [Environment]::SetEnvironmentVariable($Name, $null, "Process")
-    }
-
-    try {
-        $env:PIP_CONFIG_FILE = "NUL"
-        $env:PIP_DISABLE_PIP_VERSION_CHECK = "1"
-        $env:PIP_NO_CACHE_DIR = "1"
-        $env:PIP_NO_INDEX = "1"
-        $env:PIP_NO_INPUT = "1"
-        $env:PYTHONNOUSERSITE = "1"
-        $PipOutput = & $PythonCommand -m pip install --no-index --no-deps --upgrade --target $TargetDirectory $WheelPath 2>&1
-        if ($LASTEXITCODE -ne 0) {
-            $PipOutput | ForEach-Object { Write-Error $_ }
-            throw "pip install failed."
-        }
-    } finally {
-        foreach ($Name in $PipEnvNames) {
-            [Environment]::SetEnvironmentVariable($Name, $PreviousValues[$Name], "Process")
-        }
-    }
 }
 
 if ($Help) {
@@ -77,12 +34,17 @@ if ($Help) {
     exit 0
 }
 
-$AssetName = "codeheart-operating-kit-$Version-windows.zip"
+if ($PSBoundParameters.ContainsKey("Python") -and -not [string]::IsNullOrWhiteSpace($Python)) {
+    Write-Warning "-Python is deprecated and ignored; the Operating Kit installer uses a self-contained binary."
+}
+
+$AssetName = "codeheart-operating-kit-$Version-windows-x64.zip"
 if ([string]::IsNullOrWhiteSpace($AssetUrl)) {
     $AssetUrl = "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v$Version/$AssetName"
 }
 
 $TempDir = Join-Path ([System.IO.Path]::GetTempPath()) ([System.Guid]::NewGuid().ToString())
+$StagingDir = ""
 New-Item -ItemType Directory -Path $TempDir | Out-Null
 try {
     $AssetPath = Join-Path $TempDir $AssetName
@@ -118,32 +80,73 @@ try {
     }
 
     $ExtractDir = Join-Path $TempDir "extract"
-    Expand-Archive -LiteralPath $AssetPath -DestinationPath $ExtractDir
-    $Wheel = Get-ChildItem -Path $ExtractDir -Recurse -Filter "codeheart_operating_kit-*.whl" | Select-Object -First 1
-    if ($null -eq $Wheel) {
-        throw "Release asset did not contain a codeheart-operating-kit wheel."
+    try {
+        Expand-Archive -LiteralPath $AssetPath -DestinationPath $ExtractDir
+    } catch {
+        throw "Release asset could not be extracted; installation stopped."
+    }
+
+    $Binary = Get-ChildItem -Path $ExtractDir -Recurse -Filter "codeheart-operating-kit.exe" |
+        Where-Object { $_.FullName -match "[\\/]+bin[\\/]+codeheart-operating-kit\.exe$" } |
+        Select-Object -First 1
+    if ($null -eq $Binary) {
+        throw "Release asset did not contain bin/codeheart-operating-kit.exe."
     }
 
     $BinDir = Join-Path $InstallDir "bin"
     $LibDir = Join-Path $InstallDir "lib"
-    New-Item -ItemType Directory -Force -Path $BinDir, $LibDir | Out-Null
-    Invoke-SanitizedPipInstall -PythonCommand $Python -TargetDirectory $LibDir -WheelPath $Wheel.FullName
+    $TargetBinary = Join-Path $BinDir "codeheart-operating-kit.exe"
+    $Shim = Join-Path $BinDir "codeheart-operating-kit.cmd"
+    New-Item -ItemType Directory -Force -Path $BinDir | Out-Null
 
-    $Wrapper = Join-Path $BinDir "codeheart-operating-kit.cmd"
-$WrapperContent = @"
+    $LegacyFound = $false
+    if (Test-Path -LiteralPath $Shim) {
+        $ShimText = Get-Content -LiteralPath $Shim -Raw
+        if ($ShimText -match "python|codeheart_operating_kit") {
+            $LegacyFound = $true
+        }
+    }
+    if (Test-Path -LiteralPath $LibDir) {
+        $LegacyPayload = Get-ChildItem -Path $LibDir -Filter "codeheart_operating_kit*" -ErrorAction SilentlyContinue | Select-Object -First 1
+        if ($null -ne $LegacyPayload) {
+            $LegacyFound = $true
+        }
+    }
+    if ($LegacyFound) {
+        Write-Host "Legacy Python install detected; installing the self-contained binary and preserving legacy files."
+    }
+
+    $StagingDir = Join-Path $InstallDir (".staging." + [System.Guid]::NewGuid().ToString("N"))
+    New-Item -ItemType Directory -Force -Path $StagingDir | Out-Null
+    $StagedBinary = Join-Path $StagingDir "codeheart-operating-kit.exe"
+    Copy-Item -LiteralPath $Binary.FullName -Destination $StagedBinary
+
+    $SmokeOutput = & $StagedBinary --version 2>&1
+    if ($LASTEXITCODE -ne 0) {
+        $SmokeOutput | ForEach-Object { Write-Error $_ }
+        throw "Staged binary validation failed; previous runnable command preserved."
+    }
+
+    Move-Item -LiteralPath $StagedBinary -Destination $TargetBinary -Force
+$ShimContent = @"
 @echo off
 set "CODEHEART_OPERATING_KIT_CLI=1"
-set "PYTHONPATH=$LibDir;%PYTHONPATH%"
-"$Python" -m codeheart_operating_kit.cli %*
+"%~dp0codeheart-operating-kit.exe" %*
 "@
-    Set-Content -LiteralPath $Wrapper -Value $WrapperContent -Encoding ASCII
+    Set-Content -LiteralPath $Shim -Value $ShimContent -Encoding ASCII
 
-    Write-Host "codeheart-operating-kit installed at $Wrapper"
+    Write-Host "codeheart-operating-kit installed at $TargetBinary"
+    if ($LegacyFound) {
+        Write-Host "Legacy Python files were preserved under $InstallDir for later cleanup."
+    }
     $PathEntries = ($env:PATH -split ";") | Where-Object { $_ -ne "" }
     if ($PathEntries -notcontains $BinDir) {
         Write-Host "Add this folder to PATH to run it by name: $BinDir"
     }
     Write-Host "Next: codeheart-operating-kit onboard"
 } finally {
+    if (-not [string]::IsNullOrWhiteSpace($StagingDir)) {
+        Remove-Item -LiteralPath $StagingDir -Recurse -Force -ErrorAction SilentlyContinue
+    }
     Remove-Item -LiteralPath $TempDir -Recurse -Force -ErrorAction SilentlyContinue
 }

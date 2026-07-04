@@ -1,4 +1,4 @@
-Last updated: 2026-06-15T10:16:29Z (UTC)
+Last updated: 2026-07-04T22:00:01Z (UTC)
 
 # Codeheart Operating Kit
 
@@ -33,16 +33,22 @@ configuration.
 - `bootstrap.md`: first-run public bootstrap path for users without preinstalled Codeheart skills.
 - `install.sh`: macOS user-level installer and repair script.
 - `install.ps1`: Windows user-level installer and repair script.
+- `cmd/codeheart-operating-kit/`: self-contained Go CLI entry point.
+- `internal/`: Go CLI implementation, embedded resource handling, command behavior, and release
+  helpers.
+- `resources.go`: Go embedded Operating Kit resource bundle.
 - `components/`: managed Operating Kit component source content.
 - `profiles/standard.yaml`: first G1 profile preset.
 - `schemas/`: lockfile, config, release-manifest, and consumer-impact contracts.
-- `pyproject.toml`: Python package metadata and `codeheart-operating-kit` console entry point.
-- `scripts/build-release-assets.py`: macOS and Windows release-asset builder with checksums.
+- `pyproject.toml`: legacy Python package metadata and behavior-oracle entry point retained during
+  the Go CLI migration.
+- `src/codeheart_operating_kit/`: legacy Python CLI oracle for parity tests during migration.
+- `scripts/build-release-assets.py`: macOS universal and Windows x64 binary release-pack builder
+  with checksums.
 - `scripts/validate-*.py`: public-core, Markdown timestamp, JSON schema, and release-manifest
   validators.
-- `src/codeheart_operating_kit/`: CLI source for onboard, inspect, init, sync, check, and
-  update-check.
-- `tests/`: CLI, manifest, onboarding, sync/check, update-check, and capability tests.
+- `tests/`: Go/Python parity, CLI, manifest, onboarding, sync/check, update-check, installer, and
+  release-asset tests.
 - `templates/`: templates for installed consumer surfaces.
 - `docs/repo/reference/placement-contract.md`: repository documentation placement contract.
 - `docs/repo/reference/consumer-impact-classification.md`: consumer-impact classes for kit

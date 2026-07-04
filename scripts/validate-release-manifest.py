@@ -53,7 +53,7 @@ def validate_manifest(path: Path) -> list[str]:
         checksum = str(asset.get("sha256", ""))
         if not SHA256.match(checksum):
             errors.append(f"{path}: asset {asset.get('name', '<unnamed>')} has invalid sha256")
-        if asset.get("platform") not in {"macos", "windows", "universal"}:
+        if asset.get("platform") not in {"macos", "macos-universal", "windows", "windows-x64", "universal"}:
             errors.append(f"{path}: asset {asset.get('name', '<unnamed>')} has invalid platform")
 
     component_ids = {component.get("id") for component in manifest.get("components", [])}

@@ -27,7 +27,10 @@
           "name": { "type": "string" },
           "url": { "type": "string" },
           "sha256": { "type": "string", "pattern": "^[a-fA-F0-9]{64}$" },
-          "platform": { "type": "string", "enum": ["macos", "windows", "universal"] }
+          "platform": {
+            "type": "string",
+            "enum": ["macos", "macos-universal", "windows", "windows-x64", "universal"]
+          }
         }
       }
     },

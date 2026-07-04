@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "version": "0.1.19",
+  "assets": [
+    {
+      "name": "codeheart-operating-kit-0.1.19-macos-universal.zip",
+      "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "platform": "macos-universal"
+    },
+    {
+      "name": "codeheart-operating-kit-0.1.19-windows-x64.zip",
+      "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "platform": "windows-x64"
+    }
+  ]
+}

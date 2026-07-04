@@ -11,86 +11,87 @@ on:
         default: ""
 
 jobs:
-  cli:
-    runs-on: ubuntu-latest
+  macos-validation:
+    runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+      - id: package-version
+        run: |
+          python - <<'PY' >> "$GITHUB_OUTPUT"
+          import tomllib
+
+          with open("pyproject.toml", "rb") as stream:
+              version = tomllib.load(stream)["project"]["version"]
+          print(f"version={version}")
+          PY
       - run: python -m pip install --upgrade pip setuptools pytest
       - run: python -m pip install -e .
-      - run: python -m pytest -q
+      - run: go test ./...
+      - run: python -m pytest tests/test_go_cli_parity.py -q
+      - run: python -m pytest tests/test_install_metadata.py tests/test_release_assets.py -q
       - run: python scripts/validate-public-core.py
       - run: python scripts/validate-markdown-headers.py
       - run: python scripts/validate-json-schemas.py
       - run: python scripts/validate-release-manifest.py
-
-  native-capabilities:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-      - run: python -m pip install --upgrade pip setuptools pytest
-      - run: python -m pip install -e .
-      - run: python -m pytest tests/test_capabilities.py -q
-
-  release-assets:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-      - id: package-version
-        run: |
-          python - <<'PY' >> "$GITHUB_OUTPUT"
-          import tomllib
-
-          with open("pyproject.toml", "rb") as stream:
-              version = tomllib.load(stream)["project"]["version"]
-          print(f"version={version}")
-          PY
-      - run: python -m pip install --upgrade pip setuptools
       - run: python scripts/build-release-assets.py --output-dir dist
-      - run: test -f "dist/codeheart-operating-kit-${{ steps.package-version.outputs.version }}-macos.tar.gz"
-      - run: test -f "dist/codeheart-operating-kit-${{ steps.package-version.outputs.version }}-windows.zip"
-      - run: python scripts/validate-release-manifest.py
-
-  macos-installer:
-    runs-on: macos-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-      - id: package-version
+      - name: Validate macOS staged install without Python on PATH
         run: |
-          python - <<'PY' >> "$GITHUB_OUTPUT"
-          import tomllib
-
-          with open("pyproject.toml", "rb") as stream:
-              version = tomllib.load(stream)["project"]["version"]
-          print(f"version={version}")
-          PY
-      - run: python -m pip install --upgrade pip setuptools
-      - run: python scripts/build-release-assets.py --output-dir dist
-      - run: bash install.sh --help
-      - run: |
+          set -euo pipefail
           VERSION="${{ steps.package-version.outputs.version }}"
-          bash install.sh \
-            --asset-file "dist/codeheart-operating-kit-${VERSION}-macos.tar.gz" \
-            --checksum-file "dist/codeheart-operating-kit-${VERSION}-macos.tar.gz.sha256" \
+          TOOL_DIR="$RUNNER_TEMP/no-python-path"
+          mkdir -p "$TOOL_DIR"
+          for tool in awk cat chmod cp find grep head mkdir mktemp mv rm shasum tr unzip; do
+            ln -sf "$(command -v "$tool")" "$TOOL_DIR/$tool"
+          done
+          for forbidden in python python3 pip pip3; do
+            if PATH="$TOOL_DIR" command -v "$forbidden" >/dev/null 2>&1; then
+              echo "$forbidden unexpectedly available in installer PATH" >&2
+              exit 1
+            fi
+          done
+          PACK="dist/codeheart-operating-kit-${VERSION}-macos-universal.zip"
+          CHECKSUM="${PACK}.sha256"
+          if PATH="$TOOL_DIR" /bin/bash install.sh \
+            --asset-file "$PACK" \
+            --checksum "0000000000000000000000000000000000000000000000000000000000000000" \
+            --install-dir "$RUNNER_TEMP/codeheart-ok-bad"; then
+            echo "Checksum mismatch unexpectedly succeeded." >&2
+            exit 1
+          fi
+          PATH="$TOOL_DIR" /bin/bash install.sh \
+            --asset-file "$PACK" \
+            --checksum-file "$CHECKSUM" \
             --install-dir "$RUNNER_TEMP/codeheart-ok"
-      - run: |
           "$RUNNER_TEMP/codeheart-ok/bin/codeheart-operating-kit" --help
+          "$RUNNER_TEMP/codeheart-ok/bin/codeheart-operating-kit" onboard \
+            --target "$RUNNER_TEMP/consumer" \
+            --project-name Release-Smoke \
+            --purpose software-product \
+            --yes \
+            --json > "$RUNNER_TEMP/onboard.json"
+          if grep -q '"native_capabilities"' "$RUNNER_TEMP/onboard.json"; then
+            echo "Base onboarding unexpectedly reported native_capabilities." >&2
+            exit 1
+          fi
+          if grep -q 'Should I check and set up these tools now' "$RUNNER_TEMP/onboard.json"; then
+            echo "Base onboarding unexpectedly offered optional native capability setup." >&2
+            exit 1
+          fi
+          "$RUNNER_TEMP/codeheart-ok/bin/codeheart-operating-kit" check "$RUNNER_TEMP/consumer" --json
 
-  windows-installer:
+  windows-validation:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
@@ -99,20 +100,54 @@ jobs:
         run: |
           $Version = python -c "import tomllib; print(tomllib.load(open('pyproject.toml', 'rb'))['project']['version'])"
           "version=$Version" >> $env:GITHUB_OUTPUT
-      - run: python -m pip install --upgrade pip setuptools
-      - run: python scripts/build-release-assets.py --output-dir dist
-      - run: .\install.ps1 -Help
+      - run: python -m pip install --upgrade pip setuptools pytest
+      - run: python -m pip install -e .
+      - run: go test ./...
+      - run: python -m pytest tests/test_go_cli_parity.py -q
+      - run: python scripts/build-release-assets.py --platform windows-x64 --output-dir dist
+      - name: Validate Windows staged install without Python on PATH
         shell: pwsh
-      - run: |
+        run: |
           $Version = "${{ steps.package-version.outputs.version }}"
+          $OriginalPath = $env:PATH
+          $env:PATH = "$env:SystemRoot\System32;$env:SystemRoot;$env:SystemRoot\System32\WindowsPowerShell\v1.0"
+          foreach ($Forbidden in @("python", "python3", "pip", "pip3")) {
+              if (Get-Command $Forbidden -ErrorAction SilentlyContinue) {
+                  throw "$Forbidden unexpectedly available in installer PATH"
+              }
+          }
+          $Pack = "dist\codeheart-operating-kit-$Version-windows-x64.zip"
+          $Checksum = "$Pack.sha256"
+          try {
+              .\install.ps1 `
+                -AssetFile $Pack `
+                -Checksum "0000000000000000000000000000000000000000000000000000000000000000" `
+                -InstallDir "$env:RUNNER_TEMP\codeheart-ok-bad"
+              throw "Checksum mismatch unexpectedly succeeded."
+          } catch {
+              if ($_.Exception.Message -notmatch "Checksum mismatch") {
+                  throw
+              }
+          }
           .\install.ps1 `
-            -AssetFile "dist\codeheart-operating-kit-$Version-windows.zip" `
-            -ChecksumFile "dist\codeheart-operating-kit-$Version-windows.zip.sha256" `
+            -AssetFile $Pack `
+            -ChecksumFile $Checksum `
             -InstallDir "$env:RUNNER_TEMP\codeheart-ok"
-        shell: pwsh
-      - run: |
           & "$env:RUNNER_TEMP\codeheart-ok\bin\codeheart-operating-kit.cmd" --help
-        shell: pwsh
+          & "$env:RUNNER_TEMP\codeheart-ok\bin\codeheart-operating-kit.cmd" onboard `
+            --target "$env:RUNNER_TEMP\consumer" `
+            --project-name Release-Smoke `
+            --purpose software-product `
+            --yes `
+            --json | Tee-Object -FilePath "$env:RUNNER_TEMP\onboard.json"
+          if (Select-String -Path "$env:RUNNER_TEMP\onboard.json" -Pattern '"native_capabilities"' -Quiet) {
+              throw "Base onboarding unexpectedly reported native_capabilities."
+          }
+          if (Select-String -Path "$env:RUNNER_TEMP\onboard.json" -Pattern 'Should I check and set up these tools now' -Quiet) {
+              throw "Base onboarding unexpectedly offered optional native capability setup."
+          }
+          & "$env:RUNNER_TEMP\codeheart-ok\bin\codeheart-operating-kit.cmd" check "$env:RUNNER_TEMP\consumer" --json
+          $env:PATH = $OriginalPath
 
   macos-public-release:
     if: github.event_name == 'workflow_dispatch'
@@ -134,19 +169,31 @@ jobs:
           print(f"version={version}")
           PY
       - run: |
+          set -euo pipefail
           RELEASE_VERSION="${RELEASE_VERSION:-v${{ steps.package-version.outputs.version }}}"
           VERSION="${RELEASE_VERSION#v}"
           BASE_URL="https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/${RELEASE_VERSION}"
           curl -fsSLO "${BASE_URL}/install.sh"
-          curl -fsSLO "${BASE_URL}/codeheart-operating-kit-${VERSION}-macos.tar.gz"
-          if bash install.sh --asset-file "codeheart-operating-kit-${VERSION}-macos.tar.gz" --checksum 0000000000000000000000000000000000000000000000000000000000000000 --install-dir "$RUNNER_TEMP/codeheart-ok-bad"; then
+          curl -fsSLO "${BASE_URL}/codeheart-operating-kit-${VERSION}-macos-universal.zip"
+          if bash install.sh \
+            --asset-file "codeheart-operating-kit-${VERSION}-macos-universal.zip" \
+            --checksum "0000000000000000000000000000000000000000000000000000000000000000" \
+            --install-dir "$RUNNER_TEMP/codeheart-ok-bad"; then
             echo "Checksum mismatch unexpectedly succeeded." >&2
             exit 1
           fi
           bash install.sh --version "$VERSION" --install-dir "$RUNNER_TEMP/codeheart-ok"
           "$RUNNER_TEMP/codeheart-ok/bin/codeheart-operating-kit" --help
-          "$RUNNER_TEMP/codeheart-ok/bin/codeheart-operating-kit" onboard --target "$RUNNER_TEMP/consumer" --project-name Release-Smoke --purpose software-product --yes --json > "$RUNNER_TEMP/onboard.json"
-          grep '"native_capabilities"' "$RUNNER_TEMP/onboard.json"
+          "$RUNNER_TEMP/codeheart-ok/bin/codeheart-operating-kit" onboard \
+            --target "$RUNNER_TEMP/consumer" \
+            --project-name Release-Smoke \
+            --purpose software-product \
+            --yes \
+            --json > "$RUNNER_TEMP/onboard.json"
+          if grep -q '"native_capabilities"' "$RUNNER_TEMP/onboard.json"; then
+            echo "Base onboarding unexpectedly reported native_capabilities." >&2
+            exit 1
+          fi
           "$RUNNER_TEMP/codeheart-ok/bin/codeheart-operating-kit" check "$RUNNER_TEMP/consumer" --json
 
   windows-public-release:
@@ -172,9 +219,12 @@ jobs:
           $Version = $ReleaseVersion.TrimStart("v")
           $BaseUrl = "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/$ReleaseVersion"
           Invoke-WebRequest -Uri "$BaseUrl/install.ps1" -OutFile install.ps1
-          Invoke-WebRequest -Uri "$BaseUrl/codeheart-operating-kit-$Version-windows.zip" -OutFile "codeheart-operating-kit-$Version-windows.zip"
+          Invoke-WebRequest -Uri "$BaseUrl/codeheart-operating-kit-$Version-windows-x64.zip" -OutFile "codeheart-operating-kit-$Version-windows-x64.zip"
           try {
-              .\install.ps1 -AssetFile "codeheart-operating-kit-$Version-windows.zip" -Checksum "0000000000000000000000000000000000000000000000000000000000000000" -InstallDir "$env:RUNNER_TEMP\codeheart-ok-bad"
+              .\install.ps1 `
+                -AssetFile "codeheart-operating-kit-$Version-windows-x64.zip" `
+                -Checksum "0000000000000000000000000000000000000000000000000000000000000000" `
+                -InstallDir "$env:RUNNER_TEMP\codeheart-ok-bad"
               throw "Checksum mismatch unexpectedly succeeded."
           } catch {
               if ($_.Exception.Message -notmatch "Checksum mismatch") {
@@ -183,7 +233,14 @@ jobs:
           }
           .\install.ps1 -Version $Version -InstallDir "$env:RUNNER_TEMP\codeheart-ok"
           & "$env:RUNNER_TEMP\codeheart-ok\bin\codeheart-operating-kit.cmd" --help
-          & "$env:RUNNER_TEMP\codeheart-ok\bin\codeheart-operating-kit.cmd" onboard --target "$env:RUNNER_TEMP\consumer" --project-name Release-Smoke --purpose software-product --yes --json | Tee-Object -FilePath "$env:RUNNER_TEMP\onboard.json"
-          Select-String -Path "$env:RUNNER_TEMP\onboard.json" -Pattern '"native_capabilities"'
+          & "$env:RUNNER_TEMP\codeheart-ok\bin\codeheart-operating-kit.cmd" onboard `
+            --target "$env:RUNNER_TEMP\consumer" `
+            --project-name Release-Smoke `
+            --purpose software-product `
+            --yes `
+            --json | Tee-Object -FilePath "$env:RUNNER_TEMP\onboard.json"
+          if (Select-String -Path "$env:RUNNER_TEMP\onboard.json" -Pattern '"native_capabilities"' -Quiet) {
+              throw "Base onboarding unexpectedly reported native_capabilities."
+          }
           & "$env:RUNNER_TEMP\codeheart-ok\bin\codeheart-operating-kit.cmd" check "$env:RUNNER_TEMP\consumer" --json
         shell: pwsh

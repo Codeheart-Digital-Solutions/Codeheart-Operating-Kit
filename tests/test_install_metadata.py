@@ -1,9 +1,81 @@
+import hashlib
+import os
+import subprocess
+import zipfile
 from pathlib import Path
 
 from codeheart_operating_kit import __version__
 
 
 ROOT = Path(__file__).resolve().parents[1]
+INSTALLER_FIXTURES = ROOT / "tests/fixtures/installer"
+
+
+def sha256_file(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as stream:
+        for chunk in iter(lambda: stream.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def fake_cli_script(version: str = __version__) -> str:
+    return "\n".join(
+        [
+            "#!/usr/bin/env sh",
+            'if [ "$1" = "--version" ]; then',
+            f'  echo "codeheart-operating-kit {version}"',
+            "  exit 0",
+            "fi",
+            'if [ "$1" = "--help" ]; then',
+            '  echo "usage: codeheart-operating-kit"',
+            "  exit 0",
+            "fi",
+            "exit 0",
+            "",
+        ]
+    )
+
+
+def write_pack(tmp_path: Path, *, content: str | None = None, include_binary: bool = True) -> tuple[Path, Path]:
+    payload = tmp_path / "payload" / f"codeheart-operating-kit-{__version__}-macos-universal"
+    if include_binary:
+        binary = payload / "bin/codeheart-operating-kit"
+        binary.parent.mkdir(parents=True)
+        binary.write_text(content if content is not None else fake_cli_script(), encoding="utf-8")
+    else:
+        payload.mkdir(parents=True)
+        (payload / "manifest.json").write_text('{"binary":"bin/codeheart-operating-kit"}\n', encoding="utf-8")
+    pack = tmp_path / f"codeheart-operating-kit-{__version__}-macos-universal.zip"
+    with zipfile.ZipFile(pack, "w", compression=zipfile.ZIP_DEFLATED) as archive:
+        if payload.exists():
+            for path in sorted(payload.rglob("*")):
+                archive.write(path, path.relative_to(payload.parent))
+    checksum = pack.with_name(pack.name + ".sha256")
+    checksum.write_text(f"{sha256_file(pack)}  {pack.name}\n", encoding="utf-8")
+    return pack, checksum
+
+
+def run_macos_installer(tmp_path: Path, args: list[str], *, install_dir: Path | None = None) -> subprocess.CompletedProcess[str]:
+    install_dir = install_dir or tmp_path / "install"
+    env = os.environ.copy()
+    env["PATH"] = "/usr/bin:/bin"
+    return subprocess.run(
+        [
+            "bash",
+            str(ROOT / "install.sh"),
+            "--version",
+            __version__,
+            "--install-dir",
+            str(install_dir),
+            *args,
+        ],
+        cwd=ROOT,
+        text=True,
+        capture_output=True,
+        check=False,
+        env=env,
+    )
 
 
 def test_bootstrap_documents_first_run_path():
@@ -12,6 +84,11 @@ def test_bootstrap_documents_first_run_path():
     assert f"https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/tag/v{__version__}" in text
     assert f"releases/download/v{__version__}/install.sh" in text
     assert f"releases/download/v{__version__}/install.ps1" in text
+    assert f"codeheart-operating-kit-{__version__}-macos-universal.zip" in text
+    assert f"codeheart-operating-kit-{__version__}-windows-x64.zip" in text
+    assert "Should I check and set up these tools now?" not in text
+    assert "Do not offer optional native capability installation during base onboarding." in text
+    assert "pip install" not in text
     assert "GPT-5.5" in text
     assert "Extra High" in text
     assert "Fast" in text
@@ -24,10 +101,12 @@ def test_macos_installer_requires_checksum_and_user_level_path():
     assert "$HOME/.codeheart/operating-kit" in text
     assert "shasum -a 256" in text
     assert "Checksum mismatch" in text
-    assert "pip install --no-index --no-deps --upgrade --target" in text
-    assert "PIP_CONFIG_FILE=/dev/null" in text
-    assert "--no-index --no-deps" in text
-    assert "CODEHEART_OPERATING_KIT_CLI=1" in text
+    assert "macos-universal.zip" in text
+    assert "unzip -q" in text
+    assert "bin/codeheart-operating-kit" in text
+    assert "Staged binary validation failed; previous runnable command preserved." in text
+    assert "pip install" not in text
+    assert "PIP_CONFIG_FILE" not in text
     assert "codeheart-operating-kit onboard" in text
 
 
@@ -36,16 +115,133 @@ def test_windows_installer_requires_checksum_and_user_level_path():
     assert r"%LOCALAPPDATA%\Codeheart\OperatingKit" in text
     assert "Get-FileHash -Algorithm SHA256" in text
     assert "Checksum mismatch" in text
-    assert "pip install --no-index --no-deps --upgrade --target" in text
-    assert '$env:PIP_CONFIG_FILE = "NUL"' in text
-    assert "--no-index --no-deps" in text
+    assert "windows-x64.zip" in text
+    assert "Expand-Archive" in text
+    assert "bin/codeheart-operating-kit.exe" in text
+    assert "Staged binary validation failed; previous runnable command preserved." in text
+    assert "pip install" not in text
+    assert "PIP_CONFIG_FILE" not in text
     assert "CODEHEART_OPERATING_KIT_CLI=1" in text
     assert "codeheart-operating-kit onboard" in text
+    assert "-Python PATH" not in text
 
 
 def test_release_asset_builder_names_expected_assets():
     text = (ROOT / "scripts/build-release-assets.py").read_text(encoding="utf-8")
-    assert "macos.tar.gz" in text
-    assert "windows.zip" in text
+    assert "macos-universal" in text
+    assert "windows-x64" in text
     assert ".sha256" in text
-    assert "asset-manifest.json" in text
+    assert "release-candidate-manifest" in text
+
+
+def test_macos_installer_help_hides_deprecated_python_flag():
+    result = subprocess.run(
+        ["bash", str(ROOT / "install.sh"), "--help"],
+        cwd=ROOT,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    assert result.returncode == 0
+    assert "--python" not in result.stdout
+
+
+def test_macos_installer_installs_local_binary_pack_without_python(tmp_path):
+    pack, checksum = write_pack(tmp_path)
+    install_dir = tmp_path / "install"
+
+    result = run_macos_installer(
+        tmp_path,
+        [
+            "--asset-file",
+            str(pack),
+            "--checksum-file",
+            str(checksum),
+            "--python",
+            "/does/not/exist/python",
+        ],
+        install_dir=install_dir,
+    )
+
+    assert result.returncode == 0, result.stdout + result.stderr
+    assert "--python is deprecated and ignored" in result.stderr
+    target = install_dir / "bin/codeheart-operating-kit"
+    assert target.exists()
+    version = subprocess.run([str(target), "--version"], text=True, capture_output=True, check=False)
+    assert version.stdout == f"codeheart-operating-kit {__version__}\n"
+    assert not (install_dir / "lib").exists()
+    assert "Add this folder to PATH" in result.stdout
+
+
+def test_macos_installer_fails_closed_on_checksum_mismatch(tmp_path):
+    pack, _checksum = write_pack(tmp_path)
+    result = run_macos_installer(tmp_path, ["--asset-file", str(pack), "--checksum", "0" * 64])
+
+    assert result.returncode != 0
+    assert "Checksum mismatch" in result.stderr
+    assert not (tmp_path / "install/bin/codeheart-operating-kit").exists()
+
+
+def test_macos_installer_uses_file_url_checksum_sidecar(tmp_path):
+    asset_dir = tmp_path / "asset space"
+    asset_dir.mkdir()
+    pack, _checksum = write_pack(asset_dir)
+    result = run_macos_installer(tmp_path, ["--asset-url", pack.as_uri()])
+
+    assert result.returncode == 0, result.stdout + result.stderr
+    assert (tmp_path / "install/bin/codeheart-operating-kit").exists()
+
+
+def test_macos_installer_rejects_malformed_archive_with_valid_checksum(tmp_path):
+    pack = tmp_path / f"codeheart-operating-kit-{__version__}-macos-universal.zip"
+    pack.write_text("not a zip\n", encoding="utf-8")
+    checksum = sha256_file(pack)
+
+    result = run_macos_installer(tmp_path, ["--asset-file", str(pack), "--checksum", checksum])
+
+    assert result.returncode != 0
+    assert "could not be extracted" in result.stderr
+    assert not (tmp_path / "install/bin/codeheart-operating-kit").exists()
+
+
+def test_macos_installer_rejects_archive_missing_binary(tmp_path):
+    pack, checksum = write_pack(tmp_path, include_binary=False)
+    result = run_macos_installer(tmp_path, ["--asset-file", str(pack), "--checksum-file", str(checksum)])
+
+    assert result.returncode != 0
+    assert "did not contain bin/codeheart-operating-kit" in result.stderr
+    assert not (tmp_path / "install/bin/codeheart-operating-kit").exists()
+
+
+def test_macos_installer_preserves_previous_command_when_staged_validation_fails(tmp_path):
+    pack, checksum = write_pack(tmp_path, content="not an executable binary\n")
+    install_dir = tmp_path / "install"
+    target = install_dir / "bin/codeheart-operating-kit"
+    target.parent.mkdir(parents=True)
+    target.write_text("previous runnable\n", encoding="utf-8")
+
+    result = run_macos_installer(tmp_path, ["--asset-file", str(pack), "--checksum-file", str(checksum)], install_dir=install_dir)
+
+    assert result.returncode != 0
+    assert "previous runnable command preserved" in result.stderr
+    assert target.read_text(encoding="utf-8") == "previous runnable\n"
+
+
+def test_macos_installer_detects_legacy_python_install_and_preserves_files(tmp_path):
+    pack, checksum = write_pack(tmp_path)
+    install_dir = tmp_path / "install"
+    target = install_dir / "bin/codeheart-operating-kit"
+    legacy_lib = install_dir / "lib/codeheart_operating_kit"
+    target.parent.mkdir(parents=True)
+    legacy_lib.mkdir(parents=True)
+    target.write_text((INSTALLER_FIXTURES / "legacy-python-wrapper.sh").read_text(encoding="utf-8"), encoding="utf-8")
+    legacy_marker = legacy_lib / "__init__.py"
+    legacy_marker.write_text("# preserved\n", encoding="utf-8")
+
+    result = run_macos_installer(tmp_path, ["--asset-file", str(pack), "--checksum-file", str(checksum)], install_dir=install_dir)
+
+    assert result.returncode == 0, result.stdout + result.stderr
+    assert "Legacy Python install detected" in result.stdout
+    assert "Legacy Python files were preserved" in result.stdout
+    assert legacy_marker.read_text(encoding="utf-8") == "# preserved\n"
+    assert "codeheart_operating_kit.cli" not in target.read_text(encoding="utf-8")
