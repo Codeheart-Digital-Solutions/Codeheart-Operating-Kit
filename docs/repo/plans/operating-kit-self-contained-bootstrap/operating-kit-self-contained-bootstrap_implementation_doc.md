@@ -1,6 +1,6 @@
-Last updated: 2026-07-04T21:32:35Z (UTC)
+Last updated: 2026-07-04T22:26:18Z (UTC)
 Created: 2026-07-04
-Status: active
+Status: completed
 Execution log: docs/repo/plans/operating-kit-self-contained-bootstrap/operating-kit-self-contained-bootstrap_execution_log.md
 
 # Document Header
@@ -707,16 +707,16 @@ Critical path: EP-05 and EP-06 must not replace release assets before this suite
 
 ### F) Tasks Checklist
 
-- [ ] Create `tests/fixtures/parity/` with folder-state fixtures for missing folder, empty folder, existing folder, technical project, existing kit, ambiguous file path, and high-entry folder.
-- [ ] Create `tests/test_go_cli_parity.py` with helpers that invoke the Python CLI and compiled Go CLI against isolated temp folders.
-- [ ] Add parity tests for root help, subcommand help, version output, invalid command output, and `onboard --yes` argument gating.
-- [ ] Add explicit approved-difference tests proving Go `onboard --yes` does not offer, install, or implicitly check optional native capabilities.
-- [ ] Add parity tests for `inspect` mode, reason, marker, and JSON output.
-- [ ] Add parity tests for `init` generated file tree, scaffold preservation, `.gitignore`, `AGENTS.md`, normalized lockfile, and normalized config.
-- [ ] Add parity tests for `sync` managed-file repair, scaffold preservation, generated-surface merge, release metadata, and managed block refresh.
-- [ ] Add parity tests for `check` drift, missing route target, missing lock metadata, stale CLI, and JSON output.
-- [ ] Add parity tests for `update-check` current, update-available, failed metadata lookup, injected latest version, injected metadata URL, and agent-notification behavior.
-- [ ] Run the parity suite and record the result in the execution log.
+- [x] Create `tests/fixtures/parity/` with folder-state fixtures for missing folder, empty folder, existing folder, technical project, existing kit, ambiguous file path, and high-entry folder.
+- [x] Create `tests/test_go_cli_parity.py` with helpers that invoke the Python CLI and compiled Go CLI against isolated temp folders.
+- [x] Add parity tests for root help, subcommand help, version output, invalid command output, and `onboard --yes` argument gating.
+- [x] Add explicit approved-difference tests proving Go `onboard --yes` does not offer, install, or implicitly check optional native capabilities.
+- [x] Add parity tests for `inspect` mode, reason, marker, and JSON output.
+- [x] Add parity tests for `init` generated file tree, scaffold preservation, `.gitignore`, `AGENTS.md`, normalized lockfile, and normalized config.
+- [x] Add parity tests for `sync` managed-file repair, scaffold preservation, generated-surface merge, release metadata, and managed block refresh.
+- [x] Add parity tests for `check` drift, missing route target, missing lock metadata, stale CLI, and JSON output.
+- [x] Add parity tests for `update-check` current, update-available, failed metadata lookup, injected latest version, injected metadata URL, and agent-notification behavior.
+- [x] Run the parity suite and record the result in the execution log.
 
 ### G) Implementation Notes
 
@@ -789,17 +789,17 @@ Critical path: EP-06 release packs depend on installer expectations.
 
 ### F) Tasks Checklist
 
-- [ ] Update `install.sh` to install `codeheart-operating-kit-<version>-macos-universal.zip` without invoking Python, pip, wheel, or tarball wheel extraction.
-- [ ] Update `install.sh` to extract `bin/codeheart-operating-kit` into a staging directory, set executable mode, smoke-test the staged binary, and atomically replace the runnable command only after validation passes.
-- [ ] Update `install.sh` to detect legacy Python wrapper and legacy `lib/codeheart_operating_kit*` paths and print migration state while preserving those paths.
-- [ ] Remove `--python` from `install.sh` help and behavior, or keep it only as a deprecated no-op compatibility flag with a warning.
-- [ ] Update `install.ps1` to install `codeheart-operating-kit-<version>-windows-x64.zip` without invoking Python, pip, wheel, or Python module wrappers.
-- [ ] Update `install.ps1` to extract `bin/codeheart-operating-kit.exe` into a staging directory, smoke-test the staged binary, and atomically replace the runnable command and `.cmd` shim only after validation passes.
-- [ ] Update `install.ps1` to detect legacy Python wrapper and legacy `lib\codeheart_operating_kit*` paths and print migration state while preserving those paths.
-- [ ] Remove `-Python` from `install.ps1` help and behavior, or keep it only as a deprecated no-op compatibility parameter with a warning.
-- [ ] Preserve existing asset-file, checksum-file, checksum override, and `file://` local asset flows in both installers.
-- [ ] Add installer fixture tests covering no install, legacy Python install, checksum mismatch, local asset install, malformed archive with valid checksum, missing binary, non-executable binary, failed staged validation preserving the previous runnable command, deprecated Python flag behavior when retained, and successful binary install metadata.
-- [ ] Run installer-focused tests and record the result in the execution log.
+- [x] Update `install.sh` to install `codeheart-operating-kit-<version>-macos-universal.zip` without invoking Python, pip, wheel, or tarball wheel extraction.
+- [x] Update `install.sh` to extract `bin/codeheart-operating-kit` into a staging directory, set executable mode, smoke-test the staged binary, and atomically replace the runnable command only after validation passes.
+- [x] Update `install.sh` to detect legacy Python wrapper and legacy `lib/codeheart_operating_kit*` paths and print migration state while preserving those paths.
+- [x] Remove `--python` from `install.sh` help and behavior, or keep it only as a deprecated no-op compatibility flag with a warning.
+- [x] Update `install.ps1` to install `codeheart-operating-kit-<version>-windows-x64.zip` without invoking Python, pip, wheel, or Python module wrappers.
+- [x] Update `install.ps1` to extract `bin/codeheart-operating-kit.exe` into a staging directory, smoke-test the staged binary, and atomically replace the runnable command and `.cmd` shim only after validation passes.
+- [x] Update `install.ps1` to detect legacy Python wrapper and legacy `lib\codeheart_operating_kit*` paths and print migration state while preserving those paths.
+- [x] Remove `-Python` from `install.ps1` help and behavior, or keep it only as a deprecated no-op compatibility parameter with a warning.
+- [x] Preserve existing asset-file, checksum-file, checksum override, and `file://` local asset flows in both installers.
+- [x] Add installer fixture tests covering no install, legacy Python install, checksum mismatch, local asset install, malformed archive with valid checksum, missing binary, non-executable binary, failed staged validation preserving the previous runnable command, deprecated Python flag behavior when retained, and successful binary install metadata.
+- [x] Run installer-focused tests and record the result in the execution log.
 
 ### G) Implementation Notes
 
@@ -870,15 +870,15 @@ Critical path: EP-08 staged install proof depends on these assets.
 
 ### F) Tasks Checklist
 
-- [ ] Update `scripts/build-release-assets.py` to run `go test ./...` before asset assembly.
-- [ ] Update `scripts/build-release-assets.py` to build `cmd/codeheart-operating-kit` for mandatory macOS universal and Windows x64 with version build flags.
-- [ ] Update `scripts/build-release-assets.py` to assemble platform zip packs containing `bootstrap.md`, `INSTALL.md`, `bin/`, `manifest.json`, and `checksums.txt`.
-- [ ] Update `scripts/build-release-assets.py` to write SHA-256 sidecar files for every platform pack.
-- [ ] Update `schemas/release-manifest.schema.json` and release-manifest fixtures for `macos-universal` and `windows-x64` asset platform names.
-- [ ] Update `tests/test_release_assets.py` to reject Python wheel payloads inside staged release packs.
-- [ ] Update `tests/test_release_assets.py` to validate binary names, checksum sidecars, manifest data, and version mismatch failure.
-- [ ] Generate staged assets and a release-candidate manifest under `dist/` without changing root `manifest.yaml` to staged local checksum values.
-- [ ] Run release asset and manifest tests and record the result in the execution log.
+- [x] Update `scripts/build-release-assets.py` to run `go test ./...` before asset assembly.
+- [x] Update `scripts/build-release-assets.py` to build `cmd/codeheart-operating-kit` for mandatory macOS universal and Windows x64 with version build flags.
+- [x] Update `scripts/build-release-assets.py` to assemble platform zip packs containing `bootstrap.md`, `INSTALL.md`, `bin/`, `manifest.json`, and `checksums.txt`.
+- [x] Update `scripts/build-release-assets.py` to write SHA-256 sidecar files for every platform pack.
+- [x] Update `schemas/release-manifest.schema.json` and release-manifest fixtures for `macos-universal` and `windows-x64` asset platform names.
+- [x] Update `tests/test_release_assets.py` to reject Python wheel payloads inside staged release packs.
+- [x] Update `tests/test_release_assets.py` to validate binary names, checksum sidecars, manifest data, and version mismatch failure.
+- [x] Generate staged assets and a release-candidate manifest under `dist/` without changing root `manifest.yaml` to staged local checksum values.
+- [x] Run release asset and manifest tests and record the result in the execution log.
 
 ### G) Implementation Notes
 
@@ -948,15 +948,15 @@ unpublished assets pretending to be a live public release.
 
 ### F) Tasks Checklist
 
-- [ ] Update `bootstrap.md` to describe macOS and Windows self-contained release pack installation.
-- [ ] Update `bootstrap.md` to preserve the existing agent-guided onboarding contract and approval gates.
-- [ ] Ensure `bootstrap.md` does not offer optional native capability installation during base onboarding.
-- [ ] Ensure `bootstrap.md` and release notes do not advertise staged local asset URLs or checksums as live public release assets.
-- [ ] Update `README.md` maintainer entry points to include Go CLI source paths and staged binary release asset behavior.
-- [ ] Update `docs/repo/runbooks/release-operating-kit.md` with binary pack build, checksum mismatch proof, macOS staged install proof, Windows staged install proof, live root-manifest/bootstrap switch steps, unsigned internal prototype boundary, and signed broad release gate.
-- [ ] Update `release-notes.md` with self-contained CLI, legacy migration, and no-Python bootstrap consumer notes.
-- [ ] Update `docs/repo/README.md` and `docs/repo/plans/README.md` with this implementation plan path.
-- [ ] Run Markdown header validation and public-core validation and record the result in the execution log.
+- [x] Update `bootstrap.md` to describe macOS and Windows self-contained release pack installation.
+- [x] Update `bootstrap.md` to preserve the existing agent-guided onboarding contract and approval gates.
+- [x] Ensure `bootstrap.md` does not offer optional native capability installation during base onboarding.
+- [x] Ensure `bootstrap.md` and release notes do not advertise staged local asset URLs or checksums as live public release assets.
+- [x] Update `README.md` maintainer entry points to include Go CLI source paths and staged binary release asset behavior.
+- [x] Update `docs/repo/runbooks/release-operating-kit.md` with binary pack build, checksum mismatch proof, macOS staged install proof, Windows staged install proof, live root-manifest/bootstrap switch steps, unsigned internal prototype boundary, and signed broad release gate.
+- [x] Update `release-notes.md` with self-contained CLI, legacy migration, and no-Python bootstrap consumer notes.
+- [x] Update `docs/repo/README.md` and `docs/repo/plans/README.md` with this implementation plan path.
+- [x] Run Markdown header validation and public-core validation and record the result in the execution log.
 
 ### G) Implementation Notes
 
@@ -1016,16 +1016,16 @@ Critical path: EP-09 handoff depends on this validation evidence.
 
 ### F) Tasks Checklist
 
-- [ ] Update `.github/workflows/validate.yml` to install Go and run `go test ./...` on macOS and Windows.
-- [ ] Update `.github/workflows/validate.yml` to run Python parity tests after building the Go CLI.
-- [ ] Update `.github/workflows/validate.yml` to build staged macOS and Windows release packs.
-- [ ] Add a macOS staged install validation command that runs `install.sh --asset-file <pack> --checksum-file <pack.sha256>` with Python commands absent from `PATH`.
-- [ ] Add a Windows staged install validation command that runs `install.ps1 -AssetFile <pack> -ChecksumFile <pack.sha256>` with Python commands absent from `PATH`.
-- [ ] Add checksum mismatch validation for `install.sh` and `install.ps1`.
-- [ ] Add validation that `onboard --yes` performs base setup without native capability install offers, native capability checks, or plugin installation attempts.
-- [ ] Run the full local validation set available on macOS and record the result in the execution log.
-- [ ] Record Windows CI validation evidence in the execution log.
-- [ ] Record a fresh low-context bootstrap probe in the execution log using the public first prompt, release-candidate bootstrap source text, and staged release asset.
+- [x] Update `.github/workflows/validate.yml` to install Go and run `go test ./...` on macOS and Windows.
+- [x] Update `.github/workflows/validate.yml` to run Python parity tests after building the Go CLI.
+- [x] Update `.github/workflows/validate.yml` to build staged macOS and Windows release packs.
+- [x] Add a macOS staged install validation command that runs `install.sh --asset-file <pack> --checksum-file <pack.sha256>` with Python commands absent from `PATH`.
+- [x] Add a Windows staged install validation command that runs `install.ps1 -AssetFile <pack> -ChecksumFile <pack.sha256>` with Python commands absent from `PATH`.
+- [x] Add checksum mismatch validation for `install.sh` and `install.ps1`.
+- [x] Add validation that `onboard --yes` performs base setup without native capability install offers, native capability checks, or plugin installation attempts.
+- [x] Run the full local validation set available on macOS and record the result in the execution log.
+- [x] Record Windows CI validation evidence in the execution log.
+- [x] Record a fresh low-context bootstrap probe in the execution log using the public first prompt, release-candidate bootstrap source text, and staged release asset.
 
 ### G) Implementation Notes
 
@@ -1088,14 +1088,14 @@ Critical path: This epic closes source implementation readiness.
 
 ### F) Tasks Checklist
 
-- [ ] Update `docs/repo/plans/plan-register.md` with `OK-PR-024` lifecycle, validation summary, and release publication stop.
-- [ ] Update `Codeheart-HQ/docs/repo/plans/plan-register.md` so `CODEHEART-HQ-PR-009` references `OK-PR-024`.
-- [ ] Record staged asset names and SHA-256 values in the execution log.
-- [ ] Record macOS install proof, Windows install proof, parity proof, and checksum mismatch proof in the execution log.
-- [ ] Record proof that base onboarding does not offer, check, or install optional native capabilities.
-- [ ] Record that root `manifest.yaml` live asset URLs/checksums and published bootstrap asset references were not switched to staged unpublished assets.
-- [ ] Record residual risks for signing/notarization automation and broad public release timing.
-- [ ] Stop before `git tag`, `gh release`, GitHub release publication, and consumer sync.
+- [x] Update `docs/repo/plans/plan-register.md` with `OK-PR-024` lifecycle, validation summary, and release publication stop.
+- [x] Update `Codeheart-HQ/docs/repo/plans/plan-register.md` so `CODEHEART-HQ-PR-009` references `OK-PR-024`.
+- [x] Record staged asset names and SHA-256 values in the execution log.
+- [x] Record macOS install proof, Windows install proof, parity proof, and checksum mismatch proof in the execution log.
+- [x] Record proof that base onboarding does not offer, check, or install optional native capabilities.
+- [x] Record that root `manifest.yaml` live asset URLs/checksums and published bootstrap asset references were not switched to staged unpublished assets.
+- [x] Record residual risks for signing/notarization automation and broad public release timing.
+- [x] Stop before `git tag`, `gh release`, GitHub release publication, and consumer sync.
 
 ### G) Implementation Notes
 

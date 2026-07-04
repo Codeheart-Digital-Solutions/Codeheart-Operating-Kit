@@ -1,4 +1,4 @@
-Last updated: 2026-07-04T22:00:01Z (UTC)
+Last updated: 2026-07-04T22:26:18Z (UTC)
 
 # Codeheart Operating Kit Release Notes
 
@@ -41,6 +41,8 @@ assets until the release run publishes them.
 - Source validation covers Go tests, Python parity tests, installer tests, release asset tests,
   release manifest validation, public-core validation, and Markdown timestamp validation before a
   public release run.
+- GitHub Actions Validate run `28721439492` passed macOS and Windows validation, including staged
+  installers with Python and pip absent from the installer `PATH`.
 - Release-candidate packs are generated as staged evidence only. Public release publication,
   release URLs, live manifest checksums, and signing/notarization status are recorded during the
   later release run.

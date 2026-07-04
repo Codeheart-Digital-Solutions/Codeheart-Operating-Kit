@@ -1,6 +1,6 @@
-Last updated: 2026-07-04T22:13:37Z (UTC)
+Last updated: 2026-07-04T22:31:35Z (UTC)
 Created: 2026-07-04
-Status: active
+Status: completed
 
 # Operating Kit Self-Contained Bootstrap Execution Log
 
@@ -184,6 +184,38 @@ Dirty-worktree handling:
   first, completed non-interactive setup without reporting `native_capabilities`, did not offer
   optional native setup, and `check --json` reported `ok: true`. Windows CI evidence remains
   pending.
+- 2026-07-04T22:16:10Z: First pushed Validate run
+  `https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/actions/runs/28721342285`
+  failed in `windows-validation` during `go test ./...`. The failure exposed Windows checkout
+  line-ending sensitivity in byte-level hash fixtures and CRLF parsing in the mini YAML parser.
+- 2026-07-04T22:18:55Z: Added repository line-ending policy through `.gitattributes`, made the Go
+  mini YAML parser trim CRLF line endings, added CRLF parser coverage, reran local Go and parity
+  validation, rebuilt staged assets, committed `a6196c5`, and pushed the fix branch.
+- 2026-07-04T22:20:33Z: Follow-up Validate run
+  `https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/actions/runs/28721439492`
+  passed at head `a6196c5202f0890f9ea64680dc237f4c2a1d194b`. `windows-validation` passed
+  `go test ./...`, Python-vs-Go parity tests, Windows x64 release pack build, and staged
+  `install.ps1` proof without Python on `PATH`. `macos-validation` also passed Go tests, parity,
+  installer/release tests, public-core, Markdown, JSON schema, release-manifest validation, full
+  release asset build, and staged `install.sh` proof without Python on `PATH`.
+- 2026-07-04T22:22:12Z: Reran the low-context bootstrap probe against the rebuilt final staged
+  macOS universal pack after the line-ending repair. The probe again installed
+  `codeheart-operating-kit 0.1.19`, rendered the language prompt first, completed non-interactive
+  setup without reporting `native_capabilities`, did not offer optional native setup, and
+  `check --json` reported `ok: true`.
+- 2026-07-04T22:26:18Z: EP-08 fresh re-review passed with no blockers. Updated the implementation
+  plan lifecycle and checklists, Operating Kit plan register, HQ coordination register, and
+  unreleased source release notes for source-complete handoff while preserving the stop before
+  public release publication, Git tag creation, GitHub release creation, live manifest pointer
+  switch, signing/notarization release decision, and consumer sync.
+- 2026-07-04T22:27:47Z: EP-09 local validation passed for Markdown timestamps, public-core
+  hygiene, Operating Kit whitespace diff checks, HQ register whitespace diff checks, and no
+  remaining unchecked implementation-plan checklist items. Final fresh review gate is next.
+- 2026-07-04T22:31:35Z: Final EP-09 fresh review passed with no blockers. Accepted the
+  non-blocking caution that the HQ coordination register file is broadly dirty and must not be
+  staged wholesale. Marked this execution log complete while keeping public release publication,
+  Git tag creation, GitHub release creation, live manifest pointer switch, signing/notarization
+  release decision, and consumer sync out of scope.
 
 ## Epic Status
 
@@ -197,8 +229,8 @@ Dirty-worktree handling:
 | EP-05 - Installers And Legacy Migration | completed | Installer migration implemented locally, review finding fixed, validation passed, and fresh re-review passed with no findings. |
 | EP-06 - Binary Release Asset Builder And Manifest | completed | Binary release builder and manifest updates implemented locally, staged ignored dist assets generated, validation passed, and fresh review passed with no findings. |
 | EP-07 - Bootstrap, Release, And Documentation Updates | completed | Bootstrap, release notes, README, release runbook, and plan indexes updated locally; validation passed and fresh review passed with no findings. |
-| EP-08 - Cross-Platform Validation And Staged Install Proof | in progress | Workflow and portability updates implemented; local macOS staged install proof passed; Windows CI execution evidence still pending an external runner. |
-| EP-09 - Register, Release-Readiness Record, And Handoff | pending | Not started. |
+| EP-08 - Cross-Platform Validation And Staged Install Proof | completed | Workflow and portability updates implemented; local macOS staged install proof passed; Windows CI runner evidence passed in Validate run `28721439492`; fresh re-review passed with no blockers. |
+| EP-09 - Register, Release-Readiness Record, And Handoff | completed | Register, release-readiness, HQ coordination, checklist, and release-stop updates completed locally; validation passed and final fresh review passed with no blockers. |
 
 ## Validation Results
 
@@ -757,6 +789,9 @@ EP-08:
     file URLs, used by update-check metadata URLs and sync release-manifest file URLs.
   - `tests/test_go_cli_parity.py` now invokes the Python CLI through `sys.executable`, avoiding a
     Windows-only `python3` assumption.
+  - `.gitattributes` now forces LF checkout for repository text fixtures and scripts, with
+    Windows command and PowerShell scripts checked out as CRLF where appropriate.
+  - `internal/yamlmini` now trims CRLF endings while parsing the supported YAML subset.
 - EP-08 local validation:
   - `gofmt -w internal/commands/util.go internal/commands/update_check.go internal/commands/sync.go internal/commands/commands_test.go`: passed.
   - `go test -count=1 ./...`: passed.
@@ -780,9 +815,39 @@ EP-08:
     output.
   - `git diff --check -- .github/workflows/validate.yml scripts/build-release-assets.py internal/commands/util.go internal/commands/update_check.go internal/commands/sync.go internal/commands/commands_test.go tests/test_go_cli_parity.py tests/test_release_assets.py docs/repo/plans/operating-kit-self-contained-bootstrap/operating-kit-self-contained-bootstrap_execution_log.md`:
     passed.
-- EP-08 external validation boundary:
-  - Windows CI execution evidence is not recorded yet because no branch or workflow run has been
-    pushed or dispatched from this local implementation session.
+  - After Windows CI exposed CRLF sensitivity, reran `gofmt -w
+    internal/yamlmini/yamlmini.go internal/yamlmini/yamlmini_test.go`: passed.
+  - After Windows CI exposed CRLF sensitivity, reran `go test -count=1 ./...`: passed.
+  - After Windows CI exposed CRLF sensitivity, reran `uv run --no-project --with pytest --with pip
+    --with setuptools --with wheel python -m pytest tests/test_go_cli_parity.py
+    tests/test_release_assets.py tests/test_install_metadata.py -q`: passed, 31 tests.
+  - After Windows CI exposed CRLF sensitivity, reran
+    `python3 scripts/build-release-assets.py --platform windows-x64 --output-dir /tmp/codeheart-ok-windows-pack-test`:
+    passed.
+  - After Windows CI exposed CRLF sensitivity, reran
+    `python3 scripts/build-release-assets.py --output-dir dist`: passed and regenerated staged
+    ignored macOS universal and Windows x64 assets.
+  - `env LC_ALL=C LANG=C shasum -a 256 <staged packs>` matched the regenerated sidecar checksums.
+- EP-08 external validation:
+  - Initial pushed Validate run
+    `https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/actions/runs/28721342285`
+    failed in `windows-validation` during `go test ./...`, proving the earlier local-only Windows
+    build simulation was insufficient as closure evidence.
+  - Follow-up pushed Validate run
+    `https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/actions/runs/28721439492`
+    passed at head `a6196c5202f0890f9ea64680dc237f4c2a1d194b`.
+  - `windows-validation` job
+    `https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/actions/runs/28721439492/job/85171600104`
+    passed, including `go test ./...`, Python-vs-Go parity tests,
+    `python scripts/build-release-assets.py --platform windows-x64 --output-dir dist`, and
+    `Validate Windows staged install without Python on PATH`.
+  - `macos-validation` job
+    `https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/actions/runs/28721439492/job/85171600115`
+    passed, including Go tests, parity tests, installer/release tests, public-core validation,
+    Markdown validation, JSON schema validation, release-manifest validation, full release asset
+    build, and staged `install.sh` proof without Python on `PATH`.
+  - `windows-public-release` and `macos-public-release` jobs were skipped as expected because this
+    implementation run does not publish public release assets.
 - EP-08 fresh review:
   - Fresh subagent: `019f2f2f-7995-7531-9c62-d17c063973bc`.
   - Verdict after initial review: needs-fix.
@@ -791,7 +856,8 @@ EP-08:
       parity tests, Windows pack build, and staged `install.ps1` proof.
     - High: fresh low-context bootstrap probe evidence was not recorded.
 - Review-finding fix completed:
-  - Fresh low-context bootstrap probe passed using:
+  - Fresh low-context bootstrap probe was rerun after the Windows line-ending repair and passed
+    using:
     - public first prompt text:
       `Set up Codeheart Operating Kit: https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/latest/download/bootstrap.md`
     - current release-candidate `bootstrap.md` source;
@@ -799,12 +865,12 @@ EP-08:
       `dist/codeheart-operating-kit-0.1.19-macos-universal.zip`;
     - installer `PATH` with `python`, `python3`, `pip`, and `pip3` absent.
   - Probe evidence:
-    - first prompt SHA-256:
-      `902ea70bed95aa179e13a8d497fb4feef6b90f08ea2d9181b79cd7bdceb6ef20`
+    - first prompt SHA-256 for the exact prompt string without a trailing newline:
+      `651026e955b450f13564dda427b4cd1022a9a96a4dc04600dc70cda35e6ca33c`
     - bootstrap source SHA-256:
       `8efd5891b87417481fc4fb1b001e73a95926c738bf9e829b247cc5553309f014`
     - staged macOS pack SHA-256:
-      `3ee3e0f515f11008ca827baf8327a122ea79c3899254a9ffa8164faa5b7660ac`
+      `845a783bea2dfd57cf5a4072e4dfbab30cd319053faf33a40bbc8104fc128e0a`
     - installed binary version: `codeheart-operating-kit 0.1.19`
     - first onboarding line:
       `Choose setup language / Sprache waehlen / 选择设置语言:`
@@ -813,12 +879,57 @@ EP-08:
     - `check --json` reported `ok: true`.
   - Updated staged pack checksums:
     - `dist/codeheart-operating-kit-0.1.19-macos-universal.zip`:
-      `3ee3e0f515f11008ca827baf8327a122ea79c3899254a9ffa8164faa5b7660ac`
+      `845a783bea2dfd57cf5a4072e4dfbab30cd319053faf33a40bbc8104fc128e0a`
     - `dist/codeheart-operating-kit-0.1.19-windows-x64.zip`:
-      `c763cbd8b91415c7353f9b7b36258fa46fa4bd6ca418c83a8b0b3e3cd07efbbb`
-- Remaining EP-08 blocker:
-  - Actual Windows CI execution evidence is still pending.
-- EP-08 fresh re-review: pending after Windows CI evidence.
+      `247ec2d3815ba326a875a7d256fff3c086554c09d9f8e5c69d2690205f9e9a20`
+- EP-08 fresh re-review:
+  - Fresh subagent: `019f2f3a-be6c-7ee0-bcf0-efdabfd213ca`.
+  - Findings: none.
+  - Review validation: verified EP-08 acceptance coverage, GitHub Actions Validate run
+    `28721439492`, Windows job `85171600104`, macOS job `85171600115`, line-ending policy, CRLF
+    YAML parser coverage, and release-pack checksum behavior.
+  - Residual risks noted by reviewer: Windows proof is CI-backed rather than a physical fresh
+    Windows machine; the Windows no-Python proof removes `python`, `python3`, `pip`, and `pip3`
+    from `PATH` but does not enumerate every possible Python launcher; public release smoke jobs,
+    tag/release publication, signing, notarization, and public asset switching remain outside
+    EP-08.
+  - Verdict: pass.
+
+EP-09:
+
+- Started register, release-readiness, and handoff updates after EP-08 closure.
+- Updated lifecycle surfaces:
+  - `docs/repo/plans/operating-kit-self-contained-bootstrap/operating-kit-self-contained-bootstrap_implementation_doc.md`
+    now has status `completed` and all implementation checklist items checked.
+  - `docs/repo/plans/plan-register.md` now marks `OK-PR-024` completed, adds the execution log as
+    canonical evidence, records the validation summary, records staged-source asset boundaries,
+    and preserves the stop before public release publication.
+  - `Codeheart-HQ/docs/repo/plans/plan-register.md` now records that the HQ discovery's canonical
+    Operating Kit child implementation `OK-PR-024` completed source readiness while public release
+    publication remains separate approval-gated release-run work.
+  - `release-notes.md` now records the passing GitHub Actions macOS and Windows validation as
+    unreleased source-readiness evidence.
+- EP-09 validation:
+  - `python3 scripts/validate-markdown-headers.py`: passed.
+  - `python3 scripts/validate-public-core.py`: passed.
+  - `git diff --check -- docs/repo/plans/plan-register.md docs/repo/plans/operating-kit-self-contained-bootstrap/operating-kit-self-contained-bootstrap_implementation_doc.md docs/repo/plans/operating-kit-self-contained-bootstrap/operating-kit-self-contained-bootstrap_execution_log.md release-notes.md .gitattributes internal/yamlmini/yamlmini.go internal/yamlmini/yamlmini_test.go`:
+    passed.
+  - In Codeheart-HQ, `git diff --check -- docs/repo/plans/plan-register.md`: passed.
+  - `rg -n "^- \\[ \\]" docs/repo/plans/operating-kit-self-contained-bootstrap/operating-kit-self-contained-bootstrap_implementation_doc.md`:
+    passed with no unchecked implementation checklist items.
+- EP-09 fresh review:
+  - Fresh subagent: `019f2f3f-6fef-7fc1-a849-44ecedf6e3e4`.
+  - Findings: no blockers.
+  - Non-blocking caution: the HQ coordination register contains the intended `CODEHEART-HQ-PR-009`
+    update, but the file also contains unrelated dirty register changes and must not be staged
+    wholesale.
+  - Closeout note: execution log completion status was expected final bookkeeping after the review
+    returned.
+  - Review validation: verified GitHub Actions Validate run `28721439492`, macOS and Windows
+    validation, skipped public-release jobs, release-stop language, Markdown timestamp validation,
+    public-core validation, diff whitespace checks, no unchecked implementation checklist items,
+    and staged pack hashes.
+  - Verdict: pass.
 
 ## Residual Risk
 

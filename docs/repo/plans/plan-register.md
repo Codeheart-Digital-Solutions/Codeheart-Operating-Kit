@@ -1,4 +1,4 @@
-Last updated: 2026-07-04T20:27:00Z (UTC)
+Last updated: 2026-07-04T22:26:18Z (UTC)
 
 # Plan Register
 
@@ -17,9 +17,10 @@ maintenance.
 
 Coverage note: This register currently lists public Operating Kit repository plans that have been
 entered during plan-register adoption. Earlier repository plans may be added during later register
-maintenance. `OK-PR-024` is the draft implementation plan for removing Python/pip from the base
-Operating Kit bootstrap by porting root commands to a self-contained Go CLI, adding macOS and
-Windows binary release packs, legacy Python-wheel migration, and explicit behavior parity tests.
+maintenance. `OK-PR-024` is the completed source implementation plan for removing Python/pip from
+the base Operating Kit bootstrap by porting root commands to a self-contained Go CLI, adding macOS
+and Windows binary release packs, legacy Python-wheel migration, and explicit behavior parity
+tests.
 `OK-PR-022` is the completed implementation plan for generic runbook-to-script promotion doctrine,
 including reusable script asset guidance, current doctrine alignment, and instruction-only release
 readiness. `OK-PR-021` is the completed implementation plan for Operating Kit-guided repo feedback
@@ -34,15 +35,16 @@ Type: implementation-plan
 Purpose: Implement a self-contained Operating Kit bootstrap for fresh macOS and Windows machines
 by replacing the Python-wheel-first root CLI distribution with a Go CLI, binary release packs,
 legacy Python-wheel migration, and behavior parity tests against the current Python CLI.
-Status: active
+Status: completed
 Owner / repository: Codeheart-Operating-Kit
 Canonical docs:
 docs/repo/plans/operating-kit-self-contained-bootstrap/operating-kit-self-contained-bootstrap_implementation_doc.md
+docs/repo/plans/operating-kit-self-contained-bootstrap/operating-kit-self-contained-bootstrap_execution_log.md
 Created: 2026-07-04
-Last updated: 2026-07-04T20:27:00Z (UTC)
-Priority / ordering note: Drafted from the accepted HQ discovery capability scope. This plan
-should be reviewed before changing release assets, installers, root CLI distribution, or
-cross-platform bootstrap behavior.
+Last updated: 2026-07-04T22:26:18Z (UTC)
+Priority / ordering note: Source implementation is complete and validated. Public release
+publication, live manifest pointer switch, signing/notarization decision, Git tag, GitHub release,
+and consumer sync remain separate approval-gated release-run work.
 
 Relations:
 - depends-on: Codeheart-HQ:CODEHEART-HQ-PR-009 - Operating Kit Self-Contained Bootstrap Discovery
@@ -63,6 +65,13 @@ Session refs:
 - material update: 2026-07-04, active goal, activated the implementation plan, created the
   execution log, recorded source preflight evidence, and confirmed publication remains out of
   scope.
+- material update: 2026-07-04, active goal, completed source implementation, generated staged
+  macOS universal and Windows x64 release-candidate packs, proved local macOS no-Python install,
+  proved Windows no-Python install through GitHub Actions, and recorded the low-context bootstrap
+  probe.
+- completed: 2026-07-04, active goal, closed the source implementation after Go tests, Python
+  parity tests, installer tests, release asset tests, schema/public-core/Markdown validation,
+  GitHub Actions macOS and Windows validation, and fresh review gates passed.
 
 Coordination note:
 - Canonical source implementation plan for the HQ-owned discovery.
@@ -70,6 +79,11 @@ Coordination note:
   unless separately approved through the release runbook.
 - Consumer impact classification: migration required, validator-only change, instruction-only
   change, and security or safety policy change.
+- Validation summary: local `go test`, Python-vs-Go parity, installer, release asset,
+  release-manifest, public-core, Markdown, staged macOS install, and low-context bootstrap proof
+  passed; GitHub Actions Validate run `28721439492` passed macOS and Windows validation.
+- Staged source assets remain local release candidates. Root `manifest.yaml` live asset URLs and
+  checksums were not switched to unpublished staged assets.
 
 ## OK-PR-023 - Plan Register Dirty Target Safety Implementation
 
