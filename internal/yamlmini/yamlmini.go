@@ -91,11 +91,11 @@ func stripComments(line string) string {
 			}
 		}
 		if char == '#' && !inQuote {
-			return strings.TrimRight(line[:index], " ")
+			return strings.TrimRight(line[:index], " \t\r")
 		}
 		previous = char
 	}
-	return strings.TrimRight(line, " ")
+	return strings.TrimRight(line, " \t\r")
 }
 
 func parseBlock(lines []sourceLine, index int, indent int) (any, int, error) {

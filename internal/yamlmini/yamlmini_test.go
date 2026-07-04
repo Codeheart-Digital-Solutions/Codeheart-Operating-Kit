@@ -49,3 +49,18 @@ items:
 		t.Fatalf("int scalar changed: %#v", parsed["count"])
 	}
 }
+
+func TestParseCRLFInput(t *testing.T) {
+	parsed, err := MustMap("items:\r\n  -\r\n    path: docs/repo/README.md\r\n    ownership: scaffold\r\n")
+	if err != nil {
+		t.Fatalf("parse CRLF fixture: %v", err)
+	}
+	items, ok := parsed["items"].([]any)
+	if !ok || len(items) != 1 {
+		t.Fatalf("items = %#v, want one list item", parsed["items"])
+	}
+	item, ok := items[0].(map[string]any)
+	if !ok || item["ownership"] != "scaffold" {
+		t.Fatalf("item = %#v, want parsed mapping", items[0])
+	}
+}
