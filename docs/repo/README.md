@@ -1,4 +1,4 @@
-Last updated: 2026-07-04T23:31:11Z (UTC)
+Last updated: 2026-07-08T14:11:45Z (UTC)
 
 # Repo Documentation
 
@@ -28,6 +28,13 @@ This folder contains public repository governance for Codeheart Operating Kit.
   validation for the Operating Kit bootstrap.
 - `plans/operating-kit-self-contained-bootstrap/operating-kit-self-contained-bootstrap_execution_log.md`:
   execution evidence and per-epic review log for the self-contained bootstrap implementation.
+- `plans/operating-kit-script-asset-roles/operating-kit-script-asset-roles_discovery_doc.md`:
+  discovery for script asset role doctrine inside the reusable script asset model.
+- `plans/operating-kit-script-asset-roles/operating-kit-script-asset-roles_implementation_doc.md`:
+  completed implementation plan for script asset role doctrine, generic workflow composition,
+  compact review hooks, and managed/cloud portability guidance.
+- `plans/operating-kit-script-asset-roles/operating-kit-script-asset-roles_execution_log.md`:
+  execution evidence for the script asset role doctrine source implementation.
 - `plans/runbook-to-script-promotion-standard/runbook-to-script-promotion-standard_discovery_doc.md`:
   discovery for reusable runbook-to-script promotion triggers, first-script scaffolding, helper
   rules, domain folder triggers, package/CLI promotion, output contracts, and script testing

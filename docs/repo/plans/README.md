@@ -1,4 +1,4 @@
-Last updated: 2026-07-04T23:31:11Z (UTC)
+Last updated: 2026-07-08T14:11:45Z (UTC)
 
 # Repo Plans
 
@@ -11,6 +11,12 @@ This folder contains Codeheart Operating Kit repository-level discovery and impl
   `operating-kit-self-contained-bootstrap/operating-kit-self-contained-bootstrap_implementation_doc.md`
 - Operating Kit self-contained bootstrap execution log:
   `operating-kit-self-contained-bootstrap/operating-kit-self-contained-bootstrap_execution_log.md`
+- Operating Kit script asset roles discovery:
+  `operating-kit-script-asset-roles/operating-kit-script-asset-roles_discovery_doc.md`
+- Operating Kit script asset roles implementation plan:
+  `operating-kit-script-asset-roles/operating-kit-script-asset-roles_implementation_doc.md`
+- Operating Kit script asset roles execution log:
+  `operating-kit-script-asset-roles/operating-kit-script-asset-roles_execution_log.md`
 - Runbook-to-script promotion standard discovery:
   `runbook-to-script-promotion-standard/runbook-to-script-promotion-standard_discovery_doc.md`
 - Runbook-to-script promotion standard implementation plan:

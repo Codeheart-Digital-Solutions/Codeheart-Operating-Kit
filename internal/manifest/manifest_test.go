@@ -62,8 +62,8 @@ func TestLoadReleaseManifestAssets(t *testing.T) {
 	if err != nil {
 		t.Fatalf("LoadReleaseManifest: %v", err)
 	}
-	if releaseManifest.Version != "0.1.20" {
-		t.Fatalf("release version = %q, want 0.1.20", releaseManifest.Version)
+	if releaseManifest.Version != "0.1.21" {
+		t.Fatalf("release version = %q, want 0.1.21", releaseManifest.Version)
 	}
 	for _, platform := range []string{"macos", "windows", "universal", "macos-universal", "windows-x64"} {
 		if !hasAssetPlatform(releaseManifest.Assets, platform) {

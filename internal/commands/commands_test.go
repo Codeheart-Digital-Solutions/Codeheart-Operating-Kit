@@ -321,7 +321,7 @@ func TestUpdateCheckWritesCadenceAndFailurePreservesDueDate(t *testing.T) {
 		t.Fatalf("failed update state = %#v, previous due %v", update, beforeDue)
 	}
 	var text bytes.Buffer
-	code = RunUpdateCheck([]string{root, "--latest-version", "0.1.20"}, &text, &bytes.Buffer{})
+	code = RunUpdateCheck([]string{root, "--latest-version", "0.1.21"}, &text, &bytes.Buffer{})
 	if code != 0 {
 		t.Fatalf("RunUpdateCheck text exit = %d; stdout: %s", code, text.String())
 	}

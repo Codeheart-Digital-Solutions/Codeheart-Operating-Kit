@@ -1,4 +1,4 @@
-Last updated: 2026-06-29T19:51:37Z (UTC)
+Last updated: 2026-07-08T14:07:02Z (UTC)
 
 # Execute Implementation Plan
 
@@ -150,11 +150,20 @@ Verify the changed recipe surface against the plan and reference:
 
 For reusable script assets, also verify:
 
+- declared script asset role matches the planned role and the script-promotion standard;
 - runbook caller exists and does not duplicate full script internals;
 - script placement follows the owning area's convention;
 - first-script scaffolding exists when this is the first script in the owner area;
+- workflow dependencies, phase boundaries, and blocker ownership are documented when the asset is
+  a workflow script;
+- helpers are placed at the narrowest durable owner boundary and do not act as hidden runbook
+  entrypoints;
+- the owner area's `scripts/README.md` has a compact role index when that improves review
+  clarity;
 - output contract includes required common fields;
 - output safety describes emitted-output behavior;
+- managed-runner, CI, or cloud portability constraints are satisfied when the plan requires those
+  execution contexts;
 - proportional tests or fixtures prove the contract;
 - script does not broaden approval or target scope;
 - wrapper, package, CLI, or API promotion has repeated-use rationale.

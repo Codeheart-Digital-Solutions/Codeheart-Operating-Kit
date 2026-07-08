@@ -1,4 +1,4 @@
-Last updated: 2026-06-29T19:51:37Z (UTC)
+Last updated: 2026-07-08T14:07:02Z (UTC)
 
 # Draft Implementation Plan
 
@@ -163,11 +163,20 @@ For recipe-bearing epics, the plan must state:
 
 For reusable script asset epics, the plan must state:
 
+- script asset role, such as primitive script, workflow script, or helper, when the role affects
+  implementation or review;
 - runbook caller;
 - script owner and placement boundary;
 - first-script scaffolding path when applicable;
+- workflow dependencies, phase boundaries, and dependency contracts when the asset is a workflow
+  script;
+- helper placement, importing scripts, and the narrowest durable owner boundary when helpers are
+  created or moved;
+- whether the owner area's `scripts/README.md` needs a compact role index update;
 - output contract, including common fields and domain-shaped `data`;
 - output safety behavior;
+- managed-runner, CI, or cloud portability constraints when the script is expected to run outside
+  a local interactive shell;
 - proportional tests or fixtures;
 - review criteria for hidden approvals, target broadening, raw output, and premature wrappers or
   APIs.

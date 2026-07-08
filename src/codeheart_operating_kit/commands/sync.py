@@ -22,12 +22,12 @@ def _usable_asset_sha256(value: object) -> bool:
     return _valid_sha256(text) and text != "0" * 64
 
 
-def _current_platform() -> str:
+def _current_platform_candidates() -> set[str]:
     if sys.platform.startswith("win"):
-        return "windows"
+        return {"windows-x64", "windows", "universal"}
     if sys.platform == "darwin":
-        return "macos"
-    return "universal"
+        return {"macos-universal", "macos", "universal"}
+    return {"universal"}
 
 
 def _release_asset_from_manifest(manifest: dict[str, Any] | None) -> dict[str, str] | None:
@@ -36,7 +36,7 @@ def _release_asset_from_manifest(manifest: dict[str, Any] | None) -> dict[str, s
     assets = manifest.get("assets") or []
     if not isinstance(assets, list):
         return None
-    preferred_platform = _current_platform()
+    preferred_platforms = _current_platform_candidates()
 
     def is_cli_asset(asset: dict[str, Any]) -> bool:
         name = str(asset.get("name", ""))
@@ -46,7 +46,7 @@ def _release_asset_from_manifest(manifest: dict[str, Any] | None) -> dict[str, s
         asset
         for asset in assets
         if isinstance(asset, dict)
-        and asset.get("platform") in {preferred_platform, "universal"}
+        and asset.get("platform") in preferred_platforms
         and is_cli_asset(asset)
         and str(asset.get("url", ""))
         and _usable_asset_sha256(asset.get("sha256"))

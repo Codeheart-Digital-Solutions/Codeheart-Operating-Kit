@@ -1,4 +1,4 @@
-Last updated: 2026-06-29T14:49:19Z (UTC)
+Last updated: 2026-07-08T14:07:02Z (UTC)
 
 # Operational Recipe Maturity
 
@@ -99,6 +99,11 @@ its actual use. The levels are possible forms, not a required ladder.
 | L2 | Reusable script asset | Separate script file invoked by a runbook with explicit inputs, stable output, and tests. This may be the first durable executable surface when mechanics are already fragile, repeated, or evidence-bearing. | Script tests, fixture tests, output-contract checks, and runbook invocation validation. |
 | L3 | Thin command wrapper | CLI-style command or wrapper validates inputs, runs the recipe, and emits stable structured output after repeated usage proves the command shape. | Command tests, interface contract tests, and evidence validation. |
 | L4 | Mature API or tool surface | Durable tool or API surface exists because usage, safety, auth, observability, or scale justifies productization. | Product-grade tests, auth and safety validation, observability, and release process. |
+
+Primitive script, workflow script, and helper are role vocabulary inside L2 reusable script
+assets, not additional maturity states. A workflow script can compose deterministic phases and
+other script assets while still remaining L2. `Thin command wrapper` remains L3 and should not be
+renamed or treated as an L2 `command_wrapper` role.
 
 ## Recipe Review Triggers
 
@@ -240,7 +245,8 @@ Use structure governance for durable placement decisions. Generic rules:
 - owner-specific conventions may specialize this standard but should not silently weaken it.
 
 Use `runbook-to-script-promotion-standard.md` for reusable script asset promotion, first-script
-scaffolding, output contracts, helper timing, and review flags.
+scaffolding, script asset roles, workflow dependency guidance, output contracts, helper timing,
+and review flags.
 
 This reference does not define concrete Foundry, module, script, test, fixture, wrapper, or API
 folder paths.
@@ -266,6 +272,7 @@ make it clearly non-authoritative and link to the canonical asset.
 Implementation plans that create or materially change recipe-bearing work should name:
 
 - target maturity state;
+- script asset role for L2 reusable script assets when the role affects implementation or review;
 - validation tier;
 - evidence shape;
 - promotion destination or non-promotion decision;

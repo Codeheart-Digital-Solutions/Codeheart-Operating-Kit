@@ -1,4 +1,4 @@
-Last updated: 2026-07-04T23:31:11Z (UTC)
+Last updated: 2026-07-08T14:11:45Z (UTC)
 
 # Plan Register
 
@@ -26,8 +26,58 @@ including reusable script asset guidance, current doctrine alignment, and instru
 readiness. `OK-PR-021` is the completed implementation plan for Operating Kit-guided repo feedback
 capture with Codeheart organization membership gating, check-first GitHub Issues availability,
 demand-driven issue-intake setup, release, and approved consumer sync scope.
+`OK-PR-025` is the completed source implementation for script asset role doctrine. It adds
+`primitive script`, `workflow script`, and `helper` as L2 role vocabulary, keeps `thin command
+wrapper` as L3, clarifies generic workflow composition, contract-based script dependencies,
+helper promotion, ad hoc script boundaries, and managed/cloud portability, and adds compact
+conditional planning/execution/review hooks.
 
 ## Entries
+
+## OK-PR-025 - Operating Kit Script Asset Roles Discovery And Implementation Plan
+
+Type: discovery-plan + implementation-plan
+Purpose: Define and plan the Operating Kit source-doctrine update for reusable script asset roles.
+The discovery and draft implementation plan add `primitive script`, `workflow script`, and
+`helper` as role vocabulary inside L2 reusable script assets, keep `thin command wrapper` as the
+existing L3 maturity state, clarify contract-based workflow composition, helper promotion, ad hoc
+script boundaries, compact `scripts/README.md` role indexing, and managed/cloud portability
+guidance. The implementation plan also adds compact conditional planning, execution, and planning
+review hooks while keeping concrete module scripts, validators, generated registries, release, and
+consumer sync out of scope.
+Status: completed
+Owner / repository: Codeheart-Operating-Kit
+Canonical docs:
+docs/repo/plans/operating-kit-script-asset-roles/operating-kit-script-asset-roles_discovery_doc.md
+docs/repo/plans/operating-kit-script-asset-roles/operating-kit-script-asset-roles_implementation_doc.md
+docs/repo/plans/operating-kit-script-asset-roles/operating-kit-script-asset-roles_execution_log.md
+Created: 2026-07-08
+Last updated: 2026-07-08T14:11:45Z (UTC)
+Priority / ordering note: Source implementation is complete. Release and consumer sync are
+deferred to a separate Operating Kit release/update task.
+
+Relations:
+- related: OK-PR-022 - Runbook-To-Script Promotion Standard Implementation
+- related: OK-PR-014 - Operational Recipe Maturity Standard Implementation Pointer
+- related: OK-PR-013 - Operation Routing And Dispatch Standard Implementation
+- related: OK-PR-007 - Runbook Authoring Standards Implementation
+
+Session refs:
+- created: 2026-07-08, current session, moved from a Foundry planning draft after the user asked
+  to make the Operating Kit source repo the canonical home and keep no Foundry pointer.
+- material update: 2026-07-08, current session, patched after planning review to use Operating Kit
+  source paths, classify impact as instruction-only, add concrete validation commands, and define
+  fresh routing-probe pass criteria.
+- activated: 2026-07-08, active goal, user requested activation and implementation with subagent
+  epic review gates.
+- completed: 2026-07-08, active goal, implemented source doctrine, planning/execution/review
+  hooks, structure-governance pointer, packaged resource mirrors, validation evidence, and
+  documented main-thread fallback review after reviewer-agent execution stalled.
+
+Coordination note:
+- Canonical Operating Kit source implementation plan.
+- Consumer impact classification: instruction-only change.
+- Release notes are required when shipped; no consumer migration or manual adoption is required.
 
 ## OK-PR-024 - Operating Kit Self-Contained Bootstrap Implementation
 

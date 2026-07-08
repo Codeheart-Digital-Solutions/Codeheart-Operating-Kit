@@ -1,4 +1,4 @@
-Last updated: 2026-06-29T14:49:19Z (UTC)
+Last updated: 2026-07-08T14:07:02Z (UTC)
 
 # Review Planning Document
 
@@ -163,10 +163,21 @@ For implementation docs, check whether:
   `.codeheart/kit/docs/agent-interface/reference/runbook-to-script-promotion-standard.md`;
 - reusable-script-asset epics name the runbook caller, script owner, placement boundary, output
   contract, output safety behavior, tests or fixtures, and review flags;
+- reusable-script-asset epics name the script role when the role affects implementation or review;
+- workflow-script epics document dependencies, phase boundaries, blocker ownership, and
+  dependency contracts;
+- helper work identifies helper placement, importing scripts, and why the helper is not a hidden
+  runbook entrypoint;
+- script-bearing plans cover `scripts/README.md` role-index updates where review clarity needs
+  them;
+- script-bearing plans preserve portability boundaries for managed runners, CI, or cloud
+  orchestration when those execution contexts are intended;
 - recipe-bearing plans preserve `do not promote yet` as a valid outcome when justified;
 - promoted recipe assets have owner, placement boundary, validation path, and discoverability
   route;
 - recipe plans do not promote scripts, commands, wrappers, or APIs prematurely;
+- recipe plans do not invent an L2 `command_wrapper` role or create premature wrappers where an
+  L2 primitive or workflow script is sufficient;
 - recipe plans do not hide executable behavior, structured blockers, markers, or validation
   expectations inside vague prose.
 - recipe plans do not preserve long inline implementations as durable assets when reusable script

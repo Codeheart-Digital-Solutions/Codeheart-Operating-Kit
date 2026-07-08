@@ -1,4 +1,4 @@
-Last updated: 2026-06-29T14:49:19Z (UTC)
+Last updated: 2026-07-08T14:07:02Z (UTC)
 
 # Runbook-To-Script Promotion Standard
 
@@ -14,8 +14,8 @@ execution surface.
 
 Success:
 Agents can decide whether a step should stay runbook-only, become a structured runbook recipe,
-become a reusable script asset, mature into helpers or folders, or wait for wrapper/API maturity
-without creating premature broad command surfaces.
+become a primitive or workflow script, extract helpers or folders, or wait for wrapper/API
+maturity without creating premature broad command surfaces.
 
 Agent judgment boundary:
 The agent may promote deterministic mechanics when triggers are met and an owner, placement,
@@ -55,6 +55,17 @@ Preferred terms:
 - `reusable script asset`: repository- or module-owned executable file that performs one
   deterministic operation or evidence step with explicit inputs, outputs, tests, and a runbook
   caller.
+- `script asset role`: review label for the job a committed script-area asset performs inside L2,
+  such as primitive script, workflow script, or helper. A role is not a new maturity level.
+- `primitive script`: reusable script asset that performs one narrow deterministic operation,
+  evidence step, transformation, or request-construction task after routing, approvals, and
+  prerequisite readiness are already resolved.
+- `workflow script`: reusable script asset that deterministically composes stable phases,
+  primitive scripts, public script entrypoints, and helpers for one route-selected workflow. It
+  owns execution order and phase evidence, not user conversation or broad routing.
+- `helper`: script-area asset role for imported infrastructure or domain code shared by scripts.
+  A helper may be import-only code rather than an executable entrypoint. It is not a runbook-named
+  entrypoint unless it also deliberately exposes a script entrypoint with its own contract.
 - `script entrypoint`: script file a runbook names directly for agents or maintainers to call.
 - `infrastructure helper`: shared code for generic mechanics such as output formatting,
   redaction, result normalization, path handling, dry-run handling, or blocker classification.
@@ -66,11 +77,16 @@ Preferred terms:
   script assets, and emits stable output after repeated usage proves the command shape.
 - `mature API/tool surface`: durable productized surface justified by usage, safety, auth,
   observability, scale, or external consumers.
+- `local ad hoc script`: temporary, uncommitted script or command used for exploration,
+  diagnostics, or unscripted gaps. It is not a durable reusable script asset until deliberately
+  promoted with owner, contract, tests, and runbook caller.
 
 Deprecated or avoid:
 
 - Do not use `tested script block` as a maturity state.
 - Do not use `executable script block` to mean a durable asset.
+- Do not use `command_wrapper` as an L2 script asset role. Use `thin command wrapper` only for the
+  L3 maturity state after repeated usage proves a command surface.
 - Prefer `reusable script asset` over `promoted script` when the durable asset is specifically a
   script.
 - Prefer `reusable script asset` over `promoted recipe asset` when the asset is specifically a
@@ -89,6 +105,92 @@ Runbooks and scripts have different jobs.
 | Package, CLI, or API | stable command surface and reusable internal APIs when script count, consumers, or distribution justify it | premature abstraction before repeated usage proves the surface |
 
 The runbook remains the source of truth for when a reusable script asset may be called.
+
+## Script Asset Roles Inside L2
+
+Primitive scripts, workflow scripts, and helpers are role vocabulary inside the L2 reusable script
+asset state. They make review sharper without creating new maturity states. Primitive and
+workflow scripts are executable entrypoints. Helpers are script-area assets that support those
+entrypoints and may be import-only.
+
+Use `primitive script` when the asset:
+
+- performs one narrow operation, transformation, evidence step, or request-construction task;
+- has explicit inputs and preconditions;
+- assumes route selection, approvals, and prerequisite readiness were handled before invocation;
+- emits stable structured output or a stable blocker.
+
+Use `workflow script` when the asset:
+
+- runs a deterministic multi-phase process after one route has already been selected;
+- composes primitive scripts, public script entrypoints, and helpers through documented contracts;
+- performs prerequisite readiness checks that are part of the normal deterministic process;
+- emits phase-level status, evidence, and blockers;
+- reduces repeated agent thinking without hiding approval or routing decisions.
+
+Use `helper` when the asset:
+
+- is imported by scripts rather than named directly by runbooks;
+- contains repeated infrastructure or domain logic with a stable local contract;
+- is tested in proportion to the logic it owns;
+- stays at the narrowest durable owner boundary until real cross-boundary reuse exists.
+
+A local ad hoc script is allowed for exploration and for gaps that do not yet have a durable
+script. Keep it local and uncommitted unless promotion triggers are met. When the ad hoc script is
+promoted, give it a role, owner, input contract, output contract, tests or fixtures, and runbook
+caller.
+
+A workflow script must not own:
+
+- user conversation;
+- approval decisions;
+- broad route selection;
+- ambiguous target selection;
+- policy or business judgment;
+- hidden fallback to broader permissions or different targets;
+- hidden scope expansion or target broadening.
+
+## Workflow Composition And Dependencies
+
+Workflow scripts may depend on other reusable script assets when the dependency is contract-based
+and reviewable.
+
+Allowed dependencies include:
+
+- primitive scripts with stable input and output contracts;
+- public script entrypoints named by the owning script area;
+- infrastructure or domain helpers imported at the narrowest durable owner boundary;
+- fixture, schema, or output-contract files owned by the same route, module, package, product, or
+  repository boundary.
+
+The workflow script owns phase order, dependency invocation, local retry behavior when safe, and
+phase evidence. The called primitive or helper owns its own narrow mechanics. Do not duplicate
+primitive internals inside the workflow when a stable primitive already exists.
+
+Document workflow dependencies in the script contract or `scripts/README.md` with enough detail
+for a reviewer to see:
+
+- which entrypoints or helpers are called;
+- which inputs are passed between phases;
+- which phase can return each blocker class;
+- whether the workflow is read-only, dry-run, write-capable, or mixed;
+- where tests or fixtures prove the composition.
+
+## Prerequisite Readiness Plus Operation Primitive Pattern
+
+When a normal operation always needs the same deterministic readiness or access preflight before a
+narrow operation, prefer this shape:
+
+- one workflow script performs the route-selected readiness phases and then calls the operation
+  primitive;
+- the primitive script remains narrow and declares readiness or access as a precondition;
+- the runbook calls the workflow for the normal path and calls the primitive directly only when
+  the runbook explicitly states the precondition is already satisfied;
+- structured output distinguishes readiness blockers from operation blockers.
+
+Fields such as `readiness_required` or `access_required` may appear in a domain-owned contract
+only when the owning domain defines their exact meaning. This generic standard owns the pattern,
+not provider-specific readiness semantics.
 
 ## Promotion Triggers
 
@@ -170,13 +272,18 @@ review, safety, ownership, or fixtures.
 
 The first-script README should record:
 
-- script entrypoints and their intended runbook callers;
+- script entrypoints, their script asset role, and their intended runbook callers;
 - required local tooling;
 - input contract;
 - output contract;
+- workflow dependencies and phase boundaries when an entrypoint is a workflow script;
+- helper placement and importing scripts when helpers are present;
 - safety and approval boundary;
 - read-only, dry-run, or write behavior;
 - where tests and fixtures live.
+
+Keep the README index compact. A small table with entrypoint, role, caller, behavior, and test
+path is enough unless the owner has a stronger local convention.
 
 ## Helper Rules
 
@@ -198,6 +305,19 @@ Create domain helpers only when repeated concrete domain logic appears or is cer
 accepted script contracts. Avoid broad `utils`, `common`, or manager-style helpers that can absorb
 unrelated behavior.
 
+Place helpers at the narrowest durable owner boundary that matches real reuse:
+
+- inside one script file when only that script uses the logic;
+- inside one script area when several scripts in that owner area use the logic;
+- inside a domain folder when one domain's scripts use the logic;
+- inside a repo, package, or product helper area only after real cross-boundary reuse exists;
+- inside the Operating Kit only for generic agent or workflow doctrine tooling, not
+  product-specific mechanics.
+
+Do not promote helpers upward only because future reuse is imaginable. Promote upward when two or
+more durable owners actually need the same helper contract or an approved plan makes that reuse
+certain.
+
 ## Domain Folder Rules
 
 Add domain folders under a script area when one or more are true:
@@ -211,6 +331,11 @@ Add domain folders under a script area when one or more are true:
 
 Do not add domain folders only because a taxonomy looks tidy or a single script might someday
 need friends.
+
+Role folders such as `primitives/`, `workflows/`, or `helpers/` are optional. Prefer clear owner
+and domain placement first. Add role folders only when they improve review, navigation, safety, or
+fixtures for an existing script set. A compact `scripts/README.md` role index is usually enough
+before folder separation is justified.
 
 ## Package And CLI Promotion
 
@@ -227,10 +352,15 @@ one or more are true:
 
 Do not create a package or CLI only to make a first script look polished.
 
+Do not promote a workflow script to a thin command wrapper only because it orchestrates phases. A
+thin command wrapper is justified by a stable command surface, repeated consumers, distribution
+needs, or compatibility expectations, not by composition alone.
+
 ## Script Contract
 
 Every reusable script asset should have:
 
+- declared script asset role when committed as a durable asset;
 - one primary purpose;
 - explicit required inputs;
 - explicit optional inputs;
@@ -242,6 +372,19 @@ Every reusable script asset should have:
 - documented local tooling prerequisites;
 - a runbook caller;
 - proportional tests or fixtures.
+
+For import-only helpers, the "caller" is the importing script or script area, and the output
+contract may be a tested function, module, or data contract instead of standalone stdout. The
+runbook caller and stdout output contract belong to the executable script entrypoint that imports
+the helper.
+
+Workflow scripts should also have:
+
+- stable phase names;
+- documented dependency contracts;
+- phase-level success and blocker behavior;
+- no hidden approval, target broadening, or route fallback;
+- tests or fixtures that prove phase ordering and dependency wiring.
 
 For external, sensitive, or state-changing scripts, also require:
 
@@ -261,6 +404,7 @@ report what they are designed to do, what happened at runtime, and what they cho
 The script author defines the contract at implementation time:
 
 - stable `script_id`;
+- declared script asset role when relevant;
 - supported `mode` values;
 - expected `data` shape;
 - possible `blocker.class` values;
@@ -297,7 +441,7 @@ Minimum common fields:
 `next_route`.
 
 External, sensitive, or state-changing scripts may add fields such as `runbook_caller`,
-`target_summary`, `action_summary`, and `evidence_summary`.
+`target_summary`, `action_summary`, `phase_summary`, and `evidence_summary`.
 
 `output_safety` describes emitted-output behavior, not a universal guarantee that no sensitive
 real-world content exists. A script can reliably say it did not emit raw provider responses,
@@ -316,6 +460,7 @@ Tests are part of first-script scaffolding, not an optional late cleanup.
 Testing should scale with risk:
 
 - local read-only validation script: fixture or smoke test may be enough;
+- workflow script: phase-order, dependency-wiring, and blocker-routing tests are expected;
 - parser, serializer, redaction, or blocker classifier: unit tests are expected;
 - external request construction: offline construction tests are expected;
 - external live operation: non-live tests plus explicit live validation gate are expected;
@@ -339,6 +484,11 @@ Reviewers should flag:
 - long inline implementation in a runbook;
 - fragile shell, API, portal, or request-construction mechanics without a script;
 - script without `scripts/README.md` in its owner area;
+- durable script without a declared primitive, workflow, or helper role when the role affects
+  review;
+- workflow script with undocumented dependencies, phase boundaries, or blocker ownership;
+- helper that acts like a runbook-named entrypoint without an entrypoint contract;
+- helper promoted above the narrowest real owner boundary without proven reuse;
 - script without tests or fixtures;
 - script without a runbook caller;
 - unclear output contract;
@@ -346,6 +496,11 @@ Reviewers should flag:
 - raw sensitive output in normal stdout or committed evidence;
 - runbook duplicating script internals;
 - package, CLI, wrapper, or API created before repeated usage proves the need.
+- workflow script that hides approvals, broad routing, ambiguous target selection, policy
+  judgment, scope expansion, target broadening, or provider-specific fallback;
+- script intended for managed or cloud orchestration without explicit inputs, stable structured
+  outputs, non-interactive behavior, artifact/state boundaries, idempotency expectations when
+  applicable, and non-secret phase evidence.
 
 ## Non-Goals
 

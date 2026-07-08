@@ -1,6 +1,47 @@
-Last updated: 2026-07-04T23:21:37Z (UTC)
+Last updated: 2026-07-08T14:20:00Z (UTC)
 
 # Codeheart Operating Kit Release Notes
+
+## v0.1.21 Release Notes
+
+`v0.1.21` adds generic script asset role doctrine for reusable script assets. It keeps the
+existing L1-L4 recipe maturity model intact while distinguishing primitive scripts, workflow
+scripts, helpers, local ad hoc scripts, and L3 thin command wrappers.
+
+### Included
+
+- Agent Interface now defines `primitive script`, `workflow script`, `helper`, and local ad hoc
+  script boundaries inside the L2 reusable script asset model.
+- Workflow scripts can compose deterministic phases, public script entrypoints, primitives, and
+  helpers through documented contracts, while runbooks continue to own routing, approvals,
+  ambiguity handling, fallback choices, and consequences.
+- Helper guidance now keeps shared helpers at the narrowest durable owner boundary until real
+  cross-boundary reuse exists, and clarifies that helpers may be import-only code.
+- The standard explicitly rejects an L2 `command_wrapper` role; thin command wrappers remain L3
+  and require repeated-use or distribution rationale.
+- Planning, execution, and planning-review runbooks now add compact conditional checks for script
+  role, workflow dependencies, helper placement, `scripts/README.md` role indexes, portability,
+  and premature wrapper risk.
+- Structure Governance now points promoted recipe asset placement questions back to the enhanced
+  script-promotion standard instead of duplicating role rules.
+- Python sync now recognizes the current `macos-universal` and `windows-x64` release pack
+  platforms when refreshing old lockfiles, matching the Go CLI release metadata behavior.
+
+### Consumer Impact
+
+- `instruction-only change`: installed consumers receive clearer managed doctrine and planning
+  guidance when they sync or update the Operating Kit.
+- No forced migration is required. Existing consumer-owned scripts, runbooks, modules, local
+  state, scaffolds, validators, and local configuration are not rewritten.
+- Consumers adopt the new doctrine through normal sync or update.
+
+### Validation
+
+- Source validation covers Markdown timestamp validation, public-core validation, packaged
+  resource parity, release manifest validation, Go tests, Python parity tests, installer tests,
+  release asset tests, and staged release-pack validation before public tagging and publication.
+- Release publication records the final release URL, live manifest checksums, and unsigned
+  internal-prototype signing boundary.
 
 ## v0.1.20 Release Notes
 
