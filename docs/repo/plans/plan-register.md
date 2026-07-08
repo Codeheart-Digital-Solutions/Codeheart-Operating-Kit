@@ -1,4 +1,4 @@
-Last updated: 2026-07-08T14:11:45Z (UTC)
+Last updated: 2026-07-08T14:30:26Z (UTC)
 
 # Plan Register
 
@@ -52,9 +52,9 @@ docs/repo/plans/operating-kit-script-asset-roles/operating-kit-script-asset-role
 docs/repo/plans/operating-kit-script-asset-roles/operating-kit-script-asset-roles_implementation_doc.md
 docs/repo/plans/operating-kit-script-asset-roles/operating-kit-script-asset-roles_execution_log.md
 Created: 2026-07-08
-Last updated: 2026-07-08T14:11:45Z (UTC)
-Priority / ordering note: Source implementation is complete. Release and consumer sync are
-deferred to a separate Operating Kit release/update task.
+Last updated: 2026-07-08T14:30:26Z (UTC)
+Priority / ordering note: Source implementation is complete and released in Operating Kit
+`v0.1.21`. Named consumer repository sync remains separate approval-gated work.
 
 Relations:
 - related: OK-PR-022 - Runbook-To-Script Promotion Standard Implementation
@@ -73,11 +73,17 @@ Session refs:
 - completed: 2026-07-08, active goal, implemented source doctrine, planning/execution/review
   hooks, structure-governance pointer, packaged resource mirrors, validation evidence, and
   documented main-thread fallback review after reviewer-agent execution stalled.
+- material update: 2026-07-08, explicit release request, released Operating Kit `v0.1.21`,
+  published GitHub release assets, validated live macOS and Windows release downloads through
+  GitHub Actions workflow-dispatch run `28950406030`, and recorded release evidence in the
+  execution log.
 
 Coordination note:
 - Canonical Operating Kit source implementation plan.
 - Consumer impact classification: instruction-only change.
 - Release notes are required when shipped; no consumer migration or manual adoption is required.
+- Released in Operating Kit `v0.1.21` with live `manifest.yaml` URLs and checksums for the
+  published release assets.
 
 ## OK-PR-024 - Operating Kit Self-Contained Bootstrap Implementation
 
