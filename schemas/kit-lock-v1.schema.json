@@ -1,0 +1,110 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/schemas/kit-lock-v1.schema.json",
+  "title": "Codeheart Operating Kit Lockfile V1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "kit_version",
+    "release",
+    "selected_profile",
+    "selected_components",
+    "managed_paths",
+    "generated_surfaces",
+    "cli_repair",
+    "update_check",
+    "native_capabilities"
+  ],
+  "properties": {
+    "schema_version": { "type": "integer", "const": 1 },
+    "kit_version": { "type": "string", "minLength": 1 },
+    "selected_profile": { "type": "string", "const": "standard" },
+    "selected_components": {
+      "type": "array",
+      "items": { "type": "string" },
+      "uniqueItems": true
+    },
+    "release": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["asset_url", "checksum_sha256"],
+      "properties": {
+        "asset_url": { "type": "string", "minLength": 1 },
+        "checksum_sha256": { "type": "string", "pattern": "^[a-fA-F0-9]{64}$" }
+      }
+    },
+    "managed_paths": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/path_record" }
+    },
+    "generated_surfaces": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/path_record" }
+    },
+    "cli_repair": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["installed_cli_path", "repair_source_url"],
+      "properties": {
+        "installed_cli_path": { "type": "string" },
+        "repair_source_url": { "type": "string" },
+        "repair_checksum_sha256": { "type": "string", "pattern": "^[a-fA-F0-9]{64}$" }
+      }
+    },
+    "update_check": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "last_update_check_at",
+        "next_update_check_due",
+        "latest_seen_version",
+        "update_status"
+      ],
+      "properties": {
+        "last_update_check_at": { "type": "string", "format": "date-time" },
+        "next_update_check_due": { "type": "string", "format": "date-time" },
+        "latest_seen_version": { "type": "string" },
+        "update_status": {
+          "type": "string",
+          "enum": ["current", "update-available", "failed", "unknown"]
+        }
+      }
+    },
+    "native_capabilities": {
+      "type": "object",
+      "additionalProperties": { "$ref": "#/$defs/native_capability" }
+    }
+  },
+  "$defs": {
+    "path_record": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "ownership"],
+      "properties": {
+        "path": { "type": "string", "minLength": 1 },
+        "component": { "type": "string" },
+        "source": { "type": "string" },
+        "ownership": {
+          "type": "string",
+          "enum": ["managed", "scaffold", "template", "generated-surface", "local-user"]
+        },
+        "checksum_sha256": { "type": "string", "pattern": "^[a-fA-F0-9]{64}$" }
+      }
+    },
+    "native_capability": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "checked_at", "profile_applicability"],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["available", "installed", "missing", "install-attempted", "unavailable", "blocked", "unknown"]
+        },
+        "checked_at": { "type": "string", "format": "date-time" },
+        "profile_applicability": { "type": "string" },
+        "command_result_category": { "type": "string" }
+      }
+    }
+  }
+}

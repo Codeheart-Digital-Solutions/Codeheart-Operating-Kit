@@ -3,13 +3,16 @@ package commands
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"net/url"
 	"os"
 	"path/filepath"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/internal/lockfile"
+	"github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/internal/state"
 	"github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/internal/yamlmini"
 )
 
@@ -32,6 +35,288 @@ func TestInspectFolderModes(t *testing.T) {
 	if len(markers) != 1 || markers[0] != "pyproject.toml" {
 		t.Fatalf("technical markers = %#v", markers)
 	}
+}
+
+func TestLifecycleDryRunRepairIdempotencyAndConsumerPreservation(t *testing.T) {
+	root := filepath.Join(t.TempDir(), "missing-target")
+	var preview bytes.Buffer
+	if code := RunInit([]string{root, "--project-name", "Example", "--dry-run", "--json"}, &preview, &bytes.Buffer{}); code != 0 {
+		t.Fatalf("init dry-run exit = %d; %s", code, preview.String())
+	}
+	if _, err := os.Stat(root); !os.IsNotExist(err) {
+		t.Fatalf("init dry-run created target: %v", err)
+	}
+	var previewPayload map[string]any
+	if err := json.Unmarshal(preview.Bytes(), &previewPayload); err != nil {
+		t.Fatal(err)
+	}
+	if state.Map(previewPayload["result"])["status"] != "planned" {
+		t.Fatalf("preview result = %#v", previewPayload["result"])
+	}
+
+	if code := RunInit([]string{root, "--project-name", "Example", "--purpose", "company-automation"}, &bytes.Buffer{}, &bytes.Buffer{}); code != 0 {
+		t.Fatalf("init exit = %d", code)
+	}
+	configPath := filepath.Join(root, filepath.FromSlash(state.ConfigPath))
+	configBefore, err := os.ReadFile(configPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	preserved := map[string]string{
+		".codeheart/user/preferences.yaml":    "language: de\n",
+		"docs/repo/plans/plan-register.md":    "custom plan state\n",
+		"docs/agent-memory/session-ledger.md": "custom memory state\n",
+	}
+	for relative, content := range preserved {
+		path := filepath.Join(root, filepath.FromSlash(relative))
+		if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
+			t.Fatal(err)
+		}
+		if err := os.WriteFile(path, []byte(content), 0o644); err != nil {
+			t.Fatal(err)
+		}
+	}
+	managed := filepath.Join(root, ".codeheart", "kit", "docs", "agent-interface", "README.md")
+	if err := os.WriteFile(managed, []byte("drift\n"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if code := RunRepair([]string{root, "--dry-run"}, &bytes.Buffer{}, &bytes.Buffer{}); code != 0 {
+		t.Fatalf("repair dry-run exit = %d", code)
+	}
+	if data, _ := os.ReadFile(managed); string(data) != "drift\n" {
+		t.Fatalf("repair dry-run changed managed file")
+	}
+	if code := RunRepair([]string{root}, &bytes.Buffer{}, &bytes.Buffer{}); code != 0 {
+		t.Fatalf("repair exit = %d", code)
+	}
+	configAfter, _ := os.ReadFile(configPath)
+	if string(configAfter) != string(configBefore) {
+		t.Fatalf("repair changed consumer config\nbefore:\n%s\nafter:\n%s", configBefore, configAfter)
+	}
+	for relative, content := range preserved {
+		data, err := os.ReadFile(filepath.Join(root, filepath.FromSlash(relative)))
+		if err != nil || string(data) != content {
+			t.Fatalf("repair changed %s: %q err=%v", relative, data, err)
+		}
+	}
+	var noOp bytes.Buffer
+	if code := RunRepair([]string{root, "--json"}, &noOp, &bytes.Buffer{}); code != 0 {
+		t.Fatalf("idempotent repair exit = %d; %s", code, noOp.String())
+	}
+	var noOpPayload map[string]any
+	_ = json.Unmarshal(noOp.Bytes(), &noOpPayload)
+	if changes := state.AnySlice(state.Map(noOpPayload["result"])["changes"]); len(changes) != 0 {
+		t.Fatalf("idempotent repair changes = %#v", changes)
+	}
+	if code := RunInit([]string{root, "--project-name", "Again"}, &bytes.Buffer{}, &bytes.Buffer{}); code != 1 {
+		t.Fatalf("second init exit = %d, want blocked", code)
+	}
+}
+
+func TestRepairMigratesOnlyCompatibleLockV1(t *testing.T) {
+	root := t.TempDir()
+	if code := RunInit([]string{root, "--project-name", "Example"}, &bytes.Buffer{}, &bytes.Buffer{}); code != 0 {
+		t.Fatalf("init exit = %d", code)
+	}
+	v2, err := lockfile.ReadLock(root)
+	if err != nil {
+		t.Fatal(err)
+	}
+	v1 := map[string]any{
+		"schema_version":      1,
+		"kit_version":         v2["kit_version"],
+		"selected_profile":    v2["selected_profile"],
+		"selected_components": v2["selected_components"],
+		"release":             state.DeepCopy(state.Map(v2["release"])),
+		"managed_paths":       v2["managed_paths"],
+		"generated_surfaces":  v2["generated_surfaces"],
+		"cli_repair":          state.DeepCopy(state.Map(v2["cli_repair"])),
+		"update_check":        v2["update_check"],
+		"native_capabilities": v2["native_capabilities"],
+	}
+	legacySurfaces := []any{}
+	for _, item := range state.AnySlice(v1["generated_surfaces"]) {
+		if state.AsString(state.Map(item)["ownership"]) != "local-machine" {
+			legacySurfaces = append(legacySurfaces, item)
+		}
+	}
+	v1["generated_surfaces"] = legacySurfaces
+	state.Map(v1["release"])["checksum_sha256"] = 0
+	state.Map(v1["cli_repair"])["repair_checksum_sha256"] = "0"
+	data, err := state.EncodeYAML(v1)
+	if err != nil {
+		t.Fatal(err)
+	}
+	lockPath := filepath.Join(root, filepath.FromSlash(state.LockPath))
+	if err := os.WriteFile(lockPath, data, 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if code := RunRepair([]string{root, "--dry-run"}, &bytes.Buffer{}, &bytes.Buffer{}); code != 0 {
+		t.Fatalf("migration preview exit = %d", code)
+	}
+	stillV1, _ := state.DecodeYAMLMap(mustRead(t, lockPath))
+	if state.AsInt(stillV1["schema_version"]) != 1 {
+		t.Fatalf("dry-run migrated lock on disk")
+	}
+	if code := RunRepair([]string{root}, &bytes.Buffer{}, &bytes.Buffer{}); code != 0 {
+		t.Fatalf("migration repair exit = %d", code)
+	}
+	migrated, err := lockfile.ReadLock(root)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if state.AsInt(migrated["schema_version"]) != 2 || state.AsString(state.Map(migrated["release_provenance"])["verification_status"]) != "unverified-legacy" {
+		t.Fatalf("migrated lock = %#v", migrated)
+	}
+}
+
+func TestUpdateCheckChangesNoRepositoryBytesExceptLock(t *testing.T) {
+	root := t.TempDir()
+	if code := RunInit([]string{root, "--project-name", "Example"}, &bytes.Buffer{}, &bytes.Buffer{}); code != 0 {
+		t.Fatalf("init exit = %d", code)
+	}
+	paths := []string{state.ConfigPath, "AGENTS.md", ".codeheart/kit/README.md", "docs/repo/plans/plan-register.md"}
+	before := map[string][]byte{}
+	for _, relative := range paths {
+		before[relative] = mustRead(t, filepath.Join(root, filepath.FromSlash(relative)))
+	}
+	if _, err := UpdateCheck(root, "9.0.0", time.Date(2026, 7, 9, 20, 0, 0, 0, time.UTC).Format(time.RFC3339), ""); err != nil {
+		t.Fatal(err)
+	}
+	for _, relative := range paths {
+		after := mustRead(t, filepath.Join(root, filepath.FromSlash(relative)))
+		if string(after) != string(before[relative]) {
+			t.Fatalf("update-check changed %s", relative)
+		}
+	}
+}
+
+func TestOnboardRoutesExistingInstallationToRepair(t *testing.T) {
+	root := t.TempDir()
+	if code := RunInit([]string{root, "--project-name", "Example"}, &bytes.Buffer{}, &bytes.Buffer{}); code != 0 {
+		t.Fatalf("init exit = %d", code)
+	}
+	managed := filepath.Join(root, ".codeheart", "kit", "docs", "agent-interface", "README.md")
+	if err := os.WriteFile(managed, []byte("drift\n"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	result, _, code, err := Onboard(root, "Example", "", true, time.Now())
+	if err != nil || code != 0 || result["written"] != true {
+		t.Fatalf("existing onboard = %#v, code=%d, err=%v", result, code, err)
+	}
+	observed, err := state.Inspect(root)
+	if err != nil || observed.Classification != state.StateCurrent {
+		t.Fatalf("onboard repair state = %#v, err=%v", observed, err)
+	}
+}
+
+func TestLifecycleStartingStatePreconditionMatrix(t *testing.T) {
+	t.Setenv("CODEHEART_OPERATING_KIT_CLI", "1")
+	type expected struct {
+		init, repair, sync, update, healthy bool
+	}
+	cases := map[string]expected{
+		"absent":      {init: true},
+		"adoptable":   {init: true},
+		"current":     {repair: true, sync: true, update: true, healthy: true},
+		"drifted":     {repair: true, sync: true, update: true},
+		"stale-cli":   {},
+		"partial":     {repair: true},
+		"invalid":     {},
+		"future":      {},
+		"transaction": {},
+		"recovery":    {},
+	}
+	now := time.Date(2026, 7, 9, 20, 0, 0, 0, time.UTC)
+	for name, want := range cases {
+		t.Run(name, func(t *testing.T) {
+			root := lifecycleStateFixture(t, name)
+			_, initResult, err := initializeOperation(root, "Example", "", root, now, true)
+			if err != nil || initResult.OK() != want.init {
+				t.Fatalf("init OK=%v want=%v err=%v result=%#v", initResult.OK(), want.init, err, initResult)
+			}
+			_, repairResult, err := repairOperation(root, now, true)
+			if err != nil || repairResult.OK() != want.repair {
+				t.Fatalf("repair OK=%v want=%v err=%v result=%#v", repairResult.OK(), want.repair, err, repairResult)
+			}
+			_, syncResult, err := syncOperation(root, "", now, true)
+			if err != nil || syncResult.OK() != want.sync {
+				t.Fatalf("sync OK=%v want=%v err=%v result=%#v", syncResult.OK(), want.sync, err, syncResult)
+			}
+			_, updateResult, err := updateCheckOperation(root, "0.1.21", now.Format(time.RFC3339), "", true)
+			if err != nil || updateResult.OK() != want.update {
+				t.Fatalf("update OK=%v want=%v err=%v result=%#v", updateResult.OK(), want.update, err, updateResult)
+			}
+			check, err := CheckRepository(root)
+			if err != nil || (check["ok"] == true) != want.healthy {
+				t.Fatalf("check healthy=%v want=%v err=%v result=%#v", check["ok"], want.healthy, err, check)
+			}
+		})
+	}
+}
+
+func lifecycleStateFixture(t *testing.T, kind string) string {
+	t.Helper()
+	base := t.TempDir()
+	if kind == "absent" {
+		return filepath.Join(base, "missing")
+	}
+	if kind == "adoptable" {
+		return base
+	}
+	if code := RunInit([]string{base, "--project-name", "Example"}, &bytes.Buffer{}, &bytes.Buffer{}); code != 0 {
+		t.Fatalf("fixture init exit = %d", code)
+	}
+	switch kind {
+	case "current":
+	case "drifted":
+		path := filepath.Join(base, ".codeheart", "kit", "docs", "agent-interface", "README.md")
+		if err := os.WriteFile(path, []byte("drift\n"), 0o644); err != nil {
+			t.Fatal(err)
+		}
+	case "stale-cli":
+		lock, err := lockfile.ReadLock(base)
+		if err != nil {
+			t.Fatal(err)
+		}
+		lock["kit_version"] = "0.0.1"
+		if err := lockfile.WriteLock(base, lock); err != nil {
+			t.Fatal(err)
+		}
+	case "partial":
+		if err := os.Remove(filepath.Join(base, "AGENTS.md")); err != nil {
+			t.Fatal(err)
+		}
+	case "invalid":
+		if err := os.WriteFile(filepath.Join(base, filepath.FromSlash(state.LockPath)), []byte("schema_version: invalid\n"), 0o644); err != nil {
+			t.Fatal(err)
+		}
+	case "future":
+		if err := os.WriteFile(filepath.Join(base, filepath.FromSlash(state.LockPath)), []byte("schema_version: 99\nkit_version: future\n"), 0o644); err != nil {
+			t.Fatal(err)
+		}
+	case "transaction", "recovery":
+		phase := "staged"
+		if kind == "recovery" {
+			phase = "recovery-required"
+		}
+		marker := fmt.Sprintf("{\"schema_version\":1,\"transaction_id\":\"fixture\",\"command\":\"sync\",\"phase\":%q,\"pid\":%d}\n", phase, os.Getpid())
+		if err := os.WriteFile(filepath.Join(base, filepath.FromSlash(state.TransactionPath)), []byte(marker), 0o600); err != nil {
+			t.Fatal(err)
+		}
+	default:
+		t.Fatalf("unknown state fixture %s", kind)
+	}
+	return base
+}
+
+func mustRead(t *testing.T, path string) []byte {
+	t.Helper()
+	data, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	return data
 }
 
 func TestRunInspectJSON(t *testing.T) {

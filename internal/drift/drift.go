@@ -1,59 +1,24 @@
 package drift
 
-import (
-	"path/filepath"
+import "github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/internal/state"
 
-	"github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/internal/hash"
-)
-
-func Report(root string, lock map[string]any) []map[string]string {
+// Report is the retained compatibility projection over the authoritative state classifier.
+// The lock argument remains for callers of the v1 API; state.Inspect reads and validates the
+// installed lock together with the declaration graph.
+func Report(root string, _ map[string]any) []map[string]string {
+	observed, err := state.Inspect(root)
+	if err != nil {
+		return []map[string]string{{"path": root, "status": "invalid", "detail": err.Error()}}
+	}
 	findings := []map[string]string{}
-	for _, record := range anySlice(lock["managed_paths"]) {
-		mapping, ok := record.(map[string]any)
-		if !ok {
-			continue
-		}
-		relative := stringValue(mapping["path"])
-		expected := stringValue(mapping["checksum_sha256"])
-		path := filepath.Join(root, filepath.FromSlash(relative))
-		actual, err := hash.FileSHA256(path)
-		if err != nil {
-			findings = append(findings, map[string]string{"path": relative, "status": "missing"})
-			continue
-		}
-		if expected != "" && actual != expected {
-			findings = append(findings, map[string]string{
-				"path":     relative,
-				"status":   "drift",
-				"expected": expected,
-				"actual":   actual,
-			})
-		}
+	for _, path := range observed.MissingPaths {
+		findings = append(findings, map[string]string{"path": path, "status": "missing"})
+	}
+	for _, path := range observed.DriftedPaths {
+		findings = append(findings, map[string]string{"path": path, "status": "drift"})
+	}
+	for _, detail := range observed.Errors {
+		findings = append(findings, map[string]string{"path": state.LockPath, "status": "invalid", "detail": detail})
 	}
 	return findings
-}
-
-func anySlice(value any) []any {
-	switch item := value.(type) {
-	case []any:
-		return item
-	default:
-		return nil
-	}
-}
-
-func stringValue(value any) string {
-	if value == nil {
-		return ""
-	}
-	return filepath.ToSlash(filepath.Clean(valueToString(value)))
-}
-
-func valueToString(value any) string {
-	switch item := value.(type) {
-	case string:
-		return item
-	default:
-		return ""
-	}
 }

@@ -18,7 +18,7 @@ func TestRootHelpListsCommands(t *testing.T) {
 	if code != 0 {
 		t.Fatalf("help exit code = %d, want 0; stderr: %s", code, stderr)
 	}
-	for _, command := range []string{"onboard", "inspect", "init", "sync", "check", "update-check"} {
+	for _, command := range []string{"onboard", "inspect", "init", "repair", "sync", "check", "update-check", "upgrade"} {
 		if !strings.Contains(stdout, command) {
 			t.Fatalf("root help did not list %q:\n%s", command, stdout)
 		}
@@ -49,7 +49,7 @@ func TestVersionOutput(t *testing.T) {
 }
 
 func TestSubcommandHelp(t *testing.T) {
-	for _, command := range []string{"onboard", "inspect", "init", "sync", "check", "update-check"} {
+	for _, command := range []string{"onboard", "inspect", "init", "repair", "sync", "check", "update-check", "upgrade"} {
 		t.Run(command, func(t *testing.T) {
 			code, stdout, stderr := runForTest(command, "--help")
 			if code != 0 {
@@ -62,6 +62,32 @@ func TestSubcommandHelp(t *testing.T) {
 				t.Fatalf("%s help missing --json option:\n%s", command, stdout)
 			}
 		})
+	}
+}
+
+func TestMutatingLifecycleHelpDocumentsDryRun(t *testing.T) {
+	for _, command := range []string{"init", "repair", "sync", "update-check", "upgrade"} {
+		_, stdout, _ := runForTest(command, "--help")
+		if !strings.Contains(stdout, "--dry-run") {
+			t.Fatalf("%s help missing --dry-run:\n%s", command, stdout)
+		}
+	}
+}
+
+func TestUpgradeHelpRequiresExplicitApprovalAndHidesHandoff(t *testing.T) {
+	_, stdout, _ := runForTest("upgrade", "--help")
+	for _, expected := range []string{"--version VERSION", "--dry-run", "--yes", "--catalog CATALOG"} {
+		if !strings.Contains(stdout, expected) {
+			t.Fatalf("upgrade help missing %s:\n%s", expected, stdout)
+		}
+	}
+	rootCode, rootHelp, _ := runForTest("--help")
+	if rootCode != 0 || strings.Contains(rootHelp, "__upgrade-handoff") || strings.Contains(rootHelp, "__upgrade-reconcile") || strings.Contains(rootHelp, "__verify-content-identity") || strings.Contains(rootHelp, "__verify-release-evidence") || strings.Contains(rootHelp, "__cleanup-upgrade-handoff") {
+		t.Fatalf("internal handoff leaked into help:\n%s", rootHelp)
+	}
+	code, _, _ := runForTest("upgrade", "--version", "0.2.0")
+	if code != 2 {
+		t.Fatalf("upgrade without explicit dry-run/yes exit = %d", code)
 	}
 }
 

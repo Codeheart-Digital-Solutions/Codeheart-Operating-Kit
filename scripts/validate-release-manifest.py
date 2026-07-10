@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import re
 import sys
@@ -36,6 +37,40 @@ def load_manifest(path: Path) -> dict[str, Any]:
 
 def validate_manifest(path: Path) -> list[str]:
     manifest = load_manifest(path)
+    if "compatibility" in manifest:
+        return validate_content_manifest(path, manifest)
+    return validate_legacy_release_manifest(path, manifest)
+
+
+def validate_content_manifest(path: Path, manifest: dict[str, Any]) -> list[str]:
+    errors: list[str] = []
+    for key in ["schema_version", "version", "compatibility", "components", "profiles", "consumer_impact"]:
+        if key not in manifest:
+            errors.append(f"{path}: missing required key {key}")
+    for forbidden in ["assets", "released_at"]:
+        if forbidden in manifest:
+            errors.append(f"{path}: embedded content identity contains forbidden key {forbidden}")
+    compatibility = manifest.get("compatibility", {})
+    if set(compatibility.get("platforms", [])) != {"macos-universal", "windows-x64"}:
+        errors.append(f"{path}: compatibility platforms are incomplete")
+    if set(compatibility.get("commands", [])) != {"init", "repair", "sync", "update-check", "upgrade", "check"}:
+        errors.append(f"{path}: compatibility commands are incomplete")
+    for item in [*manifest.get("components", []), *manifest.get("profiles", [])]:
+        if not SHA256.match(str(item.get("checksum_sha256", ""))):
+            errors.append(f"{path}: {item.get('id', '<unnamed>')} has invalid checksum_sha256")
+            continue
+        source = ROOT / str(item.get("manifest_path", ""))
+        if source.is_file():
+            actual = hashlib.sha256(source.read_bytes()).hexdigest()
+            if actual != item["checksum_sha256"]:
+                errors.append(f"{path}: {item.get('id', '<unnamed>')} checksum does not match {item.get('manifest_path')}")
+    for profile in manifest.get("profiles", []):
+        if not SHA256.match(str(profile.get("graph_sha256", ""))):
+            errors.append(f"{path}: profile {profile.get('id', '<unnamed>')} has invalid graph_sha256")
+    return errors
+
+
+def validate_legacy_release_manifest(path: Path, manifest: dict[str, Any]) -> list[str]:
     errors: list[str] = []
     for key in [
         "schema_version",

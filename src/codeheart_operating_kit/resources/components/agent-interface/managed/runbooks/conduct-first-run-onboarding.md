@@ -1,4 +1,4 @@
-Last updated: 2026-06-15T10:16:29Z (UTC)
+Last updated: 2026-07-09T23:30:00Z (UTC)
 
 # Conduct First-Run Onboarding
 
@@ -30,7 +30,7 @@ context. Ask the user directly and keep the conversation visible in Codex chat.
 12. Present exactly one setup-mode message.
 13. Present the concrete setup, adoption, or repair plan.
 14. Ask for write confirmation.
-15. Check or record native Codex capability status when the user agrees.
+15. Execute the state-matched lifecycle command after approval.
 16. Explain quiet weekly update checking.
 17. Finish with base Operating Kit setup completion.
 
@@ -99,6 +99,23 @@ Always inspect before writing:
   capability status before repair.
 - `ambiguous-folder-stop`: stop and ask for a different folder or more context.
 
+## Agent Execution Route
+
+Keep the visible user dialogue above separate from state classification and command execution:
+
+- absent or adoptable: show the setup plan; after approval run `init`;
+- compatible existing lock-v2 state: show the repair plan; after approval run `repair`;
+- compatible lock v1: show `repair --dry-run` so bounded migration is visible, then repair after
+  approval;
+- active transaction: wait and run `check`; do not start concurrent setup;
+- schema-invalid, recovery-required, stale-CLI, or unsupported-future state: stop onboarding and
+  return the `check` blocker;
+- version change: stop onboarding and use the separate upgrade route only after the user asks for
+  that version change.
+
+Do not re-enter `init` for an existing installation. Onboarding confirmation authorizes only the
+state-matched init or repair operation shown in its plan.
+
 ## Setup Plan And Write Boundary
 
 Before writing, show the concrete file groups that will be added or repaired. Do not write files
@@ -107,8 +124,8 @@ environment during default onboarding. Do not mention GitHub during first-run on
 
 ## Native Capabilities And Updates
 
-Check or record native Codex capability status only when the user agrees. Record unavailable native
-capabilities as degraded state, not setup failure.
+Base onboarding does not offer, install, or implicitly check optional native capabilities. Their
+existing lock state remains unchanged unless the user separately requests capability work.
 
 Explain that Operating Kit includes quiet weekly update checking. If everything is current, Codex
 does not mention it. If an update is available, Codex asks before applying anything.

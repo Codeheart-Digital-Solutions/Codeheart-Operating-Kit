@@ -5,7 +5,8 @@ import (
 	"io"
 	"time"
 
-	"github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/internal/components"
+	"github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/internal/reconcile"
+	"github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/internal/state"
 )
 
 func RunInit(args []string, stdout io.Writer, stderr io.Writer) int {
@@ -13,6 +14,7 @@ func RunInit(args []string, stdout io.Writer, stderr io.Writer) int {
 		"--project-name":    true,
 		"--purpose":         true,
 		"--selected-folder": true,
+		"--dry-run":         false,
 		"--json":            false,
 	})
 	if err != nil {
@@ -36,61 +38,112 @@ func RunInit(args []string, stdout io.Writer, stderr io.Writer) int {
 	if selectedFolder == "" {
 		selectedFolder = expandPath(path)
 	}
-	result, err := Initialize(path, projectName, values["--purpose"], selectedFolder, time.Now())
+	payload, operation, err := initializeOperation(path, projectName, values["--purpose"], selectedFolder, time.Now(), bools["--dry-run"])
 	if err != nil {
 		fmt.Fprintf(stderr, "codeheart-operating-kit init: error: %v\n", err)
 		return 1
 	}
 	if bools["--json"] {
-		if err := writeJSON(stdout, result); err != nil {
+		if err := writeJSON(stdout, payload); err != nil {
 			fmt.Fprintf(stderr, "codeheart-operating-kit init: error: %v\n", err)
 			return 1
 		}
+	} else if bools["--dry-run"] || !operation.OK() {
+		reconcile.WriteText(stdout, operation)
+	} else {
+		fmt.Fprintln(stdout, "Operating Kit initialized.")
+		fmt.Fprintf(stdout, "Mode: %s\n", payload["inspection"].(map[string]any)["mode"])
+		if report, ok := payload["adoption_cleanup_report"].(string); ok && report != "" {
+			fmt.Fprintf(stdout, "Adoption cleanup report: %s\n", report)
+		}
+	}
+	if operation.OK() {
 		return 0
 	}
-	fmt.Fprintln(stdout, "Operating Kit initialized.")
-	fmt.Fprintf(stdout, "Mode: %s\n", result["inspection"].(map[string]any)["mode"])
-	if report, ok := result["adoption_cleanup_report"].(string); ok && report != "" {
-		fmt.Fprintf(stdout, "Adoption cleanup report: %s\n", report)
-	}
-	return 0
+	return 1
 }
 
 func Initialize(path string, projectName string, purpose string, selectedFolder string, now time.Time) (map[string]any, error) {
+	payload, _, err := initializeOperation(path, projectName, purpose, selectedFolder, now, false)
+	return payload, err
+}
+
+func initializeOperation(path, projectName, purpose, selectedFolder string, now time.Time, dryRun bool) (map[string]any, reconcile.Result, error) {
 	root := expandPath(path)
-	if err := osMkdirAll(root); err != nil {
-		return nil, err
-	}
 	inspection := InspectFolder(root)
+	observed, err := state.Inspect(root)
+	if err != nil {
+		return nil, reconcile.Result{}, err
+	}
+	if observed.Classification != state.StateAbsent && observed.Classification != state.StateAdoptable {
+		result := blockedLifecycle("init", observed, "init_requires_absent_or_adoptable", "init cannot replace an existing or incomplete Operating Kit installation", "run check, then use repair for an existing installation", "repair")
+		payload := resultPayload(result)
+		payload["inspection"] = inspection
+		return payload, result, nil
+	}
+	graph, err := state.CompileGraph("standard")
+	if err != nil {
+		return nil, reconcile.Result{}, err
+	}
+	lock, err := desiredLifecycleLock("init", observed, graph, now)
+	if err != nil {
+		return nil, reconcile.Result{}, err
+	}
 	preexisting := []string{}
 	for _, candidate := range []string{"AGENTS.md", "docs/repo/README.md", "docs/agent-memory/README.md"} {
 		if exists(joinRoot(root, candidate)) {
 			preexisting = append(preexisting, candidate)
 		}
 	}
-	state, err := components.WriteDefaultState(root, projectName, purpose, selectedFolder, now)
-	if err != nil {
-		return nil, err
-	}
+	extraFiles := map[string][]byte{}
 	reportPath := ""
 	if inspection["mode"] == "existing-technical-project-adoption" && len(preexisting) > 0 {
-		reportPath, err = components.WriteAdoptionCleanupReport(root, preexisting)
-		if err != nil {
-			return nil, err
-		}
+		reportPath = ".codeheart/reports/adoption-cleanup-report.md"
+		extraFiles[reportPath] = adoptionReport(now, preexisting)
 	}
-	return map[string]any{
-		"inspection":              inspection,
-		"state":                   stateToMap(state),
-		"adoption_cleanup_report": reportPath,
-	}, nil
+	result, err := runLifecycle(lifecycleRequest{
+		command:       "init",
+		root:          root,
+		now:           now,
+		dryRun:        dryRun,
+		observed:      observed,
+		graph:         graph,
+		desiredLock:   lock,
+		desiredConfig: initialConfig(projectName, purpose, selectedFolder),
+		extraFiles:    extraFiles,
+		ensureIgnore:  true,
+	})
+	if err != nil {
+		return nil, reconcile.Result{}, err
+	}
+	payload := resultPayload(result)
+	payload["inspection"] = inspection
+	payload["state"] = map[string]any{
+		"managed_paths":      recordsAsMaps(reconcile.ManagedPathRecords(graph)),
+		"generated_surfaces": recordsAsMaps(reconcile.GeneratedSurfaceRecords(graph)),
+		"agents_status":      changeStatus(result, "AGENTS.md"),
+		"gitignore_changed":  changeContains(result, ".gitignore"),
+	}
+	payload["adoption_cleanup_report"] = reportPath
+	return payload, result, nil
 }
 
-func stateToMap(state components.DefaultState) map[string]any {
-	return map[string]any{
-		"managed_paths":      mapsToAny(state.ManagedPaths),
-		"generated_surfaces": mapsToAny(state.GeneratedSurfaces),
-		"agents_status":      state.AgentsStatus,
-		"gitignore_changed":  state.GitignoreChanged,
+func recordsAsMaps(records []any) []map[string]any {
+	result := make([]map[string]any, 0, len(records))
+	for _, record := range records {
+		if mapping := state.Map(record); mapping != nil {
+			result = append(result, mapping)
+		}
 	}
+	return result
+}
+
+func changeStatus(result reconcile.Result, path string) string {
+	if changeContains(result, path) {
+		if result.DryRun {
+			return "planned"
+		}
+		return "updated"
+	}
+	return "unchanged"
 }

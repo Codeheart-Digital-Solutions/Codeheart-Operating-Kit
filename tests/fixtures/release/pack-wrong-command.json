@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "version": "0.1.21",
+  "platform": "macos-universal",
+  "command": "other-command",
+  "binary_path": "bin/codeheart-operating-kit",
+  "binary_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "content_manifest_path": "content-manifest.yaml",
+  "content_manifest_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+  "payload_checksums_path": "checksums.txt",
+  "payload_checksums_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+}

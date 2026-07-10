@@ -12,6 +12,8 @@ import (
 	"time"
 
 	"github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/internal/lockfile"
+	"github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/internal/reconcile"
+	"github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/internal/state"
 	"github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/internal/version"
 )
 
@@ -23,6 +25,7 @@ func RunUpdateCheck(args []string, stdout io.Writer, stderr io.Writer) int {
 		"--metadata-url":       true,
 		"--now":                true,
 		"--agent-notification": false,
+		"--dry-run":            false,
 		"--json":               false,
 	})
 	if err != nil {
@@ -35,95 +38,118 @@ func RunUpdateCheck(args []string, stdout io.Writer, stderr io.Writer) int {
 	if len(positionals) > 1 {
 		return writeArgError(stderr, "update-check", fmt.Errorf("unexpected argument %q", positionals[1]))
 	}
-	result, err := UpdateCheck(path, values["--latest-version"], values["--now"], values["--metadata-url"])
+	payload, operation, err := updateCheckOperation(path, values["--latest-version"], values["--now"], values["--metadata-url"], bools["--dry-run"])
 	if err != nil {
 		fmt.Fprintf(stderr, "codeheart-operating-kit update-check: error: %v\n", err)
 		return 1
 	}
 	if bools["--json"] {
-		if err := writeJSON(stdout, result); err != nil {
+		if err := writeJSON(stdout, payload); err != nil {
 			fmt.Fprintf(stderr, "codeheart-operating-kit update-check: error: %v\n", err)
 			return 1
 		}
+	} else if !operation.OK() || bools["--dry-run"] {
+		reconcile.WriteText(stdout, operation)
+	} else {
+		status := valueString(payload["status"])
+		if bools["--agent-notification"] && status == "current" {
+			return 0
+		}
+		switch status {
+		case "update-available":
+			fmt.Fprintf(stdout, "Operating Kit update available: %s. Apply it only if the user asks.\n", payload["latest_seen_version"])
+		case "failed":
+			fmt.Fprintf(stdout, "Operating Kit update check failed: %s\n", payload["error"])
+		default:
+			fmt.Fprintln(stdout, "Operating Kit is current.")
+		}
+	}
+	if operation.OK() {
 		return 0
 	}
-	status := valueString(result["status"])
-	if bools["--agent-notification"] && status == "current" {
-		return 0
-	}
-	switch status {
-	case "update-available":
-		fmt.Fprintf(stdout, "Operating Kit update available: %s. Apply it only if the user asks.\n", result["latest_seen_version"])
-	case "failed":
-		fmt.Fprintf(stdout, "Operating Kit update check failed: %s\n", result["error"])
-	default:
-		fmt.Fprintln(stdout, "Operating Kit is current.")
-	}
-	return 0
+	return 1
 }
 
 func UpdateCheck(path string, latestVersion string, nowText string, metadataURL string) (map[string]any, error) {
+	payload, _, err := updateCheckOperation(path, latestVersion, nowText, metadataURL, false)
+	return payload, err
+}
+
+func updateCheckOperation(path, latestVersion, nowText, metadataURL string, dryRun bool) (map[string]any, reconcile.Result, error) {
 	root := expandPath(path)
-	lock, err := lockfile.ReadLock(root)
+	observed, err := state.Inspect(root)
 	if err != nil {
-		return nil, err
+		return nil, reconcile.Result{}, err
+	}
+	if (observed.Classification != state.StateCurrent && observed.Classification != state.StateDrifted) || state.AsInt(observed.Lock["schema_version"]) != 2 {
+		result := blockedLifecycle("update-check", observed, "update_check_requires_valid_v2_installation", "update-check requires a valid lock-v2 installation", "run check and repair a compatible legacy or drifted installation first", "repair")
+		payload := resultPayload(result)
+		payload["status"] = "blocked"
+		return payload, result, nil
 	}
 	now := lockfile.UTCNow()
 	if nowText != "" {
 		parsed, err := lockfile.ParseTime(nowText)
 		if err != nil {
-			return nil, err
+			return nil, reconcile.Result{}, err
 		}
 		now = parsed
 	}
-	current := valueString(lock["kit_version"])
-	if current == "" {
-		current = version.Version
-	}
-	ensureLockDefaults(lock, current)
-
+	current := state.AsString(observed.Lock["kit_version"])
+	lock := state.DeepCopy(observed.Lock)
+	updateState := state.Map(lock["update_check"])
+	domainStatus := "current"
 	latest := latestVersion
+	metadataError := ""
 	if latest == "" {
 		latest, err = latestVersionFromMetadata(defaultString(metadataURL, defaultLatestReleaseURL))
 		if err != nil {
-			updateState := mapValue(lock["update_check"])
-			if updateState["last_update_check_at"] == nil {
-				updateState["last_update_check_at"] = lockfile.FormatTime(now)
-			}
-			if updateState["next_update_check_due"] == nil {
-				updateState["next_update_check_due"] = lockfile.FormatTime(now)
-			}
-			if updateState["latest_seen_version"] == nil {
-				updateState["latest_seen_version"] = current
-			}
+			metadataError = err.Error()
+			domainStatus = "failed"
+			latest = state.AsString(updateState["latest_seen_version"])
 			updateState["update_status"] = "failed"
-			lock["update_check"] = updateState
-			if writeErr := lockfile.WriteLock(root, lock); writeErr != nil {
-				return nil, writeErr
-			}
-			return map[string]any{
-				"status":                "failed",
-				"latest_seen_version":   updateState["latest_seen_version"],
-				"next_update_check_due": updateState["next_update_check_due"],
-				"error":                 err.Error(),
-			}, nil
+		} else if compareVersions(latest, current) > 0 {
+			domainStatus = "update-available"
+		}
+	} else if compareVersions(latest, current) > 0 {
+		domainStatus = "update-available"
+	}
+	if metadataError == "" {
+		next := now.UTC().Truncate(time.Second).Add(7 * 24 * time.Hour)
+		lock["update_check"] = map[string]any{
+			"last_update_check_at":  lockfile.FormatTime(now),
+			"next_update_check_due": lockfile.FormatTime(next),
+			"latest_seen_version":   latest,
+			"update_status":         domainStatus,
 		}
 	}
-	status := "current"
-	if compareVersions(latest, current) > 0 {
-		status = "update-available"
+	lock["last_operation"] = map[string]any{
+		"transaction_id":      "planning",
+		"command":             "update-check",
+		"completed_at":        now.UTC().Truncate(time.Second).Format(time.RFC3339),
+		"previous_generation": state.AsInt(lock["state_generation"]),
 	}
-	next := now.UTC().Truncate(time.Second).Add(7 * 24 * time.Hour)
-	lock["update_check"] = map[string]any{
-		"last_update_check_at":  lockfile.FormatTime(now),
-		"next_update_check_due": lockfile.FormatTime(next),
-		"latest_seen_version":   latest,
-		"update_status":         status,
+	result, err := runLifecycle(lifecycleRequest{
+		command:       "update-check",
+		root:          root,
+		now:           now,
+		dryRun:        dryRun,
+		observed:      observed,
+		desiredLock:   lock,
+		expectedAfter: []state.Classification{observed.Classification},
+	})
+	if err != nil {
+		return nil, reconcile.Result{}, err
 	}
-	if err := lockfile.WriteLock(root, lock); err != nil {
-		return nil, err
+	updateState = state.Map(lock["update_check"])
+	payload := resultPayload(result)
+	payload["status"] = domainStatus
+	payload["latest_seen_version"] = updateState["latest_seen_version"]
+	payload["next_update_check_due"] = updateState["next_update_check_due"]
+	if metadataError != "" {
+		payload["error"] = metadataError
 	}
-	return map[string]any{"status": status, "latest_seen_version": latest, "next_update_check_due": lockfile.FormatTime(next)}, nil
+	return payload, result, nil
 }
 
 func latestVersionFromMetadata(metadataURL string) (string, error) {
@@ -164,33 +190,6 @@ func readMetadataURL(metadataURL string) ([]byte, error) {
 		return nil, fmt.Errorf("latest-version metadata returned HTTP %d", response.StatusCode)
 	}
 	return io.ReadAll(response.Body)
-}
-
-func ensureLockDefaults(lock map[string]any, current string) {
-	if lock["schema_version"] == nil {
-		lock["schema_version"] = 1
-	}
-	if lock["kit_version"] == nil {
-		lock["kit_version"] = current
-	}
-	if lock["selected_profile"] == nil {
-		lock["selected_profile"] = "standard"
-	}
-	if lock["selected_components"] == nil {
-		lock["selected_components"] = []any{}
-	}
-	if lock["release"] == nil {
-		lock["release"] = map[string]any{"asset_url": "unknown", "checksum_sha256": strings.Repeat("0", 64)}
-	}
-	if lock["managed_paths"] == nil {
-		lock["managed_paths"] = []any{}
-	}
-	if lock["generated_surfaces"] == nil {
-		lock["generated_surfaces"] = []any{}
-	}
-	if lock["cli_repair"] == nil {
-		lock["cli_repair"] = map[string]any{"installed_cli_path": "codeheart-operating-kit", "repair_source_url": "unknown", "repair_checksum_sha256": strings.Repeat("0", 64)}
-	}
 }
 
 func compareVersions(left string, right string) int {

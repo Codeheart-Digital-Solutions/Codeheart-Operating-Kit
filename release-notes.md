@@ -1,6 +1,55 @@
-Last updated: 2026-07-08T14:20:00Z (UTC)
+Last updated: 2026-07-10T00:13:57Z (UTC)
 
 # Codeheart Operating Kit Release Notes
+
+## Unreleased - State And Release Architecture
+
+This source change makes lifecycle operations transactional and makes release evidence
+non-circular. It does not select, tag, or publish a version.
+
+### Included
+
+- A schema-validated desired-state graph and lock v2 classify absent, adoptable, current, drifted,
+  stale-CLI, partial, invalid, legacy, active-transaction, recovery, and future-version states.
+- `init`, `repair`, `sync`, `update-check`, `check`, and `onboard` use one transactional reconciler.
+  Dry-runs do not mutate the target; failed operations clean up or retain recoverable evidence;
+  rollback restores the prior installation.
+- Compatible lock v1 installations migrate through `repair`. Consumer configuration, root
+  instructions, plans, memory, local-user content, and modified retired managed files remain
+  protected.
+- Embedded `manifest.yaml` now identifies content only. Deterministic platform packs carry a pack
+  manifest, and an external catalog carries archive locations and digests after packs exist.
+- Catalog assets are bound to the requested version/platform filename, and pack extraction rejects
+  traversal, symbolic links, special filesystem entries, excess entries, and declared or actual
+  size-limit violations.
+- `upgrade --dry-run` verifies a candidate without changing the installation. Only
+  `upgrade --yes` may change the installed kit version, and the verified staged binary performs
+  reconciliation and final health checks with restoration on failure.
+- macOS universal and Windows x64 remain the supported release platforms. Generated assets stay
+  unsigned internal/prototype candidates unless signing or notarization is separately approved.
+- One compact managed lifecycle runbook distinguishes command preconditions, approval, blockers,
+  and recovery without adding a new workflow or evidence system.
+
+### Consumer Impact
+
+- `consumer migration required`: compatible lock v1 or drifted installations should run
+  `repair`; version changes use the new explicit `upgrade --yes` path.
+- `validator-only change`: component, profile, lock, content-manifest, release-catalog, and
+  pack-manifest contracts are schema validated.
+- `instruction-only change`: managed lifecycle and onboarding guidance route consumers to the
+  correct command.
+- `security or safety policy change`: path containment, transaction recovery, catalog-to-binary
+  verification, and fail-closed upgrade rollback are enforced.
+- No breaking placement-contract change is introduced.
+
+### Validation Boundary
+
+- Local source, schema, migration, transaction, rollback, reproducibility, installer, upgrade,
+  routing, public-core, and Markdown validation is required before source handoff.
+- Real Windows install and upgrade execution remains a completion gate; configured workflow
+  coverage is not itself evidence that the Windows lane passed.
+- Publication, tagging, named consumer sync, local kit update, signing changes, Python removal,
+  and new platform support require separate authorization.
 
 ## v0.1.21 Release Notes
 

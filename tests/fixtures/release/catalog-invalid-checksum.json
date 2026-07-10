@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "version": "0.1.21",
+  "assets": [
+    {
+      "name": "codeheart-operating-kit-0.1.21-macos-universal.zip",
+      "version": "0.1.21",
+      "platform": "macos-universal",
+      "url": "fixture.zip",
+      "archive_sha256": "not-a-checksum",
+      "pack_manifest_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    }
+  ]
+}

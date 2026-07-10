@@ -1,0 +1,18 @@
+schema_version: 1
+selected_profile: standard
+project_display_name: Example-Automation
+selected_setup_folder: /tmp/Example-Automation
+local_consumer_layer:
+  repo_docs_path: docs/repo/
+  agent_memory_path: docs/agent-memory/
+  user_layer_path: .codeheart/user/
+  local_machine_layer_path: .codeheart/local/
+component_settings:
+  example:
+    numeric_looking_string: "00123"
+portfolio:
+  role: coordination-home
+  coordination_home_register_path: docs/repo/plans/plan-register.md
+repo_feedback:
+  mode: disabled
+  disabled_reason: repo_owner_policy

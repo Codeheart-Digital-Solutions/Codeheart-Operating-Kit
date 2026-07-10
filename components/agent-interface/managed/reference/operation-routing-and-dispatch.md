@@ -1,4 +1,4 @@
-Last updated: 2026-06-29T14:49:19Z (UTC)
+Last updated: 2026-07-09T23:30:00Z (UTC)
 
 # Operation Routing And Dispatch
 
@@ -19,6 +19,12 @@ Visible tools, connectors, MCP servers, browser paths, local commands, APIs, CLI
 execution-surface options. They are not automatically the routing authority. Choose them after the
 intent, domain, authority, scope, and capability route are resolved, unless the user explicitly
 requests that specific surface and the request is safe.
+
+For Operating Kit installation state, the lifecycle command is the route boundary: `init` creates,
+`repair` restores the installed version, `sync` refreshes that same version, `update-check` changes
+only update metadata, `upgrade --yes` performs an approved version change, and `check` diagnoses
+without writing. Full route:
+`.codeheart/kit/docs/agent-interface/runbooks/maintain-operating-kit-installation.md`.
 
 ## Dispatch Sequence
 

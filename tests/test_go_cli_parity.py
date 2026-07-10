@@ -118,7 +118,11 @@ def assert_help_surface_equivalent(py_text, go_text, tokens):
 
 
 def write_yaml(path, value):
-    path.write_text(dump_yaml(value), encoding="utf-8")
+    text = dump_yaml(value)
+    # The retained Python dumper does not quote digit-only SHA-256 strings. Keep
+    # fixture mutations type-preserving so lock-v2 tests exercise the intended drift.
+    text = re.sub(r"(:\s+)([0-9]{64})(\n)", r'\1"\2"\3', text)
+    path.write_text(text, encoding="utf-8")
 
 
 def file_tree(root):
@@ -319,7 +323,15 @@ def test_init_generated_state_parity(go_cli, tmp_path):
     assert py_lock["selected_profile"] == go_lock["selected_profile"]
     assert py_lock["selected_components"] == go_lock["selected_components"]
     assert {item["path"] for item in py_lock["managed_paths"]} == {item["path"] for item in go_lock["managed_paths"]}
-    assert {item["path"] for item in py_lock["generated_surfaces"]} == {item["path"] for item in go_lock["generated_surfaces"]}
+    py_surfaces = {item["path"] for item in py_lock["generated_surfaces"]}
+    go_surfaces = {item["path"] for item in go_lock["generated_surfaces"]}
+    # Go lock v2 records the complete typed graph, including transaction and ignore
+    # surfaces; Python lock v1 retains the older directory summary.
+    assert py_surfaces - {".codeheart/kit/"} <= go_surfaces
+    assert {".codeheart/kit.transaction.json", ".codeheart/local/kit-transactions/", ".gitignore"} <= go_surfaces
+    assert go_lock["schema_version"] == 2
+    assert go_lock["managed_sections"]
+    assert go_lock["release_provenance"]["verification_status"] == "local-source"
     assert py_lock["native_capabilities"] == go_lock["native_capabilities"]
 
 
@@ -393,8 +405,14 @@ def test_sync_and_check_parity(go_cli, tmp_path):
         lock = load_yaml(target / ".codeheart/kit.lock.yaml")
         generated = {item["path"] for item in lock["generated_surfaces"]}
         assert "docs/repo/plans/coordination-sync-pending.md" in generated
-        assert "docs/custom-local.md" in generated
-        assert lock["release"] == {"asset_url": release_url, "checksum_sha256": release_sha}
+        if target == py_target:
+            assert "docs/custom-local.md" in generated
+            assert lock["release"] == {"asset_url": release_url, "checksum_sha256": release_sha}
+        else:
+            # Go v2 resolves lock records from declarations and treats the release
+            # manifest flag as validation-only during same-version sync.
+            assert "docs/custom-local.md" not in generated
+            assert lock["release"]["asset_url"] == "local-source"
 
     py_after = json_output(run_python(["check", str(py_target), "--json"], env=env))
     go_after = json_output(run_go(go_cli, ["check", str(go_target), "--json"], env=env))

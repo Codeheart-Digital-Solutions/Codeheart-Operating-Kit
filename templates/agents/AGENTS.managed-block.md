@@ -1,4 +1,4 @@
-Last updated: 2026-07-02T13:16:41Z (UTC)
+Last updated: 2026-07-09T23:30:00Z (UTC)
 
 <!-- BEGIN CODEHEART OPERATING KIT MANAGED BLOCK -->
 
@@ -40,6 +40,8 @@ Last updated: 2026-07-02T13:16:41Z (UTC)
 - Agent interface: `.codeheart/kit/docs/agent-interface/README.md`
 - Operation routing and dispatch:
   `.codeheart/kit/docs/agent-interface/reference/operation-routing-and-dispatch.md`
+- Operating Kit installation lifecycle:
+  `.codeheart/kit/docs/agent-interface/runbooks/maintain-operating-kit-installation.md`
 - Repo feedback capture:
   `.codeheart/kit/docs/agent-interface/runbooks/capture-repo-feedback.md`
 - Operating Kit feedback:
@@ -58,6 +60,9 @@ At the start of each agent session, inspect `.codeheart/kit.lock.yaml`. If
 
 Stay silent when the installed kit is current. When an update is available, mention it briefly and
 ask before applying anything.
+
+Only `upgrade --yes` may change the installed kit version. `repair` and `sync` restore or refresh
+the currently installed version without an additional confirmation prompt.
 
 Do not edit the due date manually. `codeheart-operating-kit update-check` owns
 `last_update_check_at`, `next_update_check_due`, `latest_seen_version`, and `update_status`.

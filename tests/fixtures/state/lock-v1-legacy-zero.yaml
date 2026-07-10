@@ -1,0 +1,20 @@
+schema_version: 1
+kit_version: "0.1.17"
+selected_profile: standard
+selected_components:
+  - agent-interface
+release:
+  asset_url: local-source
+  checksum_sha256: 0
+managed_paths: []
+generated_surfaces: []
+cli_repair:
+  installed_cli_path: codeheart-operating-kit
+  repair_source_url: local-source
+  repair_checksum_sha256: "0"
+update_check:
+  last_update_check_at: "2026-07-09T20:00:00Z"
+  next_update_check_due: "2026-07-16T20:00:00Z"
+  latest_seen_version: "0.1.17"
+  update_status: current
+native_capabilities: {}

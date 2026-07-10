@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "command": "repair",
+  "status": "blocked",
+  "dry_run": true,
+  "state_before": "drifted",
+  "changes": [
+    {
+      "action": "replace",
+      "path": ".codeheart/kit/example.md",
+      "owner": "managed"
+    }
+  ],
+  "blockers": [
+    {
+      "code": "managed_path_modified",
+      "message": "retired managed path contains changes",
+      "path": ".codeheart/kit/retired.md",
+      "remediation": "preserve the file",
+      "retry_command": "repair"
+    }
+  ],
+  "validations": [
+    {
+      "name": "change-plan",
+      "status": "passed"
+    }
+  ],
+  "rollback": {
+    "attempted": false,
+    "succeeded": false
+  }
+}

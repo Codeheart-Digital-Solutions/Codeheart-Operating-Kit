@@ -1,4 +1,4 @@
-Last updated: 2026-07-08T14:11:45Z (UTC)
+Last updated: 2026-07-09T23:56:33Z (UTC)
 
 # Repo Documentation
 
@@ -22,6 +22,17 @@ This folder contains public repository governance for Codeheart Operating Kit.
   issues.
 - `plans/README.md`: repository-level discovery and implementation plans.
 - `plans/plan-register.md`: lightweight index of registered Operating Kit repository plans.
+- `plans/operating-kit-state-release-architecture/operating-kit-state-release-architecture_discovery_doc.md`:
+  completed discovery for consumer lifecycle commands, desired-state authority, schema
+  enforcement, transactional reconciliation, release provenance, reproducibility, and
+  source-repository producer mode.
+- `plans/operating-kit-state-release-architecture/operating-kit-state-release-architecture_implementation_doc.md`:
+  source-complete implementation plan for schema-backed state, a compiled desired-state graph,
+  transactional reconciliation, explicit lifecycle commands, non-circular release provenance,
+  reproducible packs, cross-platform upgrade, and producer-mode routing proof; validation-only
+  Windows execution remains pending.
+- `plans/operating-kit-state-release-architecture/operating-kit-state-release-architecture_execution_log.md`:
+  source implementation, local validation, review, and pending Windows CI evidence.
 - `plans/operating-kit-self-contained-bootstrap/operating-kit-self-contained-bootstrap_implementation_doc.md`:
   completed implementation plan for the released self-contained Go CLI, macOS and Windows binary
   release packs, legacy Python-wheel migration, explicit behavior parity tests, and release-stage

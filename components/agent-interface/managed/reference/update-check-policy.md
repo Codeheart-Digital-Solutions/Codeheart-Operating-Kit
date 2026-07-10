@@ -1,4 +1,4 @@
-Last updated: 2026-06-13T23:55:46Z (UTC)
+Last updated: 2026-07-09T23:30:00Z (UTC)
 
 # Update Check Policy
 
@@ -8,12 +8,17 @@ checks.
 G1 resolves latest-version metadata from the public GitHub latest-release endpoint unless a
 specific metadata URL is provided for tests, mirrors, or controlled environments.
 
+`update-check` is valid-install-only. It requires a schema-valid lock-v2 installation, changes only
+update metadata plus the normal operation generation record, and never repairs content or changes
+the installed kit version. Route compatible legacy or damaged state through `repair` first.
+
 ## Session Trigger
 
 At the start of each agent session, inspect `.codeheart/kit.lock.yaml`. If
 `next_update_check_due` is in the past, run `codeheart-operating-kit update-check`.
 
-Do not apply a kit version update unless the user asks for update, sync, or kit maintenance.
+Do not apply a kit version update unless the user explicitly approves `upgrade --yes`. `sync` is a
+same-version refresh and is not version-change authorization.
 
 The trigger is static so root `AGENTS.md` does not churn weekly. The changing due date belongs in
 the lockfile only.

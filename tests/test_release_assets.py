@@ -1,11 +1,10 @@
 import hashlib
 import json
+import stat
 import subprocess
 import sys
 import zipfile
 from pathlib import Path
-
-import pytest
 
 from codeheart_operating_kit import __version__
 from codeheart_operating_kit.manifest import load_yaml
@@ -57,7 +56,8 @@ def test_release_candidate_fixture_uses_binary_platforms():
         f"codeheart-operating-kit-{__version__}-windows-x64.zip",
     }
     assert {asset["platform"] for asset in assets} == {"macos-universal", "windows-x64"}
-    assert all(len(asset["sha256"]) == 64 for asset in assets)
+    assert all(len(asset["archive_sha256"]) == 64 for asset in assets)
+    assert all(len(asset["pack_manifest_sha256"]) == 64 for asset in assets)
 
 
 def test_release_asset_build_check(tmp_path):
@@ -77,7 +77,11 @@ def test_release_asset_build_check(tmp_path):
         checksum = tmp_path / f"{name}.sha256"
         assert checksum.exists()
         assert name in checksum.read_text(encoding="utf-8")
-    assert (tmp_path / f"release-candidate-manifest-{__version__}.json").exists()
+    catalog = tmp_path / f"release-catalog-{__version__}.json"
+    assert catalog.exists()
+    payload = json.loads(catalog.read_text(encoding="utf-8"))
+    assert payload["version"] == __version__
+    assert all("archive_sha256" in asset and "pack_manifest_sha256" in asset for asset in payload["assets"])
 
 
 def test_release_asset_build_ignores_private_pip_index_env(tmp_path, monkeypatch):
@@ -97,17 +101,25 @@ def test_release_asset_build_ignores_private_pip_index_env(tmp_path, monkeypatch
 
 
 def test_release_asset_build_can_target_windows_x64_only(tmp_path):
-    result = subprocess.run(
-        [sys.executable, "scripts/build-release-assets.py", "--platform", "windows-x64", "--output-dir", str(tmp_path)],
-        cwd=ROOT,
-        text=True,
-        capture_output=True,
-        check=False,
-    )
-    assert result.returncode == 0, result.stdout + result.stderr
-    assert (tmp_path / f"codeheart-operating-kit-{__version__}-windows-x64.zip").exists()
-    assert not (tmp_path / f"codeheart-operating-kit-{__version__}-macos-universal.zip").exists()
-    candidate = json.loads((tmp_path / f"release-candidate-manifest-{__version__}.json").read_text(encoding="utf-8"))
+    outputs = [tmp_path / "first", tmp_path / "second"]
+    for output in outputs:
+        result = subprocess.run(
+            [sys.executable, "scripts/build-release-assets.py", "--platform", "windows-x64", "--output-dir", str(output)],
+            cwd=ROOT,
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+        assert result.returncode == 0, result.stdout + result.stderr
+    assert (outputs[0] / f"codeheart-operating-kit-{__version__}-windows-x64.zip").exists()
+    assert not (outputs[0] / f"codeheart-operating-kit-{__version__}-macos-universal.zip").exists()
+    for name in [
+        f"codeheart-operating-kit-{__version__}-windows-x64.zip",
+        f"codeheart-operating-kit-{__version__}-windows-x64.zip.sha256",
+        f"release-catalog-{__version__}.json",
+    ]:
+        assert (outputs[0] / name).read_bytes() == (outputs[1] / name).read_bytes()
+    candidate = json.loads((outputs[0] / f"release-catalog-{__version__}.json").read_text(encoding="utf-8"))
     assert [asset["platform"] for asset in candidate["assets"]] == ["windows-x64"]
 
 
@@ -131,53 +143,42 @@ def test_release_assets_contain_binaries_and_no_python_payload(tmp_path):
             assert any(name.endswith(binary_suffix) for name in names)
             assert any(name.endswith("bootstrap.md") for name in names)
             assert any(name.endswith("INSTALL.md") for name in names)
-            assert any(name.endswith("manifest.json") for name in names)
+            assert any(name.endswith("pack-manifest.json") for name in names)
             assert any(name.endswith("checksums.txt") for name in names)
-            assert not any(name.endswith("manifest.yaml") for name in names)
+            assert any(name.endswith("content-manifest.yaml") for name in names)
             assert not any(name.endswith(".whl") for name in names)
             assert not any(".dist-info/" in name for name in names)
             assert not any("codeheart_operating_kit/" in name for name in names)
-            manifest_name = next(name for name in names if name.endswith("manifest.json"))
+            manifest_name = next(name for name in names if name.endswith("pack-manifest.json"))
             payload_manifest = json.loads(archive.read(manifest_name).decode("utf-8"))
             assert payload_manifest["version"] == __version__
-            assert payload_manifest["binary"] == binary_suffix
+            assert payload_manifest["binary_path"] == binary_suffix
+            assert len(payload_manifest["binary_sha256"]) == 64
+            assert len(payload_manifest["content_manifest_sha256"]) == 64
+            assert len(payload_manifest["payload_checksums_sha256"]) == 64
             checksums_name = next(name for name in names if name.endswith("checksums.txt"))
             checksums_text = archive.read(checksums_name).decode("utf-8")
             assert binary_suffix in checksums_text
-            assert "manifest.json" in checksums_text
+            assert "content-manifest.yaml" in checksums_text
+            assert "pack-manifest.json" not in checksums_text
 
-    candidate = json.loads((tmp_path / f"release-candidate-manifest-{__version__}.json").read_text(encoding="utf-8"))
+            for info in archive.infolist():
+                assert info.date_time == (1980, 1, 1, 0, 0, 0)
+                assert info.create_system == 3
+                assert stat.S_IFMT(info.external_attr >> 16) == stat.S_IFREG
+
+    candidate = json.loads((tmp_path / f"release-catalog-{__version__}.json").read_text(encoding="utf-8"))
     assert {asset["platform"] for asset in candidate["assets"]} == {"macos-universal", "windows-x64"}
     assert {asset["name"] for asset in candidate["assets"]} == set(expected_binary)
-    assert all(len(asset["sha256"]) == 64 for asset in candidate["assets"])
+    assert all(len(asset["archive_sha256"]) == 64 for asset in candidate["assets"])
+    assert all(len(asset["pack_manifest_sha256"]) == 64 for asset in candidate["assets"])
 
 
 def test_current_dist_assets_match_root_manifest_when_present():
     manifest = load_yaml(ROOT / "manifest.yaml")
-    source_assets = {"bootstrap.md", "install.sh", "install.ps1", "release-notes.md"}
-    local_paths = {
-        "bootstrap.md": ROOT / "bootstrap.md",
-        "install.sh": ROOT / "install.sh",
-        "install.ps1": ROOT / "install.ps1",
-        "release-notes.md": ROOT / "release-notes.md",
-        f"codeheart-operating-kit-{__version__}-macos-universal.zip": ROOT / "dist" / f"codeheart-operating-kit-{__version__}-macos-universal.zip",
-        f"codeheart-operating-kit-{__version__}-macos-universal.zip.sha256": ROOT / "dist" / f"codeheart-operating-kit-{__version__}-macos-universal.zip.sha256",
-        f"codeheart-operating-kit-{__version__}-windows-x64.zip": ROOT / "dist" / f"codeheart-operating-kit-{__version__}-windows-x64.zip",
-        f"codeheart-operating-kit-{__version__}-windows-x64.zip.sha256": ROOT / "dist" / f"codeheart-operating-kit-{__version__}-windows-x64.zip.sha256",
-    }
-    missing = [path for path in local_paths.values() if not path.exists()]
-    if missing:
-        pytest.skip("release dist assets are not present in this checkout")
-
-    unpublished_source_changes = []
-    for asset in manifest["assets"]:
-        path = local_paths[asset["name"]]
-        actual = sha256_file(path)
-        if asset["name"] in source_assets and actual != asset["sha256"]:
-            unpublished_source_changes.append(asset["name"])
-            continue
-        assert actual == asset["sha256"]
-    assert set(unpublished_source_changes).issubset(source_assets)
+    assert "assets" not in manifest
+    assert "released_at" not in manifest
+    assert set(manifest["compatibility"]["platforms"]) == {"macos-universal", "windows-x64"}
 
 
 def test_release_manifest_component_impact_matches_component_manifests():

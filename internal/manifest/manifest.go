@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/internal/kitfs"
-	"github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/internal/yamlmini"
+	"github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/internal/state"
 )
 
 type GeneratedSurface struct {
@@ -65,11 +65,26 @@ type ReleaseManifest struct {
 }
 
 func LoadYAMLResource(resourcePath string) (map[string]any, error) {
-	text, err := kitfs.ReadText(resourcePath)
+	data, err := kitfs.ReadFile(resourcePath)
 	if err != nil {
 		return nil, err
 	}
-	return yamlmini.MustMap(text)
+	value, err := state.DecodeYAMLMap(data)
+	if err != nil {
+		return nil, err
+	}
+	switch {
+	case strings.HasPrefix(resourcePath, "profiles/"):
+		err = state.Validate(state.ProfileSchema, value)
+	case strings.HasSuffix(resourcePath, "/component.yaml"):
+		err = state.Validate(state.ComponentSchema, value)
+	case resourcePath == "manifest.yaml":
+		err = state.Validate(state.ContentManifestSchema, value)
+	}
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", resourcePath, err)
+	}
+	return value, nil
 }
 
 func LoadProfile(profileID string) (Profile, error) {
@@ -188,13 +203,22 @@ func LoadComponents(profileID string) ([]Component, error) {
 }
 
 func IterComponentFiles(profileID string) ([]ComponentFile, error) {
-	components, err := LoadComponents(profileID)
+	graph, err := state.CompileGraph(profileID)
 	if err != nil {
 		return nil, err
 	}
 	files := []ComponentFile{}
-	for _, component := range components {
-		files = append(files, component.Files...)
+	for _, node := range graph.Nodes {
+		if node.Component == "" {
+			continue
+		}
+		files = append(files, ComponentFile{
+			Source:      node.Source,
+			Target:      node.Target,
+			Ownership:   string(node.Ownership),
+			InstallWhen: node.InstallWhen,
+			Component:   node.Component,
+		})
 	}
 	return files, nil
 }
@@ -207,7 +231,7 @@ func LoadReleaseManifest() (ReleaseManifest, error) {
 	result := ReleaseManifest{
 		SchemaVersion:  intValue(root["schema_version"]),
 		Version:        stringValue(root["version"]),
-		ReleasedAt:     stringValue(root["released_at"]),
+		ReleasedAt:     "",
 		ConsumerImpact: stringSlice(root["consumer_impact"]),
 		Raw:            root,
 	}

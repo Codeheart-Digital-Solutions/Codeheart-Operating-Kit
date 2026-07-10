@@ -1,4 +1,4 @@
-Last updated: 2026-07-08T14:20:00Z (UTC)
+Last updated: 2026-07-09T22:48:33Z (UTC)
 
 # Bootstrap Codeheart Operating Kit
 
@@ -46,10 +46,33 @@ The default command installs the CLI under:
 %LOCALAPPDATA%\Codeheart\OperatingKit\bin\codeheart-operating-kit.cmd
 ```
 
-Both installers download the pinned platform release pack for the selected version and verify its
-SHA-256 checksum before installing or repairing the CLI. A checksum mismatch stops installation.
+Both installers verify the external release catalog, archive digest, pack manifest, complete
+payload checksum set, content identity, binary digest, platform, command, version, and staged
+binary output before replacement. A mismatch at any layer stops installation. If final replacement
+or validation fails, the prior runnable binary is restored.
+
 Base bootstrap installs only the Operating Kit CLI and does not require a package manager or
-language runtime setup from the user.
+language runtime setup from the user. Release catalogs currently use HTTPS plus SHA-256 under the
+unsigned internal/prototype boundary; they do not claim signing, notarization, or attestation.
+
+## Upgrade An Existing Installation
+
+Previewing an upgrade verifies the candidate in temporary storage and leaves the installed binary
+and repository state unchanged:
+
+```sh
+codeheart-operating-kit upgrade --version <Version> --dry-run <Project-Folder>
+```
+
+Only an explicit approved version change uses `--yes`:
+
+```sh
+codeheart-operating-kit upgrade --version <Version> --yes <Project-Folder>
+```
+
+The staged new binary revalidates the handoff, replaces the installed binary, reconciles repository
+state, and runs the complete check. A failed binary handoff or reconciliation restores the prior
+binary and preserves the prior repository state.
 
 ## Agent Contract
 
@@ -57,7 +80,7 @@ Follow this contract exactly during first-run setup:
 
 - Read this public bootstrap before taking setup action.
 - Install or repair `codeheart-operating-kit` before running kit commands.
-- Verify release checksums before trusting downloaded release assets.
+- Verify the complete external catalog-to-binary chain before trusting downloaded release assets.
 - Use the self-contained platform release pack for the user's operating system.
 - Start onboarding after the CLI is installed.
 - Ask the user for language before continuing with user-facing setup prompts.

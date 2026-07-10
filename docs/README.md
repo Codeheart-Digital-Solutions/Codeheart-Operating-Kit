@@ -1,4 +1,4 @@
-Last updated: 2026-07-02T13:16:41Z (UTC)
+Last updated: 2026-07-09T23:56:33Z (UTC)
 
 # Docs Index
 
@@ -23,6 +23,12 @@ This folder contains public Codeheart Operating Kit documentation.
 - Kit feedback triage runbook: `docs/repo/runbooks/triage-kit-feedback.md`
 - Repo plans: `docs/repo/plans/README.md`
 - Repo plan register: `docs/repo/plans/plan-register.md`
+- Operating Kit state and release architecture discovery:
+  `docs/repo/plans/operating-kit-state-release-architecture/operating-kit-state-release-architecture_discovery_doc.md`
+- Operating Kit state and release architecture implementation plan:
+  `docs/repo/plans/operating-kit-state-release-architecture/operating-kit-state-release-architecture_implementation_doc.md`
+- Operating Kit state and release architecture execution log:
+  `docs/repo/plans/operating-kit-state-release-architecture/operating-kit-state-release-architecture_execution_log.md`
 - Runbook-to-script promotion standard discovery:
   `docs/repo/plans/runbook-to-script-promotion-standard/runbook-to-script-promotion-standard_discovery_doc.md`
 - Runbook-to-script promotion standard implementation plan:

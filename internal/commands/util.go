@@ -100,10 +100,6 @@ func writeArgError(stderr io.Writer, command string, err error) int {
 	return 2
 }
 
-func osMkdirAll(path string) error {
-	return os.MkdirAll(path, 0o755)
-}
-
 func joinRoot(root string, relative string) string {
 	return filepath.Join(root, filepath.FromSlash(relative))
 }
@@ -127,12 +123,4 @@ func localFileURLPathForGOOS(parsed *url.URL, goos string) string {
 		path = path[1:]
 	}
 	return strings.ReplaceAll(path, "/", `\`)
-}
-
-func mapsToAny(values []map[string]any) []any {
-	result := make([]any, len(values))
-	for index, value := range values {
-		result[index] = value
-	}
-	return result
 }

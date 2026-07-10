@@ -47,7 +47,9 @@ def test_sync_refreshes_v011_lock_to_installed_cli_metadata(tmp_path, monkeypatc
     assert refreshed["kit_version"] == __version__
     assert refreshed["selected_profile"] == "standard"
     assert "planning-workflows" in refreshed["selected_components"]
-    assert f"v{__version__}" in refreshed["release"]["asset_url"]
+    # Embedded manifest.yaml is content identity only. The retained Python path
+    # cannot invent external release-catalog provenance.
+    assert "v0.1.1" in refreshed["release"]["asset_url"]
     assert refreshed_record["checksum_sha256"] == sha256_file(tmp_path / discovery_path)
     assert check_repository(tmp_path)["ok"] is True
 
@@ -198,10 +200,10 @@ def test_sync_refreshes_release_metadata_from_packaged_manifest(tmp_path, monkey
     main(["sync", str(tmp_path)])
     release = read_lock(tmp_path)["release"]
 
-    assert release["asset_url"].endswith(f"codeheart-operating-kit-{__version__}-macos-universal.zip")
-    assert f"v{__version__}" in release["asset_url"]
+    assert release["asset_url"].endswith("codeheart-operating-kit-0.1.1-macos.tar.gz")
+    assert "v0.1.1" in release["asset_url"]
     assert len(str(release["checksum_sha256"])) == 64
-    assert str(release["checksum_sha256"]) != "1" * 64
+    assert str(release["checksum_sha256"]) == "1" * 64
 
 
 def test_check_json_reports_missing_cli_and_routing(tmp_path, capsys):

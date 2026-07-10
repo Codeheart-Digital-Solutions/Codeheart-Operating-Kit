@@ -1,4 +1,4 @@
-Last updated: 2026-07-08T14:30:26Z (UTC)
+Last updated: 2026-07-10T00:25:21Z (UTC)
 
 # Plan Register
 
@@ -31,8 +31,69 @@ demand-driven issue-intake setup, release, and approved consumer sync scope.
 wrapper` as L3, clarifies generic workflow composition, contract-based script dependencies,
 helper promotion, ad hoc script boundaries, and managed/cloud portability, and adds compact
 conditional planning/execution/review hooks.
+`OK-PR-026` has source-complete state, transaction, lifecycle, release, upgrade, and compact
+routing implementation. Local validation passes; real Windows validation-only CI remains the
+completion gate.
 
 ## Entries
+
+## OK-PR-026 - Operating Kit State And Release Architecture Discovery And Implementation Plan
+
+Type: discovery-plan + implementation-plan
+Purpose: Define and plan the source implementation for safe Operating Kit lifecycle commands, one
+typed desired-state authority, runtime schema enforcement, lock-v2 migration, transactional
+reconciliation, non-circular release provenance, reproducible packs, cross-platform upgrade, and
+source-repository producer mode through a minimum reliable foundation with three internal packages,
+one lifecycle runbook, transient transaction evidence, and automated validation.
+Status: active
+Owner / repository: Codeheart-Operating-Kit
+Canonical docs:
+docs/repo/plans/operating-kit-state-release-architecture/operating-kit-state-release-architecture_discovery_doc.md
+docs/repo/plans/operating-kit-state-release-architecture/operating-kit-state-release-architecture_implementation_doc.md
+docs/repo/plans/operating-kit-state-release-architecture/operating-kit-state-release-architecture_execution_log.md
+Created: 2026-07-09
+Last updated: 2026-07-10T00:25:21Z (UTC)
+Priority / ordering note: Discovery and source implementation are complete under the simplified
+five-epic plan. Local integrated validation passes; validation-only Windows execution is still
+required before completion. Public release, tag creation, named consumer sync, and the available
+local kit update remain outside the plan.
+
+Relations:
+- related: OK-PR-024 - Operating Kit Self-Contained Bootstrap Implementation
+- related: OK-PR-017 - Consumer Runtime Materialization Hardening Implementation
+- related: OK-PR-013 - Operation Routing And Dispatch Standard Implementation
+- related: docs/repo/runbooks/release-operating-kit.md
+
+Session refs:
+- created: 2026-07-09, session 019f485d-db55-7d00-b35b-d9a464a394b0
+- material update: 2026-07-09, current session, completed discovery after user approval and drafted
+  the single source implementation plan with eight dependency-ordered epics.
+- material update: 2026-07-09, current session, revised six planning-review findings and received a
+  `Ready` re-review verdict with real Windows evidence retained as an execution completion gate.
+- material update: 2026-07-09, current session, simplified the user-approved capability from eight
+  epics to five, consolidated the implementation into three internal packages, removed persistent
+  successful journals and transient-data schemas, reduced manual evidence, and completed a focused
+  capability-preservation review.
+- activated: 2026-07-09, session 019f485d-db55-7d00-b35b-d9a464a394b0, explicit user request to
+  activate and implement the simplified five-epic source plan.
+- material update: 2026-07-09, current session, completed source implementation and local
+  integrated validation, retained real Windows execution as the only completion gate, and stopped
+  before commit, push, workflow dispatch, release, tag, or consumer sync.
+- blocked: 2026-07-10, current session, source and all local validation completed; real Windows
+  validation remains mandatory and requires authorization to create a branch, commit, push, and
+  run the validation-only workflow.
+- resumed: 2026-07-10, current session, user explicitly authorized a scoped `codex/` branch,
+  commit, push, and validation-only workflow execution; PR, release, tag, and consumer sync remain
+  excluded.
+
+Coordination note:
+- Canonical repo-level discovery and source implementation plan; no portfolio coordination is
+  configured.
+- Consumer impact classification: consumer migration required, validator-only change,
+  instruction-only change, and security or safety policy change.
+- General Operating Kit guidance-effectiveness redesign is explicitly outside this self-management
+  reliability plan.
+- Routing-bearing and recipe-bearing; source execution still requires explicit user approval.
 
 ## OK-PR-025 - Operating Kit Script Asset Roles Discovery And Implementation Plan
 

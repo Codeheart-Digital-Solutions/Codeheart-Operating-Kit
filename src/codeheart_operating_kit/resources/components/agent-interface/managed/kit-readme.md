@@ -1,4 +1,4 @@
-Last updated: 2026-07-02T13:16:41Z (UTC)
+Last updated: 2026-07-09T23:30:00Z (UTC)
 
 # Codeheart Operating Kit Inventory
 
@@ -20,6 +20,8 @@ state looks missing, stale, or damaged.
 
 - Route-before-surface standard:
   `.codeheart/kit/docs/agent-interface/reference/operation-routing-and-dispatch.md`
+- Installation lifecycle command selection:
+  `.codeheart/kit/docs/agent-interface/runbooks/maintain-operating-kit-installation.md`
 
 ## Generated State
 
@@ -68,5 +70,6 @@ state looks missing, stale, or damaged.
 
 ## Operating Rule
 
-Treat files under `.codeheart/kit/` as managed Operating Kit content. Repair or refresh them with
-`codeheart-operating-kit sync` instead of hand-editing them.
+Treat files under `.codeheart/kit/` as managed Operating Kit content. Use `repair` for compatible
+damage, `sync` for same-version embedded content, and `upgrade --yes` only for an explicitly
+approved version change. Do not hand-edit managed files.

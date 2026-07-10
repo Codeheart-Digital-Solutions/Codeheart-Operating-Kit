@@ -1,4 +1,4 @@
-Last updated: 2026-07-02T13:16:41Z (UTC)
+Last updated: 2026-07-09T23:30:00Z (UTC)
 
 # Agent Interface
 
@@ -25,6 +25,8 @@ repository documents, not in the managed bootstrap text.
 - Kit feedback item format: `reference/kit-feedback-item-format.md`
 - Repo feedback item format: `reference/repo-feedback-item-format.md`
 - First-run onboarding: `runbooks/conduct-first-run-onboarding.md`
+- Installation lifecycle—init, repair, sync, update-check, upgrade, and check:
+  `runbooks/maintain-operating-kit-installation.md`
 - Tooling readiness: `runbooks/handle-tooling-readiness.md`
 - Promote runbook recipe to script: `runbooks/promote-runbook-recipe-to-script.md`
 - Root `AGENTS.md` structure: `runbooks/structure-root-agents-md.md`

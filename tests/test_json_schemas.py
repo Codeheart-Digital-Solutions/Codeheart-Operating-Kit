@@ -102,6 +102,49 @@ def kit_config_schema():
     return json.loads((ROOT / "schemas/kit-config.schema.json").read_text(encoding="utf-8"))
 
 
+def test_state_foundation_schemas_are_versioned_and_declared():
+    component = json.loads((ROOT / "schemas/component.schema.json").read_text(encoding="utf-8"))
+    profile = json.loads((ROOT / "schemas/profile.schema.json").read_text(encoding="utf-8"))
+    lock_v1 = json.loads((ROOT / "schemas/kit-lock-v1.schema.json").read_text(encoding="utf-8"))
+    lock_v2 = json.loads((ROOT / "schemas/kit-lock.schema.json").read_text(encoding="utf-8"))
+
+    file_properties = component["$defs"]["file"]["properties"]
+    assert {"presence_policy", "update_strategy", "removal_strategy", "route_id"}.issubset(
+        file_properties
+    )
+    state_defaults = profile["properties"]["profile"]["properties"]["state_defaults"]
+    assert set(state_defaults["required"]) == {
+        "managed",
+        "scaffold",
+        "template",
+        "generated-surface",
+        "local-user",
+        "local-machine",
+    }
+    assert lock_v1["properties"]["schema_version"]["const"] == 1
+    assert lock_v2["properties"]["schema_version"]["const"] == 2
+    assert {"state_generation", "release_provenance", "last_operation"}.issubset(
+        lock_v2["required"]
+    )
+
+
+def test_release_identity_schemas_are_acyclic_and_exact():
+    content = json.loads((ROOT / "schemas/content-manifest.schema.json").read_text(encoding="utf-8"))
+    catalog = json.loads((ROOT / "schemas/release-catalog.schema.json").read_text(encoding="utf-8"))
+    pack = json.loads((ROOT / "schemas/pack-manifest.schema.json").read_text(encoding="utf-8"))
+    embedded = load_yaml(ROOT / "manifest.yaml")
+
+    assert "assets" not in embedded
+    assert "released_at" not in embedded
+    assert set(content["required"]) == {
+        "schema_version", "version", "compatibility", "components", "profiles", "consumer_impact"
+    }
+    asset_required = set(catalog["properties"]["assets"]["items"]["required"])
+    assert {"archive_sha256", "pack_manifest_sha256", "url", "platform", "version"} <= asset_required
+    assert "codeheart-operating-kit" in catalog["properties"]["assets"]["items"]["properties"]["name"]["pattern"]
+    assert {"binary_sha256", "content_manifest_sha256", "payload_checksums_sha256"} <= set(pack["required"])
+
+
 def assert_config_valid(config):
     errors = validate_instance(kit_config_schema(), config)
     assert errors == []

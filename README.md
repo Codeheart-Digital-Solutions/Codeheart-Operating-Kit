@@ -1,4 +1,4 @@
-Last updated: 2026-07-04T22:00:01Z (UTC)
+Last updated: 2026-07-09T23:30:00Z (UTC)
 
 # Codeheart Operating Kit
 
@@ -26,6 +26,23 @@ The Operating Kit owns reusable operating doctrine and release artifacts. Consum
 their local product guidance, plans, runbooks, memory state, credentials, and environment-specific
 configuration.
 
+## Reliable Installed State And Releases
+
+The Go CLI compiles component and profile declarations into one desired-state graph and classifies
+installed state before any lifecycle command acts. Mutating commands use one target-filesystem
+transaction with dry-run, lock-last commit, post-check, rollback, and recovery markers only when
+rollback cannot finish. `init`, `repair`, `sync`, `update-check`, `upgrade`, and `check` have
+separate responsibilities; only `upgrade --yes` may change kit version.
+
+Embedded `manifest.yaml` identifies content, compatibility, components, profiles, and graph digest
+without circular archive URLs or checksums. Deterministic release packs carry a pack manifest and
+payload checksums; an external catalog generated after the packs binds archive and pack-manifest
+digests. Install and upgrade verify that catalog-to-binary chain. Lock v1 has a bounded migration
+for the two released zero-checksum placeholders; unrelated invalid or future state fails closed.
+
+Supported release platforms remain macOS universal and Windows x64. Catalog verification is
+currently HTTPS plus SHA-256 under the unsigned internal/prototype boundary.
+
 ## Maintainer Entry Points
 
 - `AGENTS.md`: agent-facing bootstrap and maintainer routing.
@@ -39,12 +56,13 @@ configuration.
 - `resources.go`: Go embedded Operating Kit resource bundle.
 - `components/`: managed Operating Kit component source content.
 - `profiles/standard.yaml`: first G1 profile preset.
-- `schemas/`: lockfile, config, release-manifest, and consumer-impact contracts.
+- `schemas/`: state, declarations, embedded content identity, external release catalog, pack,
+  compatibility release-manifest, and consumer-impact contracts.
 - `pyproject.toml`: legacy Python package metadata and behavior-oracle entry point retained during
   the Go CLI migration.
 - `src/codeheart_operating_kit/`: legacy Python CLI oracle for parity tests during migration.
-- `scripts/build-release-assets.py`: macOS universal and Windows x64 binary release-pack builder
-  with checksums.
+- `scripts/build-release-assets.py`: deterministic macOS universal and Windows x64 pack builder,
+  repeat-build verifier, and external catalog emitter.
 - `scripts/validate-*.py`: public-core, Markdown timestamp, JSON schema, and release-manifest
   validators.
 - `tests/`: Go/Python parity, CLI, manifest, onboarding, sync/check, update-check, installer, and

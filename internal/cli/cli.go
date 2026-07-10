@@ -38,22 +38,34 @@ var commands = []command{
 	{
 		name:  "init",
 		help:  "Initialize Operating Kit in a folder",
-		usage: "[--project-name PROJECT_NAME] [--purpose {private-automation,company-automation,software-product}] [--selected-folder SELECTED_FOLDER] [--json] [path]",
+		usage: "[--project-name PROJECT_NAME] [--purpose {private-automation,company-automation,software-product}] [--selected-folder SELECTED_FOLDER] [--dry-run] [--json] [path]",
 		options: []option{
 			{flag: "path"},
 			{flag: "--project-name PROJECT_NAME"},
 			{flag: "--purpose {private-automation,company-automation,software-product}", help: "Optional backward-compatible setup metadata; omitted for new generic setups."},
 			{flag: "--selected-folder SELECTED_FOLDER"},
+			{flag: "--dry-run", help: "Show the deterministic change plan without writing"},
+			{flag: "--json"},
+		},
+	},
+	{
+		name:  "repair",
+		help:  "Repair a compatible current-version installation",
+		usage: "[--dry-run] [--json] [path]",
+		options: []option{
+			{flag: "path"},
+			{flag: "--dry-run", help: "Show the deterministic change plan without writing"},
 			{flag: "--json"},
 		},
 	},
 	{
 		name:  "sync",
 		help:  "Refresh managed Operating Kit files",
-		usage: "[--release-manifest RELEASE_MANIFEST] [--json] [path]",
+		usage: "[--release-manifest RELEASE_MANIFEST] [--dry-run] [--json] [path]",
 		options: []option{
 			{flag: "path"},
 			{flag: "--release-manifest RELEASE_MANIFEST", help: "Optional release manifest fixture to validate before sync"},
+			{flag: "--dry-run", help: "Show the deterministic change plan without writing"},
 			{flag: "--json"},
 		},
 	},
@@ -69,13 +81,27 @@ var commands = []command{
 	{
 		name:  "update-check",
 		help:  "Check latest version metadata without applying updates",
-		usage: "[--latest-version LATEST_VERSION] [--metadata-url METADATA_URL] [--now NOW] [--agent-notification] [--json] [path]",
+		usage: "[--latest-version LATEST_VERSION] [--metadata-url METADATA_URL] [--now NOW] [--agent-notification] [--dry-run] [--json] [path]",
 		options: []option{
 			{flag: "path"},
 			{flag: "--latest-version LATEST_VERSION"},
 			{flag: "--metadata-url METADATA_URL", help: "Latest release metadata URL; defaults to the public GitHub latest-release endpoint"},
 			{flag: "--now NOW"},
 			{flag: "--agent-notification"},
+			{flag: "--dry-run", help: "Show the metadata change without writing"},
+			{flag: "--json"},
+		},
+	},
+	{
+		name:  "upgrade",
+		help:  "Verify and apply an explicitly approved version upgrade",
+		usage: "--version VERSION [--catalog CATALOG] (--dry-run | --yes) [--json] [path]",
+		options: []option{
+			{flag: "path"},
+			{flag: "--version VERSION"},
+			{flag: "--catalog CATALOG", help: "External release catalog URL or local path"},
+			{flag: "--dry-run", help: "Verify the candidate without changing installed state"},
+			{flag: "--yes", help: "Approve the verified version change"},
 			{flag: "--json"},
 		},
 	},
@@ -102,6 +128,21 @@ func Run(args []string, stdout io.Writer, stderr io.Writer) int {
 		fmt.Fprintf(stderr, "%s: error: the following arguments are required: command\n", prog)
 		return 2
 	}
+	if args[0] == "__upgrade-reconcile" {
+		return commandimpl.RunUpgradeReconcile(args[1:], stdout, stderr)
+	}
+	if args[0] == "__upgrade-handoff" {
+		return commandimpl.RunUpgradeHandoff(args[1:], stderr)
+	}
+	if args[0] == "__verify-content-identity" {
+		return commandimpl.RunVerifyContentIdentity(args[1:], stderr)
+	}
+	if args[0] == "__verify-release-evidence" {
+		return commandimpl.RunVerifyReleaseEvidence(args[1:], stderr)
+	}
+	if args[0] == "__cleanup-upgrade-handoff" {
+		return commandimpl.RunCleanupUpgradeHandoff(args[1:], stderr)
+	}
 
 	switch args[0] {
 	case "-h", "--help":
@@ -115,7 +156,7 @@ func Run(args []string, stdout io.Writer, stderr io.Writer) int {
 	cmd, ok := findCommand(args[0])
 	if !ok {
 		printRootHelp(stderr)
-		fmt.Fprintf(stderr, "%s: error: argument command: invalid choice: '%s' (choose from onboard, inspect, init, sync, check, update-check)\n", prog, args[0])
+		fmt.Fprintf(stderr, "%s: error: argument command: invalid choice: '%s' (choose from onboard, inspect, init, repair, sync, check, update-check, upgrade)\n", prog, args[0])
 		return 2
 	}
 
@@ -131,12 +172,16 @@ func Run(args []string, stdout io.Writer, stderr io.Writer) int {
 		return commandimpl.RunInspect(args[1:], stdout, stderr)
 	case "init":
 		return commandimpl.RunInit(args[1:], stdout, stderr)
+	case "repair":
+		return commandimpl.RunRepair(args[1:], stdout, stderr)
 	case "sync":
 		return commandimpl.RunSync(args[1:], stdout, stderr)
 	case "check":
 		return commandimpl.RunCheck(args[1:], stdout, stderr)
 	case "update-check":
 		return commandimpl.RunUpdateCheck(args[1:], stdout, stderr)
+	case "upgrade":
+		return commandimpl.RunUpgrade(args[1:], stdout, stderr)
 	default:
 		fmt.Fprintf(stderr, "%s: unknown command %q\n", prog, cmd.name)
 		return 2
@@ -185,9 +230,9 @@ func findCommand(name string) (command, bool) {
 }
 
 func printRootHelp(w io.Writer) {
-	fmt.Fprintf(w, "usage: %s [-h] [--version] {onboard,inspect,init,sync,check,update-check} ...\n\n", prog)
+	fmt.Fprintf(w, "usage: %s [-h] [--version] {onboard,inspect,init,repair,sync,check,update-check,upgrade} ...\n\n", prog)
 	fmt.Fprintln(w, "positional arguments:")
-	fmt.Fprintln(w, "  {onboard,inspect,init,sync,check,update-check}")
+	fmt.Fprintln(w, "  {onboard,inspect,init,repair,sync,check,update-check,upgrade}")
 	for _, cmd := range commands {
 		fmt.Fprintf(w, "    %-12s %s\n", cmd.name, cmd.help)
 	}

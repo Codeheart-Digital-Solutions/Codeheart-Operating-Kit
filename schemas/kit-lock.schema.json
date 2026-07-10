@@ -1,24 +1,29 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/schemas/kit-lock.schema.json",
-  "title": "Codeheart Operating Kit Lockfile",
+  "title": "Codeheart Operating Kit Lockfile V2",
   "type": "object",
   "additionalProperties": false,
   "required": [
     "schema_version",
     "kit_version",
+    "state_generation",
     "release",
+    "release_provenance",
     "selected_profile",
     "selected_components",
     "managed_paths",
+    "managed_sections",
     "generated_surfaces",
     "cli_repair",
     "update_check",
-    "native_capabilities"
+    "native_capabilities",
+    "last_operation"
   ],
   "properties": {
-    "schema_version": { "type": "integer", "const": 1 },
+    "schema_version": { "type": "integer", "const": 2 },
     "kit_version": { "type": "string", "minLength": 1 },
+    "state_generation": { "type": "integer", "minimum": 1 },
     "selected_profile": { "type": "string", "const": "standard" },
     "selected_components": {
       "type": "array",
@@ -34,9 +39,31 @@
         "checksum_sha256": { "type": "string", "pattern": "^[a-fA-F0-9]{64}$" }
       }
     },
+    "release_provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["verification_status", "source"],
+      "properties": {
+        "verification_status": {
+          "type": "string",
+          "enum": ["verified", "local-source", "unverified-legacy"]
+        },
+        "source": { "type": "string", "minLength": 1 },
+        "catalog_url": { "type": "string" },
+        "catalog_sha256": { "type": "string", "pattern": "^[a-fA-F0-9]{64}$" },
+        "archive_sha256": { "type": "string", "pattern": "^[a-fA-F0-9]{64}$" },
+        "pack_manifest_sha256": { "type": "string", "pattern": "^[a-fA-F0-9]{64}$" },
+        "binary_sha256": { "type": "string", "pattern": "^[a-fA-F0-9]{64}$" },
+        "verified_at": { "type": "string", "format": "date-time" }
+      }
+    },
     "managed_paths": {
       "type": "array",
       "items": { "$ref": "#/$defs/path_record" }
+    },
+    "managed_sections": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/section_record" }
     },
     "generated_surfaces": {
       "type": "array",
@@ -55,12 +82,7 @@
     "update_check": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "last_update_check_at",
-        "next_update_check_due",
-        "latest_seen_version",
-        "update_status"
-      ],
+      "required": ["last_update_check_at", "next_update_check_due", "latest_seen_version", "update_status"],
       "properties": {
         "last_update_check_at": { "type": "string", "format": "date-time" },
         "next_update_check_due": { "type": "string", "format": "date-time" },
@@ -73,27 +95,17 @@
     },
     "native_capabilities": {
       "type": "object",
-      "additionalProperties": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": ["status", "checked_at", "profile_applicability"],
-        "properties": {
-          "status": {
-            "type": "string",
-            "enum": [
-              "available",
-              "installed",
-              "missing",
-              "install-attempted",
-              "unavailable",
-              "blocked",
-              "unknown"
-            ]
-          },
-          "checked_at": { "type": "string", "format": "date-time" },
-          "profile_applicability": { "type": "string" },
-          "command_result_category": { "type": "string" }
-        }
+      "additionalProperties": { "$ref": "#/$defs/native_capability" }
+    },
+    "last_operation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["transaction_id", "command", "completed_at", "previous_generation"],
+      "properties": {
+        "transaction_id": { "type": "string", "minLength": 1 },
+        "command": { "type": "string", "minLength": 1 },
+        "completed_at": { "type": "string", "format": "date-time" },
+        "previous_generation": { "type": "integer", "minimum": 0 }
       }
     }
   },
@@ -108,9 +120,34 @@
         "source": { "type": "string" },
         "ownership": {
           "type": "string",
-          "enum": ["managed", "scaffold", "template", "generated-surface", "local-user"]
+          "enum": ["managed", "scaffold", "template", "generated-surface", "local-user", "local-machine"]
         },
         "checksum_sha256": { "type": "string", "pattern": "^[a-fA-F0-9]{64}$" }
+      }
+    },
+    "section_record": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "begin_marker", "end_marker", "checksum_sha256"],
+      "properties": {
+        "path": { "type": "string", "minLength": 1 },
+        "begin_marker": { "type": "string", "minLength": 1 },
+        "end_marker": { "type": "string", "minLength": 1 },
+        "checksum_sha256": { "type": "string", "pattern": "^[a-fA-F0-9]{64}$" }
+      }
+    },
+    "native_capability": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "checked_at", "profile_applicability"],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["available", "installed", "missing", "install-attempted", "unavailable", "blocked", "unknown"]
+        },
+        "checked_at": { "type": "string", "format": "date-time" },
+        "profile_applicability": { "type": "string" },
+        "command_result_category": { "type": "string" }
       }
     }
   }

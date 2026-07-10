@@ -1,6 +1,10 @@
 package manifest
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/internal/state"
+)
 
 func TestLoadStandardProfile(t *testing.T) {
 	profile, err := LoadProfile("standard")
@@ -57,7 +61,7 @@ func TestLoadSelectedComponentsAndFiles(t *testing.T) {
 	}
 }
 
-func TestLoadReleaseManifestAssets(t *testing.T) {
+func TestLoadEmbeddedContentManifest(t *testing.T) {
 	releaseManifest, err := LoadReleaseManifest()
 	if err != nil {
 		t.Fatalf("LoadReleaseManifest: %v", err)
@@ -65,10 +69,21 @@ func TestLoadReleaseManifestAssets(t *testing.T) {
 	if releaseManifest.Version != "0.1.21" {
 		t.Fatalf("release version = %q, want 0.1.21", releaseManifest.Version)
 	}
-	for _, platform := range []string{"macos", "windows", "universal", "macos-universal", "windows-x64"} {
-		if !hasAssetPlatform(releaseManifest.Assets, platform) {
-			t.Fatalf("release manifest missing %s asset: %#v", platform, releaseManifest.Assets)
-		}
+	if len(releaseManifest.Assets) != 0 {
+		t.Fatalf("embedded content identity must not contain release assets: %#v", releaseManifest.Assets)
+	}
+	compatibility, ok := releaseManifest.Raw["compatibility"].(map[string]any)
+	if !ok || compatibility["commands"] == nil {
+		t.Fatalf("content manifest missing compatibility: %#v", releaseManifest.Raw)
+	}
+	graph, err := state.CompileGraph("standard")
+	if err != nil {
+		t.Fatal(err)
+	}
+	profiles := releaseManifest.Raw["profiles"].([]any)
+	profile := profiles[0].(map[string]any)
+	if profile["graph_sha256"] != graph.DigestSHA256 {
+		t.Fatalf("content graph digest = %v, want %s", profile["graph_sha256"], graph.DigestSHA256)
 	}
 }
 
@@ -84,15 +99,6 @@ func contains(values []string, expected string) bool {
 func hasFile(files []ComponentFile, path string, ownership string) bool {
 	for _, file := range files {
 		if file.Target == path && file.Ownership == ownership {
-			return true
-		}
-	}
-	return false
-}
-
-func hasAssetPlatform(assets []ReleaseAsset, platform string) bool {
-	for _, asset := range assets {
-		if asset.Platform == platform {
 			return true
 		}
 	}

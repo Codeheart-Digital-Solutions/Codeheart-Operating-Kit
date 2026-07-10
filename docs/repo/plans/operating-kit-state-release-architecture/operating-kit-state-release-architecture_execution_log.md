@@ -1,0 +1,297 @@
+Last updated: 2026-07-10T00:25:21Z (UTC)
+Created: 2026-07-09
+
+# Operating Kit State And Release Architecture Execution Log
+
+Plan: `operating-kit-state-release-architecture_implementation_doc.md`
+
+Mode: goal-style source implementation
+
+Status: active; source complete, validation-only Windows CI authorized and pending
+
+## Overall Divergence
+
+The simplified five-epic plan remains the execution authority. Three bounded execution
+differences are recorded:
+
+- focused routing probes were implemented as fresh deterministic producer and materialized-
+  consumer scenarios because subagent execution was not permitted;
+- the retained Python sync path preserves existing external release provenance because embedded
+  content identity no longer contains archive assets; Go lifecycle commands are authoritative;
+- source and local validation completed without a commit or push, so the configured real Windows
+  workflow has not run and remains the completion gate.
+
+## Summary
+
+The plan was activated after explicit user approval. Execution is limited to source implementation,
+local validation, validation-only CI, planning lifecycle updates, and evidence. No release, tag,
+named consumer sync, local Operating Kit update, signing change, Python retirement, or new platform
+work is authorized.
+
+Consumer impact:
+
+- consumer migration required;
+- validator-only change;
+- instruction-only change;
+- security or safety policy change;
+- no breaking placement-contract change.
+
+## Epic Delta Index
+
+| Epic | State | Meaningful divergence |
+| --- | --- | --- |
+| `EP-01` | completed | Shared profile-level state defaults replaced repetitive component-level strategy fields; `resources.go` already embedded the schema glob and required no edit. |
+| `EP-02` | completed | Existing Python parity tests remain compatibility evidence, but lock-v2 graph records and same-version sync provenance are intentionally Go-authoritative. |
+| `EP-03` | source completed | Real Windows install/upgrade execution is carried by the EP-05 completion gate. |
+| `EP-04` | completed | Deterministic focused probes replaced subagent probes because delegation was not permitted. |
+| `EP-05` | active | Local evidence is complete; validation-only Windows CI awaits a separately authorized commit/push route. |
+
+## Review Gate Metrics
+
+Review gate required: yes
+
+Review gate skipped: no
+
+Reviewer mode: strongest practical main-thread review; reviewer-agent execution is not permitted
+unless the user or applicable repository instructions explicitly request subagent work.
+
+Review rounds: 4 during implementation
+
+Material findings: EP-01 state precedence, EP-02 pre-commit cleanup, EP-03 pack-verifier checksum
+mapping, final Windows expected-failure messaging, and missing explicit Windows junction coverage
+plus bare-filename catalog inference and catalog/archive containment found and fixed
+
+Final accepted result: EP-01 through EP-04 and local EP-05 source accepted; Windows execution
+pending
+
+Worth-it assessment: positive. The capability is concentrated in three internal packages and one
+new durable lifecycle runbook. It adds no service, registry, successful-operation journal,
+evidence attachment set, or extra approval step for routine repair and same-version sync.
+
+## EP-01 Delta - Validated State Model And Migration
+
+State: completed
+
+Safe defaults and divergence:
+
+- Kept per-file strategy overrides available in the component schema while defining shared defaults
+  once in `profiles/standard.yaml`; this avoids repeating the same policies across every component
+  file without narrowing graph behavior.
+- Left `resources.go` unchanged because its existing `schemas` embed pattern automatically includes
+  the new schemas.
+- Reused the existing ignored `.venv` after the shell `python3` lacked pytest; no tooling was
+  installed or repaired.
+
+Validation:
+
+- `go test ./...`: passed after updating the intentional profile digest fixture.
+- State, component, lockfile, and manifest package tests: passed.
+- State fixtures cover numeric-looking strings, optional config, legacy placeholders, unrelated
+  invalid v1 data, future versions, graph semantics, all primary classifications, and migration.
+- `.venv/bin/python -m pytest tests/test_json_schemas.py tests/test_packaging_resources.py -q`:
+  `31 passed`.
+- `python3 scripts/validate-json-schemas.py`: passed.
+- `go mod verify`: passed.
+
+Review gate:
+
+- Reviewer mode: strongest practical main-thread review.
+- Round 1 finding: unsupported future lock state could be classified as `partial` before the lock
+  version was inspected when another required surface was missing.
+- Fix: inspect and reject unsupported or invalid lock versions before partial-state evaluation when
+  a lock exists; added complete and incomplete future-lock regression fixtures.
+- Material findings after fix: none.
+- Files changed because of review: `internal/state/observed.go` and `internal/state/state_test.go`.
+- EP-01 result: accepted.
+
+## EP-02 Delta - Transactional Lifecycle Commands
+
+State: completed
+
+Safe defaults and divergence:
+
+- Kept legacy JSON fields as top-level compatibility projections and placed the shared concise
+  operation result under `result`, avoiding a second public schema for an internal result type.
+- Kept `--release-manifest` on `sync` as validation-only compatibility input. Same-version sync now
+  preserves installed release provenance and uses only embedded running-binary content.
+- Retained the Python CLI as parity evidence. Its lock-v1 surface remains intentionally narrower;
+  Go lock v2 records the complete typed graph.
+- Real Windows reparse behavior remains an EP-05 platform gate; Windows compilation passed here.
+
+Validation:
+
+- `go test ./...`: passed.
+- `go test -race ./internal/reconcile ./internal/commands ./internal/cli ./internal/drift`:
+  passed.
+- `GOOS=windows GOARCH=amd64 go build ./...`: passed.
+- `.venv/bin/python -m pytest tests/test_cli.py tests/test_init.py tests/test_onboard.py
+  tests/test_sync_check.py tests/test_update_check.py tests/test_go_cli_parity.py -q`:
+  `51 passed`.
+- State-transition tests cover absent, adoptable, current, drifted, stale CLI, partial, invalid,
+  legacy, active transaction, recovery, and future-version inputs.
+- Preservation and failure tests cover config, root instructions, plans, memory, local-user data,
+  safe retirement, managed-section repair, concurrency, parent replacement, staged validation,
+  interrupted commit, successful rollback, failed rollback, stale recovery, no-op, and cleanup.
+
+Review gate:
+
+- Reviewer mode: strongest practical main-thread review.
+- Round 2 finding: several filesystem errors after marker acquisition but before commit returned
+  directly, which could remove the marker while retaining partial stage data.
+- Fix: route every pre-commit setup, staging, marker-write, and validation failure through the same
+  cleanup rollback path; marker acquisition now also removes a partially written marker.
+- Additional tightening: require plan/marker identity agreement before stale staged takeover,
+  revalidate parent identity before each replacement, and compare resolved prefixes to reject
+  symbolic links and Windows reparse targets.
+- Material findings after fix: none.
+- EP-02 result: accepted.
+
+## EP-03 Delta - Reproducible Release And Safe Upgrade
+
+State: source completed; real Windows execution pending under EP-05
+
+Implementation:
+
+- Split embedded content identity from external release catalog and per-platform pack identity;
+  added strict schemas and catalog-to-binary verification.
+- Added deterministic macOS universal and Windows x64 pack builds, normalized archive metadata,
+  repeat-build byte comparison, and final catalog emission.
+- Added safe extraction, traversal and link rejection, payload and identity validation, forward-
+  only upgrade selection, hash-bound handoff, new-binary reconciliation, final check, and binary/
+  state restoration after failure.
+- Added public `upgrade --dry-run` and `upgrade --yes`; kept internal handoff and verification
+  commands absent from help.
+- Refactored both installers to validate catalog, archive, pack, payload, content, binary, and
+  staged version before replacement.
+
+Validation:
+
+- `go test -race ./...`: passed, including release, handoff, rollback, traversal, schema,
+  transaction, and command tests.
+- `.venv/bin/python -m pytest tests/test_install_metadata.py tests/test_release_assets.py
+  tests/test_packaging_resources.py -q`: `27 passed` after the final catalog/archive hardening.
+- Final release builder: macOS universal and Windows x64 packs each built twice, final bytes
+  matched, and the catalog/pack/content/binary chain verified.
+- Isolated macOS install: passed. A conflicting checksum failed closed and the installed binary
+  hash remained unchanged.
+- Isolated upgrade: dry-run preserved the old binary and lock hashes; approved handoff upgraded
+  `0.1.20` to `0.1.21`; the resulting installation reported `current` with no drift.
+- `GOOS=windows GOARCH=amd64 go build ./...`: passed. Actual Windows install, deferred handoff,
+  reparse behavior, and failure preservation await the configured Windows workflow.
+
+Review gate:
+
+- The first EP-03 review found that the Python pack verifier interpreted checksum/path columns in
+  reverse order. The mapping was corrected and release tests were rerun.
+- Handoff validation was tightened to require a sibling handoff directory, staged binary
+  containment, and a hash-bound handoff file; Windows cleanup uses the staged binary after parent
+  exit.
+- No remaining material source defect was found. EP-03 source result: accepted.
+
+## EP-04 Delta - Compact Lifecycle Guidance And Producer Routing
+
+State: completed
+
+Implementation:
+
+- Added one compact managed lifecycle runbook with state-to-command selection, dry-runs, upgrade
+  approval, blockers, recovery, tooling readiness, and stop conditions.
+- Added producer authority to root instructions and aligned onboarding, update-check, managed
+  routes, the root managed template, maintainer runbooks, and retained Python resource mirrors.
+- Kept routine authorization minimal: invoking init, repair, or same-version sync authorizes that
+  operation; only a version-changing upgrade requires `--yes`.
+
+Focused routing probes:
+
+| Prompt | Selected route | Approval class | Result |
+| --- | --- | --- | --- |
+| Change Operating Kit implementation source. | Tracked `components/`, `internal/`, schemas, templates, and `docs/repo/`; never ignored `.codeheart/kit/`. | Existing source-implementation authorization. | pass |
+| Restore an existing compatible drifted materialized consumer without changing version. | `repair --dry-run`, then `repair`; `sync` remains same-version and `upgrade` is version-only. | Named repair invocation authorizes repair; no upgrade approval. | pass |
+
+Validation:
+
+- `.venv/bin/python -m pytest tests/test_onboard.py tests/test_packaging_resources.py
+  tests/test_routing.py -q`: `15 passed`.
+- Lifecycle preservation tests prove consumer config, root instructions, plans, memory, local-user
+  content, and managed-section-local content remain intact.
+- Markdown and public-core validators passed; source and retained resource mirrors match.
+- EP-04 result: accepted.
+
+## EP-05 Delta - Integrated Validation And Source Handoff
+
+State: active; local source handoff ready, Windows CI pending
+
+Local integrated evidence:
+
+- `go test -race ./...`: passed.
+- `.venv/bin/python -m pytest -q`: `130 passed`.
+- `go vet ./...`: passed.
+- JSON Schema, release-contract, public-core, and Markdown validators: passed.
+- Shell syntax and PowerShell help parsing: passed. `actionlint` and PyYAML are not present, so no
+  new local tooling was installed; the workflow is retained for GitHub-native parsing and runtime.
+- Final reproducibility, macOS install, upgrade dry-run/apply, preservation, and post-check
+  evidence passed in isolated temporary roots; repository `.codeheart/` state and the developer
+  CLI were not used or changed.
+
+Final review:
+
+- Capability, consumer preservation, transaction safety, release integrity, platform symmetry,
+  routing, and publication stops were reviewed on the main thread.
+- Finding: Windows checksum-failure lanes expected the phrase `Checksum mismatch`, while the new
+  fail-closed catalog conflict used a different phrase. Both installers now use one matching
+  message; installer/release tests (`25 passed`), Bash parsing, PowerShell parsing, and repeat-build
+  verification passed after the fix.
+- Finding: the general reparse test skips on Windows but the workflow had no replacement fixture.
+  The Windows install lane now creates a real directory junction, requires repair to fail, and
+  verifies the outside sentinel is preserved. Runtime evidence remains pending with that workflow.
+- Finding: PowerShell catalog inference passed an empty parent to `Join-Path` when `-AssetFile`
+  was a bare filename, as used by the public-release smoke lane. It now resolves that case against
+  the current directory; the focused PowerShell probe and affected installer/release suite passed.
+- Finding: catalog asset names were not bound to the requested version/platform filename, and ZIP
+  extraction relied too heavily on declared sizes and incomplete filesystem-type checks. Catalog
+  schema/runtime selection and both installers now reject unsafe names; Go extraction enforces
+  entry, declared-size, actual-size, symlink, and special-file limits; deterministic packs encode
+  regular-file types. Negative catalog and symbolic-link fixtures pass.
+- The handoff rollback fixture now uses the native Go test executable as the staged candidate and
+  forces only its child reconciliation process to fail. On Windows CI this exercises native
+  executable replacement, child-process failure, file-lock release, and byte-for-byte restoration
+  rather than relying on a Unix script fixture.
+- No remaining critical or high-severity source finding is known. Real Windows runtime evidence is
+  still required before the plan can become completed.
+
+Negative evidence:
+
+- no release or tag created;
+- no branch commit, push, pull request, or validation workflow dispatched;
+- no named consumer synchronized and no local Operating Kit update applied;
+- no signing/notarization policy changed;
+- no Python implementation removed;
+- no new platform added.
+
+## Final Validation
+
+Local validation is complete and source handoff is ready. The configured macOS/Windows workflow
+contains fresh install, checksum failure, dry-run hash preservation, approved upgrade, deferred
+Windows replacement, native failed-reconciliation rollback, junction containment, and final
+health-check lanes. It has not run against this uncommitted source.
+
+Completion requires a commit/push route and one validation-only Windows workflow run with its run
+ID, commit SHA, and result recorded here. This execution log remains active until that evidence
+passes; publication and consumer rollout remain separate.
+
+Blocked audit: the same missing authorization for branch creation, commit, push, and validation-
+only workflow execution recurred for three consecutive goal turns. No further local evidence can
+substitute for the plan's mandatory real Windows runtime gate.
+
+Resumed: the user explicitly authorized creation of a `codex/` branch, scoped commit, push, and
+validation-only workflow execution. PR creation, release, tag, and consumer sync remain excluded.
+
+Final local regression after review fixes: `go test -race ./...` passed; full Python validation
+reported `130 passed`; JSON Schema, release-contract, public-core, Markdown, Windows cross-build,
+Bash syntax, PowerShell parsing, and diff checks passed. The only diff-check output is Git's
+existing LF-to-CRLF working-copy warning for `install.ps1`.
+The final catalog/archive fixes were followed by the affected installer, release, packaging, and
+repeat-build suite: `27 passed`; fresh isolated macOS install and `0.1.20` -> `0.1.21` upgrade plus
+post-check also passed. Windows-target test binaries for reconcile, release, commands, and CLI
+compiled successfully, and all Windows workflow PowerShell blocks passed parser validation after
+GitHub-expression substitution.

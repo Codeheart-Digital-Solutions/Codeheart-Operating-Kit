@@ -1,4 +1,4 @@
-Last updated: 2026-07-08T14:11:45Z (UTC)
+Last updated: 2026-07-09T23:56:33Z (UTC)
 
 # Repo Plans
 
@@ -7,6 +7,12 @@ This folder contains Codeheart Operating Kit repository-level discovery and impl
 ## Current Plans
 
 - Plan register: `plan-register.md`
+- Operating Kit state and release architecture discovery:
+  `operating-kit-state-release-architecture/operating-kit-state-release-architecture_discovery_doc.md`
+- Operating Kit state and release architecture implementation plan:
+  `operating-kit-state-release-architecture/operating-kit-state-release-architecture_implementation_doc.md`
+- Operating Kit state and release architecture execution log:
+  `operating-kit-state-release-architecture/operating-kit-state-release-architecture_execution_log.md`
 - Operating Kit self-contained bootstrap implementation plan:
   `operating-kit-self-contained-bootstrap/operating-kit-self-contained-bootstrap_implementation_doc.md`
 - Operating Kit self-contained bootstrap execution log:

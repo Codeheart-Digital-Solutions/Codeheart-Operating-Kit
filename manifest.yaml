@@ -1,50 +1,24 @@
 schema_version: 1
 version: 0.1.21
-released_at: "2026-07-08T14:20:00Z"
-assets:
-  -
-    name: bootstrap.md
-    url: "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.21/bootstrap.md"
-    sha256: fc4b32cf62a1bbeca51b49b052a0099fc15e6f9078385f6148e4f47264192ccc
-    platform: universal
-  -
-    name: install.sh
-    url: "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.21/install.sh"
-    sha256: 55461cc24d5dd78ecc19b7ee53755003c3a4dbff9eb3dbc322d179370474631a
-    platform: macos
-  -
-    name: install.ps1
-    url: "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.21/install.ps1"
-    sha256: ef5a37ec8e501781a28944b9ef039de6055c821d1350ebd75253f5ee5fb692e4
-    platform: windows
-  -
-    name: release-notes.md
-    url: "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.21/release-notes.md"
-    sha256: 1fab9b9c4e6191c7bf0b4981ac6c125066607f87c8b5c2e008862edc57753086
-    platform: universal
-  -
-    name: codeheart-operating-kit-0.1.21-macos-universal.zip
-    url: "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.21/codeheart-operating-kit-0.1.21-macos-universal.zip"
-    sha256: d2de398164dc48e372504bb8b86562e5debd2355886892560b5b08717557d735
-    platform: macos-universal
-  -
-    name: codeheart-operating-kit-0.1.21-macos-universal.zip.sha256
-    url: "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.21/codeheart-operating-kit-0.1.21-macos-universal.zip.sha256"
-    sha256: da69e9da973c78f37f6e5741a2491cadfc6a3156622d9dff5dece10bcc24443a
-    platform: macos-universal
-  -
-    name: codeheart-operating-kit-0.1.21-windows-x64.zip
-    url: "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.21/codeheart-operating-kit-0.1.21-windows-x64.zip"
-    sha256: 4d96a4616e09ad45ce0161389c29386d9470ae183cf7bd3c80b337dcbef48504
-    platform: windows-x64
-  -
-    name: codeheart-operating-kit-0.1.21-windows-x64.zip.sha256
-    url: "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.21/codeheart-operating-kit-0.1.21-windows-x64.zip.sha256"
-    sha256: 5500a4ff48ea8cd4571fb152daeca9947cda5cf58ab53f77b039a4788b99acaf
-    platform: windows-x64
+compatibility:
+  lock_schema_versions:
+    - 1
+    - 2
+  config_schema_versions:
+    - 1
+  operation_result_schema_version: 1
+  platforms:
+    - macos-universal
+    - windows-x64
+  commands:
+    - init
+    - repair
+    - sync
+    - update-check
+    - upgrade
+    - check
 components:
-  -
-    id: planning-workflows
+  - id: planning-workflows
     version: 0.1.21
     manifest_path: components/planning-workflows/component.yaml
     checksum_sha256: 2776a412748a2a55ef818051904f0266a169ec98654d0584b766b34c851b72ee
@@ -52,8 +26,7 @@ components:
       - component addition
       - instruction-only change
       - backwards-compatible scaffold addition
-  -
-    id: agent-memory
+  - id: agent-memory
     version: 0.1.6
     manifest_path: components/agent-memory/component.yaml
     checksum_sha256: 07d92169b36ab3a2177db3ea1a591b17006d4a20c41f2f6bab814c0115b8c1f0
@@ -61,18 +34,16 @@ components:
       - component addition
       - instruction-only change
       - backwards-compatible scaffold addition
-  -
-    id: agent-interface
+  - id: agent-interface
     version: 0.1.21
     manifest_path: components/agent-interface/component.yaml
-    checksum_sha256: c234e76cf210be56a611a93a1cb22ce69ebaf533d9ca2da9cafb26400016648f
+    checksum_sha256: b30e37c56cc9d060c8375ae34461e20bf6de134ee006b48dbe694cf6b2153098
     consumer_impact:
       - component addition
       - instruction-only change
       - validator-only change
       - security or safety policy change
-  -
-    id: structure-governance
+  - id: structure-governance
     version: 0.1.21
     manifest_path: components/structure-governance/component.yaml
     checksum_sha256: c4ea6be4c3095639d4911a4ef31169a504e91bec072b464c4f7db9f97ad3c0e2
@@ -81,16 +52,14 @@ components:
       - instruction-only change
       - backwards-compatible scaffold addition
       - breaking placement-contract change
-  -
-    id: native-codex-capabilities
+  - id: native-codex-capabilities
     version: 0.1.6
     manifest_path: components/native-codex-capabilities/component.yaml
     checksum_sha256: 6114b3fe4a39311cc798c56f5b3bab202db794dddd456c50785935e32ca330a4
     consumer_impact:
       - component addition
       - instruction-only change
-  -
-    id: validators
+  - id: validators
     version: 0.1.6
     manifest_path: components/validators/component.yaml
     checksum_sha256: 70623ab11659d1e54c96c539643d5a85403bb522e15a382790544bb76aadcca3
@@ -98,9 +67,11 @@ components:
       - component addition
       - validator-only change
 profiles:
-  -
-    id: standard
+  - id: standard
+    version: 0.1.6
     manifest_path: profiles/standard.yaml
+    checksum_sha256: 9c37650d009686d2300d98131ccaf63aaeb33c7cd5851734d97e8af4a22fb404
+    graph_sha256: e534aba6af44a4c08ec98272c0c564925516aabaaf887458c905820107fb1e84
     components:
       - planning-workflows
       - agent-memory
@@ -108,74 +79,8 @@ profiles:
       - structure-governance
       - native-codex-capabilities
       - validators
-    generated_surfaces:
-      - .codeheart/kit/
-      - .codeheart/kit.lock.yaml
-      - .codeheart/kit.config.yaml
-      - AGENTS.md
-      - docs/repo/README.md
-      - docs/repo/plans/plan-register.md
-      - docs/repo/plans/coordination-sync-pending.md
-      - docs/agent-memory/README.md
-      - docs/agent-memory/goal-register.md
-      - docs/agent-memory/session-ledger.md
-      - docs/agent-memory/untriaged-sessions.md
-      - .codeheart/user/
-native_baseline_capability_checks:
-  -
-    id: documents
-    profile: standard
-    status_values:
-      - available
-      - installed
-      - missing
-      - install-attempted
-      - unavailable
-      - blocked
-      - unknown
-  -
-    id: spreadsheets
-    profile: standard
-    status_values:
-      - available
-      - installed
-      - missing
-      - install-attempted
-      - unavailable
-      - blocked
-      - unknown
-  -
-    id: presentations
-    profile: standard
-    status_values:
-      - available
-      - installed
-      - missing
-      - install-attempted
-      - unavailable
-      - blocked
-      - unknown
-  -
-    id: browser
-    profile: standard
-    status_values:
-      - available
-      - installed
-      - missing
-      - install-attempted
-      - unavailable
-      - blocked
-      - unknown
-  -
-    id: pdf
-    profile: standard
-    status_values:
-      - available
-      - installed
-      - missing
-      - install-attempted
-      - unavailable
-      - blocked
-      - unknown
 consumer_impact:
   - instruction-only change
+  - validator-only change
+  - consumer migration required
+  - security or safety policy change

@@ -5,6 +5,8 @@ import (
 	"io"
 	"strings"
 	"time"
+
+	"github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/internal/reconcile"
 )
 
 func RunOnboard(args []string, stdout io.Writer, stderr io.Writer) int {
@@ -82,12 +84,27 @@ func Onboard(target string, projectName string, purpose string, yes bool, now ti
 		return result, script, 1, nil
 	}
 	if yes {
-		initialized, err := Initialize(expandedTarget, projectName, purpose, expandedTarget, now)
+		var changed map[string]any
+		var operationOK bool
+		var err error
+		if inspection["mode"] == "existing-operating-kit-repair" {
+			var operationResult reconcile.Result
+			changed, operationResult, err = repairOperation(expandedTarget, now, false)
+			operationOK = operationResult.OK()
+		} else {
+			var operationResult reconcile.Result
+			changed, operationResult, err = initializeOperation(expandedTarget, projectName, purpose, expandedTarget, now, false)
+			operationOK = operationResult.OK()
+		}
 		if err != nil {
 			return nil, nil, 1, err
 		}
-		for key, value := range initialized {
+		for key, value := range changed {
 			result[key] = value
+		}
+		if !operationOK {
+			result["error"] = "The selected Operating Kit lifecycle operation was blocked. Run check for remediation."
+			return result, script, 1, nil
 		}
 		result["written"] = true
 		result["write_approved"] = true

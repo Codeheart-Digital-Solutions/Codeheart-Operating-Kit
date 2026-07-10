@@ -54,8 +54,56 @@ profile:
       install_when: absent
     - path: .codeheart/user/
       ownership: local-user
-      source: templates/user-layer/
+      source: local-user container
       install_when: absent
+    - path: .codeheart/user/README.md
+      ownership: local-user
+      source: templates/user-layer/README.md
+      install_when: absent
+    - path: .codeheart/user/examples/preferences.yaml
+      ownership: local-user
+      source: templates/user-layer/example.preferences.yaml
+      install_when: absent
+    - path: .gitignore
+      ownership: template
+      source: internal/reconcile/plan.go
+      install_when: conditional
+      presence_policy: optional
+      update_strategy: append-only
+      removal_strategy: preserve
+    - path: .codeheart/kit.transaction.json
+      ownership: local-machine
+      source: internal/reconcile/transaction.go
+      install_when: conditional
+    - path: .codeheart/local/kit-transactions/
+      ownership: local-machine
+      source: internal/reconcile/transaction.go
+      install_when: conditional
+  state_defaults:
+    managed:
+      presence_policy: required
+      update_strategy: replace
+      removal_strategy: reconcile
+    scaffold:
+      presence_policy: create-when-absent
+      update_strategy: preserve
+      removal_strategy: preserve
+    template:
+      presence_policy: required
+      update_strategy: managed-section
+      removal_strategy: preserve
+    generated-surface:
+      presence_policy: required
+      update_strategy: replace
+      removal_strategy: reconcile
+    local-user:
+      presence_policy: create-when-absent
+      update_strategy: preserve
+      removal_strategy: preserve
+    local-machine:
+      presence_policy: conditional
+      update_strategy: report-only
+      removal_strategy: preserve
   update_check:
     cadence_days: 7
     current_result_agent_message: silent

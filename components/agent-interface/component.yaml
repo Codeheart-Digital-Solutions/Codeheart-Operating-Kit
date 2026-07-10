@@ -57,6 +57,9 @@ component:
     - source: components/agent-interface/managed/runbooks/conduct-first-run-onboarding.md
       target: .codeheart/kit/docs/agent-interface/runbooks/conduct-first-run-onboarding.md
       ownership: managed
+    - source: components/agent-interface/managed/runbooks/maintain-operating-kit-installation.md
+      target: .codeheart/kit/docs/agent-interface/runbooks/maintain-operating-kit-installation.md
+      ownership: managed
     - source: components/agent-interface/managed/runbooks/handle-tooling-readiness.md
       target: .codeheart/kit/docs/agent-interface/runbooks/handle-tooling-readiness.md
       ownership: managed

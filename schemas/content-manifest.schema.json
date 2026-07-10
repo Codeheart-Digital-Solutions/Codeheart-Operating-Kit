@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/schemas/content-manifest.schema.json",
+  "title": "Codeheart Operating Kit Embedded Content Manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "version", "compatibility", "components", "profiles", "consumer_impact"],
+  "properties": {
+    "schema_version": { "type": "integer", "const": 1 },
+    "version": { "type": "string", "minLength": 1 },
+    "compatibility": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["lock_schema_versions", "config_schema_versions", "operation_result_schema_version", "platforms", "commands"],
+      "properties": {
+        "lock_schema_versions": { "type": "array", "items": { "type": "integer" }, "minItems": 1, "uniqueItems": true },
+        "config_schema_versions": { "type": "array", "items": { "type": "integer" }, "minItems": 1, "uniqueItems": true },
+        "operation_result_schema_version": { "type": "integer", "const": 1 },
+        "platforms": { "type": "array", "items": { "type": "string", "enum": ["macos-universal", "windows-x64"] }, "minItems": 2, "uniqueItems": true },
+        "commands": { "type": "array", "items": { "type": "string", "enum": ["init", "repair", "sync", "update-check", "upgrade", "check"] }, "minItems": 6, "uniqueItems": true }
+      }
+    },
+    "components": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "version", "manifest_path", "checksum_sha256", "consumer_impact"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "version": { "type": "string", "minLength": 1 },
+          "manifest_path": { "type": "string", "pattern": "^components/[A-Za-z0-9._-]+/component\\.yaml$" },
+          "checksum_sha256": { "$ref": "#/$defs/sha256" },
+          "consumer_impact": { "type": "array", "items": { "$ref": "#/$defs/impact_class" }, "uniqueItems": true }
+        }
+      }
+    },
+    "profiles": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "version", "manifest_path", "checksum_sha256", "graph_sha256", "components"],
+        "properties": {
+          "id": { "type": "string", "const": "standard" },
+          "version": { "type": "string", "minLength": 1 },
+          "manifest_path": { "type": "string", "const": "profiles/standard.yaml" },
+          "checksum_sha256": { "$ref": "#/$defs/sha256" },
+          "graph_sha256": { "$ref": "#/$defs/sha256" },
+          "components": { "type": "array", "items": { "type": "string" }, "minItems": 1, "uniqueItems": true }
+        }
+      }
+    },
+    "consumer_impact": { "type": "array", "items": { "$ref": "#/$defs/impact_class" }, "uniqueItems": true }
+  },
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^[a-fA-F0-9]{64}$" },
+    "impact_class": { "type": "string", "enum": ["instruction-only change", "validator-only change", "component addition", "backwards-compatible scaffold addition", "consumer migration required", "breaking placement-contract change", "security or safety policy change"] }
+  }
+}

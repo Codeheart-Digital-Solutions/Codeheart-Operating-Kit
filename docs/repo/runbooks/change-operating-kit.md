@@ -1,4 +1,4 @@
-Last updated: 2026-06-13T22:47:44Z (UTC)
+Last updated: 2026-07-09T23:30:00Z (UTC)
 
 # Change Operating Kit
 
@@ -19,6 +19,17 @@ validators, installers, release assets, or CLI behavior.
 10. Record release-note or migration-note needs for consumer-affecting changes.
 11. Run the smallest validation set that proves the changed surface.
 12. Summarize validation and residual risk in the PR.
+
+For state, lifecycle, installer, or release changes, also run the matching gates:
+
+- schema and migration tests for declaration, config, lock, content, catalog, or pack contracts;
+- transaction failure tests for planning, staging, commit, post-check, rollback, and recovery;
+- build-twice byte comparison plus catalog-to-binary verification for release-pack changes;
+- isolated installer and upgrade success/failure paths for each affected platform;
+- consumer materialization and routing checks when managed guidance changes.
+
+Do not use the source repository's ignored `.codeheart/kit/` tree as producer authority. Source
+components, profiles, templates, schemas, Go packages, and maintainer runbooks are canonical.
 
 ## Stop Conditions
 

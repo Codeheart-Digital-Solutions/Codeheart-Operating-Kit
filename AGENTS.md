@@ -40,6 +40,8 @@ Last updated: 2026-06-26T14:30:34Z (UTC)
 - Agent interface: `.codeheart/kit/docs/agent-interface/README.md`
 - Operation routing and dispatch:
   `.codeheart/kit/docs/agent-interface/reference/operation-routing-and-dispatch.md`
+- Operating Kit installation lifecycle:
+  `.codeheart/kit/docs/agent-interface/runbooks/maintain-operating-kit-installation.md`
 - Operating Kit feedback:
   `.codeheart/kit/docs/agent-interface/runbooks/submit-kit-feedback.md`
 - Tooling readiness:
@@ -57,6 +59,9 @@ At the start of each agent session, inspect `.codeheart/kit.lock.yaml`. If
 Stay silent when the installed kit is current. When an update is available, mention it briefly and
 ask before applying anything.
 
+Only `upgrade --yes` may change the installed kit version. `repair` and `sync` restore or refresh
+the currently installed version without an additional confirmation prompt.
+
 Do not edit the due date manually. `codeheart-operating-kit update-check` owns
 `last_update_check_at`, `next_update_check_due`, `latest_seen_version`, and `update_status`.
 
@@ -66,6 +71,17 @@ Do not edit the due date manually. `codeheart-operating-kit update-check` owns
 
 Add repository-specific rules below this heading. Keep local safety rules, build and test commands,
 product documentation routes, release procedures, and repository-specific exceptions here.
+
+## Producer Authority
+
+This repository is the Operating Kit producer. For source, release, state, lifecycle, installer, or
+routing changes, use tracked source under `components/`, `profiles/`, `templates/`, `schemas/`,
+`internal/`, `scripts/`, and `docs/repo/` as authority. Never use the ignored consumer installation
+under `.codeheart/kit/` as source truth or copy changes from it back into producer files.
+
+Route implementation through `docs/repo/runbooks/change-operating-kit.md` and release work through
+`docs/repo/runbooks/release-operating-kit.md`. Consumer lifecycle guidance is authored at
+`components/agent-interface/managed/runbooks/maintain-operating-kit-installation.md`.
 
 # Local User Guidance
 

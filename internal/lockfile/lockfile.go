@@ -1,12 +1,13 @@
 package lockfile
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
 	"time"
 
-	"github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/internal/yamlmini"
+	"github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/internal/state"
 )
 
 const (
@@ -27,18 +28,50 @@ func FormatTime(value time.Time) string {
 }
 
 func ReadLock(root string) (map[string]any, error) {
-	return readYAML(filepath.Join(root, filepath.FromSlash(LockPath)))
+	value, err := readYAML(filepath.Join(root, filepath.FromSlash(LockPath)))
+	if err != nil || len(value) == 0 {
+		return value, err
+	}
+	version := state.AsInt(value["schema_version"])
+	schemaPath, err := state.SchemaForLockVersion(version)
+	if err != nil {
+		return nil, err
+	}
+	if version == 1 {
+		value, _ = state.NormalizeLegacyV1(value)
+	}
+	if err := state.Validate(schemaPath, value); err != nil {
+		return nil, err
+	}
+	return value, nil
 }
 
 func WriteLock(root string, lock map[string]any) error {
+	schemaPath, err := state.SchemaForLockVersion(state.AsInt(lock["schema_version"]))
+	if err != nil {
+		return err
+	}
+	if err := state.Validate(schemaPath, lock); err != nil {
+		return err
+	}
 	return writeYAML(filepath.Join(root, filepath.FromSlash(LockPath)), lock)
 }
 
 func ReadConfig(root string) (map[string]any, error) {
-	return readYAML(filepath.Join(root, filepath.FromSlash(ConfigPath)))
+	value, err := readYAML(filepath.Join(root, filepath.FromSlash(ConfigPath)))
+	if err != nil || len(value) == 0 {
+		return value, err
+	}
+	if err := state.Validate(state.ConfigV1Schema, value); err != nil {
+		return nil, err
+	}
+	return value, nil
 }
 
 func WriteConfig(root string, config map[string]any) error {
+	if err := state.Validate(state.ConfigV1Schema, config); err != nil {
+		return err
+	}
 	return writeYAML(filepath.Join(root, filepath.FromSlash(ConfigPath)), config)
 }
 
@@ -116,12 +149,16 @@ func readYAML(path string) (map[string]any, error) {
 	if err != nil {
 		return nil, err
 	}
-	return yamlmini.MustMap(string(data))
+	return state.DecodeYAMLMap(data)
 }
 
 func writeYAML(path string, value map[string]any) error {
 	if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
 		return err
 	}
-	return os.WriteFile(path, []byte(yamlmini.Dump(value)), 0o644)
+	data, err := state.EncodeYAML(value)
+	if err != nil {
+		return fmt.Errorf("encode %s: %w", path, err)
+	}
+	return os.WriteFile(path, data, 0o644)
 }

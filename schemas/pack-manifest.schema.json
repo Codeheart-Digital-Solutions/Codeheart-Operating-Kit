@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/schemas/pack-manifest.schema.json",
+  "title": "Codeheart Operating Kit Release Pack Manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "version", "platform", "command", "binary_path", "binary_sha256", "content_manifest_path", "content_manifest_sha256", "payload_checksums_path", "payload_checksums_sha256"],
+  "properties": {
+    "schema_version": { "type": "integer", "const": 1 },
+    "version": { "type": "string", "minLength": 1 },
+    "platform": { "type": "string", "enum": ["macos-universal", "windows-x64"] },
+    "command": { "type": "string", "const": "codeheart-operating-kit" },
+    "binary_path": { "type": "string", "pattern": "^bin/codeheart-operating-kit(\\.exe)?$" },
+    "binary_sha256": { "$ref": "#/$defs/sha256" },
+    "content_manifest_path": { "type": "string", "const": "content-manifest.yaml" },
+    "content_manifest_sha256": { "$ref": "#/$defs/sha256" },
+    "payload_checksums_path": { "type": "string", "const": "checksums.txt" },
+    "payload_checksums_sha256": { "$ref": "#/$defs/sha256" }
+  },
+  "$defs": { "sha256": { "type": "string", "pattern": "^[a-fA-F0-9]{64}$" } }
+}
