@@ -1,4 +1,4 @@
-Last updated: 2026-07-10T00:40:48Z (UTC)
+Last updated: 2026-07-10T00:45:48Z (UTC)
 Created: 2026-07-09
 
 # Operating Kit State And Release Architecture Execution Log
@@ -55,13 +55,13 @@ Review gate skipped: no
 Reviewer mode: strongest practical main-thread review; reviewer-agent execution is not permitted
 unless the user or applicable repository instructions explicitly request subagent work.
 
-Review rounds: 7 during implementation and CI
+Review rounds: 8 during implementation and CI
 
 Material findings: EP-01 state precedence, EP-02 pre-commit cleanup, EP-03 pack-verifier checksum
 mapping, final Windows expected-failure messaging, and missing explicit Windows junction coverage
 plus bare-filename catalog inference, catalog/archive containment, and stale final graph identity
 plus no-Python installer dependency, Windows drive-path parsing, and symlink-scanner pipefail
-handling plus host-native archive ordering found and fixed
+handling, host-native archive ordering, and expected Windows native-exit handling found and fixed
 
 Final accepted result: EP-01 through EP-04 and local EP-05 source accepted; Windows execution
 pending
@@ -297,6 +297,18 @@ CI round 3:
 - Payload checksum and ZIP entry order now sort explicitly by archive-relative POSIX names. All 10
   release-asset tests, including repeat-build comparison, pass locally. A new pushed Windows run
   remains required.
+
+CI round 4:
+
+- Push-triggered Validate run `29060578007` tested commit
+  `e2b57488637acb79c027b73098e3a50d0baf2b1a`.
+- macOS passed again. Windows passed Go, parity, and deterministic pack construction; fresh install
+  and onboarding also succeeded. The intentional junction-containment rejection then exited 1 as
+  designed, but GitHub's PowerShell wrapper promoted that native exit before the assertion ran.
+- The junction fixture now temporarily disables native-error promotion, captures exit and JSON,
+  requires a nonzero exit plus `unsafe_target`, restores the shell preference, and verifies the
+  outside sentinel. PowerShell syntax and native-failure capture probes pass locally. A new pushed
+  Windows run remains required.
 
 Negative evidence:
 

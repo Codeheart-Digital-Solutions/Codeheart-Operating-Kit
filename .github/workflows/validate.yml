@@ -186,9 +186,19 @@ jobs:
           Set-Content -Path "$Outside\sentinel.txt" -Value "preserve"
           Move-Item "$ReparseConsumer\.codeheart\kit" "$ReparseConsumer\.codeheart\kit-real"
           New-Item -ItemType Junction -Path "$ReparseConsumer\.codeheart\kit" -Target $Outside | Out-Null
-          & "$env:RUNNER_TEMP\codeheart-ok\bin\codeheart-operating-kit.cmd" repair $ReparseConsumer --json
-          if ($LASTEXITCODE -eq 0) {
+          $PreviousNativePreference = $PSNativeCommandUseErrorActionPreference
+          try {
+              $PSNativeCommandUseErrorActionPreference = $false
+              $RepairOutput = (& "$env:RUNNER_TEMP\codeheart-ok\bin\codeheart-operating-kit.cmd" repair $ReparseConsumer --json | Out-String)
+              $RepairExit = $LASTEXITCODE
+          } finally {
+              $PSNativeCommandUseErrorActionPreference = $PreviousNativePreference
+          }
+          if ($RepairExit -eq 0) {
               throw "repair unexpectedly traversed a Windows reparse point"
+          }
+          if ($RepairOutput -notmatch '"code":\s*"unsafe_target"') {
+              throw "repair did not report the expected unsafe_target blocker"
           }
           if ((Get-Content "$Outside\sentinel.txt" -Raw).Trim() -ne "preserve") {
               throw "Windows reparse containment changed the outside target"
