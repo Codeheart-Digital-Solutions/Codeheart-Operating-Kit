@@ -128,6 +128,21 @@ def test_state_foundation_schemas_are_versioned_and_declared():
     )
 
 
+def test_profile_schema_keeps_legacy_update_check_metadata_optional_and_compatible():
+    schema = json.loads((ROOT / "schemas/profile.schema.json").read_text(encoding="utf-8"))
+    profile = load_yaml(ROOT / "profiles/standard.yaml")
+
+    assert "update_check" not in schema["properties"]["profile"]["required"]
+    assert "update_check" not in profile["profile"]
+
+    profile["profile"]["update_check"] = {
+        "cadence_days": 7,
+        "current_result_agent_message": "silent",
+        "update_available_agent_message": "prompt-user-before-apply",
+    }
+    assert validate_instance(schema, profile) == []
+
+
 def test_release_identity_schemas_are_acyclic_and_exact():
     content = json.loads((ROOT / "schemas/content-manifest.schema.json").read_text(encoding="utf-8"))
     catalog = json.loads((ROOT / "schemas/release-catalog.schema.json").read_text(encoding="utf-8"))

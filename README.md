@@ -31,8 +31,9 @@ configuration.
 The Go CLI compiles component and profile declarations into one desired-state graph and classifies
 installed state before any lifecycle command acts. Mutating commands use one target-filesystem
 transaction with dry-run, lock-last commit, post-check, rollback, and recovery markers only when
-rollback cannot finish. `init`, `repair`, `sync`, `update-check`, `upgrade`, and `check` have
-separate responsibilities; only `upgrade --yes` may change kit version.
+rollback cannot finish. `init`, `repair`, `sync`, `upgrade`, and `check` have separate
+responsibilities; `update-check` is an optional, user-invoked lookup, and only `upgrade --yes` may
+change kit version.
 
 Embedded `manifest.yaml` identifies content, compatibility, components, profiles, and graph digest
 without circular archive URLs or checksums. Deterministic release packs carry a pack manifest and

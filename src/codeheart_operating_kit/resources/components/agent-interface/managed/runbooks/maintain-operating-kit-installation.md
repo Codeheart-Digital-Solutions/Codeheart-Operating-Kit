@@ -1,4 +1,4 @@
-Last updated: 2026-07-09T23:30:00Z (UTC)
+Last updated: 2026-07-10T11:29:07Z (UTC)
 
 # Maintain An Operating Kit Installation
 
@@ -14,7 +14,7 @@ prompt.
 | Diagnose any state | `check` | Read-only; returns one primary state and actionable blockers. |
 | Compatible drift, partial installation, or lock-v1 migration | `repair --dry-run`, then `repair` | Restores the running version; never authorizes a version change. |
 | Refresh embedded files for the already installed version | `sync --dry-run`, then `sync` | Uses only the running binary and preserves the installed kit version. |
-| Weekly latest-version metadata is due | `update-check` | Valid lock-v2 installation only; changes update metadata, not kit content or version. |
+| User explicitly asks whether a newer release exists | `update-check` | Optional manual lookup for a valid lock-v2 installation; due metadata never triggers it. |
 | User approved a newer release | `upgrade --version <version> --dry-run`, then `upgrade --version <version> --yes` | Only command that may change kit version; verifies catalog-to-binary provenance first. |
 | Active transaction | `check` and wait | Do not start concurrent lifecycle work. |
 | Dead verified pre-commit transaction | `repair --dry-run`, then `repair` | Stale takeover requires process-liveness and transaction-identity proof. |

@@ -206,8 +206,6 @@ func OnboardingScript(projectName string, purpose string, target string, mode st
 		"Should I continue with this setup?",
 		"1. Yes, set it up",
 		"2. No, stop here",
-		"",
-		"Operating Kit setup includes quiet weekly update checking. If everything is current, Codex will not mention it. If an update is available, Codex will ask before applying anything.",
 		"After successful setup, finish with: Base Operating Kit setup is complete.",
 		"Foundry module setup will become available later, after the first Foundry module is released.",
 	)
@@ -216,10 +214,10 @@ func OnboardingScript(projectName string, purpose string, target string, mode st
 
 func modeMessage(mode string) string {
 	messages := map[string]string{
-		"new-folder-setup":                    "This folder is ready for a new setup. I can add Codex working instructions, a small memory area, and quiet weekly update checking.",
+		"new-folder-setup":                    "This folder is ready for a new setup. I can add Codex working instructions and a small memory area.",
 		"existing-folder-setup":               "This folder already contains files. I can set up Operating Kit here without replacing your existing files. I will show the exact additions before changing anything.",
 		"existing-technical-project-adoption": "This is an existing technical project. I will not overwrite existing docs or instructions. I will add the managed Operating Kit area, preserve local instructions, scaffold only missing memory files, and create an adoption cleanup report for overlapping docs.",
-		"existing-operating-kit-repair":       "This folder already has Operating Kit. I will check whether the managed kit files, routing, and update state need repair. I will not apply a version update unless you ask for it.",
+		"existing-operating-kit-repair":       "This folder already has Operating Kit. I will check whether the managed kit files, routing, and lifecycle state need repair. I will not apply a version update unless you ask for it.",
 		"ambiguous-folder-stop":               "I cannot tell whether this folder is safe to set up. Please use a different folder, or tell me more about what this folder is for.",
 	}
 	return messages[mode]
@@ -230,7 +228,7 @@ func planPreview(mode string) string {
 	case "existing-technical-project-adoption":
 		return "Adoption plan: add .codeheart/kit/, config, lock, managed AGENTS block, missing memory files, and .codeheart/reports/adoption-cleanup-report.md without deleting overlapping docs."
 	case "existing-operating-kit-repair":
-		return "Repair plan: check managed Operating Kit files, agent routing, setup information, and update-check information."
+		return "Repair plan: check managed Operating Kit files, agent routing, setup information, and lifecycle metadata."
 	case "ambiguous-folder-stop":
 		return "Stop plan: choose a different folder or provide more context before writing files."
 	default:

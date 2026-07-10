@@ -1,4 +1,4 @@
-Last updated: 2026-07-09T23:30:00Z (UTC)
+Last updated: 2026-07-10T11:29:07Z (UTC)
 
 # Agent Interface
 
@@ -21,7 +21,7 @@ repository documents, not in the managed bootstrap text.
 - Operational recipe maturity: `reference/operational-recipe-maturity.md`
 - Runbook-to-script promotion standard: `reference/runbook-to-script-promotion-standard.md`
 - Runbook authoring standard: `reference/runbook-authoring-standard.md`
-- Update-check policy: `reference/update-check-policy.md`
+- Optional manual update-check policy: `reference/update-check-policy.md`
 - Kit feedback item format: `reference/kit-feedback-item-format.md`
 - Repo feedback item format: `reference/repo-feedback-item-format.md`
 - First-run onboarding: `runbooks/conduct-first-run-onboarding.md`

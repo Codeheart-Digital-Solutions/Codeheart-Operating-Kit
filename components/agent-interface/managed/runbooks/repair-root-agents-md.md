@@ -1,4 +1,4 @@
-Last updated: 2026-06-13T22:55:57Z (UTC)
+Last updated: 2026-07-10T11:29:07Z (UTC)
 
 # Repair Root AGENTS.md
 
@@ -11,7 +11,7 @@ routing.
 2. Report missing or malformed markers.
 3. Preserve content outside the managed block.
 4. Replace only managed-block content when repair is safe.
-5. Verify direct routes and update-check trigger.
+5. Verify direct routes and the optional, manual-only update-check boundary.
 6. Report unresolved conflicts instead of overwriting local instructions.
 
 ## Stop Conditions

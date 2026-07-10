@@ -39,6 +39,8 @@ def test_onboard_prompt_order_and_copy(tmp_path, capsys):
     assert not (tmp_path / ".codeheart").exists()
     assert "portfolio" not in output.lower()
     assert "coordination" not in output.lower()
+    assert "weekly update" not in output.lower()
+    assert "update-check" not in output.lower()
 
 
 def test_onboard_project_name_and_target_folder_help_prompts(tmp_path, capsys):
@@ -89,6 +91,8 @@ def test_onboard_yes_writes_and_creates_adoption_report(tmp_path):
     assert ".codeheart/kit/docs/agent-interface/reference/operation-routing-and-dispatch.md" in agents_text
     assert "repository, module, extension, or agent task is blocked by missing local tooling" in agents_text
     assert ".codeheart/kit/docs/agent-interface/runbooks/handle-tooling-readiness.md" in agents_text
+    assert "Do not check for a new Operating Kit version at session start" in agents_text
+    assert "At the start of each agent session" not in agents_text
     assert "Route-before-surface standard" in kit_readme_text
     assert ".codeheart/kit/docs/agent-interface/reference/operation-routing-and-dispatch.md" in kit_readme_text
     assert "Local machine/runtime layer" in kit_readme_text

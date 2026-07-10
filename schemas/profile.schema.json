@@ -17,14 +17,25 @@
         "description",
         "selected_components",
         "generated_surfaces",
-        "state_defaults",
-        "update_check"
+        "state_defaults"
       ],
       "properties": {
         "id": { "type": "string", "const": "standard" },
         "version": { "type": "string", "minLength": 1 },
         "name": { "type": "string", "minLength": 1 },
         "description": { "type": "string", "minLength": 1 },
+        "update_check": {
+          "type": "object",
+          "deprecated": true,
+          "description": "Legacy compatibility metadata only; it does not require automatic, session-start, or cadence-based checks.",
+          "additionalProperties": false,
+          "required": ["cadence_days", "current_result_agent_message", "update_available_agent_message"],
+          "properties": {
+            "cadence_days": { "type": "integer", "minimum": 1 },
+            "current_result_agent_message": { "type": "string", "const": "silent" },
+            "update_available_agent_message": { "type": "string", "const": "prompt-user-before-apply" }
+          }
+        },
         "selected_components": {
           "type": "array",
           "items": { "type": "string", "minLength": 1 },
@@ -45,16 +56,6 @@
             "generated-surface": { "$ref": "#/$defs/strategies" },
             "local-user": { "$ref": "#/$defs/strategies" },
             "local-machine": { "$ref": "#/$defs/strategies" }
-          }
-        },
-        "update_check": {
-          "type": "object",
-          "additionalProperties": false,
-          "required": ["cadence_days", "current_result_agent_message", "update_available_agent_message"],
-          "properties": {
-            "cadence_days": { "type": "integer", "minimum": 1 },
-            "current_result_agent_message": { "type": "string", "const": "silent" },
-            "update_available_agent_message": { "type": "string", "const": "prompt-user-before-apply" }
           }
         }
       }

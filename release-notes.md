@@ -1,6 +1,48 @@
-Last updated: 2026-07-10T07:26:13Z (UTC)
+Last updated: 2026-07-10T11:35:02Z (UTC)
 
 # Codeheart Operating Kit Release Notes
+
+## v0.1.23 Release Notes
+
+`v0.1.23` makes Operating Kit version checks optional and user-directed. Agents no longer check
+for a newer kit at session start, during onboarding, or merely because stored cadence metadata is
+due.
+
+### Included
+
+- Root `AGENTS.md`, its managed template, lifecycle runbooks, routing references, and onboarding
+  guidance now require an update lookup only when the user asks or an authorized task explicitly
+  depends on the latest available release.
+- First-run onboarding no longer promises quiet weekly checks or performs a version lookup as part
+  of setup.
+- `codeheart-operating-kit update-check` remains available as an explicit manual command. It stays
+  silent when current in agent-notification mode and never applies an upgrade.
+- Existing lockfile update metadata remains supported for compatibility and audit context, but its
+  due date is informational and does not trigger work.
+- The standard profile no longer declares a cadence. The profile schema continues to accept the
+  former declaration as deprecated compatibility metadata so older declarations are not
+  needlessly invalidated.
+
+### Consumer Impact
+
+- `instruction-only change`: managed guidance removes automatic, session-start, onboarding, and
+  cadence-based version-check expectations.
+- `validator-only change`: the active standard profile drops its cadence declaration while the
+  schema retains backward-compatible acceptance of the legacy field.
+- `security or safety policy change`: a read from an external release source now requires explicit
+  user intent or a task-specific latest-version requirement.
+- No migration or mandatory consumer action is required. Consumers adopt the policy through a
+  normal Operating Kit upgrade or managed-content synchronization.
+
+### Validation Boundary
+
+- Source, schema, packaged-resource parity, Go/Python behavior, onboarding, release-contract,
+  reproducibility, and isolated installer/upgrade checks are required before publication.
+- macOS universal and Windows x64 remain the supported release platforms. Assets remain unsigned
+  under the existing internal/prototype boundary; signing and notarization are not introduced by
+  this release.
+- Named consumer sync, local installed-kit mutation, command removal, and release-signing changes
+  remain outside this release.
 
 ## v0.1.22 Release Notes
 

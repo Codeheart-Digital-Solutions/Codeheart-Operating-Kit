@@ -164,7 +164,20 @@ def test_bootstrap_documents_first_run_path():
     assert "Extra High" in text
     assert "Fast" in text
     assert "Documents > <Project-Name>" in text
-    assert "If everything is current, Codex will not mention it" in text
+    assert "Do not introduce or run a version check as part of onboarding." in text
+    assert "quiet weekly update checking" not in text
+    assert "Once a week, Codex checks" not in text
+
+
+def test_update_check_policy_is_manual_only():
+    text = (
+        ROOT / "components/agent-interface/managed/reference/update-check-policy.md"
+    ).read_text(encoding="utf-8")
+    assert "version checks are manual and optional" in text
+    assert "Do not run it at\nsession start" in text
+    assert "due metadata never triggers it" in (
+        ROOT / "components/agent-interface/managed/runbooks/maintain-operating-kit-installation.md"
+    ).read_text(encoding="utf-8")
 
 
 def test_macos_installer_requires_checksum_and_user_level_path():

@@ -1,4 +1,4 @@
-Last updated: 2026-07-10T07:26:13Z (UTC)
+Last updated: 2026-07-10T11:29:07Z (UTC)
 
 # Bootstrap Codeheart Operating Kit
 
@@ -8,19 +8,19 @@ preinstalled Codeheart skills.
 Pinned corrective release:
 
 ```text
-Version: v0.1.22
-Release URL: https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/tag/v0.1.22
+Version: v0.1.23
+Release URL: https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/tag/v0.1.23
 ```
 
 ## Install The CLI
 
 macOS installs into a user-level Operating Kit folder. The installer verifies and installs the
 self-contained platform release pack named
-`codeheart-operating-kit-0.1.22-macos-universal.zip`; the pack contains
+`codeheart-operating-kit-0.1.23-macos-universal.zip`; the pack contains
 `bin/codeheart-operating-kit`.
 
 ```sh
-curl -fsSLO https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.22/install.sh
+curl -fsSLO https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.23/install.sh
 bash install.sh
 ```
 
@@ -32,11 +32,11 @@ $HOME/.codeheart/operating-kit/bin/codeheart-operating-kit
 
 Windows installs into the current user's local application data folder. The installer verifies and
 installs the self-contained platform release pack named
-`codeheart-operating-kit-0.1.22-windows-x64.zip`; the pack contains
+`codeheart-operating-kit-0.1.23-windows-x64.zip`; the pack contains
 `bin/codeheart-operating-kit.exe` and the installer writes the `.cmd` shim.
 
 ```powershell
-Invoke-WebRequest -Uri "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.22/install.ps1" -OutFile install.ps1
+Invoke-WebRequest -Uri "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.23/install.ps1" -OutFile install.ps1
 .\install.ps1
 ```
 
@@ -94,9 +94,10 @@ Follow this contract exactly during first-run setup:
 - Do not use `--yes` unless the user already supplied every required setup decision and approved
   writing files.
 - Do not offer optional native capability installation during base onboarding.
-- Keep current update-check results silent and mention only available updates.
+- Do not run or introduce `update-check` during onboarding unless the user separately requests a
+  version check.
 
-For `v0.1.22`, `codeheart-operating-kit onboard` is an agent-guided script and setup-plan renderer.
+For `v0.1.23`, `codeheart-operating-kit onboard` is an agent-guided script and setup-plan renderer.
 It is not a terminal stdin prompt loop. Show rendered prompts in Codex chat, collect user decisions
 in chat, and rerun the command with explicit values only when applying setup.
 
@@ -265,7 +266,7 @@ Use exactly one setup mode message after inspection.
 ```text
 This folder is ready for a new setup.
 
-I can add Codex working instructions, a small memory area, and quiet weekly update checking.
+I can add Codex working instructions and a small memory area.
 ```
 
 ### `existing-folder-setup`
@@ -292,7 +293,7 @@ report for overlapping docs.
 ```text
 This folder already has Operating Kit.
 
-I will check whether the managed kit files, routing, and update state need repair. I will not apply
+I will check whether the managed kit files, routing, and lifecycle state need repair. I will not apply
 a version update unless you ask for it.
 ```
 
@@ -316,7 +317,7 @@ Here is the setup plan.
 I will add:
 - Operating Kit files in .codeheart/kit/
 - Setup information in .codeheart/kit.config.yaml
-- Update-check information in .codeheart/kit.lock.yaml
+- Installed version and lifecycle metadata in .codeheart/kit.lock.yaml
 - Local user notes in .codeheart/user/
 - Agent instructions in AGENTS.md
 - Repository notes in docs/repo/
@@ -333,7 +334,7 @@ Here is the adoption plan.
 I will add:
 - Operating Kit files in .codeheart/kit/
 - Setup information in .codeheart/kit.config.yaml
-- Update-check information in .codeheart/kit.lock.yaml
+- Installed version and lifecycle metadata in .codeheart/kit.lock.yaml
 - Local user notes in .codeheart/user/
 - A managed Operating Kit block in AGENTS.md
 - Missing agent memory files when needed
@@ -352,7 +353,7 @@ I will check:
 - Managed Operating Kit files
 - Agent instruction routing
 - Setup information
-- Update-check information
+- Installed version and lifecycle metadata
 
 I will show repair findings before changing files.
 ```
@@ -370,19 +371,11 @@ Should I continue with this setup?
 
 If the user stops, do not write setup files.
 
-## Update Checks
+## Optional Version Checks
 
-After setup writes or repair checks, show:
-
-```text
-Operating Kit setup includes quiet weekly update checking.
-
-Once a week, Codex checks whether an Operating Kit update is available.
-
-If everything is current, Codex will not mention it.
-
-If an update is available, Codex will ask before applying anything.
-```
+Do not introduce or run a version check as part of onboarding. If the user later asks whether a
+newer release exists, use the optional `update-check` command. Applying a version change still
+requires explicit `upgrade --yes` approval.
 
 ## Completion Message
 

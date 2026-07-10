@@ -1,7 +1,7 @@
 schema_version: 1
 profile:
   id: standard
-  version: "0.1.22"
+  version: "0.1.23"
   name: Standard
   description: Base public Operating Kit profile for general agent-first repositories and folders.
   selected_components:
@@ -104,7 +104,3 @@ profile:
       presence_policy: conditional
       update_strategy: report-only
       removal_strategy: preserve
-  update_check:
-    cadence_days: 7
-    current_result_agent_message: silent
-    update_available_agent_message: prompt-user-before-apply

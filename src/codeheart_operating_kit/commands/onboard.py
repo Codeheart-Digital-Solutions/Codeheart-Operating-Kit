@@ -106,8 +106,6 @@ def onboarding_script(project_name: str | None, purpose: str | None, target: Pat
         "1. Yes, check these tools",
         "2. No, skip this for now",
         "",
-        "After setup and capability checks, explain quiet weekly update checking.",
-        "Operating Kit setup includes quiet weekly update checking. If everything is current, Codex will not mention it. If an update is available, Codex will ask before applying anything.",
         "After successful setup, finish with: Base Operating Kit setup is complete.",
         "Foundry module setup will become available later, after the first Foundry module is released.",
     ])
@@ -116,10 +114,10 @@ def onboarding_script(project_name: str | None, purpose: str | None, target: Pat
 
 def mode_message(mode: str) -> str:
     messages = {
-        "new-folder-setup": "This folder is ready for a new setup. I can add Codex working instructions, a small memory area, and quiet weekly update checking.",
+        "new-folder-setup": "This folder is ready for a new setup. I can add Codex working instructions and a small memory area.",
         "existing-folder-setup": "This folder already contains files. I can set up Operating Kit here without replacing your existing files. I will show the exact additions before changing anything.",
         "existing-technical-project-adoption": "This is an existing technical project. I will not overwrite existing docs or instructions. I will add the managed Operating Kit area, preserve local instructions, scaffold only missing memory files, and create an adoption cleanup report for overlapping docs.",
-        "existing-operating-kit-repair": "This folder already has Operating Kit. I will check whether the managed kit files, routing, and update state need repair. I will not apply a version update unless you ask for it.",
+        "existing-operating-kit-repair": "This folder already has Operating Kit. I will check whether the managed kit files, routing, and lifecycle state need repair. I will not apply a version update unless you ask for it.",
         "ambiguous-folder-stop": "I cannot tell whether this folder is safe to set up. Please use a different folder, or tell me more about what this folder is for.",
     }
     return messages[mode]
@@ -129,7 +127,7 @@ def plan_preview(mode: str) -> str:
     if mode == "existing-technical-project-adoption":
         return "Adoption plan: add .codeheart/kit/, config, lock, managed AGENTS block, missing memory files, and .codeheart/reports/adoption-cleanup-report.md without deleting overlapping docs."
     if mode == "existing-operating-kit-repair":
-        return "Repair plan: check managed Operating Kit files, agent routing, setup information, update-check information, and native Codex capability status."
+        return "Repair plan: check managed Operating Kit files, agent routing, setup information, lifecycle metadata, and native Codex capability status."
     if mode == "ambiguous-folder-stop":
         return "Stop plan: choose a different folder or provide more context before writing files."
     return "Setup plan: add .codeheart/kit/, kit config, kit lock, local user notes, AGENTS.md, docs/repo/, and missing docs/agent-memory/ files. I will not delete existing files."

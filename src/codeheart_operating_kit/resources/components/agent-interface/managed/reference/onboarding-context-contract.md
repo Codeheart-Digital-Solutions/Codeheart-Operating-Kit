@@ -1,4 +1,4 @@
-Last updated: 2026-06-15T10:16:29Z (UTC)
+Last updated: 2026-07-10T11:29:07Z (UTC)
 
 # Onboarding Context Contract
 
@@ -43,7 +43,8 @@ folder strategy in the first prompt. `bootstrap.md` and this managed contract ow
 - Do not use non-interactive flags to fill missing user decisions.
 - Do not use `--yes` unless the user already supplied every required setup decision and approved
   writing files.
-- Keep current update-check results silent and mention only available updates.
+- Do not run or introduce `update-check` during onboarding unless the user separately requests a
+  version check.
 
 `codeheart-operating-kit onboard` is an agent-guided script and setup-plan renderer. It is not a
 terminal stdin prompt loop. The agent shows rendered prompts in Codex chat, collects user decisions
@@ -64,7 +65,6 @@ in chat, and reruns the command with explicit values only when applying setup.
 11. Show the setup, adoption, repair, or stop plan.
 12. Ask before writing files.
 13. Ask whether to check native Codex capabilities.
-14. Explain quiet weekly update checking.
 
 ## Codex Setup Copy
 
@@ -217,19 +217,11 @@ After setup writes complete, ask whether to check baseline support for documents
 presentations, browser work, and PDFs. Unavailable tools are recorded as degraded state, not setup
 failure.
 
-## Update Checks
+## Optional Version Checks
 
-After setup and capability checks, explain quiet weekly update checking:
-
-```text
-Operating Kit setup includes quiet weekly update checking.
-
-Once a week, Codex checks whether an Operating Kit update is available.
-
-If everything is current, Codex will not mention it.
-
-If an update is available, Codex will ask before applying anything.
-```
+Do not introduce or run an Operating Kit version check as part of onboarding. If the user later
+asks whether a newer release exists, route that separate request through the optional
+`update-check` command. A version change still requires explicit `upgrade --yes` approval.
 
 ## Non-Interactive Onboarding
 
@@ -262,7 +254,7 @@ the user explicitly answered the context question. Missing purpose metadata must
 ## Storage
 
 - Shared non-secret setup context: `.codeheart/kit.config.yaml`
-- Installed version and update-check state: `.codeheart/kit.lock.yaml`
+- Installed version and lifecycle metadata: `.codeheart/kit.lock.yaml`
 - Local personal preferences: `.codeheart/user/preferences.yaml`
 
 Do not write user-specific answers inside `.codeheart/kit/`. The managed kit directory is replaced

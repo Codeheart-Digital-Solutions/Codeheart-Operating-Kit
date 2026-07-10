@@ -1,4 +1,4 @@
-Last updated: 2026-06-13T22:55:57Z (UTC)
+Last updated: 2026-07-10T11:29:07Z (UTC)
 
 # Structure Root AGENTS.md
 
@@ -12,7 +12,7 @@ Use this runbook when creating a consumer root `AGENTS.md`.
 3. Add direct managed routes for discovery, implementation planning, implementation execution,
    planning review, agent memory, agent interface, and structure governance.
 4. Add `.codeheart/kit/README.md` as fallback inventory.
-5. Add the static update-check trigger.
+5. State that update checks are optional and must not run at session start or from due metadata.
 6. Add a repository-owned section below the managed block.
 7. Add local user guidance below repository-owned instructions when present.
 

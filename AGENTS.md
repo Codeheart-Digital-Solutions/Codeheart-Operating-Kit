@@ -1,4 +1,4 @@
-Last updated: 2026-06-26T14:30:34Z (UTC)
+Last updated: 2026-07-10T11:29:07Z (UTC)
 
 <!-- BEGIN CODEHEART OPERATING KIT MANAGED BLOCK -->
 
@@ -51,18 +51,19 @@ Last updated: 2026-06-26T14:30:34Z (UTC)
   `.codeheart/kit/docs/structure-governance/reference/module-extension-state.md`
 - Full kit inventory and fallback: `.codeheart/kit/README.md`
 
-## Weekly Update Check
+## Optional Update Checks
 
-At the start of each agent session, inspect `.codeheart/kit.lock.yaml`. If
-`next_update_check_due` is in the past, run `codeheart-operating-kit update-check`.
+Do not check for a new Operating Kit version at session start or merely because
+`next_update_check_due` is in the past. Run `codeheart-operating-kit update-check` only when the
+user asks or the current task explicitly requires latest-release information.
 
-Stay silent when the installed kit is current. When an update is available, mention it briefly and
-ask before applying anything.
+`update-check` changes metadata only. Its due-date fields are informational and never create a
+mandatory or background check.
 
 Only `upgrade --yes` may change the installed kit version. `repair` and `sync` restore or refresh
 the currently installed version without an additional confirmation prompt.
 
-Do not edit the due date manually. `codeheart-operating-kit update-check` owns
+Do not edit update metadata manually. When invoked, `codeheart-operating-kit update-check` owns
 `last_update_check_at`, `next_update_check_due`, `latest_seen_version`, and `update_status`.
 
 <!-- END CODEHEART OPERATING KIT MANAGED BLOCK -->

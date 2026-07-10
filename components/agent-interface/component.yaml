@@ -1,9 +1,9 @@
 schema_version: 1
 component:
   id: agent-interface
-  version: "0.1.22"
+  version: "0.1.23"
   name: Agent Interface
-  description: Managed root AGENTS contract, onboarding, update-check, and repair guidance.
+  description: Managed root AGENTS contract, onboarding, optional update-check, and repair guidance.
   profiles:
     - standard
   consumer_impact:

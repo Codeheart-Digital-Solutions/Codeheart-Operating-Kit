@@ -1,4 +1,4 @@
-Last updated: 2026-07-09T23:30:00Z (UTC)
+Last updated: 2026-07-10T11:29:07Z (UTC)
 
 # Operation Routing And Dispatch
 
@@ -21,9 +21,9 @@ intent, domain, authority, scope, and capability route are resolved, unless the 
 requests that specific surface and the request is safe.
 
 For Operating Kit installation state, the lifecycle command is the route boundary: `init` creates,
-`repair` restores the installed version, `sync` refreshes that same version, `update-check` changes
-only update metadata, `upgrade --yes` performs an approved version change, and `check` diagnoses
-without writing. Full route:
+`repair` restores the installed version, `sync` refreshes that same version, an explicitly
+requested `update-check` changes only update metadata, `upgrade --yes` performs an approved version
+change, and `check` diagnoses without writing. Full route:
 `.codeheart/kit/docs/agent-interface/runbooks/maintain-operating-kit-installation.md`.
 
 ## Dispatch Sequence

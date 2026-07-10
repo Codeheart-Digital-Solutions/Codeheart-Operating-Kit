@@ -1,4 +1,4 @@
-Last updated: 2026-07-09T23:30:00Z (UTC)
+Last updated: 2026-07-10T11:29:07Z (UTC)
 
 # Conduct First-Run Onboarding
 
@@ -31,8 +31,7 @@ context. Ask the user directly and keep the conversation visible in Codex chat.
 13. Present the concrete setup, adoption, or repair plan.
 14. Ask for write confirmation.
 15. Execute the state-matched lifecycle command after approval.
-16. Explain quiet weekly update checking.
-17. Finish with base Operating Kit setup completion.
+16. Finish with base Operating Kit setup completion.
 
 ## Required User-Owned Decisions
 
@@ -122,10 +121,10 @@ Before writing, show the concrete file groups that will be added or repaired. Do
 before confirmation. Do not delete existing files during onboarding. Do not create a Python virtual
 environment during default onboarding. Do not mention GitHub during first-run onboarding.
 
-## Native Capabilities And Updates
+## Native Capabilities
 
 Base onboarding does not offer, install, or implicitly check optional native capabilities. Their
 existing lock state remains unchanged unless the user separately requests capability work.
 
-Explain that Operating Kit includes quiet weekly update checking. If everything is current, Codex
-does not mention it. If an update is available, Codex asks before applying anything.
+Do not run or introduce an Operating Kit version check during onboarding. Version checking remains
+an optional, separate user request.
