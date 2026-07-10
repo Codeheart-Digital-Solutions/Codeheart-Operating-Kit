@@ -1,4 +1,4 @@
-Last updated: 2026-07-10T00:25:21Z (UTC)
+Last updated: 2026-07-10T00:29:02Z (UTC)
 Created: 2026-07-09
 
 # Operating Kit State And Release Architecture Execution Log
@@ -55,11 +55,12 @@ Review gate skipped: no
 Reviewer mode: strongest practical main-thread review; reviewer-agent execution is not permitted
 unless the user or applicable repository instructions explicitly request subagent work.
 
-Review rounds: 4 during implementation
+Review rounds: 5 during implementation and CI
 
 Material findings: EP-01 state precedence, EP-02 pre-commit cleanup, EP-03 pack-verifier checksum
 mapping, final Windows expected-failure messaging, and missing explicit Windows junction coverage
-plus bare-filename catalog inference and catalog/archive containment found and fixed
+plus bare-filename catalog inference, catalog/archive containment, and stale final graph identity
+found and fixed
 
 Final accepted result: EP-01 through EP-04 and local EP-05 source accepted; Windows execution
 pending
@@ -258,6 +259,17 @@ Final review:
   rather than relying on a Unix script fixture.
 - No remaining critical or high-severity source finding is known. Real Windows runtime evidence is
   still required before the plan can become completed.
+
+CI round 1:
+
+- Push-triggered Validate run `29059953879` tested commit
+  `2200e960c4f14e736ade188aaa1e572e5bc62cbb`.
+- Both platform jobs stopped at `go test ./...`: the final removal of an extra EOF blank line from
+  the managed lifecycle runbook changed the compiled graph digest after content identity had been
+  generated. Recorded `e534aba6...` did not match compiled `8acfeed3...`.
+- Root and retained-resource content manifests now record the final graph digest. Local Go,
+  packaged-resource, release-manifest, and schema validation pass after the fix. A new pushed CI
+  run remains required.
 
 Negative evidence:
 
