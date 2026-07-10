@@ -1,7 +1,7 @@
-Last updated: 2026-07-10T00:45:48Z (UTC)
+Last updated: 2026-07-10T00:54:31Z (UTC)
 Created: 2026-07-09
-Status: active
-Source state: complete; validation-only Windows CI authorized and pending
+Status: completed
+Source state: complete; validation-only macOS and Windows CI passed in run `29060996193`
 Execution log: operating-kit-state-release-architecture_execution_log.md
 
 # Document Header
@@ -729,7 +729,7 @@ framework, registry, or service is created.
 - [x] Run `go test ./internal/release ./internal/reconcile ./internal/commands`.
 - [x] Run `python3 -m pytest tests/test_release_assets.py tests/test_install_metadata.py tests/test_packaging_resources.py -q`.
 - [x] Run staged macOS install and upgrade success plus failure paths in an isolated temporary home while leaving both the developer CLI and source-repository `.codeheart/` state unchanged.
-- [ ] Run the Windows install and upgrade matrix through the validation workflow and retain CI results as the completion evidence.
+- [x] Run the Windows install and upgrade matrix through the validation workflow and retain CI results as the completion evidence. Validate run `29060996193` passed on commit `f0b31bd925ba19798ad28ff54c8ba19d2b77af75`.
 
 ### G) Implementation Notes
 
@@ -900,10 +900,10 @@ it does not authorize repository-setting changes or publication.
 
 - [x] Extend `.github/workflows/validate.yml` with state migration, transaction failure, reproducibility, consumer materialization, routing, macOS install/upgrade, and Windows install/upgrade jobs.
 - [x] Run the automated state-transition matrix and confirm every command precondition, ending state, blocker, and preservation digest.
-- [ ] Run transaction failure, concurrent-operation, symbolic-link, Windows reparse-point, parent-replacement, stale-marker, rollback, and recovery-retry fixtures. Local cases passed; Windows reparse execution remains in the pending Windows workflow.
+- [x] Run transaction failure, concurrent-operation, symbolic-link, Windows reparse-point, parent-replacement, stale-marker, rollback, and recovery-retry fixtures. Local cases passed and Validate run `29060996193` proved the Windows junction-containment and deferred-handoff paths.
 - [x] Build macOS universal and Windows x64 release candidates twice and confirm byte-identical packs plus coherent catalog, pack, content, and binary digests.
 - [x] Run isolated macOS fresh-install and upgrade success plus failure paths.
-- [ ] Run the validation-only Windows workflow and record run IDs, commit SHA, and pass/fail summary without publishing assets.
+- [x] Run the validation-only Windows workflow and record run IDs, commit SHA, and pass/fail summary without publishing assets. Run `29060996193` passed for commit `f0b31bd925ba19798ad28ff54c8ba19d2b77af75`; public-release jobs remained skipped.
 - [x] Run `go test -race ./...`.
 - [x] Run `python3 -m pytest -q` and record approved Go-only compatibility differences.
 - [x] Run public-core, Markdown, JSON Schema, and release-contract validators.
@@ -975,7 +975,8 @@ before source handoff. Publication and named consumer sync require separate expl
 - 2026-07-09: Reviewed the simplified plan against `FR-001` through `FR-012`, `NFR-001` through
   `NFR-010`, the five approved capability scopes, the implementation-plan quality gate, routing
   coverage, and recipe-maturity coverage. No approved capability was lost and no planning blocker
-  remains. Real Windows validation remains an execution completion gate.
+  remains. Real Windows validation remained an execution completion gate and passed in Validate
+  run `29060996193`.
 - 2026-07-09: Activated for source implementation after explicit user approval. Release
   publication, tag creation, named consumer sync, local kit update, signing, Python retirement, and
   new platforms remain outside execution authority.

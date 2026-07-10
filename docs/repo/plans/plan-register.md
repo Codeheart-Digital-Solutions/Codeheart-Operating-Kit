@@ -1,4 +1,4 @@
-Last updated: 2026-07-10T00:25:21Z (UTC)
+Last updated: 2026-07-10T00:54:31Z (UTC)
 
 # Plan Register
 
@@ -31,9 +31,8 @@ demand-driven issue-intake setup, release, and approved consumer sync scope.
 wrapper` as L3, clarifies generic workflow composition, contract-based script dependencies,
 helper promotion, ad hoc script boundaries, and managed/cloud portability, and adds compact
 conditional planning/execution/review hooks.
-`OK-PR-026` has source-complete state, transaction, lifecycle, release, upgrade, and compact
-routing implementation. Local validation passes; real Windows validation-only CI remains the
-completion gate.
+`OK-PR-026` is the completed state, transaction, lifecycle, release, upgrade, and compact routing
+implementation. Local validation and real macOS/Windows validation-only CI pass.
 
 ## Entries
 
@@ -45,18 +44,18 @@ typed desired-state authority, runtime schema enforcement, lock-v2 migration, tr
 reconciliation, non-circular release provenance, reproducible packs, cross-platform upgrade, and
 source-repository producer mode through a minimum reliable foundation with three internal packages,
 one lifecycle runbook, transient transaction evidence, and automated validation.
-Status: active
+Status: completed
 Owner / repository: Codeheart-Operating-Kit
 Canonical docs:
 docs/repo/plans/operating-kit-state-release-architecture/operating-kit-state-release-architecture_discovery_doc.md
 docs/repo/plans/operating-kit-state-release-architecture/operating-kit-state-release-architecture_implementation_doc.md
 docs/repo/plans/operating-kit-state-release-architecture/operating-kit-state-release-architecture_execution_log.md
 Created: 2026-07-09
-Last updated: 2026-07-10T00:25:21Z (UTC)
-Priority / ordering note: Discovery and source implementation are complete under the simplified
-five-epic plan. Local integrated validation passes; validation-only Windows execution is still
-required before completion. Public release, tag creation, named consumer sync, and the available
-local kit update remain outside the plan.
+Last updated: 2026-07-10T00:54:31Z (UTC)
+Priority / ordering note: Discovery and implementation are complete under the simplified five-epic
+plan. Local integrated validation and validation-only macOS/Windows execution passed. Public
+release, tag creation, named consumer sync, and the available local kit update remain outside the
+plan.
 
 Relations:
 - related: OK-PR-024 - Operating Kit Self-Contained Bootstrap Implementation
@@ -85,6 +84,9 @@ Session refs:
 - resumed: 2026-07-10, current session, user explicitly authorized a scoped `codex/` branch,
   commit, push, and validation-only workflow execution; PR, release, tag, and consumer sync remain
   excluded.
+- completed: 2026-07-10, current session, Validate run `29060996193` passed macOS and Windows jobs
+  for commit `f0b31bd925ba19798ad28ff54c8ba19d2b77af75`; no PR, release, tag, or consumer sync was
+  performed.
 
 Coordination note:
 - Canonical repo-level discovery and source implementation plan; no portfolio coordination is

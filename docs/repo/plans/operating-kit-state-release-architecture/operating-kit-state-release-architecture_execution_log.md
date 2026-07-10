@@ -1,4 +1,4 @@
-Last updated: 2026-07-10T00:45:48Z (UTC)
+Last updated: 2026-07-10T00:54:31Z (UTC)
 Created: 2026-07-09
 
 # Operating Kit State And Release Architecture Execution Log
@@ -7,7 +7,7 @@ Plan: `operating-kit-state-release-architecture_implementation_doc.md`
 
 Mode: goal-style source implementation
 
-Status: active; source complete, validation-only Windows CI authorized and pending
+Status: completed; source and validation-only macOS/Windows CI passed
 
 ## Overall Divergence
 
@@ -18,8 +18,8 @@ differences are recorded:
   consumer scenarios because subagent execution was not permitted;
 - the retained Python sync path preserves existing external release provenance because embedded
   content identity no longer contains archive assets; Go lifecycle commands are authoritative;
-- source and local validation completed without a commit or push, so the configured real Windows
-  workflow has not run and remains the completion gate.
+- source and local validation completed before the scoped branch/commit/push route was authorized;
+  after authorization, the configured real Windows workflow ran and passed the completion gate.
 
 ## Summary
 
@@ -42,9 +42,9 @@ Consumer impact:
 | --- | --- | --- |
 | `EP-01` | completed | Shared profile-level state defaults replaced repetitive component-level strategy fields; `resources.go` already embedded the schema glob and required no edit. |
 | `EP-02` | completed | Existing Python parity tests remain compatibility evidence, but lock-v2 graph records and same-version sync provenance are intentionally Go-authoritative. |
-| `EP-03` | source completed | Real Windows install/upgrade execution is carried by the EP-05 completion gate. |
+| `EP-03` | completed | Real Windows install/upgrade execution passed through the EP-05 completion gate. |
 | `EP-04` | completed | Deterministic focused probes replaced subagent probes because delegation was not permitted. |
-| `EP-05` | active | Local evidence is complete; validation-only Windows CI awaits a separately authorized commit/push route. |
+| `EP-05` | completed | Local evidence and validation-only macOS/Windows CI passed. |
 
 ## Review Gate Metrics
 
@@ -63,8 +63,8 @@ plus bare-filename catalog inference, catalog/archive containment, and stale fin
 plus no-Python installer dependency, Windows drive-path parsing, and symlink-scanner pipefail
 handling, host-native archive ordering, and expected Windows native-exit handling found and fixed
 
-Final accepted result: EP-01 through EP-04 and local EP-05 source accepted; Windows execution
-pending
+Final accepted result: EP-01 through EP-05 accepted; validation-only macOS and Windows execution
+passed
 
 Worth-it assessment: positive. The capability is concentrated in three internal packages and one
 new durable lifecycle runbook. It adds no service, registry, successful-operation journal,
@@ -118,7 +118,8 @@ Safe defaults and divergence:
   preserves installed release provenance and uses only embedded running-binary content.
 - Retained the Python CLI as parity evidence. Its lock-v1 surface remains intentionally narrower;
   Go lock v2 records the complete typed graph.
-- Real Windows reparse behavior remains an EP-05 platform gate; Windows compilation passed here.
+- Real Windows reparse behavior was retained as an EP-05 platform gate and passed in the final
+  validation-only workflow.
 
 Validation:
 
@@ -150,7 +151,7 @@ Review gate:
 
 ## EP-03 Delta - Reproducible Release And Safe Upgrade
 
-State: source completed; real Windows execution pending under EP-05
+State: completed; real Windows execution passed under EP-05
 
 Implementation:
 
@@ -178,8 +179,8 @@ Validation:
   hash remained unchanged.
 - Isolated upgrade: dry-run preserved the old binary and lock hashes; approved handoff upgraded
   `0.1.20` to `0.1.21`; the resulting installation reported `current` with no drift.
-- `GOOS=windows GOARCH=amd64 go build ./...`: passed. Actual Windows install, deferred handoff,
-  reparse behavior, and failure preservation await the configured Windows workflow.
+- `GOOS=windows GOARCH=amd64 go build ./...`: passed. The configured Windows workflow subsequently
+  passed actual installation, deferred handoff, reparse containment, and failure preservation.
 
 Review gate:
 
@@ -221,7 +222,7 @@ Validation:
 
 ## EP-05 Delta - Integrated Validation And Source Handoff
 
-State: active; local source handoff ready, Windows CI pending
+State: completed; local source and validation-only macOS/Windows CI passed
 
 Local integrated evidence:
 
@@ -245,7 +246,8 @@ Final review:
   verification passed after the fix.
 - Finding: the general reparse test skips on Windows but the workflow had no replacement fixture.
   The Windows install lane now creates a real directory junction, requires repair to fail, and
-  verifies the outside sentinel is preserved. Runtime evidence remains pending with that workflow.
+  verifies the outside sentinel is preserved. The final Windows workflow passed this runtime
+  evidence.
 - Finding: PowerShell catalog inference passed an empty parent to `Join-Path` when `-AssetFile`
   was a bare filename, as used by the public-release smoke lane. It now resolves that case against
   the current directory; the focused PowerShell probe and affected installer/release suite passed.
@@ -258,8 +260,8 @@ Final review:
   forces only its child reconciliation process to fail. On Windows CI this exercises native
   executable replacement, child-process failure, file-lock release, and byte-for-byte restoration
   rather than relying on a Unix script fixture.
-- No remaining critical or high-severity source finding is known. Real Windows runtime evidence is
-  still required before the plan can become completed.
+- No remaining critical or high-severity source finding is known. The required real Windows
+  runtime evidence passed before plan completion.
 
 CI round 1:
 
@@ -310,10 +312,34 @@ CI round 4:
   outside sentinel. PowerShell syntax and native-failure capture probes pass locally. A new pushed
   Windows run remains required.
 
+CI round 5:
+
+- Push-triggered Validate run `29060790532` tested commit
+  `b71a40a59403821df06d9a8a8dba9fc771b3d75d`.
+- macOS passed all validation. Windows passed Go, parity, deterministic pack construction, fresh
+  install, onboarding, check, and the junction fixture's expected `unsafe_target` result plus
+  outside-sentinel assertion. The step still ended nonzero because PowerShell retained the
+  intentionally failed native repair as `$LASTEXITCODE` after the assertions.
+- The workflow now clears only that captured, asserted expected exit before leaving the step. The
+  product's fail-closed exit and containment assertions remain unchanged.
+
+CI round 6 - completion evidence:
+
+- Push-triggered Validate run `29060996193` tested commit
+  `f0b31bd925ba19798ad28ff54c8ba19d2b77af75` and concluded `success`.
+- macOS validation job `86262615364` passed Go, Python parity, installer/release tests, public-core,
+  Markdown, schemas, release contracts, reproducible builds, no-Python staged install, and approved
+  handoff.
+- Windows validation job `86262615369` passed Go, Python parity, deterministic Windows pack build,
+  no-Python staged install, checksum rejection, onboarding/check, real junction containment,
+  upgrade dry-run, deferred replacement, native failed-reconciliation rollback, and final check.
+- Both public-release jobs were skipped. No assets were published.
+
 Negative evidence:
 
 - no release or tag created;
-- no branch commit, push, pull request, or validation workflow dispatched;
+- no pull request created; branch, commit, push, and validation-only workflow actions were limited
+  to the user's explicit approval;
 - no named consumer synchronized and no local Operating Kit update applied;
 - no signing/notarization policy changed;
 - no Python implementation removed;
@@ -321,14 +347,11 @@ Negative evidence:
 
 ## Final Validation
 
-Local validation is complete and source handoff is ready. The configured macOS/Windows workflow
-contains fresh install, checksum failure, dry-run hash preservation, approved upgrade, deferred
-Windows replacement, native failed-reconciliation rollback, junction containment, and final
-health-check lanes. It has not run against this uncommitted source.
-
-Completion requires a commit/push route and one validation-only Windows workflow run with its run
-ID, commit SHA, and result recorded here. This execution log remains active until that evidence
-passes; publication and consumer rollout remain separate.
+Local validation and the configured macOS/Windows validation-only workflow are complete. Run
+`29060996193` passed for commit `f0b31bd925ba19798ad28ff54c8ba19d2b77af75`, including fresh
+installation, checksum failure, dry-run hash preservation, approved upgrade, deferred Windows
+replacement, native failed-reconciliation rollback, junction containment, and final health checks.
+This closes the implementation gate; publication and consumer rollout remain separate.
 
 Blocked audit: the same missing authorization for branch creation, commit, push, and validation-
 only workflow execution recurred for three consecutive goal turns. No further local evidence can
