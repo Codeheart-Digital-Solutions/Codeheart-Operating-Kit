@@ -87,8 +87,8 @@ fi
 RELEASE_BASE_URL="https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v${VERSION}"
 CATALOG_NAME="release-catalog-${VERSION}.json"
 if [[ -z "$CATALOG_URL" && -z "$CATALOG_FILE" ]]; then
-  if [[ -n "$ASSET_FILE" && -f "$(dirname "$ASSET_FILE")/$CATALOG_NAME" ]]; then
-    CATALOG_FILE="$(dirname "$ASSET_FILE")/$CATALOG_NAME"
+  if [[ -n "$ASSET_FILE" && -f "$(/usr/bin/dirname "$ASSET_FILE")/$CATALOG_NAME" ]]; then
+    CATALOG_FILE="$(/usr/bin/dirname "$ASSET_FILE")/$CATALOG_NAME"
   else
     CATALOG_URL="${RELEASE_BASE_URL}/${CATALOG_NAME}"
   fi
@@ -149,7 +149,7 @@ if [[ -z "$ASSET_URL" ]]; then
   ASSET_URL="$CATALOG_ASSET_URL"
   if [[ "$ASSET_URL" != *://* ]]; then
     if [[ -n "$CATALOG_FILE" ]]; then
-      ASSET_URL="$(dirname "$CATALOG_FILE")/$ASSET_URL"
+      ASSET_URL="$(/usr/bin/dirname "$CATALOG_FILE")/$ASSET_URL"
     else
       ASSET_URL="${CATALOG_URL%/*}/$ASSET_URL"
     fi
@@ -178,7 +178,7 @@ while IFS= read -r ENTRY; do
     /*|*\\*|../*|*/../*|*/..) fail "Release asset contains an unsafe archive path." ;;
   esac
 done < <(/usr/bin/unzip -Z1 "$ASSET_PATH")
-if /usr/bin/unzip -Z -v "$ASSET_PATH" | /usr/bin/grep -Eq 'Unix file attributes \((010|020|060|120|140)[0-7]{3} octal\)'; then
+if /usr/bin/unzip -Z -v "$ASSET_PATH" | /usr/bin/grep -E 'Unix file attributes \((010|020|060|120|140)[0-7]{3} octal\)' >/dev/null; then
   fail "Release asset contains a symbolic link or unsupported filesystem entry."
 fi
 if ! /usr/bin/unzip -q "$ASSET_PATH" -d "$EXTRACT_DIR"; then
@@ -189,7 +189,7 @@ PACK_MANIFESTS=()
 while IFS= read -r FILE; do PACK_MANIFESTS+=("$FILE"); done < <(find "$EXTRACT_DIR" -name pack-manifest.json -type f)
 [[ "${#PACK_MANIFESTS[@]}" == "1" ]] || fail "Release asset must contain exactly one pack-manifest.json."
 PACK_MANIFEST="${PACK_MANIFESTS[0]}"
-PAYLOAD_ROOT="$(dirname "$PACK_MANIFEST")"
+PAYLOAD_ROOT="$(/usr/bin/dirname "$PACK_MANIFEST")"
 [[ "$(sha256_file "$PACK_MANIFEST")" == "$CATALOG_PACK_SHA" ]] || fail "Pack manifest checksum mismatch."
 [[ "$(json_get "$PACK_MANIFEST" schema_version)" == "1" ]] || fail "Pack manifest schema is unsupported."
 [[ "$(json_get "$PACK_MANIFEST" version)" == "$VERSION" ]] || fail "Pack version does not match."

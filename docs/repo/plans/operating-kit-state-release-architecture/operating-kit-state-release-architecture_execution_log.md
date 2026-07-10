@@ -1,4 +1,4 @@
-Last updated: 2026-07-10T00:29:02Z (UTC)
+Last updated: 2026-07-10T00:35:34Z (UTC)
 Created: 2026-07-09
 
 # Operating Kit State And Release Architecture Execution Log
@@ -55,12 +55,13 @@ Review gate skipped: no
 Reviewer mode: strongest practical main-thread review; reviewer-agent execution is not permitted
 unless the user or applicable repository instructions explicitly request subagent work.
 
-Review rounds: 5 during implementation and CI
+Review rounds: 6 during implementation and CI
 
 Material findings: EP-01 state precedence, EP-02 pre-commit cleanup, EP-03 pack-verifier checksum
 mapping, final Windows expected-failure messaging, and missing explicit Windows junction coverage
 plus bare-filename catalog inference, catalog/archive containment, and stale final graph identity
-found and fixed
+plus no-Python installer dependency, Windows drive-path parsing, and symlink-scanner pipefail
+handling found and fixed
 
 Final accepted result: EP-01 through EP-04 and local EP-05 source accepted; Windows execution
 pending
@@ -270,6 +271,21 @@ CI round 1:
 - Root and retained-resource content manifests now record the final graph digest. Local Go,
   packaged-resource, release-manifest, and schema validation pass after the fix. A new pushed CI
   run remains required.
+
+CI round 2:
+
+- Push-triggered Validate run `29060094718` tested commit
+  `a0b98f018e3dc9fd1c6d90133accf26ce27403d5`.
+- macOS passed Go, Python parity, installer/release tests, public-core, Markdown, schemas, release
+  validation, and reproducible builds, then the minimal no-Python installer lane found unqualified
+  `dirname` calls. Those calls now use `/usr/bin/dirname`; the exact minimal-PATH offline install
+  passes locally.
+- Windows passed setup and reached Go release tests, where absolute `D:\...` local asset paths
+  were reparsed as URL scheme `d`. Windows absolute filesystem paths are now read before URL
+  parsing; Windows-target tests compile and focused release tests pass locally.
+- The affected full installer suite then exposed `grep -q`/`pipefail` SIGPIPE ambiguity in the
+  symlink scanner. The scanner now consumes the complete ZIP listing; all 14 installer tests pass.
+- A new pushed CI run remains required for these fixes.
 
 Negative evidence:
 

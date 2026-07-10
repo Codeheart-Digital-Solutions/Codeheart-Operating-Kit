@@ -179,6 +179,7 @@ def test_macos_installer_requires_checksum_and_user_level_path():
     assert "bin/codeheart-operating-kit" in text
     assert "Staged binary validation failed; previous runnable command preserved." in text
     assert "symbolic link or unsupported filesystem entry" in text
+    assert "/usr/bin/dirname" in text
     assert "pip install" not in text
     assert "PIP_CONFIG_FILE" not in text
     assert "codeheart-operating-kit onboard" in text

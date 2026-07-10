@@ -102,6 +102,10 @@ func readLocation(location, base string) ([]byte, string, error) {
 	if err != nil {
 		return nil, "", err
 	}
+	if runtime.GOOS == "windows" && filepath.IsAbs(resolved) {
+		data, err := os.ReadFile(filepath.Clean(resolved))
+		return data, filepath.Dir(filepath.Clean(resolved)), err
+	}
 	parsed, err := url.Parse(resolved)
 	if err != nil {
 		return nil, "", err
