@@ -1,4 +1,4 @@
-Last updated: 2026-07-10T07:44:05Z (UTC)
+Last updated: 2026-07-10T11:50:21Z (UTC)
 Created: 2026-07-09
 
 # Operating Kit State And Release Architecture Execution Log
@@ -423,6 +423,65 @@ Published identity digests:
 | Windows pack manifest | `fb3a1425d70072723ef4a864b705fb9bbd0f7d4a0ccb42a86150a76dbce1f46a` |
 | Windows payload checksums | `de29aa8eea3834080fd3307ffa9413bcc5f1de5f217eb8ec4412d977602d2f22` |
 | Windows binary | `bd76ed1a928ef4ba12459c421bb58c611acf7211e4c9cfed20851fe4c6bb6dba` |
+
+Residual operational notices are limited to GitHub runner migrations: Node.js 20 actions are being
+forced onto Node.js 24, and `macos-latest` is scheduled to migrate to macOS 26. Neither notice
+failed a release or validation job. No consumer repository was synchronized and the source
+repository's ignored Operating Kit installation was not upgraded.
+
+## Ad Hoc `v0.1.23` Maintenance Release Evidence
+
+The user explicitly requested a bounded doctrine correction, version bump, and release. The change
+did not require a new discovery or implementation plan: it removed mandatory session-start,
+onboarding, background, and cadence-based version-check expectations while retaining
+`update-check` as an optional user-invoked command. Existing lock metadata remains compatible and
+informational. No consumer migration is required.
+
+Release identity:
+
+- version and tag: `v0.1.23`;
+- release commit: `d8369961847785149731db7884c49d177890da88`;
+- `main` was fast-forwarded to the release commit before tagging;
+- release URL:
+  `https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/tag/v0.1.23`;
+- published at: `2026-07-10T11:46:40Z`;
+- signing/notarization: unsigned internal/prototype boundary retained; no Apple notarization or
+  Windows Authenticode signature. Residual risk is the lack of publisher identity attestation
+  beyond GitHub transport, repository control, and the published SHA-256 chain.
+
+Validation:
+
+- Local public-core, Markdown, JSON Schema, content-manifest, Bash syntax, PowerShell parsing, and
+  diff checks passed. `go test -race ./...` passed and the full Python suite reported `132 passed`.
+- Both platform packs were built twice with byte-identical output. A relative-URL candidate catalog
+  passed isolated macOS checksum rejection, install, onboard, check, `0.1.22` -> `0.1.23` dry-run,
+  approved upgrade, and final check. Candidate pack bytes matched the final-URL publication packs.
+- Pre-publication Validate run `29090277717` passed for the release commit: macOS job
+  `86353699711` and Windows job `86353699723`; public-release jobs were skipped.
+- Post-publication workflow-dispatch run `29090488725` passed all four jobs: macOS validation
+  `86354378684`, Windows public release `86354378709`, Windows validation `86354378712`, and macOS
+  public release `86354378779`.
+- All 16 published assets were downloaded again; each companion sidecar matched the live bytes,
+  and the live primary files matched the locally validated publication set.
+
+Published identity digests:
+
+| Surface | SHA-256 |
+| --- | --- |
+| `bootstrap.md` | `14b4fc269da7c2b9dcda1497a932f4ff511962b094e92d2a13fc26fa6f7eb4a2` |
+| `install.sh` | `b705667f688ec0abfba34fe4449153b62474deeef357c85f1b7500e7fef22ebf` |
+| `install.ps1` | `5d42b1da2754f7b0e81eab5285547409bfe63068194709d3b38c39159b23e81c` |
+| `manifest.yaml` / both pack content manifests | `a926d26cd27efed53eb0d7463e22b3822880482a4bc5dbfbd1816a50fc3f814b` |
+| `release-notes.md` | `e1bbadddc9c28cc8b52f9f80f284402b781255e47d7f74a8f1f533a24600bd0e` |
+| `release-catalog-0.1.23.json` | `74706cfe4a6fba1488799fb505f8344d9f7c9cc2f2b8a67b550258c719ae0cd3` |
+| macOS archive | `cd66388044ed3fde3886b9e4b9327b6b9d5f1077f595e65fc44f9f1e06548ffd` |
+| macOS pack manifest | `507e0cdd7b105853ca17663ebf3284e49e80ca1b7b573a275553db56cfd254e0` |
+| macOS payload checksums | `3347134230da81e821f44c9ca1ded5f4e1ef0337a0900be8249382f89b9c93de` |
+| macOS binary | `4f7e74f0f101c5efb275b2923ed39146222d0d94871e0b6b344aaf243d80ede9` |
+| Windows archive | `d562c46b344e0187ecd0070a8d12fbf6c8fd5b6fddd798719b2048a7daf6dc48` |
+| Windows pack manifest | `a9124a7582b5fd32fa5ebb13eeaf014bff8bcc3328e48e41ca2dcc3ff4e7cb52` |
+| Windows payload checksums | `70041a37e56ac1f57dd5a687b84fdde591af631edd4ada24840e76bee14464ef` |
+| Windows binary | `13f8b1ab189fd1ee9dd497e0418e08be1223c1e287d8a1c8156a05e0e71b35fd` |
 
 Residual operational notices are limited to GitHub runner migrations: Node.js 20 actions are being
 forced onto Node.js 24, and `macos-latest` is scheduled to migrate to macOS 26. Neither notice
