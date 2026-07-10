@@ -203,6 +203,7 @@ jobs:
           if ((Get-Content "$Outside\sentinel.txt" -Raw).Trim() -ne "preserve") {
               throw "Windows reparse containment changed the outside target"
           }
+          $global:LASTEXITCODE = 0
           $env:PATH = $OriginalPath
       - name: Validate Windows upgrade dry-run and deferred handoff
         shell: pwsh
