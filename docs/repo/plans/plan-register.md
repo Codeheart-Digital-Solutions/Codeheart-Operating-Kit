@@ -1,4 +1,4 @@
-Last updated: 2026-07-10T00:54:31Z (UTC)
+Last updated: 2026-07-10T07:44:05Z (UTC)
 
 # Plan Register
 
@@ -32,7 +32,8 @@ wrapper` as L3, clarifies generic workflow composition, contract-based script de
 helper promotion, ad hoc script boundaries, and managed/cloud portability, and adds compact
 conditional planning/execution/review hooks.
 `OK-PR-026` is the completed state, transaction, lifecycle, release, upgrade, and compact routing
-implementation. Local validation and real macOS/Windows validation-only CI pass.
+implementation. Local validation and real macOS/Windows CI pass; the implementation was
+subsequently released in Operating Kit `v0.1.22` under separate authorization.
 
 ## Entries
 
@@ -51,11 +52,12 @@ docs/repo/plans/operating-kit-state-release-architecture/operating-kit-state-rel
 docs/repo/plans/operating-kit-state-release-architecture/operating-kit-state-release-architecture_implementation_doc.md
 docs/repo/plans/operating-kit-state-release-architecture/operating-kit-state-release-architecture_execution_log.md
 Created: 2026-07-09
-Last updated: 2026-07-10T00:54:31Z (UTC)
+Last updated: 2026-07-10T07:44:05Z (UTC)
 Priority / ordering note: Discovery and implementation are complete under the simplified five-epic
-plan. Local integrated validation and validation-only macOS/Windows execution passed. Public
-release, tag creation, named consumer sync, and the available local kit update remain outside the
-plan.
+plan. Local integrated validation and validation-only macOS/Windows execution passed. Versioning,
+tagging, and release remained outside the plan and were subsequently completed in `v0.1.22` under
+separate explicit authorization. Named consumer sync and the available local kit update remain
+separate.
 
 Relations:
 - related: OK-PR-024 - Operating Kit Self-Contained Bootstrap Implementation
@@ -87,6 +89,10 @@ Session refs:
 - completed: 2026-07-10, current session, Validate run `29060996193` passed macOS and Windows jobs
   for commit `f0b31bd925ba19798ad28ff54c8ba19d2b77af75`; no PR, release, tag, or consumer sync was
   performed.
+- material update: 2026-07-10, separate explicit release request, bumped and released Operating Kit
+  `v0.1.22` from commit `4643fa9691ef38e882aba09b3d69dec94f7655a7`, published catalog-bound
+  macOS/Windows packs and companion checksums, and passed live public-download workflow run
+  `29077398089`; no consumer sync or local kit update was performed.
 
 Coordination note:
 - Canonical repo-level discovery and source implementation plan; no portfolio coordination is
@@ -96,6 +102,8 @@ Coordination note:
 - General Operating Kit guidance-effectiveness redesign is explicitly outside this self-management
   reliability plan.
 - Routing-bearing and recipe-bearing; source execution still requires explicit user approval.
+- Released in Operating Kit `v0.1.22`; release evidence and unsigned-boundary residual risk are
+  recorded in the execution log.
 
 ## OK-PR-025 - Operating Kit Script Asset Roles Discovery And Implementation Plan
 

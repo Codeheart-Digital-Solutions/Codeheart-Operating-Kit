@@ -1,4 +1,4 @@
-Last updated: 2026-07-10T00:54:31Z (UTC)
+Last updated: 2026-07-10T07:44:05Z (UTC)
 Created: 2026-07-09
 
 # Operating Kit State And Release Architecture Execution Log
@@ -7,7 +7,7 @@ Plan: `operating-kit-state-release-architecture_implementation_doc.md`
 
 Mode: goal-style source implementation
 
-Status: completed; source and validation-only macOS/Windows CI passed
+Status: completed and released in `v0.1.22`
 
 ## Overall Divergence
 
@@ -23,10 +23,11 @@ differences are recorded:
 
 ## Summary
 
-The plan was activated after explicit user approval. Execution is limited to source implementation,
-local validation, validation-only CI, planning lifecycle updates, and evidence. No release, tag,
-named consumer sync, local Operating Kit update, signing change, Python retirement, or new platform
-work is authorized.
+The plan was activated after explicit user approval. Its execution was limited to source
+implementation, local validation, validation-only CI, planning lifecycle updates, and evidence. A
+later explicit user request separately authorized the `v0.1.22` version bump, tag, and public
+release. Named consumer sync, local Operating Kit update, signing change, Python retirement, and
+new platform work remain outside authority.
 
 Consumer impact:
 
@@ -335,11 +336,12 @@ CI round 6 - completion evidence:
   upgrade dry-run, deferred replacement, native failed-reconciliation rollback, and final check.
 - Both public-release jobs were skipped. No assets were published.
 
-Negative evidence:
+Scope evidence:
 
-- no release or tag created;
-- no pull request created; branch, commit, push, and validation-only workflow actions were limited
-  to the user's explicit approval;
+- implementation closure initially created no release or tag; later `v0.1.22` publication occurred
+  only after a separate explicit release request;
+- no pull request created; branch, commit, push, `main` fast-forward, tag, release, and workflow
+  actions were limited to the user's explicit approvals;
 - no named consumer synchronized and no local Operating Kit update applied;
 - no signing/notarization policy changed;
 - no Python implementation removed;
@@ -369,3 +371,60 @@ repeat-build suite: `27 passed`; fresh isolated macOS install and `0.1.20` -> `0
 post-check also passed. Windows-target test binaries for reconcile, release, commands, and CLI
 compiled successfully, and all Windows workflow PowerShell blocks passed parser validation after
 GitHub-expression substitution.
+
+## Post-Plan `v0.1.22` Release Evidence
+
+The user separately authorized a version bump and release after the implementation plan was
+completed. This did not reopen or expand the plan into consumer rollout, signing, Python removal,
+or new-platform work.
+
+Release identity:
+
+- version and tag: `v0.1.22`;
+- release commit: `4643fa9691ef38e882aba09b3d69dec94f7655a7`;
+- `main` was fast-forwarded to the release commit before tagging;
+- release URL:
+  `https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/tag/v0.1.22`;
+- published at: `2026-07-10T07:40:35Z`;
+- signing/notarization: unsigned internal/prototype boundary retained; no Apple notarization or
+  Windows Authenticode signature. Residual risk is the lack of publisher identity attestation
+  beyond GitHub transport, repository control, and the published SHA-256 chain.
+
+Validation:
+
+- Local public-core, Markdown, JSON Schema, content-manifest, Bash syntax, and diff checks passed.
+- `go test -race ./...` passed and the full Python suite reported `130 passed`.
+- Both platform packs were built twice with byte-identical output. A relative-URL candidate catalog
+  passed isolated macOS checksum rejection, install, onboard, check, `0.1.21` -> `0.1.22` dry-run,
+  approved upgrade, and final check. Candidate pack bytes matched the final-URL publication packs.
+- Pre-publication Validate run `29077161600` passed for the release commit: macOS job
+  `86311269137` and Windows job `86311269143`; public-release jobs were skipped.
+- Post-publication workflow-dispatch run `29077398089` passed all four jobs: Windows validation
+  `86312030998`, Windows public release `86312030999`, macOS public release `86312031001`, and
+  macOS validation `86312031003`.
+- All 16 published assets were downloaded again; each companion sidecar matched the live bytes,
+  and the live primary files matched the locally validated publication set.
+
+Published identity digests:
+
+| Surface | SHA-256 |
+| --- | --- |
+| `bootstrap.md` | `26beb66acb959cf73a4e79bb5e0bb5d9ccaa6f2689a4b91395436c5951f5ef80` |
+| `install.sh` | `7b7d7d4baaf651669fd44dd8a2504269615dbf28fc4514fe60b35c8fc848fae3` |
+| `install.ps1` | `6b4e073d5fcf45adfb7e460608090b33b14f1ff6b9ba4ecd68bd7015a6d79acb` |
+| `manifest.yaml` / both pack content manifests | `36595dc46d8be5881d1565f8bd2d28bfb961f6a99a9d156ff10694705551d6cc` |
+| `release-notes.md` | `85f1bfca779457fde2b6e32fd96c968b198cbec5aedd64ee31410078f022a80c` |
+| `release-catalog-0.1.22.json` | `68ecfa8f293c6b62391fb6e73f2224c66cd72dec2c9b164cefa9c71fbce3f81e` |
+| macOS archive | `5a536d01bfe81190d42a963b72047a56362cbb5712a42057318554d8a3b9c60c` |
+| macOS pack manifest | `3ddc5657ded02c18d6a26b89a3550a8aa29e98ca3245b118d489a3fd8ef3e710` |
+| macOS payload checksums | `1c96d277982b993582e9ef288ca738b3b6aca87c58fce07e9c58f5c7e66dfc78` |
+| macOS binary | `e7bfce698db85e0529ea6a1dc84a94079f154119bf8ecfb1c668a765a879019f` |
+| Windows archive | `843699e2b6ebba75fddb56d83627247adf0ee66850d36456471ca6bd72a8b01c` |
+| Windows pack manifest | `fb3a1425d70072723ef4a864b705fb9bbd0f7d4a0ccb42a86150a76dbce1f46a` |
+| Windows payload checksums | `de29aa8eea3834080fd3307ffa9413bcc5f1de5f217eb8ec4412d977602d2f22` |
+| Windows binary | `bd76ed1a928ef4ba12459c421bb58c611acf7211e4c9cfed20851fe4c6bb6dba` |
+
+Residual operational notices are limited to GitHub runner migrations: Node.js 20 actions are being
+forced onto Node.js 24, and `macos-latest` is scheduled to migrate to macOS 26. Neither notice
+failed a release or validation job. No consumer repository was synchronized and the source
+repository's ignored Operating Kit installation was not upgraded.
