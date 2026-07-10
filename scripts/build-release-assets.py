@@ -100,10 +100,14 @@ def assemble_payload(work: Path, version: str, platform: str, binary: Path, bina
 
 
 def write_payload_identity(payload: Path, version: str, platform: str, binary_name: str) -> bytes:
-    included = [
-        item for item in sorted(payload.rglob("*"))
-        if item.is_file() and item.name not in {"checksums.txt", "pack-manifest.json"}
-    ]
+    included = sorted(
+        (
+            item
+            for item in payload.rglob("*")
+            if item.is_file() and item.name not in {"checksums.txt", "pack-manifest.json"}
+        ),
+        key=lambda item: item.relative_to(payload).as_posix(),
+    )
     checksums = "".join(f"{sha256(item)}  {item.relative_to(payload).as_posix()}\n" for item in included)
     checksums_path = payload / "checksums.txt"
     checksums_path.write_text(checksums, encoding="utf-8")
@@ -127,7 +131,11 @@ def write_payload_identity(payload: Path, version: str, platform: str, binary_na
 def deterministic_zip(payload: Path, output: Path) -> None:
     root_name = payload.name
     with zipfile.ZipFile(output, "w", compression=zipfile.ZIP_DEFLATED, compresslevel=9, strict_timestamps=True) as archive:
-        for item in sorted(path for path in payload.rglob("*") if path.is_file()):
+        items = sorted(
+            (path for path in payload.rglob("*") if path.is_file()),
+            key=lambda item: item.relative_to(payload).as_posix(),
+        )
+        for item in items:
             relative = item.relative_to(payload).as_posix()
             info = zipfile.ZipInfo(f"{root_name}/{relative}", FIXED_ZIP_TIME)
             info.create_system = 3

@@ -1,4 +1,4 @@
-Last updated: 2026-07-10T00:35:34Z (UTC)
+Last updated: 2026-07-10T00:40:48Z (UTC)
 Created: 2026-07-09
 
 # Operating Kit State And Release Architecture Execution Log
@@ -55,13 +55,13 @@ Review gate skipped: no
 Reviewer mode: strongest practical main-thread review; reviewer-agent execution is not permitted
 unless the user or applicable repository instructions explicitly request subagent work.
 
-Review rounds: 6 during implementation and CI
+Review rounds: 7 during implementation and CI
 
 Material findings: EP-01 state precedence, EP-02 pre-commit cleanup, EP-03 pack-verifier checksum
 mapping, final Windows expected-failure messaging, and missing explicit Windows junction coverage
 plus bare-filename catalog inference, catalog/archive containment, and stale final graph identity
 plus no-Python installer dependency, Windows drive-path parsing, and symlink-scanner pipefail
-handling found and fixed
+handling plus host-native archive ordering found and fixed
 
 Final accepted result: EP-01 through EP-04 and local EP-05 source accepted; Windows execution
 pending
@@ -286,6 +286,17 @@ CI round 2:
 - The affected full installer suite then exposed `grep -q`/`pipefail` SIGPIPE ambiguity in the
   symlink scanner. The scanner now consumes the complete ZIP listing; all 14 installer tests pass.
 - A new pushed CI run remains required for these fixes.
+
+CI round 3:
+
+- Push-triggered Validate run `29060371292` tested commit
+  `7883939cb87ba09fe466415c57ad346b0e105f53`.
+- The full macOS job passed, including reproducible builds, minimal-PATH installation, and approved
+  upgrade. Windows passed Go and Python parity, then its release builder found that native `Path`
+  ordering differed from POSIX archive-name ordering.
+- Payload checksum and ZIP entry order now sort explicitly by archive-relative POSIX names. All 10
+  release-asset tests, including repeat-build comparison, pass locally. A new pushed Windows run
+  remains required.
 
 Negative evidence:
 
