@@ -1,11 +1,12 @@
-Last updated: 2026-07-10T00:13:57Z (UTC)
+Last updated: 2026-07-10T07:26:13Z (UTC)
 
 # Codeheart Operating Kit Release Notes
 
-## Unreleased - State And Release Architecture
+## v0.1.22 Release Notes
 
-This source change makes lifecycle operations transactional and makes release evidence
-non-circular. It does not select, tag, or publish a version.
+`v0.1.22` makes lifecycle operations transactional and release evidence non-circular. It adds
+fail-closed state migration, repair, synchronization, and explicit upgrade behavior without adding
+routine approval ceremony.
 
 ### Included
 
@@ -25,8 +26,9 @@ non-circular. It does not select, tag, or publish a version.
 - `upgrade --dry-run` verifies a candidate without changing the installation. Only
   `upgrade --yes` may change the installed kit version, and the verified staged binary performs
   reconciliation and final health checks with restoration on failure.
-- macOS universal and Windows x64 remain the supported release platforms. Generated assets stay
-  unsigned internal/prototype candidates unless signing or notarization is separately approved.
+- macOS universal and Windows x64 remain the supported release platforms. Release assets are
+  published unsigned under the retained internal/prototype boundary; signing and notarization are
+  not part of this release.
 - One compact managed lifecycle runbook distinguishes command preconditions, approval, blockers,
   and recovery without adding a new workflow or evidence system.
 
@@ -45,11 +47,13 @@ non-circular. It does not select, tag, or publish a version.
 ### Validation Boundary
 
 - Local source, schema, migration, transaction, rollback, reproducibility, installer, upgrade,
-  routing, public-core, and Markdown validation is required before source handoff.
-- Real Windows install and upgrade execution remains a completion gate; configured workflow
-  coverage is not itself evidence that the Windows lane passed.
-- Publication, tagging, named consumer sync, local kit update, signing changes, Python removal,
-  and new platform support require separate authorization.
+  routing, public-core, and Markdown validation plus real macOS and Windows workflow execution pass
+  before tagging.
+- Published installers and catalogs bind HTTPS release URLs to SHA-256 archive, pack-manifest,
+  payload, content-manifest, and binary identities. The residual unsigned-boundary risk is the lack
+  of publisher identity attestation beyond GitHub transport and repository control.
+- Named consumer sync, local kit update, signing changes, Python removal, and new platform support
+  remain outside this release.
 
 ## v0.1.21 Release Notes
 

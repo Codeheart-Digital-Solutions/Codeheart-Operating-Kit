@@ -1,20 +1,20 @@
 {
   "schema_version": 1,
-  "version": "0.1.21",
+  "version": "0.1.22",
   "assets": [
     {
-      "name": "codeheart-operating-kit-0.1.21-macos-universal.zip",
-      "version": "0.1.21",
+      "name": "codeheart-operating-kit-0.1.22-macos-universal.zip",
+      "version": "0.1.22",
       "platform": "macos-universal",
-      "url": "codeheart-operating-kit-0.1.21-macos-universal.zip",
+      "url": "codeheart-operating-kit-0.1.22-macos-universal.zip",
       "archive_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
       "pack_manifest_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
     },
     {
-      "name": "codeheart-operating-kit-0.1.21-windows-x64.zip",
-      "version": "0.1.21",
+      "name": "codeheart-operating-kit-0.1.22-windows-x64.zip",
+      "version": "0.1.22",
       "platform": "windows-x64",
-      "url": "codeheart-operating-kit-0.1.21-windows-x64.zip",
+      "url": "codeheart-operating-kit-0.1.22-windows-x64.zip",
       "archive_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
       "pack_manifest_sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
     }

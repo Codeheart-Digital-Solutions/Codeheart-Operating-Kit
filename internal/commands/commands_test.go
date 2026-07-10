@@ -243,7 +243,7 @@ func TestLifecycleStartingStatePreconditionMatrix(t *testing.T) {
 			if err != nil || syncResult.OK() != want.sync {
 				t.Fatalf("sync OK=%v want=%v err=%v result=%#v", syncResult.OK(), want.sync, err, syncResult)
 			}
-			_, updateResult, err := updateCheckOperation(root, "0.1.21", now.Format(time.RFC3339), "", true)
+			_, updateResult, err := updateCheckOperation(root, "0.1.22", now.Format(time.RFC3339), "", true)
 			if err != nil || updateResult.OK() != want.update {
 				t.Fatalf("update OK=%v want=%v err=%v result=%#v", updateResult.OK(), want.update, err, updateResult)
 			}
@@ -606,7 +606,7 @@ func TestUpdateCheckWritesCadenceAndFailurePreservesDueDate(t *testing.T) {
 		t.Fatalf("failed update state = %#v, previous due %v", update, beforeDue)
 	}
 	var text bytes.Buffer
-	code = RunUpdateCheck([]string{root, "--latest-version", "0.1.21"}, &text, &bytes.Buffer{})
+	code = RunUpdateCheck([]string{root, "--latest-version", "0.1.22"}, &text, &bytes.Buffer{})
 	if code != 0 {
 		t.Fatalf("RunUpdateCheck text exit = %d; stdout: %s", code, text.String())
 	}
