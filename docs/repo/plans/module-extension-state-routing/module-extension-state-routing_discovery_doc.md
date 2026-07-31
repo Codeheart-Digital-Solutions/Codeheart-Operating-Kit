@@ -4,6 +4,29 @@ Status: draft
 
 # Module Extension State Routing Discovery
 
+<!-- BEGIN CODEHEART PLAN METADATA -->
+```yaml
+plan:
+    capabilities:
+        - module-extension-state
+    catalog_metadata_updated: "2026-07-31T23:16:16Z"
+    first_cataloged: "2026-07-31T23:16:16Z"
+    id: codeheart-operating-kit.discovery.module-extension-state-routing
+    kind: discovery
+    legacy_aliases:
+        - OK-PR-006
+    products:
+        - codeheart-operating-kit
+    purpose: Define placement and routing for committed non-secret module and extension state.
+    relations:
+        - kind: related
+          target: codeheart-operating-kit.implementation.module-extension-state-routing
+    schema_version: 1
+    strategic_themes:
+        - modular-routing
+```
+<!-- END CODEHEART PLAN METADATA -->
+
 ## Overview
 
 This discovery defines whether Codeheart Operating Kit should own a generic placement and routing

@@ -4,6 +4,27 @@ Status: completed
 
 # Operating Kit Portfolio Coordination And Plan Register Model Discovery
 
+<!-- BEGIN CODEHEART PLAN METADATA -->
+```yaml
+plan:
+    capabilities:
+        - portfolio-coordination
+    catalog_metadata_updated: "2026-07-31T23:16:16Z"
+    first_cataloged: "2026-07-31T23:16:16Z"
+    id: codeheart-operating-kit.discovery.portfolio-coordination-plan-register
+    kind: discovery
+    products:
+        - codeheart-operating-kit
+    purpose: Define the reusable plan-register and optional multi-repository portfolio coordination model.
+    relations:
+        - kind: related
+          target: codeheart-operating-kit.implementation.portfolio-coordination-plan-register
+    schema_version: 1
+    strategic_themes:
+        - portfolio-coordination
+```
+<!-- END CODEHEART PLAN METADATA -->
+
 ## Overview
 
 This discovery defines how Codeheart Operating Kit should treat plan registers and optional

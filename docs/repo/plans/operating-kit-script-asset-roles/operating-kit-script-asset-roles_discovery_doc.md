@@ -4,6 +4,27 @@ Status: implementation-handoff-ready
 
 # Operating Kit Script Asset Roles Discovery
 
+<!-- BEGIN CODEHEART PLAN METADATA -->
+```yaml
+plan:
+    capabilities:
+        - script-asset-roles
+    catalog_metadata_updated: "2026-07-31T23:16:16Z"
+    first_cataloged: "2026-07-31T23:16:16Z"
+    id: codeheart-operating-kit.discovery.script-asset-roles
+    kind: discovery
+    products:
+        - codeheart-operating-kit
+    purpose: Define reusable primitive, workflow, helper, and thin-wrapper roles for Operating Kit script assets.
+    relations:
+        - kind: related
+          target: codeheart-operating-kit.implementation.script-asset-roles
+    schema_version: 1
+    strategic_themes:
+        - automation-governance
+```
+<!-- END CODEHEART PLAN METADATA -->
+
 ## Discovery Status
 
 Input state: focused Operating Kit doctrine discovery after Foundry M365 authentication and invoice

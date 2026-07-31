@@ -8,6 +8,26 @@ Execution log: docs/repo/plans/plan-register-portfolio-doctrine-refinement/plan-
 
 ## Plan Register Portfolio Doctrine Refinement Implementation Plan
 
+<!-- BEGIN CODEHEART PLAN METADATA -->
+```yaml
+plan:
+    capabilities:
+        - plan-register-doctrine
+    catalog_metadata_updated: "2026-07-31T23:16:16Z"
+    first_cataloged: "2026-07-31T23:16:16Z"
+    id: codeheart-operating-kit.implementation.plan-register-portfolio-doctrine-refinement
+    kind: implementation
+    legacy_aliases:
+        - OK-PR-004
+    products:
+        - codeheart-operating-kit
+    purpose: Refine local and coordination-home register shapes, identities, relations, and portfolio summaries.
+    schema_version: 1
+    strategic_themes:
+        - portfolio-coordination
+```
+<!-- END CODEHEART PLAN METADATA -->
+
 Overview: Refine existing Operating Kit plan-register doctrine so local registers and
 coordination-home registers have durable reference shapes for portfolio overview use without
 turning the register into a board, task tracker, archive system, or consumer-specific planning

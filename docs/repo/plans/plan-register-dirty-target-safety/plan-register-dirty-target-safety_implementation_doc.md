@@ -9,6 +9,26 @@ Execution log:
 
 ## Plan Register Dirty Target Safety Implementation Plan
 
+<!-- BEGIN CODEHEART PLAN METADATA -->
+```yaml
+plan:
+    capabilities:
+        - plan-register-safety
+    catalog_metadata_updated: "2026-07-31T23:16:16Z"
+    first_cataloged: "2026-07-31T23:16:16Z"
+    id: codeheart-operating-kit.implementation.plan-register-dirty-target-safety
+    kind: implementation
+    legacy_aliases:
+        - OK-PR-023
+    products:
+        - codeheart-operating-kit
+    purpose: Distinguish unrelated dirty work from actual register conflicts before coordination writes.
+    schema_version: 1
+    strategic_themes:
+        - safe-coordination
+```
+<!-- END CODEHEART PLAN METADATA -->
+
 Overview: Clarify managed Operating Kit plan-register doctrine so agents do not treat an
 unrelated dirty coordination-home repository as an automatic blocker. Agents should inspect the
 target register and distinguish compatible, non-overlapping changes from ambiguous target-entry

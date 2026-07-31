@@ -8,6 +8,26 @@ Execution log: business-docs-placement-clarity_execution_log.md
 
 ## Overview
 
+<!-- BEGIN CODEHEART PLAN METADATA -->
+```yaml
+plan:
+    capabilities:
+        - structure-governance
+    catalog_metadata_updated: "2026-07-31T23:16:16Z"
+    first_cataloged: "2026-07-31T23:16:16Z"
+    id: codeheart-operating-kit.implementation.business-docs-placement-clarity
+    kind: implementation
+    legacy_aliases:
+        - OK-PR-018
+    products:
+        - codeheart-operating-kit
+    purpose: Clarify where organization business records belong without conflating them with software design or implementation planning.
+    schema_version: 1
+    strategic_themes:
+        - repository-structure-clarity
+```
+<!-- END CODEHEART PLAN METADATA -->
+
 This implementation plan clarifies the managed Operating Kit placement doctrine for
 `docs/business/`. The intended change is to make clear that `docs/business/` means company or
 organization business-operating records when a consumer repository intentionally stores them. It

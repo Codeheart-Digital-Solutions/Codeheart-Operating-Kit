@@ -6,6 +6,29 @@ Status: completed
 
 ## Local Runtime Environment Standard Implementation Plan
 
+<!-- BEGIN CODEHEART PLAN METADATA -->
+```yaml
+plan:
+    capabilities:
+        - local-runtime-standard
+    catalog_metadata_updated: "2026-07-31T23:16:16Z"
+    first_cataloged: "2026-07-31T23:16:16Z"
+    id: codeheart-operating-kit.implementation.local-runtime-environment-standard
+    kind: implementation
+    legacy_aliases:
+        - OK-PR-016
+    products:
+        - codeheart-operating-kit
+    purpose: Implement ignored local runtime state, a default Python environment location, and tooling-readiness guidance.
+    relations:
+        - kind: depends-on
+          target: codeheart-operating-kit.discovery.local-runtime-environment-standard
+    schema_version: 1
+    strategic_themes:
+        - local-runtime-reliability
+```
+<!-- END CODEHEART PLAN METADATA -->
+
 Overview: Implement the accepted Operating Kit standard for ignored local machine/runtime state.
 The implementation adds `.codeheart/local/` as the repo-local machine boundary, makes
 `.codeheart/local/envs/python/` the default Python virtual environment path, adds safe init/sync

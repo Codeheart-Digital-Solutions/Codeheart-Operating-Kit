@@ -7,6 +7,26 @@ Execution log: docs/repo/plans/coordination-home-register-id-namespace/coordinat
 
 ## Coordination Home Register ID Namespace Implementation Plan
 
+<!-- BEGIN CODEHEART PLAN METADATA -->
+```yaml
+plan:
+    capabilities:
+        - portfolio-coordination
+    catalog_metadata_updated: "2026-07-31T23:16:16Z"
+    first_cataloged: "2026-07-31T23:16:16Z"
+    id: codeheart-operating-kit.implementation.coordination-home-register-id-namespace
+    kind: implementation
+    legacy_aliases:
+        - OK-PR-003
+    products:
+        - codeheart-operating-kit
+    purpose: Give coordination-home register entries collision-resistant repository-qualified identities while preserving source aliases.
+    schema_version: 1
+    strategic_themes:
+        - stable-identities
+```
+<!-- END CODEHEART PLAN METADATA -->
+
 Overview: Add explicit Operating Kit doctrine for coordination-home plan-register IDs so member
 repositories can safely have local entries such as `PR-001` without colliding in the coordination
 home. The change is instruction-only: it updates managed plan-register format and maintenance

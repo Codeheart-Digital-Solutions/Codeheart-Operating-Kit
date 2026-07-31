@@ -1,0 +1,736 @@
+schema_version: 1
+repository_id: codeheart-operating-kit
+inventory_revision: 3b134a07b806d1522e7cf76fe52e2028d79155c2
+reviewed_at: 2026-07-31T23:16:16Z
+records:
+  - path: docs/repo/plans/business-docs-placement-clarity/business-docs-placement-clarity_implementation_doc.md
+    source_revision: 3b134a07b806d1522e7cf76fe52e2028d79155c2
+    source_sha256: 29d6cdcfac38a1ec38adf0488497325237bc1e1a1cd927bf41fc5f655f6660b7
+    decision:
+      id: codeheart-operating-kit.implementation.business-docs-placement-clarity
+      kind: implementation
+      purpose: Clarify where organization business records belong without conflating them with software design or implementation planning.
+      first_cataloged: 2026-07-31T23:16:16Z
+      catalog_metadata_updated: 2026-07-31T23:16:16Z
+      products: [codeheart-operating-kit]
+      capabilities: [structure-governance]
+      strategic_themes: [repository-structure-clarity]
+    confidence: high
+    ambiguity: []
+    evidence: [Canonical implementation content and legacy register entry OK-PR-018.]
+    legacy_aliases: [OK-PR-018]
+    conflicts: []
+    deferred: false
+    branch_owner: none
+
+  - path: docs/repo/plans/codeheart-operating-kit-implementation-planning-quality/codeheart-operating-kit-implementation-planning-quality_implementation_doc.md
+    source_revision: 3b134a07b806d1522e7cf76fe52e2028d79155c2
+    source_sha256: 064f4e906caf172507d34ed30aecc424a9ca15f7a6185ce5233004baefcd7f47
+    decision:
+      id: codeheart-operating-kit.implementation.implementation-planning-quality
+      kind: implementation
+      purpose: Preserve intended feature capability across discovery, implementation planning, review, and execution workflows.
+      first_cataloged: 2026-07-31T23:16:16Z
+      catalog_metadata_updated: 2026-07-31T23:16:16Z
+      products: [codeheart-operating-kit]
+      capabilities: [planning-workflows]
+      strategic_themes: [capability-preservation]
+    confidence: high
+    ambiguity: []
+    evidence: [Canonical implementation content and legacy register entry OK-PR-002.]
+    legacy_aliases: [OK-PR-002]
+    conflicts: []
+    deferred: false
+    branch_owner: none
+
+  - path: docs/repo/plans/coordination-home-register-id-namespace/coordination-home-register-id-namespace_implementation_doc.md
+    source_revision: 3b134a07b806d1522e7cf76fe52e2028d79155c2
+    source_sha256: 52d36ae3c45ddb166b314db0aab7c2d6da6fb4ee3b398fbeb863fe37443dd8fa
+    decision:
+      id: codeheart-operating-kit.implementation.coordination-home-register-id-namespace
+      kind: implementation
+      purpose: Give coordination-home register entries collision-resistant repository-qualified identities while preserving source aliases.
+      first_cataloged: 2026-07-31T23:16:16Z
+      catalog_metadata_updated: 2026-07-31T23:16:16Z
+      products: [codeheart-operating-kit]
+      capabilities: [portfolio-coordination]
+      strategic_themes: [stable-identities]
+    confidence: high
+    ambiguity: []
+    evidence: [Canonical implementation content and legacy register entry OK-PR-003.]
+    legacy_aliases: [OK-PR-003]
+    conflicts: []
+    deferred: false
+    branch_owner: none
+
+  - path: docs/repo/plans/discovery-handoff-gate/discovery-handoff-gate_implementation_doc.md
+    source_revision: 3b134a07b806d1522e7cf76fe52e2028d79155c2
+    source_sha256: 8d2dc6487b5bd77edd7d214321ed241f477a3ee10aa2a42d7155aaef7068c1b0
+    decision:
+      id: codeheart-operating-kit.implementation.discovery-handoff-gate
+      kind: implementation
+      purpose: Prevent implementation planning from bypassing an unresolved discovery capability handoff.
+      first_cataloged: 2026-07-31T23:16:16Z
+      catalog_metadata_updated: 2026-07-31T23:16:16Z
+      products: [codeheart-operating-kit]
+      capabilities: [discovery-handoff]
+      strategic_themes: [planning-quality]
+    confidence: high
+    ambiguity: []
+    evidence: [Canonical implementation content and legacy register entry OK-PR-012.]
+    legacy_aliases: [OK-PR-012]
+    conflicts: []
+    deferred: false
+    branch_owner: none
+
+  - path: docs/repo/plans/kit-feedback-intake/kit-feedback-intake_discovery_doc.md
+    source_revision: 3b134a07b806d1522e7cf76fe52e2028d79155c2
+    source_sha256: 03c6cbe47ae4902371dd896b9e9b317c04f46ceb068ac60d42ab2597bc752f3f
+    decision:
+      id: codeheart-operating-kit.discovery.kit-feedback-intake
+      kind: discovery
+      purpose: Define a public-safe intake model for consumer feedback, doctrine gaps, sync issues, and product ideas.
+      first_cataloged: 2026-07-31T23:16:16Z
+      catalog_metadata_updated: 2026-07-31T23:16:16Z
+      products: [codeheart-operating-kit]
+      capabilities: [kit-feedback-intake]
+      strategic_themes: [feedback-driven-improvement]
+      relations:
+        - kind: related
+          target: codeheart-operating-kit.implementation.kit-feedback-intake
+    confidence: high
+    ambiguity: []
+    evidence: [Canonical discovery content and sibling implementation plan.]
+    legacy_aliases: []
+    conflicts: []
+    deferred: false
+    branch_owner: none
+
+  - path: docs/repo/plans/kit-feedback-intake/kit-feedback-intake_implementation_doc.md
+    source_revision: 3b134a07b806d1522e7cf76fe52e2028d79155c2
+    source_sha256: e65bf59f97cee54309d143689895360d8f47dba6c79de301c679f4897bfc397f
+    decision:
+      id: codeheart-operating-kit.implementation.kit-feedback-intake
+      kind: implementation
+      purpose: Deliver a public GitHub feedback intake and maintainer triage workflow without enabling consumer edits to managed content.
+      first_cataloged: 2026-07-31T23:16:16Z
+      catalog_metadata_updated: 2026-07-31T23:16:16Z
+      products: [codeheart-operating-kit]
+      capabilities: [kit-feedback-intake]
+      strategic_themes: [feedback-driven-improvement]
+      relations:
+        - kind: depends-on
+          target: codeheart-operating-kit.discovery.kit-feedback-intake
+    confidence: high
+    ambiguity: []
+    evidence: [Canonical implementation content and sibling discovery plan.]
+    legacy_aliases: []
+    conflicts: []
+    deferred: false
+    branch_owner: none
+
+  - path: docs/repo/plans/local-runtime-environment-standard/local-runtime-environment-standard_discovery_doc.md
+    source_revision: 3b134a07b806d1522e7cf76fe52e2028d79155c2
+    source_sha256: 0aea485a0f2b8c1253ed7301447a583e0c44b0b11eb3c9f6ebcb991c01daecc9
+    decision:
+      id: codeheart-operating-kit.discovery.local-runtime-environment-standard
+      kind: discovery
+      purpose: Define a reusable convention for ignored repository-local runtime state and missing-tool readiness routing.
+      first_cataloged: 2026-07-31T23:16:16Z
+      catalog_metadata_updated: 2026-07-31T23:16:16Z
+      products: [codeheart-operating-kit]
+      capabilities: [local-runtime-standard]
+      strategic_themes: [local-runtime-reliability]
+      relations:
+        - kind: related
+          target: codeheart-operating-kit.implementation.local-runtime-environment-standard
+    confidence: high
+    ambiguity: []
+    evidence: [Canonical discovery content and legacy register entry OK-PR-015.]
+    legacy_aliases: [OK-PR-015]
+    conflicts: []
+    deferred: false
+    branch_owner: none
+
+  - path: docs/repo/plans/local-runtime-environment-standard/local-runtime-environment-standard_implementation_doc.md
+    source_revision: 3b134a07b806d1522e7cf76fe52e2028d79155c2
+    source_sha256: 9727d9755e72f4a2f2e40338b1d39115cf9882a108205207cbf26e8aa2af3ba1
+    decision:
+      id: codeheart-operating-kit.implementation.local-runtime-environment-standard
+      kind: implementation
+      purpose: Implement ignored local runtime state, a default Python environment location, and tooling-readiness guidance.
+      first_cataloged: 2026-07-31T23:16:16Z
+      catalog_metadata_updated: 2026-07-31T23:16:16Z
+      products: [codeheart-operating-kit]
+      capabilities: [local-runtime-standard]
+      strategic_themes: [local-runtime-reliability]
+      relations:
+        - kind: depends-on
+          target: codeheart-operating-kit.discovery.local-runtime-environment-standard
+    confidence: high
+    ambiguity: []
+    evidence: [Canonical implementation content and legacy register entry OK-PR-016.]
+    legacy_aliases: [OK-PR-016]
+    conflicts: []
+    deferred: false
+    branch_owner: none
+
+  - path: docs/repo/plans/module-extension-state-routing/module-extension-state-routing_discovery_doc.md
+    source_revision: 3b134a07b806d1522e7cf76fe52e2028d79155c2
+    source_sha256: 0cc8b365f094b3ad133b7fb1b59efbc01498a38817606fbaf54acc4bc9e0c4a7
+    decision:
+      id: codeheart-operating-kit.discovery.module-extension-state-routing
+      kind: discovery
+      purpose: Define placement and routing for committed non-secret module and extension state.
+      first_cataloged: 2026-07-31T23:16:16Z
+      catalog_metadata_updated: 2026-07-31T23:16:16Z
+      products: [codeheart-operating-kit]
+      capabilities: [module-extension-state]
+      strategic_themes: [modular-routing]
+      relations:
+        - kind: related
+          target: codeheart-operating-kit.implementation.module-extension-state-routing
+    confidence: high
+    ambiguity: []
+    evidence: [Canonical discovery content and legacy register entry OK-PR-006.]
+    legacy_aliases: [OK-PR-006]
+    conflicts: []
+    deferred: false
+    branch_owner: none
+
+  - path: docs/repo/plans/module-extension-state-routing/module-extension-state-routing_implementation_doc.md
+    source_revision: 3b134a07b806d1522e7cf76fe52e2028d79155c2
+    source_sha256: 8177d084bbc8081b500e1cabae532bed295bac94bbceda9e6ff785090e506f92
+    decision:
+      id: codeheart-operating-kit.implementation.module-extension-state-routing
+      kind: implementation
+      purpose: Implement managed placement, routing, packaging, and validation for module and extension state.
+      first_cataloged: 2026-07-31T23:16:16Z
+      catalog_metadata_updated: 2026-07-31T23:16:16Z
+      products: [codeheart-operating-kit]
+      capabilities: [module-extension-state]
+      strategic_themes: [modular-routing]
+      relations:
+        - kind: depends-on
+          target: codeheart-operating-kit.discovery.module-extension-state-routing
+    confidence: high
+    ambiguity: []
+    evidence: [Canonical implementation content and legacy register entry OK-PR-008.]
+    legacy_aliases: [OK-PR-008]
+    conflicts: []
+    deferred: false
+    branch_owner: none
+
+  - path: docs/repo/plans/operating-kit-script-asset-roles/operating-kit-script-asset-roles_discovery_doc.md
+    source_revision: 3b134a07b806d1522e7cf76fe52e2028d79155c2
+    source_sha256: 1bebe20bae509c4c80367dbf189370e123937156bd51bb3cdd120de2e075d4ca
+    decision:
+      id: codeheart-operating-kit.discovery.script-asset-roles
+      kind: discovery
+      purpose: Define reusable primitive, workflow, helper, and thin-wrapper roles for Operating Kit script assets.
+      first_cataloged: 2026-07-31T23:16:16Z
+      catalog_metadata_updated: 2026-07-31T23:16:16Z
+      products: [codeheart-operating-kit]
+      capabilities: [script-asset-roles]
+      strategic_themes: [automation-governance]
+      relations:
+        - kind: related
+          target: codeheart-operating-kit.implementation.script-asset-roles
+    confidence: high
+    ambiguity: []
+    evidence: [Canonical discovery content and combined legacy register entry OK-PR-025.]
+    legacy_aliases: []
+    conflicts: []
+    deferred: false
+    branch_owner: none
+
+  - path: docs/repo/plans/operating-kit-script-asset-roles/operating-kit-script-asset-roles_implementation_doc.md
+    source_revision: 3b134a07b806d1522e7cf76fe52e2028d79155c2
+    source_sha256: 62d042bed7557f214e4c03bfca0f024ae9ce05274bdabc3d54f84fdd317f17bc
+    decision:
+      id: codeheart-operating-kit.implementation.script-asset-roles
+      kind: implementation
+      purpose: Add script role doctrine and planning hooks while preserving the existing operational maturity model.
+      first_cataloged: 2026-07-31T23:16:16Z
+      catalog_metadata_updated: 2026-07-31T23:16:16Z
+      products: [codeheart-operating-kit]
+      capabilities: [script-asset-roles]
+      strategic_themes: [automation-governance]
+      relations:
+        - kind: depends-on
+          target: codeheart-operating-kit.discovery.script-asset-roles
+    confidence: high
+    ambiguity: []
+    evidence: [Canonical implementation content and combined legacy register entry OK-PR-025.]
+    legacy_aliases: [OK-PR-025]
+    conflicts: []
+    deferred: false
+    branch_owner: none
+
+  - path: docs/repo/plans/operating-kit-self-contained-bootstrap/operating-kit-self-contained-bootstrap_implementation_doc.md
+    source_revision: 3b134a07b806d1522e7cf76fe52e2028d79155c2
+    source_sha256: ce03f70cf570e49d8fd19becb927a800262693cdb69e3e06937b1536bd40ac6c
+    decision:
+      id: codeheart-operating-kit.implementation.self-contained-bootstrap
+      kind: implementation
+      purpose: Replace the Python-first root bootstrap with self-contained macOS and Windows CLI release packs.
+      first_cataloged: 2026-07-31T23:16:16Z
+      catalog_metadata_updated: 2026-07-31T23:16:16Z
+      products: [codeheart-operating-kit]
+      capabilities: [self-contained-bootstrap]
+      strategic_themes: [self-contained-runtime]
+    confidence: high
+    ambiguity: []
+    evidence: [Canonical implementation content and legacy register entry OK-PR-024.]
+    legacy_aliases: [OK-PR-024]
+    conflicts: []
+    deferred: false
+    branch_owner: none
+
+  - path: docs/repo/plans/operating-kit-state-release-architecture/operating-kit-state-release-architecture_discovery_doc.md
+    source_revision: 3b134a07b806d1522e7cf76fe52e2028d79155c2
+    source_sha256: 01143365817781640cd3de2999cf1d2851ad9d5cc17063565003458fe847de30
+    decision:
+      id: codeheart-operating-kit.discovery.state-release-architecture
+      kind: discovery
+      purpose: Define safe desired state, reconciliation, release provenance, and cross-platform upgrade architecture.
+      first_cataloged: 2026-07-31T23:16:16Z
+      catalog_metadata_updated: 2026-07-31T23:16:16Z
+      products: [codeheart-operating-kit]
+      capabilities: [state-release-architecture]
+      strategic_themes: [reproducible-lifecycle]
+      relations:
+        - kind: related
+          target: codeheart-operating-kit.implementation.state-release-architecture
+    confidence: high
+    ambiguity: []
+    evidence: [Canonical discovery content and combined legacy register entry OK-PR-026.]
+    legacy_aliases: []
+    conflicts: []
+    deferred: false
+    branch_owner: none
+
+  - path: docs/repo/plans/operating-kit-state-release-architecture/operating-kit-state-release-architecture_implementation_doc.md
+    source_revision: 3b134a07b806d1522e7cf76fe52e2028d79155c2
+    source_sha256: a89c45361fc19045f89bc552e25fe71f933fa15d9b79d558472c100c82b1cdd2
+    decision:
+      id: codeheart-operating-kit.implementation.state-release-architecture
+      kind: implementation
+      purpose: Implement typed desired state, transactional reconciliation, release provenance, and cross-platform upgrade foundations.
+      first_cataloged: 2026-07-31T23:16:16Z
+      catalog_metadata_updated: 2026-07-31T23:16:16Z
+      products: [codeheart-operating-kit]
+      capabilities: [state-release-architecture]
+      strategic_themes: [reproducible-lifecycle]
+      relations:
+        - kind: depends-on
+          target: codeheart-operating-kit.discovery.state-release-architecture
+    confidence: high
+    ambiguity: []
+    evidence: [Canonical implementation content and combined legacy register entry OK-PR-026.]
+    legacy_aliases: [OK-PR-026]
+    conflicts: []
+    deferred: false
+    branch_owner: none
+
+  - path: docs/repo/plans/operation-routing-dispatch-standard/operation-routing-dispatch-standard_discovery_doc.md
+    source_revision: 3b134a07b806d1522e7cf76fe52e2028d79155c2
+    source_sha256: d7b33556377022fbd35786ce2d35dc7eb8104d99a07d47a2544c6a8645931004
+    decision:
+      id: codeheart-operating-kit.discovery.operation-routing-dispatch-standard
+      kind: discovery
+      purpose: Define shared pre-execution routing, authority, capability, ambiguity, and dispatch doctrine.
+      first_cataloged: 2026-07-31T23:16:16Z
+      catalog_metadata_updated: 2026-07-31T23:16:16Z
+      products: [codeheart-operating-kit]
+      capabilities: [operation-routing]
+      strategic_themes: [reliable-routing]
+      relations:
+        - kind: related
+          target: codeheart-operating-kit.implementation.operation-routing-dispatch-standard
+    confidence: high
+    ambiguity: []
+    evidence: [Canonical discovery content and legacy register entry OK-PR-011.]
+    legacy_aliases: [OK-PR-011]
+    conflicts: []
+    deferred: false
+    branch_owner: none
+
+  - path: docs/repo/plans/operation-routing-dispatch-standard/operation-routing-dispatch-standard_implementation_doc.md
+    source_revision: 3b134a07b806d1522e7cf76fe52e2028d79155c2
+    source_sha256: cd8540b6c0909920d960a1f45c292cba5cb57fee9a388bd599c20c9e341aa45c
+    decision:
+      id: codeheart-operating-kit.implementation.operation-routing-dispatch-standard
+      kind: implementation
+      purpose: Implement managed routing doctrine, route inventories, low-context probes, and packaged guidance.
+      first_cataloged: 2026-07-31T23:16:16Z
+      catalog_metadata_updated: 2026-07-31T23:16:16Z
+      products: [codeheart-operating-kit]
+      capabilities: [operation-routing]
+      strategic_themes: [reliable-routing]
+      relations:
+        - kind: depends-on
+          target: codeheart-operating-kit.discovery.operation-routing-dispatch-standard
+    confidence: high
+    ambiguity: []
+    evidence: [Canonical implementation content and legacy register entry OK-PR-013.]
+    legacy_aliases: [OK-PR-013]
+    conflicts: []
+    deferred: false
+    branch_owner: none
+
+  - path: docs/repo/plans/plan-register-dirty-target-safety/plan-register-dirty-target-safety_implementation_doc.md
+    source_revision: 3b134a07b806d1522e7cf76fe52e2028d79155c2
+    source_sha256: f2c2efde6e696dbb6c14ad267f8b8cde954ebf701826f3045693a6dc6800e17a
+    decision:
+      id: codeheart-operating-kit.implementation.plan-register-dirty-target-safety
+      kind: implementation
+      purpose: Distinguish unrelated dirty work from actual register conflicts before coordination writes.
+      first_cataloged: 2026-07-31T23:16:16Z
+      catalog_metadata_updated: 2026-07-31T23:16:16Z
+      products: [codeheart-operating-kit]
+      capabilities: [plan-register-safety]
+      strategic_themes: [safe-coordination]
+    confidence: high
+    ambiguity: []
+    evidence: [Canonical implementation content and legacy register entry OK-PR-023.]
+    legacy_aliases: [OK-PR-023]
+    conflicts: []
+    deferred: false
+    branch_owner: none
+
+  - path: docs/repo/plans/plan-register-portfolio-doctrine-refinement/plan-register-portfolio-doctrine-refinement_implementation_doc.md
+    source_revision: 3b134a07b806d1522e7cf76fe52e2028d79155c2
+    source_sha256: 5432aa2d93fff56b641b1340e5867ecfe6fb3f170a632595062ec6172874dbf9
+    decision:
+      id: codeheart-operating-kit.implementation.plan-register-portfolio-doctrine-refinement
+      kind: implementation
+      purpose: Refine local and coordination-home register shapes, identities, relations, and portfolio summaries.
+      first_cataloged: 2026-07-31T23:16:16Z
+      catalog_metadata_updated: 2026-07-31T23:16:16Z
+      products: [codeheart-operating-kit]
+      capabilities: [plan-register-doctrine]
+      strategic_themes: [portfolio-coordination]
+    confidence: high
+    ambiguity: []
+    evidence: [Canonical implementation content and legacy register entry OK-PR-004.]
+    legacy_aliases: [OK-PR-004]
+    conflicts: []
+    deferred: false
+    branch_owner: none
+
+  - path: docs/repo/plans/plan-register-session-lifecycle-hardening/plan-register-session-lifecycle-hardening_implementation_doc.md
+    source_revision: 3b134a07b806d1522e7cf76fe52e2028d79155c2
+    source_sha256: 43d25795c9b8b323540482ef62519e991dc483f4b3df2ab0f54eed2e31f83f06
+    decision:
+      id: codeheart-operating-kit.implementation.plan-register-session-lifecycle-hardening
+      kind: implementation
+      purpose: Make plan-register session references self-contained and lifecycle grouping consistent.
+      first_cataloged: 2026-07-31T23:16:16Z
+      catalog_metadata_updated: 2026-07-31T23:16:16Z
+      products: [codeheart-operating-kit]
+      capabilities: [plan-lifecycle]
+      strategic_themes: [traceable-planning]
+    confidence: high
+    ambiguity: []
+    evidence: [Canonical implementation content and legacy register entry OK-PR-001.]
+    legacy_aliases: [OK-PR-001]
+    conflicts: []
+    deferred: false
+    branch_owner: none
+
+  - path: docs/repo/plans/portfolio-coordination-plan-register/portfolio-coordination-plan-register_discovery_doc.md
+    source_revision: 3b134a07b806d1522e7cf76fe52e2028d79155c2
+    source_sha256: 5dfa6f7a117d9995da298ff9ba388589acfbadacea04dba980f85a498231023a
+    decision:
+      id: codeheart-operating-kit.discovery.portfolio-coordination-plan-register
+      kind: discovery
+      purpose: Define the reusable plan-register and optional multi-repository portfolio coordination model.
+      first_cataloged: 2026-07-31T23:16:16Z
+      catalog_metadata_updated: 2026-07-31T23:16:16Z
+      products: [codeheart-operating-kit]
+      capabilities: [portfolio-coordination]
+      strategic_themes: [portfolio-coordination]
+      relations:
+        - kind: related
+          target: codeheart-operating-kit.implementation.portfolio-coordination-plan-register
+    confidence: high
+    ambiguity: []
+    evidence: [Canonical discovery content and sibling implementation plan.]
+    legacy_aliases: []
+    conflicts: []
+    deferred: false
+    branch_owner: none
+
+  - path: docs/repo/plans/portfolio-coordination-plan-register/portfolio-coordination-plan-register_implementation_doc.md
+    source_revision: 3b134a07b806d1522e7cf76fe52e2028d79155c2
+    source_sha256: da256236d48a2782e8e1138316f71d80621cc8492d0bc816fd48b99ad1902111
+    decision:
+      id: codeheart-operating-kit.implementation.portfolio-coordination-plan-register
+      kind: implementation
+      purpose: Implement plan-register doctrine, optional portfolio configuration, consumer state, sync behavior, and validation.
+      first_cataloged: 2026-07-31T23:16:16Z
+      catalog_metadata_updated: 2026-07-31T23:16:16Z
+      products: [codeheart-operating-kit]
+      capabilities: [portfolio-coordination]
+      strategic_themes: [portfolio-coordination]
+      relations:
+        - kind: depends-on
+          target: codeheart-operating-kit.discovery.portfolio-coordination-plan-register
+    confidence: high
+    ambiguity: []
+    evidence: [Canonical implementation content and sibling discovery plan.]
+    legacy_aliases: []
+    conflicts: []
+    deferred: false
+    branch_owner: none
+
+  - path: docs/repo/plans/repo-feedback-capture/repo-feedback-capture_discovery_doc.md
+    source_revision: 3b134a07b806d1522e7cf76fe52e2028d79155c2
+    source_sha256: 18ec2b1cf61637dd6b1c4d01c0a18a95173c36283396c3101367d38afe775fa8
+    decision:
+      id: codeheart-operating-kit.discovery.repo-feedback-capture
+      kind: discovery
+      purpose: Define how agents recognize, route, classify, and safely capture repository-specific feedback.
+      first_cataloged: 2026-07-31T23:16:16Z
+      catalog_metadata_updated: 2026-07-31T23:16:16Z
+      products: [codeheart-operating-kit]
+      capabilities: [repo-feedback-capture]
+      strategic_themes: [feedback-driven-improvement]
+      relations:
+        - kind: related
+          target: codeheart-operating-kit.implementation.repo-feedback-capture
+    confidence: high
+    ambiguity: []
+    evidence: [Canonical discovery content and legacy register entry OK-PR-020.]
+    legacy_aliases: [OK-PR-020]
+    conflicts: []
+    deferred: false
+    branch_owner: none
+
+  - path: docs/repo/plans/repo-feedback-capture/repo-feedback-capture_implementation_doc.md
+    source_revision: 3b134a07b806d1522e7cf76fe52e2028d79155c2
+    source_sha256: 54efc59530222f7331332312bc764a2250a6f0a34e14c33180c39cb0734b3ace
+    decision:
+      id: codeheart-operating-kit.implementation.repo-feedback-capture
+      kind: implementation
+      purpose: Implement managed feedback capture, issue-intake setup, routing, packaging, and validation.
+      first_cataloged: 2026-07-31T23:16:16Z
+      catalog_metadata_updated: 2026-07-31T23:16:16Z
+      products: [codeheart-operating-kit]
+      capabilities: [repo-feedback-capture]
+      strategic_themes: [feedback-driven-improvement]
+      relations:
+        - kind: depends-on
+          target: codeheart-operating-kit.discovery.repo-feedback-capture
+    confidence: high
+    ambiguity: []
+    evidence: [Canonical implementation content and legacy register entry OK-PR-021.]
+    legacy_aliases: [OK-PR-021]
+    conflicts: []
+    deferred: false
+    branch_owner: none
+
+  - path: docs/repo/plans/runbook-authoring-standards/runbook-authoring-standards_discovery_doc.md
+    source_revision: 3b134a07b806d1522e7cf76fe52e2028d79155c2
+    source_sha256: c87cb2042d4a2cccdd1dde2f724d8c50f6ffccb1f22bfb546508042ea4c08208
+    decision:
+      id: codeheart-operating-kit.discovery.runbook-authoring-standards
+      kind: discovery
+      purpose: Define reusable quality standards for human-facing, agent-facing, hybrid, and maintainer runbooks.
+      first_cataloged: 2026-07-31T23:16:16Z
+      catalog_metadata_updated: 2026-07-31T23:16:16Z
+      products: [codeheart-operating-kit]
+      capabilities: [runbook-authoring]
+      strategic_themes: [runbook-quality]
+      relations:
+        - kind: related
+          target: codeheart-operating-kit.implementation.runbook-authoring-standards
+    confidence: high
+    ambiguity: []
+    evidence: [Canonical discovery content and legacy register entry OK-PR-005.]
+    legacy_aliases: [OK-PR-005]
+    conflicts: []
+    deferred: false
+    branch_owner: none
+
+  - path: docs/repo/plans/runbook-authoring-standards/runbook-authoring-standards_implementation_doc.md
+    source_revision: 3b134a07b806d1522e7cf76fe52e2028d79155c2
+    source_sha256: 0db887a5246bc50ac7345c768597fea65af8218652bc7353f7b90b805031e8dc
+    decision:
+      id: codeheart-operating-kit.implementation.runbook-authoring-standards
+      kind: implementation
+      purpose: Implement audience-aware runbook doctrine, planning hooks, packaged guidance, and validation.
+      first_cataloged: 2026-07-31T23:16:16Z
+      catalog_metadata_updated: 2026-07-31T23:16:16Z
+      products: [codeheart-operating-kit]
+      capabilities: [runbook-authoring]
+      strategic_themes: [runbook-quality]
+      relations:
+        - kind: depends-on
+          target: codeheart-operating-kit.discovery.runbook-authoring-standards
+    confidence: high
+    ambiguity: []
+    evidence: [Canonical implementation content and legacy register entry OK-PR-007.]
+    legacy_aliases: [OK-PR-007]
+    conflicts: []
+    deferred: false
+    branch_owner: none
+
+  - path: docs/repo/plans/runbook-to-script-promotion-standard/runbook-to-script-promotion-standard_discovery_doc.md
+    source_revision: 3b134a07b806d1522e7cf76fe52e2028d79155c2
+    source_sha256: 2c2b757366c6bd82b29b0c45d0869f0e8333d602e72f80f4deb14f13a142d684
+    decision:
+      id: codeheart-operating-kit.discovery.runbook-to-script-promotion-standard
+      kind: discovery
+      purpose: Define when repeated or fragile runbook mechanics should become reusable scripts or command surfaces.
+      first_cataloged: 2026-07-31T23:16:16Z
+      catalog_metadata_updated: 2026-07-31T23:16:16Z
+      products: [codeheart-operating-kit]
+      capabilities: [script-promotion]
+      strategic_themes: [automation-governance]
+      relations:
+        - kind: related
+          target: codeheart-operating-kit.implementation.runbook-to-script-promotion-standard
+    confidence: high
+    ambiguity: []
+    evidence: [Canonical discovery content and legacy register entry OK-PR-019.]
+    legacy_aliases: [OK-PR-019]
+    conflicts: []
+    deferred: false
+    branch_owner: none
+
+  - path: docs/repo/plans/runbook-to-script-promotion-standard/runbook-to-script-promotion-standard_implementation_doc.md
+    source_revision: 3b134a07b806d1522e7cf76fe52e2028d79155c2
+    source_sha256: 0b882eec081ac6081220586f4c8ba5bfeceeb31b919d640c9fc256c54dc426c6
+    decision:
+      id: codeheart-operating-kit.implementation.runbook-to-script-promotion-standard
+      kind: implementation
+      purpose: Implement doctrine for promoting repeated runbook mechanics without premature broad automation.
+      first_cataloged: 2026-07-31T23:16:16Z
+      catalog_metadata_updated: 2026-07-31T23:16:16Z
+      products: [codeheart-operating-kit]
+      capabilities: [script-promotion]
+      strategic_themes: [automation-governance]
+      relations:
+        - kind: depends-on
+          target: codeheart-operating-kit.discovery.runbook-to-script-promotion-standard
+    confidence: high
+    ambiguity: []
+    evidence: [Canonical implementation content and legacy register entry OK-PR-022.]
+    legacy_aliases: [OK-PR-022]
+    conflicts: []
+    deferred: false
+    branch_owner: none
+
+  - path: docs/repo/plans/runtime-materialization-hardening/runtime-materialization-hardening_implementation_doc.md
+    source_revision: 3b134a07b806d1522e7cf76fe52e2028d79155c2
+    source_sha256: 1d952ad36e3df8f811384aff4841804382ae79237fb80e5add47bb73fbb4b7cc
+    decision:
+      id: codeheart-operating-kit.implementation.runtime-materialization-hardening
+      kind: implementation
+      purpose: Materialize consumer runtime tooling into ignored local state without editable links or global mutation.
+      first_cataloged: 2026-07-31T23:16:16Z
+      catalog_metadata_updated: 2026-07-31T23:16:16Z
+      products: [codeheart-operating-kit]
+      capabilities: [runtime-materialization]
+      strategic_themes: [runtime-integrity]
+    confidence: high
+    ambiguity: []
+    evidence: [Canonical implementation content and legacy register entry OK-PR-017.]
+    legacy_aliases: [OK-PR-017]
+    conflicts: []
+    deferred: false
+    branch_owner: none
+
+  - path: docs/repo/plans/semantic-plan-catalog-coordination/semantic-plan-catalog-coordination_discovery_doc.md
+    source_revision: 3b134a07b806d1522e7cf76fe52e2028d79155c2
+    source_sha256: ce0a3799576aaf7316d14ade69927e619aa4867f05b95258f281eabc4c9e31f4
+    decision:
+      id: codeheart-operating-kit.discovery.semantic-plan-catalog-coordination
+      kind: discovery
+      purpose: Define semantic plan identity, generated views, branch-aware portfolio facts, and resilient compatibility migration.
+      first_cataloged: 2026-07-31T23:16:16Z
+      catalog_metadata_updated: 2026-07-31T23:16:16Z
+      products: [codeheart-operating-kit]
+      capabilities: [semantic-plan-catalog]
+      strategic_themes: [cohesive-product-planning]
+      relations:
+        - kind: related
+          target: codeheart-operating-kit.implementation.semantic-plan-catalog-coordination
+    confidence: high
+    ambiguity: []
+    evidence: [Canonical discovery content and legacy register entry OK-PR-027.]
+    legacy_aliases: [OK-PR-027]
+    conflicts: []
+    deferred: false
+    branch_owner: none
+
+  - path: docs/repo/plans/semantic-plan-catalog-coordination/semantic-plan-catalog-coordination_implementation_doc.md
+    source_revision: 3b134a07b806d1522e7cf76fe52e2028d79155c2
+    source_sha256: dcf3c527fadb2e508684d24dd4ecaa7b18342ce28403387c98420ec3059dbc5c
+    decision:
+      id: codeheart-operating-kit.implementation.semantic-plan-catalog-coordination
+      kind: implementation
+      purpose: Implement semantic plan metadata, guarded migration, branch-aware coordination, managed UX, and an approval-gated release.
+      first_cataloged: 2026-07-31T23:16:16Z
+      catalog_metadata_updated: 2026-07-31T23:16:16Z
+      products: [codeheart-operating-kit]
+      capabilities: [semantic-plan-catalog]
+      strategic_themes: [cohesive-product-planning]
+      relations:
+        - kind: depends-on
+          target: codeheart-operating-kit.discovery.semantic-plan-catalog-coordination
+    confidence: high
+    ambiguity: []
+    evidence: [Canonical implementation content, legacy register entry OK-PR-028, and reviewed metadata applied by branch owner codex/semantic-plan-catalog-coordination.]
+    legacy_aliases: [OK-PR-028]
+    conflicts: []
+    deferred: false
+    branch_owner: none
+
+  - path: docs/repo/plans/tooling-environment-readiness/tooling-environment-readiness_discovery_doc.md
+    source_revision: 3b134a07b806d1522e7cf76fe52e2028d79155c2
+    source_sha256: f45192cb4e89b819f291fab092a85e509729a7e3189a4aa61dd5b701a8931150
+    decision:
+      id: codeheart-operating-kit.discovery.tooling-environment-readiness
+      kind: discovery
+      purpose: Define shared missing-tool routing, environment readiness, and approval-gated install or repair boundaries.
+      first_cataloged: 2026-07-31T23:16:16Z
+      catalog_metadata_updated: 2026-07-31T23:16:16Z
+      products: [codeheart-operating-kit]
+      capabilities: [tooling-readiness]
+      strategic_themes: [tooling-readiness]
+      relations:
+        - kind: related
+          target: codeheart-operating-kit.implementation.tooling-environment-readiness
+    confidence: high
+    ambiguity: []
+    evidence: [Canonical discovery content and legacy register entry OK-PR-009.]
+    legacy_aliases: [OK-PR-009]
+    conflicts: []
+    deferred: false
+    branch_owner: none
+
+  - path: docs/repo/plans/tooling-environment-readiness/tooling-environment-readiness_implementation_doc.md
+    source_revision: 3b134a07b806d1522e7cf76fe52e2028d79155c2
+    source_sha256: 1a8a7ffd72a72c45fd17e040514eb7c9bf49d1d0f44d95e50af2ce604b51e0d1
+    decision:
+      id: codeheart-operating-kit.implementation.tooling-environment-readiness
+      kind: implementation
+      purpose: Implement one central tooling-readiness route with managed guidance, planning hooks, packaging, and tests.
+      first_cataloged: 2026-07-31T23:16:16Z
+      catalog_metadata_updated: 2026-07-31T23:16:16Z
+      products: [codeheart-operating-kit]
+      capabilities: [tooling-readiness]
+      strategic_themes: [tooling-readiness]
+      relations:
+        - kind: depends-on
+          target: codeheart-operating-kit.discovery.tooling-environment-readiness
+    confidence: high
+    ambiguity: []
+    evidence: [Canonical implementation content and legacy register entry OK-PR-010.]
+    legacy_aliases: [OK-PR-010]
+    conflicts: []
+    deferred: false
+    branch_owner: none

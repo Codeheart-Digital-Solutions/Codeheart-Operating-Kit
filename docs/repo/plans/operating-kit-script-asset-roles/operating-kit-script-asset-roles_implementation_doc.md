@@ -8,6 +8,29 @@ Execution log: docs/repo/plans/operating-kit-script-asset-roles/operating-kit-sc
 
 ## Operating Kit Script Asset Roles Implementation Plan
 
+<!-- BEGIN CODEHEART PLAN METADATA -->
+```yaml
+plan:
+    capabilities:
+        - script-asset-roles
+    catalog_metadata_updated: "2026-07-31T23:16:16Z"
+    first_cataloged: "2026-07-31T23:16:16Z"
+    id: codeheart-operating-kit.implementation.script-asset-roles
+    kind: implementation
+    legacy_aliases:
+        - OK-PR-025
+    products:
+        - codeheart-operating-kit
+    purpose: Add script role doctrine and planning hooks while preserving the existing operational maturity model.
+    relations:
+        - kind: depends-on
+          target: codeheart-operating-kit.discovery.script-asset-roles
+    schema_version: 1
+    strategic_themes:
+        - automation-governance
+```
+<!-- END CODEHEART PLAN METADATA -->
+
 Overview: update Operating Kit source doctrine so reusable script assets can be classified as
 `primitive script`, `workflow script`, or `helper` without changing the existing L2/L3/L4 maturity
 model. The implementation keeps `thin command wrapper` as L3, adds generic workflow-composition

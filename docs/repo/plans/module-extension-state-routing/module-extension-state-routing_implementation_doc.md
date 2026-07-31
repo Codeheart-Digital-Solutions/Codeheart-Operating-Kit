@@ -6,6 +6,29 @@ Status: completed
 
 ## Module Extension State Routing Implementation Plan
 
+<!-- BEGIN CODEHEART PLAN METADATA -->
+```yaml
+plan:
+    capabilities:
+        - module-extension-state
+    catalog_metadata_updated: "2026-07-31T23:16:16Z"
+    first_cataloged: "2026-07-31T23:16:16Z"
+    id: codeheart-operating-kit.implementation.module-extension-state-routing
+    kind: implementation
+    legacy_aliases:
+        - OK-PR-008
+    products:
+        - codeheart-operating-kit
+    purpose: Implement managed placement, routing, packaging, and validation for module and extension state.
+    relations:
+        - kind: depends-on
+          target: codeheart-operating-kit.discovery.module-extension-state-routing
+    schema_version: 1
+    strategic_themes:
+        - modular-routing
+```
+<!-- END CODEHEART PLAN METADATA -->
+
 Overview: Add Operating Kit managed doctrine and generic routing for committed, non-secret
 module or extension state under `docs/repo/state/<module-or-extension-id>/`. The implementation
 is an instruction-only Operating Kit release: it creates a structure-governance reference, routes

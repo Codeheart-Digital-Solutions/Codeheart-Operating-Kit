@@ -1,4 +1,4 @@
-Last updated: 2026-07-31T23:11:39Z (UTC)
+Last updated: 2026-07-31T23:25:19Z (UTC)
 Created: 2026-07-31
 Status: active
 Execution log: semantic-plan-catalog-coordination_execution_log.md
@@ -6,6 +6,29 @@ Execution log: semantic-plan-catalog-coordination_execution_log.md
 # Document Header
 
 ## Semantic Plan Catalog And Branch-Aware Coordination Implementation Plan
+
+<!-- BEGIN CODEHEART PLAN METADATA -->
+```yaml
+plan:
+    capabilities:
+        - semantic-plan-catalog
+    catalog_metadata_updated: "2026-07-31T23:16:16Z"
+    first_cataloged: "2026-07-31T23:16:16Z"
+    id: codeheart-operating-kit.implementation.semantic-plan-catalog-coordination
+    kind: implementation
+    legacy_aliases:
+        - OK-PR-028
+    products:
+        - codeheart-operating-kit
+    purpose: Implement semantic plan metadata, guarded migration, branch-aware coordination, managed UX, and an approval-gated release.
+    relations:
+        - kind: depends-on
+          target: codeheart-operating-kit.discovery.semantic-plan-catalog-coordination
+    schema_version: 1
+    strategic_themes:
+        - cohesive-product-planning
+```
+<!-- END CODEHEART PLAN METADATA -->
 
 Overview: Implement the approved semantic plan-catalog model as a compatibility migration inside
 the self-contained Operating Kit. Canonical discovery, implementation, and family documents gain
@@ -1531,26 +1554,26 @@ branch after source hashes stabilize.
 
 - [x] Create the plan-scoped execution log before migration evidence is collected.
 - [ ] Run `codeheart-operating-kit plans inventory --remote-overlays --output docs/repo/plans/semantic-plan-catalog-coordination/attachments/producer-plan-migration-inventory.json .` from the producer work branch.
-- [ ] Reconcile every inventory record against `docs/repo/plans/plan-register.md`, sibling documents, execution evidence, and current lifecycle headers.
-- [ ] Assign one stable semantic ID, kind, purpose, first-cataloged time, catalog-update time, and legacy alias set to every formal record.
-- [ ] Record evidence-backed family, product, capability, theme, and relation values in `producer-plan-migration-ledger.yaml`.
-- [ ] Record omitted optional classifications, ambiguity, confidence, branch owner, conflicts, and deferrals in `producer-plan-migration-ledger.yaml`.
-- [ ] Validate the completed ledger against `schemas/plan-migration-ledger.schema.json`.
-- [ ] Recheck source revisions, byte hashes, dirty overlap, and active-branch ownership immediately before the dry run.
-- [ ] Run `codeheart-operating-kit plans migrate --ledger docs/repo/plans/semantic-plan-catalog-coordination/attachments/producer-plan-migration-ledger.yaml --dry-run .`.
-- [ ] Review every planned write, skip, blocker, preserved header value, and unrelated-file exclusion from the dry-run result.
-- [ ] Inspect the existing `.codeheart/kit.config.yaml` path, preserve untracked and dirty user content, and block on conflicting portfolio identity before adoption.
-- [ ] Adopt `.codeheart/kit.config.yaml` as shared tracked producer configuration with the approved stable repository identity and `plan_catalog_mode: mixed`.
-- [ ] Apply the reviewed ledger with `codeheart-operating-kit plans migrate --ledger docs/repo/plans/semantic-plan-catalog-coordination/attachments/producer-plan-migration-ledger.yaml --yes .`.
-- [ ] Add the frozen-authority and generated-listing notice to `docs/repo/plans/plan-register.md` without deleting historical entries.
+- [x] Reconcile every inventory record against `docs/repo/plans/plan-register.md`, sibling documents, execution evidence, and current lifecycle headers.
+- [x] Assign one stable semantic ID, kind, purpose, first-cataloged time, catalog-update time, and legacy alias set to every formal record.
+- [x] Record evidence-backed family, product, capability, theme, and relation values in `producer-plan-migration-ledger.yaml`.
+- [x] Record omitted optional classifications, ambiguity, confidence, branch owner, conflicts, and deferrals in `producer-plan-migration-ledger.yaml`.
+- [x] Validate the completed ledger against `schemas/plan-migration-ledger.schema.json`.
+- [x] Recheck source revisions, byte hashes, dirty overlap, and active-branch ownership immediately before the dry run.
+- [x] Run `codeheart-operating-kit plans migrate --ledger docs/repo/plans/semantic-plan-catalog-coordination/attachments/producer-plan-migration-ledger.yaml --dry-run .`.
+- [x] Review every planned write, skip, blocker, preserved header value, and unrelated-file exclusion from the dry-run result.
+- [x] Inspect the existing `.codeheart/kit.config.yaml` path, preserve untracked and dirty user content, and block on conflicting portfolio identity before adoption.
+- [x] Adopt `.codeheart/kit.config.yaml` as shared tracked producer configuration with the approved stable repository identity and `plan_catalog_mode: mixed`.
+- [x] Apply the reviewed ledger with `codeheart-operating-kit plans migrate --ledger docs/repo/plans/semantic-plan-catalog-coordination/attachments/producer-plan-migration-ledger.yaml --yes .`.
+- [x] Add the frozen-authority and generated-listing notice to `docs/repo/plans/plan-register.md` without deleting historical entries.
 - [ ] Re-run remote-overlay inventory and semantically review every record created, changed, skipped, and deferred during the migration window.
-- [ ] Assign contested plan migration to each current branch owner and record the resulting source evidence in the ledger.
-- [ ] Apply reviewed reconciliation entries with the same guarded migration command.
+- [x] Assign contested plan migration to each current branch owner and record the resulting source evidence in the ledger.
+- [x] Apply reviewed reconciliation entries with the same guarded migration command.
 - [ ] Run `codeheart-operating-kit plans validate --remote-overlays .` in mixed mode and resolve every canonical-record blocker.
 - [ ] Change producer catalog mode from `mixed` to `canonical` after default and active-overlay coverage passes.
 - [ ] Run `codeheart-operating-kit plans validate --remote-overlays .` and `codeheart-operating-kit plans list --format json .` in canonical mode.
-- [ ] Re-run the migration apply and record the zero-change idempotency result.
-- [ ] Run `python3 scripts/validate-public-core.py` across the migrated repository and record the result.
+- [x] Re-run the migration apply and record the zero-change idempotency result.
+- [x] Run `python3 scripts/validate-public-core.py` across the migrated repository and record the result.
 
 ### G) Implementation Notes
 
@@ -1576,11 +1599,11 @@ branch after source hashes stabilize.
 
 ### Validation Tasks
 
-- [ ] Prove the inventory count equals canonical discovery, implementation, and qualifying family record counts.
-- [ ] Prove every migrated legacy register ID resolves to exactly one canonical record alias, with each exception recorded as a documented ambiguity.
-- [ ] Prove all metadata-only changes preserve pre-migration content-update header values.
+- [x] Prove the inventory count equals canonical discovery, implementation, and qualifying family record counts.
+- [x] Prove every migrated legacy register ID resolves to exactly one canonical record alias, with each exception recorded as a documented ambiguity.
+- [x] Prove all metadata-only changes preserve pre-migration content-update header values.
 - [ ] Prove `plans validate --remote-overlays` covers the default branch and every accessible active plan-changing branch before canonical cutover.
-- [ ] Prove a second migration apply produces zero canonical plan changes.
+- [x] Prove a second migration apply produces zero canonical plan changes.
 
 ## EP-06 - Integrated Validation And Release-Candidate Handoff
 

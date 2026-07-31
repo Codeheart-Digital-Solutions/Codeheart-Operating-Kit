@@ -8,6 +8,26 @@ Execution log: plan-register-session-lifecycle-hardening_execution_log.md
 
 ## Plan Register Session And Lifecycle Hardening Implementation Plan
 
+<!-- BEGIN CODEHEART PLAN METADATA -->
+```yaml
+plan:
+    capabilities:
+        - plan-lifecycle
+    catalog_metadata_updated: "2026-07-31T23:16:16Z"
+    first_cataloged: "2026-07-31T23:16:16Z"
+    id: codeheart-operating-kit.implementation.plan-register-session-lifecycle-hardening
+    kind: implementation
+    legacy_aliases:
+        - OK-PR-001
+    products:
+        - codeheart-operating-kit
+    purpose: Make plan-register session references self-contained and lifecycle grouping consistent.
+    schema_version: 1
+    strategic_themes:
+        - traceable-planning
+```
+<!-- END CODEHEART PLAN METADATA -->
+
 This implementation plan hardens the Operating Kit plan-register doctrine after the first
 `v0.1.5` consumer rollout exposed two gaps:
 

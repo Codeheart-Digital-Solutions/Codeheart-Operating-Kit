@@ -9,6 +9,29 @@ Execution log:
 
 ## Runbook-To-Script Promotion Standard Implementation Plan
 
+<!-- BEGIN CODEHEART PLAN METADATA -->
+```yaml
+plan:
+    capabilities:
+        - script-promotion
+    catalog_metadata_updated: "2026-07-31T23:16:16Z"
+    first_cataloged: "2026-07-31T23:16:16Z"
+    id: codeheart-operating-kit.implementation.runbook-to-script-promotion-standard
+    kind: implementation
+    legacy_aliases:
+        - OK-PR-022
+    products:
+        - codeheart-operating-kit
+    purpose: Implement doctrine for promoting repeated runbook mechanics without premature broad automation.
+    relations:
+        - kind: depends-on
+          target: codeheart-operating-kit.discovery.runbook-to-script-promotion-standard
+    schema_version: 1
+    strategic_themes:
+        - automation-governance
+```
+<!-- END CODEHEART PLAN METADATA -->
+
 Overview: Implement the accepted Operating Kit doctrine for promoting fragile, repeated, or
 evidence-bearing runbook mechanics into reusable script assets without turning whole runbooks into
 premature CLIs, APIs, or broad automation wrappers. The implementation adds a managed reference,

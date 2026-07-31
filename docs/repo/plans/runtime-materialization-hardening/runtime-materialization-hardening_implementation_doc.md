@@ -7,6 +7,26 @@ Execution log: runtime-materialization-hardening_execution_log.md
 
 ## Consumer Runtime Materialization And Terminal Handoff Hardening Implementation Plan
 
+<!-- BEGIN CODEHEART PLAN METADATA -->
+```yaml
+plan:
+    capabilities:
+        - runtime-materialization
+    catalog_metadata_updated: "2026-07-31T23:16:16Z"
+    first_cataloged: "2026-07-31T23:16:16Z"
+    id: codeheart-operating-kit.implementation.runtime-materialization-hardening
+    kind: implementation
+    legacy_aliases:
+        - OK-PR-017
+    products:
+        - codeheart-operating-kit
+    purpose: Materialize consumer runtime tooling into ignored local state without editable links or global mutation.
+    schema_version: 1
+    strategic_themes:
+        - runtime-integrity
+```
+<!-- END CODEHEART PLAN METADATA -->
+
 Overview: Harden the Operating Kit local tooling standard so consumer-mode runtime tooling is
 materialized from durable module or package content without editable development links, generated
 install metadata in managed snapshots, or mutation of global runtimes. The durable placement for

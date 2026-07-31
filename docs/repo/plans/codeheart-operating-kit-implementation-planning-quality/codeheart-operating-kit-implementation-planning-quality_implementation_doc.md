@@ -6,6 +6,26 @@ Execution log: docs/repo/plans/codeheart-operating-kit-implementation-planning-q
 
 # Document Header
 
+<!-- BEGIN CODEHEART PLAN METADATA -->
+```yaml
+plan:
+    capabilities:
+        - planning-workflows
+    catalog_metadata_updated: "2026-07-31T23:16:16Z"
+    first_cataloged: "2026-07-31T23:16:16Z"
+    id: codeheart-operating-kit.implementation.implementation-planning-quality
+    kind: implementation
+    legacy_aliases:
+        - OK-PR-002
+    products:
+        - codeheart-operating-kit
+    purpose: Preserve intended feature capability across discovery, implementation planning, review, and execution workflows.
+    schema_version: 1
+    strategic_themes:
+        - capability-preservation
+```
+<!-- END CODEHEART PLAN METADATA -->
+
 This draft implementation plan turns the completed implementation-planning quality discovery into
 a source-repository change plan for Codeheart Operating Kit. The plan targets the reusable managed
 planning workflow runbooks in this `Codeheart-Operating-Kit` source repository. It does not

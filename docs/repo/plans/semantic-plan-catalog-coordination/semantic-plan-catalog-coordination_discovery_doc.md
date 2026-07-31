@@ -4,6 +4,29 @@ Status: draft
 
 # Semantic Plan Catalog And Branch-Aware Coordination Discovery
 
+<!-- BEGIN CODEHEART PLAN METADATA -->
+```yaml
+plan:
+    capabilities:
+        - semantic-plan-catalog
+    catalog_metadata_updated: "2026-07-31T23:16:16Z"
+    first_cataloged: "2026-07-31T23:16:16Z"
+    id: codeheart-operating-kit.discovery.semantic-plan-catalog-coordination
+    kind: discovery
+    legacy_aliases:
+        - OK-PR-027
+    products:
+        - codeheart-operating-kit
+    purpose: Define semantic plan identity, generated views, branch-aware portfolio facts, and resilient compatibility migration.
+    relations:
+        - kind: related
+          target: codeheart-operating-kit.implementation.semantic-plan-catalog-coordination
+    schema_version: 1
+    strategic_themes:
+        - cohesive-product-planning
+```
+<!-- END CODEHEART PLAN METADATA -->
+
 ## Overview
 
 This discovery re-evaluates the Operating Kit plan-register model after practical use exposed

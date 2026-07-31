@@ -1,4 +1,4 @@
-Last updated: 2026-07-31T23:11:39Z (UTC)
+Last updated: 2026-07-31T23:25:19Z (UTC)
 Created: 2026-07-31
 
 # Semantic Plan Catalog And Branch-Aware Coordination Execution Log
@@ -913,7 +913,8 @@ Status: completed and accepted in review round three.
 
 ## EP-05 Delta - Producer Semantic Migration And Catalog Cutover
 
-Status: active; legacy baseline preparation in progress.
+Status: active; all 33 local records are canonical in mixed mode, with remote/default-branch
+coverage and canonical cutover pending default-branch enrollment.
 
 - Safe sequence correction: the task list originally placed the frozen-register notice after mixed
   adoption. The implemented runtime requires current register bytes to match the exact legacy
@@ -931,6 +932,44 @@ Status: active; legacy baseline preparation in progress.
 - Pre-baseline validation: source CLI validation found 33 formal records, all valid in legacy mode,
   with expected metadata/title-layout warnings and the documented unpaired `OK-PR-014` evidence.
   JSON schemas, Markdown headers, public-core hygiene, and planning-surface diff checks passed.
+- Baseline checkpoint: committed and normally pushed planning/configuration-only commit
+  `3b134a07b806d1522e7cf76fe52e2028d79155c2`. It contains the frozen register, valid legacy config,
+  active plan, and execution log; source implementation and unrelated untracked files remain
+  outside the checkpoint.
+- Remote-overlay preflight: the source CLI enumerated all 33 local records but correctly returned
+  incomplete remote coverage because `origin`'s default branch does not yet contain portfolio-v2
+  enrollment. The failed artifact contained a local source locator, so it was retained only under
+  `/private/tmp` and was not committed to this public repository. No membership rule was weakened
+  and no current-completeness claim was made.
+- Local migration inventory: the committed plan-scoped inventory records exact baseline revision
+  `3b134a07b806d1522e7cf76fe52e2028d79155c2`, 21 implementation records, 12 discovery records, no
+  qualifying family README, 33 legacy records, and unpaired historical evidence `OK-PR-014`.
+- Semantic review: reviewed every canonical document against its own content, sibling records,
+  legacy register evidence, lifecycle, source hash, and branch ownership. The ledger assigns 33
+  stable semantic IDs, public product/capability/theme classifications, evidence-backed sibling
+  relations, 27 unique aliases without duplication, and no unsupported family classification.
+  Combined `OK-PR-025` and `OK-PR-026` rows retain their alias only on the implementation record;
+  the discoveries remain separately addressable. Plans without a register row receive no invented
+  alias.
+- Mixed adoption: set `plan_catalog_cutover_revision` to the exact baseline and entered mixed mode.
+  Pre-apply validation reported the four expected unregistered legacy records as transient mixed
+  blockers; the reviewed migration plan contained guarded writes for all four and no blocker. The
+  dry run planned exactly 32 replacements and deferred only the active branch-owned implementation
+  plan.
+- Guarded apply: `plans migrate --yes --json` transaction
+  `117ec086a8a4436a9208a7ed709c65ba` applied all 32 unchanged records with staged-state,
+  post-check, transaction-cleanup, and marker-cleanup validation. The current branch owner then
+  inserted the reviewed metadata for the active implementation plan and reconciled its ledger
+  evidence without changing the metadata decision.
+- Local closure evidence: mixed validation is valid for all 33 canonical records. A second dry run
+  and apply returned zero changes and 33 `already_applied` outcomes. All 33 IDs are unique; the 27
+  assigned aliases are unique. Metadata-only changes preserved every historical `Last updated`
+  line byte-for-byte; the active implementation plan's later checklist progress is a separate
+  meaningful content change. JSON-schema, Markdown-header, public-core, and diff validation passed.
+- Remaining gate: remote overlay validation cannot succeed until the repository's portfolio-v2
+  enrollment exists on the actual default branch. Therefore the producer remains mixed and no
+  canonical-cutover checkbox is claimed. Default-branch integration is a repository-governance
+  action outside the current plan-only push authority.
 
 ## EP-06 Delta - Integrated Validation And Release-Candidate Handoff
 

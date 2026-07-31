@@ -8,6 +8,27 @@ Execution log: docs/repo/plans/portfolio-coordination-plan-register/portfolio-co
 
 ## Portfolio Coordination And Plan Register Implementation Plan
 
+<!-- BEGIN CODEHEART PLAN METADATA -->
+```yaml
+plan:
+    capabilities:
+        - portfolio-coordination
+    catalog_metadata_updated: "2026-07-31T23:16:16Z"
+    first_cataloged: "2026-07-31T23:16:16Z"
+    id: codeheart-operating-kit.implementation.portfolio-coordination-plan-register
+    kind: implementation
+    products:
+        - codeheart-operating-kit
+    purpose: Implement plan-register doctrine, optional portfolio configuration, consumer state, sync behavior, and validation.
+    relations:
+        - kind: depends-on
+          target: codeheart-operating-kit.discovery.portfolio-coordination-plan-register
+    schema_version: 1
+    strategic_themes:
+        - portfolio-coordination
+```
+<!-- END CODEHEART PLAN METADATA -->
+
 This implementation plan turns the reviewed discovery for portfolio coordination and plan-register
 doctrine into concrete Codeheart Operating Kit changes.
 

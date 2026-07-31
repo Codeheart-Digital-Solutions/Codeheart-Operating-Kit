@@ -4,6 +4,29 @@ Status: draft
 
 # Runbook Authoring Standards Discovery
 
+<!-- BEGIN CODEHEART PLAN METADATA -->
+```yaml
+plan:
+    capabilities:
+        - runbook-authoring
+    catalog_metadata_updated: "2026-07-31T23:16:16Z"
+    first_cataloged: "2026-07-31T23:16:16Z"
+    id: codeheart-operating-kit.discovery.runbook-authoring-standards
+    kind: discovery
+    legacy_aliases:
+        - OK-PR-005
+    products:
+        - codeheart-operating-kit
+    purpose: Define reusable quality standards for human-facing, agent-facing, hybrid, and maintainer runbooks.
+    relations:
+        - kind: related
+          target: codeheart-operating-kit.implementation.runbook-authoring-standards
+    schema_version: 1
+    strategic_themes:
+        - runbook-quality
+```
+<!-- END CODEHEART PLAN METADATA -->
+
 ## Overview
 
 This discovery investigates whether Codeheart Operating Kit should define reusable standards for
