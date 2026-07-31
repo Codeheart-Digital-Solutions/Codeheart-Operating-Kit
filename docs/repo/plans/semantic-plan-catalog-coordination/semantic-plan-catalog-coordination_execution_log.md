@@ -1,4 +1,4 @@
-Last updated: 2026-07-31T23:48:30Z (UTC)
+Last updated: 2026-07-31T23:50:52Z (UTC)
 Created: 2026-07-31
 
 # Semantic Plan Catalog And Branch-Aware Coordination Execution Log
@@ -1031,6 +1031,10 @@ before the `EP-05` default-branch gate and the later release-candidate authority
   version mutation, or release-candidate commit/push occurred. Because the validated worktree is
   not yet an immutable commit and `EP-05` remote/canonical closure is unresolved, no exact source
   revision is handed to `EP-07` yet.
+- Coordination visibility: bounded plan/evidence checkpoint
+  `a85bc2e0151f1d3d63d4999190c7a20810d24f22` was committed and normally pushed to
+  `codex/semantic-plan-catalog-coordination`. It contains only the active plan/log and plan-scoped
+  inventory, impact, and discovery-evidence attachments; implementation source remains local.
 
 ## EP-07 Delta - Version Bump, Reproducible Release, And Public Verification
 
