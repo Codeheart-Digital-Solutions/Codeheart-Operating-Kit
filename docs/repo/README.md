@@ -1,4 +1,4 @@
-Last updated: 2026-07-10T00:54:31Z (UTC)
+Last updated: 2026-07-31T10:59:19Z (UTC)
 
 # Repo Documentation
 
@@ -22,6 +22,19 @@ This folder contains public repository governance for Codeheart Operating Kit.
   issues.
 - `plans/README.md`: repository-level discovery and implementation plans.
 - `plans/plan-register.md`: lightweight index of registered Operating Kit repository plans.
+- `plans/semantic-plan-catalog-coordination/semantic-plan-catalog-coordination_discovery_doc.md`:
+  implementation-handoff-ready discovery for semantic plan identity, rich canonical metadata,
+  automatic config-driven portfolio discovery, on-demand source refresh, default-branch baselines,
+  changed-plan branch overlays, reusable coordination-home setup, activation publication, and
+  parallel semantic migration.
+- `plans/semantic-plan-catalog-coordination/semantic-plan-catalog-coordination_implementation_doc.md`:
+  active seven-epic compatibility implementation for canonical plan contracts, derived local views,
+  guarded semantic migration, config-driven portfolio discovery, branch-aware scanning, managed
+  coordination UX, activation publication, producer cutover, cross-platform proof, dynamic patch
+  versioning, and approval-gated public release verification.
+- `plans/semantic-plan-catalog-coordination/semantic-plan-catalog-coordination_execution_log.md`:
+  active execution evidence, divergence, review-gate results, migration evidence, and release
+  handoff for the semantic plan catalog implementation.
 - `plans/operating-kit-state-release-architecture/operating-kit-state-release-architecture_discovery_doc.md`:
   completed discovery for consumer lifecycle commands, desired-state authority, schema
   enforcement, transactional reconciliation, release provenance, reproducibility, and

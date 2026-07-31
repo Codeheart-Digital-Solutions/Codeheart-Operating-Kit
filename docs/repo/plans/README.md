@@ -1,4 +1,4 @@
-Last updated: 2026-07-09T23:56:33Z (UTC)
+Last updated: 2026-07-31T10:59:19Z (UTC)
 
 # Repo Plans
 
@@ -7,6 +7,12 @@ This folder contains Codeheart Operating Kit repository-level discovery and impl
 ## Current Plans
 
 - Plan register: `plan-register.md`
+- Semantic plan catalog and branch-aware coordination discovery:
+  `semantic-plan-catalog-coordination/semantic-plan-catalog-coordination_discovery_doc.md`
+- Semantic plan catalog and branch-aware coordination implementation and release plan:
+  `semantic-plan-catalog-coordination/semantic-plan-catalog-coordination_implementation_doc.md`
+- Semantic plan catalog and branch-aware coordination execution log:
+  `semantic-plan-catalog-coordination/semantic-plan-catalog-coordination_execution_log.md`
 - Operating Kit state and release architecture discovery:
   `operating-kit-state-release-architecture/operating-kit-state-release-architecture_discovery_doc.md`
 - Operating Kit state and release architecture implementation plan:
