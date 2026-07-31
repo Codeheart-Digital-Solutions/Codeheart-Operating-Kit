@@ -1,4 +1,4 @@
-Last updated: 2026-07-31T10:59:19Z (UTC)
+Last updated: 2026-07-31T23:08:19Z (UTC)
 
 # Plan Register
 
@@ -12,6 +12,9 @@ entries.
 Follow `.codeheart/kit/docs/planning-workflows/reference/plan-register-format.md` for entry
 fields and `.codeheart/kit/docs/planning-workflows/runbooks/maintain-plan-register.md` for
 maintenance.
+
+> Frozen legacy evidence: current plan authority is derived from canonical plan metadata and
+> `codeheart-operating-kit plans list`. Do not append or renumber entries after mixed cutover.
 
 ## Register Coverage
 

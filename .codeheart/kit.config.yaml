@@ -1,0 +1,17 @@
+schema_version: 1
+selected_profile: standard
+project_display_name: Codeheart-Operating-Kit
+selected_setup_folder: .
+local_consumer_layer:
+  repo_docs_path: docs/repo/
+  agent_memory_path: docs/agent-memory/
+  user_layer_path: .codeheart/user/
+  local_machine_layer_path: .codeheart/local/
+component_settings:
+  planning-workflows:
+    plan_catalog_mode: legacy
+portfolio:
+  schema_version: 2
+  role: member
+  member_repository_id: codeheart-operating-kit
+  coordination_home_id: codeheart-hq

@@ -1,4 +1,4 @@
-Last updated: 2026-07-31T10:59:19Z (UTC)
+Last updated: 2026-07-31T23:11:39Z (UTC)
 Created: 2026-07-31
 Status: active
 Execution log: semantic-plan-catalog-coordination_execution_log.md
@@ -352,6 +352,7 @@ Expected consumer-owned and local-machine surfaces:
     portfolio.member_repository_id: <stable-id>
     portfolio.coordination_home_id: <stable-home-id>
     component_settings.planning-workflows.plan_catalog_mode: <legacy|mixed|canonical>
+    component_settings.planning-workflows.plan_catalog_cutover_revision: <pre-cutover-git-commit> # required in mixed mode
   docs/repo/plans/
     <plan-family>/
       <slug>_discovery_doc.md                         # canonical discovery metadata
@@ -526,6 +527,8 @@ Assumptions:
   `coordination_home_id` and automatically catalogs its own repository;
 - absent `component_settings.planning-workflows.plan_catalog_mode` means `legacy`;
 - `mixed` accepts metadata plus legacy fallback and requires metadata on newly authored plans;
+- `mixed` records the exact pre-cutover Git revision so grandfathered plan paths and the frozen
+  register are provenance-backed rather than inferred from mutable current entries;
 - `canonical` rejects missing metadata for every formal discovery, implementation, and family
   record in scope;
 - family authority remains `README.md` only after the current second-sibling trigger is met;
@@ -611,7 +614,8 @@ ambiguous and risks a long dual-write period.
 Simplest working solution: define
 `component_settings.planning-workflows.plan_catalog_mode` with `legacy`, `mixed`, and `canonical`.
 Absence means `legacy`; `mixed` stops manual appends and enforces metadata for new plans while
-reading old evidence; `canonical` requires complete metadata coverage.
+reading old evidence proven by `plan_catalog_cutover_revision`; `canonical` requires complete
+metadata coverage.
 
 Six-to-twelve-month change: a future mode may require stronger controlled vocabularies without
 altering current repository state.
@@ -924,22 +928,22 @@ contract. Schema names and typed Go models must stabilize before downstream comm
 
 ### F) Tasks Checklist
 
-- [ ] Create `schemas/plan-metadata.schema.json` with the approved required core, optional strategic fields, exact kinds, relation shape, alias shape, and UTC catalog timestamp format.
-- [ ] Create `schemas/plan-catalog.schema.json` with member facts, independent source observations, Git visibility, verification, freshness, candidates, scan errors, and completeness fields.
-- [ ] Create `schemas/plan-migration-ledger.schema.json` with source revision, byte hash, semantic decision, evidence, confidence, ambiguity, aliases, conflicts, deferral, and branch-owner fields.
-- [ ] Create `schemas/portfolio-local-sources.schema.json` and `schemas/portfolio-strategic-overlay.schema.json` with strict public-safe field boundaries.
-- [ ] Extend `schemas/kit-config.schema.json` with portfolio-v2 role contracts, v1 compatibility, discovery sources, required repository identities for both roles, home identity, and planning-workflows catalog modes.
-- [ ] Add embedded schema constants and loaders in `internal/state/schema.go`.
-- [ ] Implement canonical record structs and deterministic ordering in `internal/plancatalog/model.go`.
-- [ ] Implement exact marker, YAML, lifecycle-header, and H1 extraction in `internal/plancatalog/metadata.go`.
-- [ ] Implement semantic ID parsing, ASCII normalization checks, transliteration diagnostics, and repository-identity ownership in `internal/plancatalog/identity.go`.
-- [ ] Implement canonical plan and family enumeration in `internal/plancatalog/discover.go`.
-- [ ] Implement schema, identity, relation, family, header, alias, and catalog-mode validation in `internal/plancatalog/validate.go`.
-- [ ] Add valid, invalid, renamed, same-ID, family, legacy, and mixed-mode fixtures under `tests/fixtures/plans/`.
-- [ ] Add v1, v2-member, v2-home-self-member, missing-home-repository-ID, mismatched-home, local-source, and strategic-overlay fixtures under `tests/fixtures/portfolio/`.
-- [ ] Extend `tests/test_json_schemas.py` with positive and negative instance tests for every new durable schema.
-- [ ] Run `go test ./internal/plancatalog ./internal/state` and record the result in the execution log.
-- [ ] Run `python3 scripts/validate-json-schemas.py` and record the result in the execution log.
+- [x] Create `schemas/plan-metadata.schema.json` with the approved required core, optional strategic fields, exact kinds, relation shape, alias shape, and UTC catalog timestamp format.
+- [x] Create `schemas/plan-catalog.schema.json` with member facts, independent source observations, Git visibility, verification, freshness, candidates, scan errors, and completeness fields.
+- [x] Create `schemas/plan-migration-ledger.schema.json` with source revision, byte hash, semantic decision, evidence, confidence, ambiguity, aliases, conflicts, deferral, and branch-owner fields.
+- [x] Create `schemas/portfolio-local-sources.schema.json` and `schemas/portfolio-strategic-overlay.schema.json` with strict public-safe field boundaries.
+- [x] Extend `schemas/kit-config.schema.json` with portfolio-v2 role contracts, v1 compatibility, discovery sources, required repository identities for both roles, home identity, and planning-workflows catalog modes.
+- [x] Add embedded schema constants and loaders in `internal/state/schema.go`.
+- [x] Implement canonical record structs and deterministic ordering in `internal/plancatalog/model.go`.
+- [x] Implement exact marker, YAML, lifecycle-header, and H1 extraction in `internal/plancatalog/metadata.go`.
+- [x] Implement semantic ID parsing, ASCII normalization checks, transliteration diagnostics, and repository-identity ownership in `internal/plancatalog/identity.go`.
+- [x] Implement canonical plan and family enumeration in `internal/plancatalog/discover.go`.
+- [x] Implement schema, identity, relation, family, header, alias, and catalog-mode validation in `internal/plancatalog/validate.go`.
+- [x] Add valid, invalid, renamed, same-ID, family, legacy, and mixed-mode fixtures under `tests/fixtures/plans/`.
+- [x] Add v1, v2-member, v2-home-self-member, missing-home-repository-ID, mismatched-home, local-source, and strategic-overlay fixtures under `tests/fixtures/portfolio/`.
+- [x] Extend `tests/test_json_schemas.py` with positive and negative instance tests for every new durable schema.
+- [x] Run `go test ./internal/plancatalog ./internal/state` and record the result in the execution log.
+- [x] Run `python3 scripts/validate-json-schemas.py` and record the result in the execution log.
 
 ### G) Implementation Notes
 
@@ -966,11 +970,11 @@ authority, and lifecycle separation.
 
 ### Validation Tasks
 
-- [ ] Prove metadata fixtures round-trip through typed parsing without changing canonical document bytes.
-- [ ] Prove parallel same-ID fixtures preserve separate ref and commit observations.
-- [ ] Prove existing config-v1 fixtures remain valid and portfolio-v1 objects remain readable.
-- [ ] Prove a coordination home validates and catalogs its own plans through its required repository identity.
-- [ ] Prove malformed metadata never falls back silently to legacy inference.
+- [x] Prove metadata fixtures round-trip through typed parsing without changing canonical document bytes.
+- [x] Prove parallel same-ID fixtures preserve separate ref and commit observations.
+- [x] Prove existing config-v1 fixtures remain valid and portfolio-v1 objects remain readable.
+- [x] Prove a coordination home validates and catalogs its own plans through its required repository identity.
+- [x] Prove malformed metadata never falls back silently to legacy inference.
 
 ## EP-02 - Local Catalog Views And Guarded Migration Mechanics
 
@@ -1015,6 +1019,9 @@ Out of scope:
 - `internal/cli/cli.go`
 - `internal/cli/cli_test.go`
 - `internal/reconcile/plan.go`
+- `internal/reconcile/transaction.go`
+- `internal/reconcile/reconcile_test.go`
+- `go.mod`
 - `tests/fixtures/plans/`
 
 ### D) Acceptance Criteria And Size
@@ -1038,6 +1045,8 @@ Acceptance criteria:
 - concurrent change, active-branch ownership, ambiguous evidence, invalid target placement, and
   unrelated dirty-file conditions produce skips or blockers without overwrite;
 - a failed multi-file apply rolls back every change made by the command;
+- transaction staging, backup, quarantine, and rollback mutations remain bound to the opened
+  repository and target-parent handles even when path components are concurrently replaced;
 - repeated apply is idempotent;
 - a catalog-only insertion preserves the original `Last updated` value;
 - `mixed` mode enforces metadata for new plans and stops manual register append instructions while
@@ -1051,21 +1060,22 @@ managed migration runbook and producer migration are authored as executable inst
 
 ### F) Tasks Checklist
 
-- [ ] Implement legacy register entry parsing and canonical-path reconciliation in `internal/plancatalog/legacy.go`.
-- [ ] Implement deterministic text and JSON local views in `internal/plancatalog/view.go`.
-- [ ] Implement Git revision, byte-hash, branch-touch, coverage, and legacy-gap inventory in `internal/plancatalog/inventory.go`.
-- [ ] Implement schema-validated ledger loading and optimistic precondition evaluation in `internal/plancatalog/migrate.go`.
-- [ ] Implement marker-bounded metadata insertion that preserves existing header bytes and meaningful content dates.
-- [ ] Implement idempotent multi-file migration through `internal/reconcile` staging, containment, rollback, and result types.
-- [ ] Implement grouped `plans validate`, `plans list`, `plans inventory`, and `plans migrate` dispatch in `internal/commands/plans.go`.
-- [ ] Extend `internal/cli/cli.go` with `plans` group help, subcommand help, argument errors, and exit-code routing.
-- [ ] Add mode enforcement for `legacy`, `mixed`, and `canonical` repository states.
-- [ ] Add stable blocker codes for malformed metadata, ambiguous legacy evidence, source mismatch, active-branch ownership, dirty overlap, invalid ledger, incomplete coverage, and rollback failure.
-- [ ] Add golden command-output tests in `internal/commands/commands_test.go`.
-- [ ] Add grouped help and invalid-subcommand tests in `internal/cli/cli_test.go`.
-- [ ] Add dry-run, idempotency, concurrent-edit, active-branch, dirty-file, rollback, chronology, and canonical-coverage fixtures under `tests/fixtures/plans/`.
-- [ ] Run `go test ./internal/plancatalog ./internal/commands ./internal/cli ./internal/reconcile` and record the result in the execution log.
-- [ ] Run a temporary-repository migration simulation and record the before-hash, after-hash, preserved content date, and second-run result.
+- [x] Implement legacy register entry parsing and canonical-path reconciliation in `internal/plancatalog/legacy.go`.
+- [x] Implement deterministic text and JSON local views in `internal/plancatalog/view.go`.
+- [x] Implement Git revision, byte-hash, branch-touch, coverage, and legacy-gap inventory in `internal/plancatalog/inventory.go`.
+- [x] Implement schema-validated ledger loading and optimistic precondition evaluation in `internal/plancatalog/migrate.go`.
+- [x] Implement marker-bounded metadata insertion that preserves existing header bytes and meaningful content dates.
+- [x] Implement idempotent multi-file migration through `internal/reconcile` staging, containment, rollback, and result types.
+- [x] Implement grouped `plans validate`, `plans list`, `plans inventory`, and `plans migrate` dispatch in `internal/commands/plans.go`.
+- [x] Extend `internal/cli/cli.go` with `plans` group help, subcommand help, argument errors, and exit-code routing.
+- [x] Add mode enforcement for `legacy`, `mixed`, and `canonical` repository states.
+- [x] Add stable blocker codes for malformed metadata, ambiguous legacy evidence, source mismatch, active-branch ownership, dirty overlap, invalid ledger, incomplete coverage, and rollback failure.
+- [x] Add golden command-output tests in `internal/commands/commands_test.go`.
+- [x] Add grouped help and invalid-subcommand tests in `internal/cli/cli_test.go`.
+- [x] Add dry-run, idempotency, concurrent-edit, active-branch, dirty-file, rollback, chronology, and canonical-coverage fixtures under `tests/fixtures/plans/`.
+- [x] Raise the source-build floor to Go 1.25 and use `os.Root` handle-relative operations for transaction containment and rollback.
+- [x] Run `go test ./internal/plancatalog ./internal/commands ./internal/cli ./internal/reconcile` and record the result in the execution log.
+- [x] Run a temporary-repository migration simulation and record the before-hash, after-hash, preserved content date, and second-run result.
 
 ### G) Implementation Notes
 
@@ -1089,10 +1099,12 @@ managed migration runbook and producer migration are authored as executable inst
 
 ### Validation Tasks
 
-- [ ] Prove mixed views contain metadata records and legacy-only records without duplicate canonical paths.
-- [ ] Prove changed source hashes and overlapping dirty plans produce zero canonical writes.
-- [ ] Prove rollback restores byte-identical plan files after an injected migration failure.
-- [ ] Prove canonical mode rejects one missing formal record and passes after its reviewed ledger entry applies.
+- [x] Prove mixed views contain metadata records and legacy-only records without duplicate canonical paths.
+- [x] Prove changed source hashes and overlapping dirty plans produce zero canonical writes.
+- [x] Prove rollback restores byte-identical plan files after an injected migration failure.
+- [x] Prove concurrent parent replacement cannot redirect transaction artifacts, backup,
+  quarantine, restoration, or cleanup outside the opened repository and parent handles.
+- [x] Prove canonical mode rejects one missing formal record and passes after its reviewed ledger entry applies.
 
 ## EP-03 - Config-Driven Portfolio Discovery And Branch-Aware Scanning
 
@@ -1214,25 +1226,25 @@ instructions in `EP-04` wait for command names, preflight, blockers, and output 
 
 ### F) Tasks Checklist
 
-- [ ] Implement portfolio-v1 and portfolio-v2 loading with normalized role, identity, source, and compatibility records in `internal/portfolio/config.go`.
-- [ ] Implement exact default-branch membership, home self-membership, candidate, mismatch, and exclusion decisions in `internal/portfolio/membership.go`.
-- [ ] Define provider-neutral repository, ref, file, merge-base, change, and enrichment interfaces in `internal/portfolio/source.go`.
-- [ ] Implement scanner-owned bare-mirror creation, authenticated fetch, ref prune, remote-only ref namespace, and atomic refresh in `internal/portfolio/mirror.go`.
-- [ ] Implement bounded direct-argument remote discovery and bare-object content reads in `internal/portfolio/localgit.go`.
-- [ ] Implement `gh auth status` preflight, complete paginated read-only discovery, truncation detection, three-attempt transient retry, rate-limit blockers, and redacted diagnostics in `internal/portfolio/github.go`.
-- [ ] Implement default-baseline collection, unmerged-branch enumeration, merge-base filtering, observation assembly, conflict detection, staleness, and retirement in `internal/portfolio/scanner.go`.
-- [ ] Implement strategic-overlay validation and immutable preservation in `internal/portfolio/overlay.go`.
-- [ ] Implement atomic complete-cache replacement and incomplete-scan preservation in `internal/portfolio/store.go`.
-- [ ] Implement repeatable `--github-owner` and `--local-root` argument parsing without changing existing single-value command behavior in `internal/commands/util.go`.
-- [ ] Implement role-specific `portfolio configure` inputs, deterministic placement, matching-value idempotency, and conflicting-identity blockers in `internal/commands/portfolio.go`.
-- [ ] Implement `portfolio scan` text and JSON results in `internal/commands/portfolio.go`.
-- [ ] Extend `plans validate` and `plans inventory` with `--remote-overlays` through the shared portfolio source engine in `internal/commands/plans.go`.
-- [ ] Extend `internal/cli/cli.go` with `portfolio` group help, subcommand help, argument errors, and exit-code routing.
-- [ ] Add fake-Git and fake-`gh` fixtures for bare-mirror refresh, stale local refs, local-only branches, default branches, multiple unmerged branches, pagination, truncation, retry exhaustion, rate limiting, PR enrichment, merged refs, deleted refs, auth failure, access failure, and command cancellation.
-- [ ] Add configuration and false-enrollment fixtures for repeatable sources, matching reruns, conflicting identities, home self-membership, branch-only config, missing Kit markers, missing stable identity, mismatched home identity, and provider-visible unrelated repositories.
-- [ ] Add cache-integrity tests for success, incomplete scan, interrupted write, strategic-overlay preservation, and deterministic ordering.
-- [ ] Run `go test ./internal/portfolio ./internal/plancatalog ./internal/commands ./internal/cli` and record the result in the execution log.
-- [ ] Run local multi-repository fixture scans on macOS and Windows through `.github/workflows/validate.yml`.
+- [x] Implement portfolio-v1 and portfolio-v2 loading with normalized role, identity, source, and compatibility records in `internal/portfolio/config.go`.
+- [x] Implement exact default-branch membership, home self-membership, candidate, mismatch, and exclusion decisions in `internal/portfolio/membership.go`.
+- [x] Define provider-neutral repository, ref, file, merge-base, change, and enrichment interfaces in `internal/portfolio/source.go`.
+- [x] Implement scanner-owned bare-mirror creation, authenticated fetch, ref prune, remote-only ref namespace, and atomic refresh in `internal/portfolio/mirror.go`.
+- [x] Implement bounded direct-argument remote discovery and bare-object content reads in `internal/portfolio/localgit.go`.
+- [x] Implement `gh auth status` preflight, complete paginated read-only discovery, truncation detection, three-attempt transient retry, rate-limit blockers, and redacted diagnostics in `internal/portfolio/github.go`.
+- [x] Implement default-baseline collection, unmerged-branch enumeration, merge-base filtering, observation assembly, conflict detection, staleness, and retirement in `internal/portfolio/scanner.go`.
+- [x] Implement strategic-overlay validation and immutable preservation in `internal/portfolio/overlay.go`.
+- [x] Implement atomic complete-cache replacement and incomplete-scan preservation in `internal/portfolio/store.go`.
+- [x] Implement repeatable `--github-owner` and `--local-root` argument parsing without changing existing single-value command behavior in `internal/commands/util.go`.
+- [x] Implement role-specific `portfolio configure` inputs, deterministic placement, matching-value idempotency, and conflicting-identity blockers in `internal/commands/portfolio.go`.
+- [x] Implement `portfolio scan` text and JSON results in `internal/commands/portfolio.go`.
+- [x] Extend `plans validate` and `plans inventory` with `--remote-overlays` through the shared portfolio source engine in `internal/commands/plans.go`.
+- [x] Extend `internal/cli/cli.go` with `portfolio` group help, subcommand help, argument errors, and exit-code routing.
+- [x] Add fake-Git and fake-`gh` fixtures for bare-mirror refresh, stale local refs, local-only branches, default branches, multiple unmerged branches, pagination, truncation, retry exhaustion, rate limiting, PR enrichment, merged refs, deleted refs, auth failure, access failure, and command cancellation.
+- [x] Add configuration and false-enrollment fixtures for repeatable sources, matching reruns, conflicting identities, home self-membership, branch-only config, missing Kit markers, missing stable identity, mismatched home identity, and provider-visible unrelated repositories.
+- [x] Add cache-integrity tests for success, incomplete scan, interrupted write, strategic-overlay preservation, and deterministic ordering.
+- [x] Run `go test ./internal/portfolio ./internal/plancatalog ./internal/commands ./internal/cli` and record the result in the execution log.
+- [x] Run local multi-repository fixture scans on macOS and Windows through `.github/workflows/validate.yml`.
 
 ### G) Implementation Notes
 
@@ -1261,14 +1273,14 @@ instructions in `EP-04` wait for command names, preflight, blockers, and output 
 
 ### Validation Tasks
 
-- [ ] Prove a large inherited baseline appears once while each changed branch plan appears as one independent observation.
-- [ ] Prove provider visibility alone never creates catalog membership.
-- [ ] Prove the coordination home appears once through self-membership and needs no self-registration source.
-- [ ] Prove stale local refs, local heads, worktree changes, and unpushed commits never appear as current remote observations.
-- [ ] Prove pagination, truncation, retry exhaustion, and rate-limit exhaustion prevent complete-cache replacement.
-- [ ] Prove a failed required-member scan preserves the prior complete cache byte-for-byte.
-- [ ] Prove adapter output and artifacts contain no secret-bearing environment value.
-- [ ] Prove strategic overlay bytes remain unchanged across successful and failed scans.
+- [x] Prove a large inherited baseline appears once while each changed branch plan appears as one independent observation.
+- [x] Prove provider visibility alone never creates catalog membership.
+- [x] Prove the coordination home appears once through self-membership and needs no self-registration source.
+- [x] Prove stale local refs, local heads, worktree changes, and unpushed commits never appear as current remote observations.
+- [x] Prove pagination, truncation, retry exhaustion, and rate-limit exhaustion prevent complete-cache replacement.
+- [x] Prove a failed required-member scan preserves the prior complete cache byte-for-byte.
+- [x] Prove adapter output and artifacts contain no secret-bearing environment value.
+- [x] Prove strategic overlay bytes remain unchanged across successful and failed scans.
 
 ## EP-04 - Managed Planning, Coordination, And Publication UX
 
@@ -1378,28 +1390,28 @@ behavior from `EP-03`. Doctrine must not speculate beyond implemented behavior.
 
 ### F) Tasks Checklist
 
-- [ ] Create `plan-catalog-format.md` with exact metadata markers, fields, IDs, kinds, relations, families, aliases, modes, observations, and compatibility examples.
-- [ ] Create `portfolio-coordination-format.md` with v1/v2 config, authorized scope, membership predicates, source ownership, candidates, cache, overlay, and freshness rules.
-- [ ] Update `planning-document-lifecycle.md` with separate record kinds, metadata authority, catalog modes, Git visibility, verification, and content chronology.
-- [ ] Update `plan-register-format.md` with stable-entry, legacy-evidence, generated-view, and no-manual-append behavior.
-- [ ] Update the discovery, implementation-planning, execution, and review runbooks with mode-aware metadata authoring and validation gates.
-- [ ] Add the activation and material-active-update plan-checkpoint publication contract to implementation-planning and execution runbooks.
-- [ ] Add explicit publication exclusions and stop conditions for ambiguous scope, auth failure, policy rejection, normal-push rejection, overlapping dirty work, and broader external actions.
-- [ ] Define L1 fresh-agent and L3 command validation tiers, non-secret evidence fields, blocker fields, and the no-L2-script promotion boundary in the new managed references and runbooks.
-- [ ] Replace manual catalog authority in `maintain-plan-register.md` with local view, legacy compatibility, cutover, and coordination routing.
-- [ ] Create `configure-portfolio-coordination.md` as one hybrid member/home setup recipe with paced identity and scope questions, exact flags, preview, user review, approved write, validation, and first scan.
-- [ ] Create `refresh-portfolio-catalog.md` as an agent-facing read recipe with preflight, freshness, completeness, failure disclosure, and strategic-overlay preservation.
-- [ ] Create `migrate-plan-catalog.md` as an agent-facing inventory, semantic review, dry-run, guarded apply, reevaluation, cutover, and closure recipe.
-- [ ] Update planning-workflows, agent-interface, fallback kit inventory routes, and `operation-routing-and-dispatch.md` with local-plan and portfolio selections.
-- [ ] Modify the fresh `plan-register.md` scaffold into a compact stable entry point.
-- [ ] Remove `coordination-sync-pending.md` from fresh component and profile generated surfaces while preserving existing consumer-owned copies and compatibility reads.
-- [ ] Create repo-owned `portfolio-README.md` and `portfolio-strategic-overlay.yaml` scaffolds with public-safe placeholders.
-- [ ] Update `components/planning-workflows/component.yaml`, `components/agent-interface/component.yaml`, `profiles/standard.yaml`, `templates/agents/AGENTS.managed-block.md`, and `templates/consumer-docs/repo/README.md` with exact new surfaces.
-- [ ] Update `docs/repo/reference/placement-contract.md` and `docs/repo/runbooks/change-operating-kit.md` with ownership and validation gates.
-- [ ] Synchronize every changed embedded source file into `src/codeheart_operating_kit/resources/`.
-- [ ] Extend `tests/test_packaging_resources.py` with every new managed and scaffold resource.
-- [ ] Extend `tests/test_routing.py` with low-context member authoring, coordination setup, refresh, migration, activation, and failed-publication scenarios.
-- [ ] Run focused managed-doc, routing, packaging, markdown-header, and public-core tests and record the result in the execution log.
+- [x] Create `plan-catalog-format.md` with exact metadata markers, fields, IDs, kinds, relations, families, aliases, modes, observations, and compatibility examples.
+- [x] Create `portfolio-coordination-format.md` with v1/v2 config, authorized scope, membership predicates, source ownership, candidates, cache, overlay, and freshness rules.
+- [x] Update `planning-document-lifecycle.md` with separate record kinds, metadata authority, catalog modes, Git visibility, verification, and content chronology.
+- [x] Update `plan-register-format.md` with stable-entry, legacy-evidence, generated-view, and no-manual-append behavior.
+- [x] Update the discovery, implementation-planning, execution, and review runbooks with mode-aware metadata authoring and validation gates.
+- [x] Add the activation and material-active-update plan-checkpoint publication contract to implementation-planning and execution runbooks.
+- [x] Add explicit publication exclusions and stop conditions for ambiguous scope, auth failure, policy rejection, normal-push rejection, overlapping dirty work, and broader external actions.
+- [x] Define L1 fresh-agent and L3 command validation tiers, non-secret evidence fields, blocker fields, and the no-L2-script promotion boundary in the new managed references and runbooks.
+- [x] Replace manual catalog authority in `maintain-plan-register.md` with local view, legacy compatibility, cutover, and coordination routing.
+- [x] Create `configure-portfolio-coordination.md` as one hybrid member/home setup recipe with paced identity and scope questions, exact flags, preview, user review, approved write, validation, and first scan.
+- [x] Create `refresh-portfolio-catalog.md` as an agent-facing read recipe with preflight, freshness, completeness, failure disclosure, and strategic-overlay preservation.
+- [x] Create `migrate-plan-catalog.md` as an agent-facing inventory, semantic review, dry-run, guarded apply, reevaluation, cutover, and closure recipe.
+- [x] Update planning-workflows, agent-interface, fallback kit inventory routes, and `operation-routing-and-dispatch.md` with local-plan and portfolio selections.
+- [x] Modify the fresh `plan-register.md` scaffold into a compact stable entry point.
+- [x] Remove `coordination-sync-pending.md` from fresh component and profile generated surfaces while preserving existing consumer-owned copies and compatibility reads.
+- [x] Create repo-owned `portfolio-README.md` and `portfolio-strategic-overlay.yaml` scaffolds with public-safe placeholders.
+- [x] Update `components/planning-workflows/component.yaml`, `components/agent-interface/component.yaml`, `profiles/standard.yaml`, `templates/agents/AGENTS.managed-block.md`, and `templates/consumer-docs/repo/README.md` with exact new surfaces.
+- [x] Update `docs/repo/reference/placement-contract.md` and `docs/repo/runbooks/change-operating-kit.md` with ownership and validation gates.
+- [x] Synchronize every changed embedded source file into `src/codeheart_operating_kit/resources/`.
+- [x] Extend `tests/test_packaging_resources.py` with every new managed and scaffold resource.
+- [x] Extend `tests/test_routing.py` with low-context member authoring, coordination setup, refresh, migration, activation, and failed-publication scenarios.
+- [x] Run focused managed-doc, routing, packaging, markdown-header, and public-core tests and record the result in the execution log.
 
 ### G) Implementation Notes
 
@@ -1426,12 +1438,12 @@ not doctrine gaps.
 
 ### Validation Tasks
 
-- [ ] Prove a fresh initialized fixture contains every new managed route and repo-owned scaffold without `coordination-sync-pending.md`.
-- [ ] Prove an existing consumer-owned `coordination-sync-pending.md` survives sync and remains readable as compatibility evidence.
-- [ ] Prove a low-context agent selects refresh before current portfolio analysis and reports incomplete scans.
-- [ ] Prove activation wording grants one plan-only normal push and refuses every named broader action.
-- [ ] Prove source and packaged resource bytes match for every changed embedded file.
-- [ ] Prove public-core validation rejects private topology and credential examples in managed content.
+- [x] Prove a fresh initialized fixture contains every new managed route and repo-owned scaffold without `coordination-sync-pending.md`.
+- [x] Prove an existing consumer-owned `coordination-sync-pending.md` survives sync and remains readable as compatibility evidence.
+- [x] Prove a low-context agent selects refresh before current portfolio analysis and reports incomplete scans.
+- [x] Prove activation wording grants one plan-only normal push and refuses every named broader action.
+- [x] Prove source and packaged resource bytes match for every changed embedded file.
+- [x] Prove public-core validation rejects private topology and credential examples in managed content.
 
 ## EP-05 - Producer Semantic Migration And Catalog Cutover
 
@@ -1517,7 +1529,7 @@ branch after source hashes stabilize.
 
 ### F) Tasks Checklist
 
-- [ ] Create the plan-scoped execution log before migration evidence is collected.
+- [x] Create the plan-scoped execution log before migration evidence is collected.
 - [ ] Run `codeheart-operating-kit plans inventory --remote-overlays --output docs/repo/plans/semantic-plan-catalog-coordination/attachments/producer-plan-migration-inventory.json .` from the producer work branch.
 - [ ] Reconcile every inventory record against `docs/repo/plans/plan-register.md`, sibling documents, execution evidence, and current lifecycle headers.
 - [ ] Assign one stable semantic ID, kind, purpose, first-cataloged time, catalog-update time, and legacy alias set to every formal record.
@@ -1967,3 +1979,28 @@ release-runbook authorization are resolved.
 - 2026-07-31: Activated the implementation plan by explicit user request, created its sibling
   execution log, and selected `codex/semantic-plan-catalog-coordination` as the unambiguous work
   branch. Public release execution remains subject to the `EP-07` release gate.
+- 2026-07-31: Completed and independently accepted `EP-01` after two review rounds. The accepted
+  foundation includes versioned plan, catalog, migration, local-source, overlay, and nested config
+  contracts; semantic identities and families; exact metadata/header parsing; deterministic
+  validation; compatibility-mode defaults; automatic home self-membership; and focused fixtures
+  proving rename stability, mixed and legacy behavior, same-ID observations, and malformed-input
+  blockers.
+- 2026-07-31: Completed and independently accepted `EP-02` after twenty-three review rounds. The
+  accepted compatibility and migration layer includes deterministic legacy reconciliation and
+  views, Git-backed inventory, guarded ledger application, Go 1.25 handle-relative transaction
+  containment, rollback and stale recovery, safe explicit inventory replacement, grouped plan
+  commands, stable blockers, and race regressions for parent exchange and concurrent-byte
+  preservation.
+- 2026-07-31: Completed and independently accepted `EP-03` after fourteen review rounds. The
+  accepted portfolio layer includes exact configuration and membership, provider-neutral local
+  and GitHub discovery, complete default and unmerged-branch observations, immutable strategic
+  overlays, atomic cache publication, policy-confined descriptor-bound Git execution, and rooted
+  atomic no-replace mirror capture, installation, restoration, and cleanup across supported
+  release targets.
+- 2026-07-31: Completed and independently accepted `EP-04` after three review rounds. The accepted
+  managed UX includes exact semantic-catalog and portfolio references, mode-aware authoring,
+  stable register and strategic-overlay scaffolds, refresh-first analysis, semantic migration,
+  bounded activation publication, fresh low-context routing, and byte-identical packaged
+  resources. Review tightened the generic portfolio scaffold to remain role-neutral and made the
+  pristine-placeholder replacement exception consistent and regression-tested throughout setup
+  guidance.
