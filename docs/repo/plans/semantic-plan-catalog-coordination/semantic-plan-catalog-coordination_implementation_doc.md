@@ -1,4 +1,4 @@
-Last updated: 2026-07-31T23:25:19Z (UTC)
+Last updated: 2026-07-31T23:48:30Z (UTC)
 Created: 2026-07-31
 Status: active
 Execution log: semantic-plan-catalog-coordination_execution_log.md
@@ -1702,26 +1702,26 @@ owner-repository plan or explicitly scoped portfolio rollout.
 
 ### F) Tasks Checklist
 
-- [ ] Extend `.github/workflows/validate.yml` with supported-platform plan metadata, migration, local Git overlay, and grouped CLI tests.
-- [ ] Add an isolated repository and local bare-remote fixture for recorded fresh-agent activation publication probes.
-- [ ] Add static authority-contract assertions and fresh-agent refusal scenarios for unrelated staged files, ambiguous branch scope, rejected normal push, PR creation, merge, release, force-push, branch deletion, and destructive commands.
-- [ ] Add adversarial branch fixtures containing executable files, hooks, malformed metadata, path traversal names, oversized metadata, and secret-like text.
-- [ ] Add low-context routing probes for semantic plan reference, member authoring, coordination-home setup, current analysis, failed refresh, migration skip, and activation publication.
-- [ ] Benchmark representative local and fake-GitHub portfolios and record repository, branch, plan, API-call, duration, and concurrency evidence.
-- [ ] Record configured live GitHub probe availability and redacted evidence status in the execution log.
-- [ ] Classify every changed surface under `docs/repo/reference/consumer-impact-classification.md`.
-- [ ] Draft compatibility migration, adoption, consumer-impact, and release notes for the final implemented behavior.
-- [ ] Update `docs/repo/README.md`, `docs/repo/plans/README.md`, and the current register compatibility entry with final source status.
-- [ ] Run `gofmt -w` on changed Go files and verify the resulting diff.
-- [ ] Run `go test ./...` and record the result in the execution log.
-- [ ] Run `python3 -m pytest -q` and record the result in the execution log.
-- [ ] Run `python3 scripts/validate-json-schemas.py` and record the result in the execution log.
-- [ ] Run `python3 scripts/validate-markdown-headers.py` and record the result in the execution log.
-- [ ] Run `python3 scripts/validate-public-core.py` and record the result in the execution log.
-- [ ] Run `git diff --check` and record the result in the execution log.
-- [ ] Verify source and packaged resource identity for every changed embedded file.
-- [ ] Review the implementation against every frozen discovery decision, capability must-cover item, explicit exclusion, and success-evidence statement.
-- [ ] Produce repository-scoped migration handoff summaries without changing any additional repository.
+- [x] Extend `.github/workflows/validate.yml` with supported-platform plan metadata, migration, local Git overlay, and grouped CLI tests.
+- [x] Add an isolated repository and local bare-remote fixture for recorded fresh-agent activation publication probes.
+- [x] Add static authority-contract assertions and fresh-agent refusal scenarios for unrelated staged files, ambiguous branch scope, rejected normal push, PR creation, merge, release, force-push, branch deletion, and destructive commands.
+- [x] Add adversarial branch fixtures containing executable files, hooks, malformed metadata, path traversal names, oversized metadata, and secret-like text.
+- [x] Add low-context routing probes for semantic plan reference, member authoring, coordination-home setup, current analysis, failed refresh, migration skip, and activation publication.
+- [x] Benchmark representative local and fake-GitHub portfolios and record repository, branch, plan, API-call, duration, and concurrency evidence.
+- [x] Record configured live GitHub probe availability and redacted evidence status in the execution log.
+- [x] Classify every changed surface under `docs/repo/reference/consumer-impact-classification.md`.
+- [x] Draft compatibility migration, adoption, consumer-impact, and release notes for the final implemented behavior.
+- [x] Update `docs/repo/README.md` and `docs/repo/plans/README.md`, and preserve the frozen current register compatibility entry byte-for-byte.
+- [x] Run `gofmt -w` on changed Go files and verify the resulting diff.
+- [x] Run `go test ./...` and record the result in the execution log.
+- [x] Run the repository Python suite through the available isolated pytest runtime and record the result in the execution log.
+- [x] Run `python3 scripts/validate-json-schemas.py` and record the result in the execution log.
+- [x] Run `python3 scripts/validate-markdown-headers.py` and record the result in the execution log.
+- [x] Run `python3 scripts/validate-public-core.py` and record the result in the execution log.
+- [x] Run `git diff --check` and record the result in the execution log.
+- [x] Verify source and packaged resource identity for every changed embedded file.
+- [x] Review the implementation against every frozen discovery decision, capability must-cover item, explicit exclusion, and success-evidence statement.
+- [x] Produce repository-scoped migration handoff summaries without changing any additional repository.
 - [ ] Record the validated source revision and hand it to EP-07 with release version, tag, public assets, consumer installations, and other repositories unchanged.
 
 ### G) Implementation Notes
@@ -1747,10 +1747,10 @@ owner-repository plan or explicitly scoped portfolio rollout.
 ### Validation Tasks
 
 - [ ] Prove all mandatory local and cross-platform gates pass from a clean fixture state.
-- [ ] Prove activation publication through static managed-contract tests and a recorded fresh-agent local-remote probe without a publication CLI.
+- [x] Prove activation publication through static managed-contract tests and a recorded fresh-agent local-remote probe without a publication CLI.
 - [ ] Prove source completion leaves release tags, public assets, consumer sync, and other-repository writes untouched before EP-07.
-- [ ] Prove every discovery must-cover requirement maps to one designated passing evidence item.
-- [ ] Prove migration and rollout documentation preserves repository ownership and ordinary parallel work.
+- [x] Prove every discovery must-cover requirement maps to one designated passing evidence item.
+- [x] Prove migration and rollout documentation preserves repository ownership and ordinary parallel work.
 
 ## EP-07 - Version Bump, Reproducible Release, And Public Verification
 

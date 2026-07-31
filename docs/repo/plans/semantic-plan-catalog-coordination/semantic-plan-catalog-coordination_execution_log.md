@@ -1,4 +1,4 @@
-Last updated: 2026-07-31T23:25:19Z (UTC)
+Last updated: 2026-07-31T23:48:30Z (UTC)
 Created: 2026-07-31
 
 # Semantic Plan Catalog And Branch-Aware Coordination Execution Log
@@ -25,7 +25,7 @@ Public release execution remains subject to the `EP-07` release gate recorded in
 | `EP-03` | completed | Added exact portfolio configuration and membership, local/GitHub discovery with optional PR enrichment, scanner-owned policy-confined bare mirrors, byte-aware default and unmerged-branch observations, atomic complete cache, and remote-overlay commands; hardened compatibility, evidence completeness, source authority, remote normalization, local namespace containment, atomic publication, and Git command-policy confinement after review. | Accepted in round fourteen |
 | `EP-04` | completed | Added exact semantic-catalog and portfolio references, mode-aware planning and activation publication doctrine, setup/refresh/migration recipes, stable entry-point and strategy scaffolds, routing, declarations, packaged mirrors, and materialization tests. | Accepted in round three |
 | `EP-05` | active | Began the producer-only compatibility migration with an explicit legacy-mode identity/config adoption and frozen-register baseline sequence. | Pending |
-| `EP-06` | pending | None yet. | Pending |
+| `EP-06` | active | Added cross-platform grouped validation, low-context and activation probes, adversarial fixtures, public-safe remote evidence, impact/release/adoption documentation, discovery evidence mapping, benchmarks, and read-only migration handoffs; immutable candidate handoff remains pending. | Pending |
 | `EP-07` | pending | None yet. | Pending explicit release gate |
 
 ## Review Gate Metrics
@@ -973,7 +973,64 @@ coverage and canonical cutover pending default-branch enrollment.
 
 ## EP-06 Delta - Integrated Validation And Release-Candidate Handoff
 
-Status: pending. No divergence recorded yet.
+Status: active; source-level validation is clean, but immutable candidate handoff cannot close
+before the `EP-05` default-branch gate and the later release-candidate authority boundary.
+
+- Cross-platform validation surface: macOS and Windows workflow jobs now run grouped plan catalog,
+  migration, portfolio-overlay, command, CLI, routing, schema, and packaged-resource tests. The
+  affected Go packages also cross-compiled successfully for Windows amd64 in this worktree. Real
+  Windows execution remains release-candidate evidence and is not claimed locally.
+- Low-context and activation evidence: installed-route probes cover semantic reference, member
+  authoring, coordination-home setup, refresh-before-analysis, incomplete-refresh disclosure,
+  migration skips, and activation boundaries. An isolated repository and local bare remote prove
+  that activation publishes only the selected plan and execution-log checkpoint while unrelated
+  code remains local; no PR is created and no publication CLI was added.
+- Negative and adversarial evidence: static managed-contract assertions cover unrelated staged
+  files, ambiguous scope, rejected normal push, PR, merge, release, force-push, branch deletion,
+  destructive Git, auth failure, and policy rejection. The adversarial descriptor includes an
+  executable plan-adjacent file, Git hook, malformed metadata, traversal name, oversized metadata,
+  and secret-like placeholder. Scanner Git-policy tests disable hooks, sanitize inherited Git
+  configuration, reject unsafe transports, and read branch content only as inert Git objects. A
+  real local-remote adversarial branch test confirms neither its executable nor hook runs and its
+  ignored sentinel/placeholder bytes do not enter scan output.
+- Public artifact hardening: remote-overlay plan validation and inventory now redact absolute and
+  `file:` machine locators to stable `local-git` evidence labels. A regression covers members,
+  candidates, scan errors, and preservation of ordinary provider locators. Exact locators remain
+  only in ignored scanner-local cache for operational recovery.
+- Benchmarks: a representative local inventory measured one repository, one local/default view,
+  33 plans, zero provider API calls, concurrency one, and 1.07 seconds wall time. The deterministic
+  fake-GitHub portfolio measured two repositories, two branches, four plans, two API calls,
+  concurrency four, and sub-millisecond scanner duration; its complete test took 2.42 seconds.
+  No V1 SLO or incremental cache is justified by this evidence.
+- Live-provider boundary: authenticated `gh` read access was available for a redacted repository
+  visibility preflight. No live portfolio-completeness claim was made because the producer is not
+  yet enrolled on its default branch. No credential value, private source locator, or failed raw
+  artifact was committed.
+- Consumer and discovery evidence: release/adoption notes and a dedicated impact record separately
+  classify instruction, validator, scaffold, migration, additive placement/local-path, and safety
+  effects. `discovery-capability-evidence-matrix.md` maps every frozen must-cover item and explicit
+  exclusion to designated passing source evidence while retaining the real-Windows and producer
+  rollout qualifications.
+- Additional-repository handoffs: current read-only inventories and owner-scoped migration
+  recommendations were produced for three explicitly scoped private repositories. They remain
+  under `/private/tmp`; no private names, counts, paths, or topology were added to this public repo,
+  and no file, branch, remote, plan, register, or configuration in another repository changed.
+- Register compatibility correction: the approved architecture freezes the legacy register at the
+  mixed-mode baseline, so the original task to update its current entry was unsafe. The two README
+  entry points were updated instead, and a byte comparison against baseline
+  `3b134a07b806d1522e7cf76fe52e2028d79155c2` proves the register remains unchanged.
+- Local validation: `gofmt` and diff review passed; `go test ./...` passed; the focused catalog,
+  portfolio, commands, and CLI race suite passed; `go vet ./internal/... ./cmd/...` passed; all 147
+  Python tests passed through `uv run --with pytest python -m pytest -q`; JSON-schema, Markdown
+  header, public-core, and release-manifest validators passed; `git diff --check` passed; and the
+  packaging tests proved source/package byte identity for every changed embedded resource. A fresh
+  source binary also validated and listed all 33 local canonical records in mixed mode; its 25
+  diagnostics are the recorded legacy-title/status and unpaired `OK-PR-014` compatibility warnings,
+  not errors.
+- Remaining source handoff: no release tag, public asset, consumer sync, external-repository write,
+  version mutation, or release-candidate commit/push occurred. Because the validated worktree is
+  not yet an immutable commit and `EP-05` remote/canonical closure is unresolved, no exact source
+  revision is handed to `EP-07` yet.
 
 ## EP-07 Delta - Version Bump, Reproducible Release, And Public Verification
 
