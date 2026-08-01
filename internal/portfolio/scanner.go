@@ -3,7 +3,7 @@ package portfolio
 import (
 	"context"
 	"encoding/json"
-	"errors"
+	stderrors "errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -323,7 +323,7 @@ func scanRepository(ctx context.Context, manager MirrorManager, source Repositor
 
 func readMembershipEvidence(ctx context.Context, repository *GitRepository, path string) ([]byte, error) {
 	data, err := repository.ReadFile(ctx, repository.DefaultRef, path)
-	if errors.Is(err, os.ErrNotExist) {
+	if stderrors.Is(err, os.ErrNotExist) {
 		return nil, nil
 	}
 	return data, err
@@ -367,6 +367,13 @@ func collectObservations(ctx context.Context, repository *GitRepository, reposit
 			errors = append(errors, ScanError{Code: problem.Code, Message: problem.Message, SourceLocator: repository.Source.Locator, RepositoryID: repositoryID, Ref: ref})
 		}
 	}
+	legacyEntries := []plancatalog.LegacyEntry{}
+	if data, readErr := repository.ReadFile(ctx, ref, plancatalog.LegacyRegisterPath); readErr == nil {
+		legacyEntries, _ = plancatalog.ParseLegacyRegister(data)
+	} else if !stderrors.Is(readErr, os.ErrNotExist) {
+		errors = append(errors, ScanError{Code: "legacy_title_evidence_unavailable", Message: "legacy title evidence could not be read", SourceLocator: repository.Source.Locator, RepositoryID: repositoryID, Ref: ref})
+	}
+	legacyReconciliation := plancatalog.ReconcileLegacy(records, nil, legacyEntries)
 	commit, err := repository.Revision(ctx, ref)
 	if err != nil {
 		return nil, append(errors, ScanError{Code: "observation_revision_unavailable", Message: "observation commit could not be resolved", SourceLocator: repository.Source.Locator, RepositoryID: repositoryID, Ref: ref})
@@ -391,7 +398,7 @@ func collectObservations(ctx context.Context, repository *GitRepository, reposit
 			errors = append(errors, ScanError{Code: "observation_freshness_unavailable", Message: "plan-specific source-change time could not be resolved", SourceLocator: repository.Source.Locator, RepositoryID: repositoryID, Ref: ref})
 		}
 		observations = append(observations, plancatalog.SourceObservation{
-			RepositoryID: repositoryID, PlanID: metadata.ID, Title: record.Header.Title, Kind: metadata.Kind,
+			RepositoryID: repositoryID, PlanID: metadata.ID, Title: plancatalog.DisplayTitle(record, legacyReconciliation.ByCanonicalPath[record.Path]), Kind: metadata.Kind,
 			Purpose: metadata.Purpose, Lifecycle: record.Header.Lifecycle, Family: metadata.Family,
 			Products: append([]string{}, metadata.Products...), Capabilities: append([]string{}, metadata.Capabilities...),
 			StrategicThemes: append([]string{}, metadata.StrategicThemes...), Relations: append([]plancatalog.Relation{}, metadata.Relations...),
@@ -454,7 +461,7 @@ func ReadCachedCatalog(root string) (Catalog, error) {
 	var err error
 	for attempt := 0; attempt < fileShareRetryAttempts; attempt++ {
 		data, err = readRootRegular(root, CatalogPath)
-		if err == nil || (!errors.Is(err, errRootRegularChanged) && !isTransientFileSharingError(err)) {
+		if err == nil || (!stderrors.Is(err, errRootRegularChanged) && !isTransientFileSharingError(err)) {
 			break
 		}
 		time.Sleep(fileShareRetryDelay)

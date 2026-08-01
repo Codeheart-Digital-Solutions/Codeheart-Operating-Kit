@@ -215,15 +215,15 @@ func gitRevisionHasRegularFile(root, revision, path string) bool {
 func BuildView(snapshot RepositorySnapshot) View {
 	rows := make([]ViewRow, 0, len(snapshot.Records))
 	for _, record := range snapshot.Records {
+		matches := snapshot.Reconciliation.ByCanonicalPath[record.Path]
 		row := ViewRow{
-			Title:          record.Header.Title,
+			Title:          DisplayTitle(record, matches),
 			Kind:           record.ExpectedKind,
 			Lifecycle:      record.Header.Lifecycle,
 			CanonicalPath:  record.Path,
 			Legacy:         record.Metadata == nil,
 			LegacyEvidence: []string{},
 		}
-		matches := snapshot.Reconciliation.ByCanonicalPath[record.Path]
 		for _, match := range matches {
 			row.LegacyEvidence = append(row.LegacyEvidence, match.ID)
 		}
@@ -240,9 +240,6 @@ func BuildView(snapshot RepositorySnapshot) View {
 		} else {
 			row.ID = "legacy-path:" + record.Path
 		}
-		if record.Header.CompatibilityTitle && (row.Title == "Document Header" || row.Title == "Overview") && len(matches) == 1 && matches[0].Title != "" {
-			row.Title = matches[0].Title
-		}
 		rows = append(rows, row)
 	}
 	sort.SliceStable(rows, func(i, j int) bool {
@@ -252,6 +249,16 @@ func BuildView(snapshot RepositorySnapshot) View {
 		return rows[i].CanonicalPath < rows[j].CanonicalPath
 	})
 	return View{SchemaVersion: 1, Mode: snapshot.Settings.Mode, RepositoryID: snapshot.Settings.RepositoryID, Rows: rows, Problems: append([]Problem{}, snapshot.Problems...)}
+}
+
+// DisplayTitle preserves historical document headings while giving every catalog
+// surface the same reviewed semantic title for legacy compatibility layouts.
+func DisplayTitle(record Record, matches []LegacyEntry) string {
+	title := record.Header.Title
+	if record.Header.CompatibilityTitle && (title == "Document Header" || title == "Overview") && len(matches) == 1 && matches[0].Title != "" {
+		return matches[0].Title
+	}
+	return title
 }
 
 func WriteViewJSON(writer io.Writer, view View) error {

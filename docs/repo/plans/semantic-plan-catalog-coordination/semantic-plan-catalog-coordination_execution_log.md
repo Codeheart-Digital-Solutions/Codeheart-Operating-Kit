@@ -1,4 +1,4 @@
-Last updated: 2026-08-01T05:12:42Z (UTC)
+Last updated: 2026-08-01T06:10:04Z (UTC)
 Created: 2026-07-31
 
 # Semantic Plan Catalog And Branch-Aware Coordination Execution Log
@@ -1112,6 +1112,59 @@ before the `EP-05` default-branch gate and the later release-candidate authority
   The fixture now uses `Path.as_posix()` for all three remote object assertions. The exact focused
   activation test and all 50 grouped schema, routing, and packaged-resource tests pass locally. A
   fresh real-Windows rerun remains required; no failed gate was bypassed.
+- Source-and-mixed integration closure: both macOS and both real-Windows validation jobs passed at
+  exact head `f40682ccdf4fba289fa3337568e0503b555d6a1c`, including the complete Go, Python,
+  schema, packaging, staged-install, and upgrade-smoke surfaces. Public release jobs remained
+  correctly skipped. Ready PR `#3` was merged through merge commit
+  `4b1b7d43f22740fcd2532f96f2a76d291d3e4aee`, whose parents are the prior default branch and the
+  exact validated source head; baseline `3b134a07b806d1522e7cf76fe52e2028d79155c2` remains an
+  ancestor. No failed check was bypassed and no release artifact was published.
+- Live EP-05 reconciliation and canonical-cutover preparation: a fresh source CLI built from merge
+  `4b1b7d43f22740fcd2532f96f2a76d291d3e4aee` inventoried 33 formal records, all canonical, with
+  no invalid, unreadable, unsafe, active-branch-touch, or dirty-overlap records. The complete
+  pushed-evidence scan observed one enrolled self-member and 33 verified default-branch plans,
+  with no candidates, scan errors, stale/conflicting observations, or unmerged plan-changing
+  overlay observations. All five accessible remote refs were ancestors of `origin/main`. Mixed
+  remote validation passed; the reviewed ledger reapplied with zero writes, 33 `already_applied`
+  skips, and no blocker. The producer then entered canonical mode, where live remote validation
+  passed and JSON listing returned 33 unique semantic IDs (12 discovery, 21 implementation, zero
+  legacy rows). The plan-scoped inventory was refreshed in canonical mode; the historical
+  register-only `OK-PR-014` pointer remains an intentional warning-level evidence record rather
+  than an invented local plan. The full Go suite, all 147 Python tests, vet, JSON-schema,
+  Markdown-header, public-core, release-manifest, and diff gates passed with the cutover changes in
+  the worktree.
+- EP-05 gate review round one: rejected exact commit
+  `c1c136c47976e4ebbcf69008274bbeb98289f96b` with one medium consistency finding. Three migrated
+  implementation plans used their reviewed semantic legacy-register titles in local `plans list`
+  output but published generic historical headings (`Overview` or `Document Header`) in inventory
+  and remote observations. All other migration, coverage, idempotency, frozen-register,
+  public-safety, validation, and unrelated-state checks were accepted.
+- Title-consistency remediation: centralized the existing single-match compatibility-title rule
+  and now uses it for local views, migration inventories, and pushed remote observations. This
+  preserves the three historical document headings and their meaningful content dates while
+  publishing the same reviewed semantic title on every catalog surface; ambiguous or absent legacy
+  evidence still cannot override a document title. Unit and remote-Git regressions cover the
+  resolver, local listing, local inventory, and coordination-home observation together. A fresh
+  live inventory found zero title mismatches across all 33 records, retained complete one-member
+  and 33-observation remote coverage with no errors, and canonical remote validation passed. The
+  complete Go suite, race-enabled catalog/portfolio tests, all 147 Python tests, vet, JSON-schema,
+  Markdown-header, public-core, release-manifest, and diff gates passed.
+- EP-05 gate review round two: accepted exact head
+  `23e377060c1a53c2851b1b31e3b19cd5a4139045` with no material findings. The reviewer independently
+  matched all 33 IDs, paths, and titles across local list, fresh and committed inventories, and
+  default remote observations; confirmed the single-match-only resolver, same-ref register reads,
+  canonical local/remote validation, zero-change migration, frozen history, and protected-state
+  exclusion; and passed exact-commit catalog/portfolio tests in an isolated clone.
+- Canonical-cutover PR CI round one: ready PR `#4` retained exact accepted head `23e3770`. Both
+  macOS jobs passed, while both real-Windows jobs found one portability defect in the new regression
+  fixture: after branch switching under Git for Windows, CRLF checkout bytes no longer matched the
+  fixture's LF-only heading replacement, so the test correctly observed the unchanged baseline
+  title. Production title resolution was not implicated. The fixture now detects and preserves LF
+  or CRLF explicitly and fails early when its intended heading is absent. The focused regression
+  passes both normally and with inherited `core.autocrlf=true`; the complete Go suite,
+  race-enabled portfolio tests, vet, JSON-schema, Markdown-header, public-core, release-manifest,
+  and diff gates also pass. A fresh exact-head CI run remains required and no failed check is
+  bypassed.
 
 ## EP-07 Delta - Version Bump, Reproducible Release, And Public Verification
 
