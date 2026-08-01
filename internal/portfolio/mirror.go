@@ -643,6 +643,7 @@ func safeGitArgs(args ...string) []string {
 		"-c", "protocol.ssh.allow=always",
 		"-c", "protocol.file.allow=always",
 		"-c", "protocol.ext.allow=never",
+		"-c", "core.longpaths=true",
 		"-c", "core.sshCommand=ssh",
 		"-c", "core.hooksPath=" + os.DevNull,
 	}

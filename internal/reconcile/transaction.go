@@ -1423,6 +1423,16 @@ func cleanupBoundTransactionWithEvidence(repositoryRoot, transactionRoot *os.Roo
 	if err != nil {
 		return err
 	}
+	evidenceClosedForRename := false
+	if runtime.GOOS == "windows" && evidence != nil && evidence.file != nil {
+		// Windows does not permit renaming a directory while this retained child-file handle is
+		// open. The directory handle remains bound across the rename; after quarantine we reopen
+		// the evidence through that handle and revalidate both its identity and exact bytes.
+		if err := evidence.file.Close(); err != nil {
+			return fmt.Errorf("close transaction evidence before quarantine: %w", err)
+		}
+		evidenceClosedForRename = true
+	}
 	if err := repositoryRoot.Rename(transactionPath, quarantine); err != nil {
 		return fmt.Errorf("atomically quarantine transaction directory: %w", err)
 	}
@@ -1430,7 +1440,16 @@ func cleanupBoundTransactionWithEvidence(repositoryRoot, transactionRoot *os.Roo
 		return fmt.Errorf("transaction authority changed during quarantine; retained captured entry at %s: %w", filepath.ToSlash(quarantine), err)
 	}
 	if evidence != nil {
-		if err := validateBoundRootFile(transactionRoot, evidence.path, evidence.file, evidence.info, evidence.data); err != nil {
+		if evidenceClosedForRename {
+			reopened, reopenedInfo, reopenedData, err := openBoundRegularRootFile(transactionRoot, evidence.path)
+			if err != nil {
+				return fmt.Errorf("transaction evidence changed during quarantine; retained at %s: %w", filepath.ToSlash(quarantine), err)
+			}
+			_ = reopened.Close()
+			if evidence.info == nil || !os.SameFile(evidence.info, reopenedInfo) || !bytes.Equal(evidence.data, reopenedData) {
+				return fmt.Errorf("transaction evidence changed during quarantine; retained at %s", filepath.ToSlash(quarantine))
+			}
+		} else if err := validateBoundRootFile(transactionRoot, evidence.path, evidence.file, evidence.info, evidence.data); err != nil {
 			return fmt.Errorf("transaction evidence changed during quarantine; retained at %s: %w", filepath.ToSlash(quarantine), err)
 		}
 	}

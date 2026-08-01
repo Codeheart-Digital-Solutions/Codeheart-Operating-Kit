@@ -651,6 +651,28 @@ func TestMigrationChangedHashAndDirtyOverlapProduceZeroWrites(t *testing.T) {
 	})
 }
 
+func TestMigrationAcceptsCleanCheckoutLineEndingConversion(t *testing.T) {
+	root := migrationRepository(t)
+	alpha := "docs/repo/plans/alpha/alpha_discovery_doc.md"
+	runGitTest(t, root, "config", "core.autocrlf", "true")
+	runGitTest(t, root, "config", "core.eol", "crlf")
+	if err := os.Remove(filepath.Join(root, filepath.FromSlash(alpha))); err != nil {
+		t.Fatal(err)
+	}
+	runGitTest(t, root, "checkout", "--", alpha)
+	if data := mustReadFile(t, filepath.Join(root, filepath.FromSlash(alpha))); !bytes.Contains(data, []byte("\r\n")) {
+		t.Skip("Git did not apply the configured checkout line-ending conversion")
+	}
+	if status := runGitTest(t, root, "status", "--porcelain=v1", "--", alpha); status != "" {
+		t.Fatalf("line-ending conversion unexpectedly dirtied the checkout: %q", status)
+	}
+
+	plan, err := BuildMigrationPlan(root, migrationLedger(t, root))
+	if err != nil || len(plan.FilePlan.Actions) != 2 || len(plan.Skips) != 0 {
+		t.Fatalf("clean converted checkout was not migratable: actions=%#v skips=%#v err=%v", plan.FilePlan.Actions, plan.Skips, err)
+	}
+}
+
 func TestMigrationActiveBranchSkipAndTransactionalRollback(t *testing.T) {
 	t.Run("active branch", func(t *testing.T) {
 		root := migrationRepository(t)

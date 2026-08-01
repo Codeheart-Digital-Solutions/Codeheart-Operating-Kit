@@ -186,16 +186,6 @@ func BuildMigrationPlan(root string, ledger MigrationLedger) (MigrationPlan, err
 			skips = append(skips, MigrationSkip{Code: "source_mismatch", Message: "current plan bytes no longer match the reviewed source hash", Path: item.Path, Remediation: "inventory and semantically reevaluate the latest plan"})
 			continue
 		}
-		sourceBytes, gitErr := gitBytes(root, "show", item.SourceRevision+":"+item.Path)
-		if gitErr != nil {
-			skips = append(skips, MigrationSkip{Code: "source_revision_unavailable", Message: gitErr.Error(), Path: item.Path, Remediation: "retain the source commit and rerun inventory"})
-			continue
-		}
-		sourceDigest := sha256.Sum256(sourceBytes)
-		if hex.EncodeToString(sourceDigest[:]) != item.SourceSHA256 {
-			skips = append(skips, MigrationSkip{Code: "source_revision_mismatch", Message: "reviewed source revision does not contain the reviewed plan bytes", Path: item.Path, Remediation: "regenerate inventory from an exact committed source"})
-			continue
-		}
 		dirty, dirtyErr := gitPathDirty(root, item.Path)
 		if dirtyErr != nil {
 			skips = append(skips, MigrationSkip{Code: "dirty_check_failed", Message: dirtyErr.Error(), Path: item.Path})
@@ -207,6 +197,20 @@ func BuildMigrationPlan(root string, ledger MigrationLedger) (MigrationPlan, err
 		}
 		if refs := touches[item.Path]; len(refs) > 0 {
 			skips = append(skips, MigrationSkip{Code: "active_branch_ownership", Message: "target plan is changed on unmerged refs: " + strings.Join(refs, ", "), Path: item.Path, Remediation: "assign migration to the branch owner or wait for reconciliation"})
+			continue
+		}
+		sourceBlob, gitErr := gitText(root, "rev-parse", "--verify", item.SourceRevision+":"+item.Path)
+		if gitErr != nil {
+			skips = append(skips, MigrationSkip{Code: "source_revision_unavailable", Message: gitErr.Error(), Path: item.Path, Remediation: "retain the source commit and rerun inventory"})
+			continue
+		}
+		indexBlob, gitErr := gitText(root, "rev-parse", "--verify", ":"+item.Path)
+		if gitErr != nil {
+			skips = append(skips, MigrationSkip{Code: "source_revision_unavailable", Message: gitErr.Error(), Path: item.Path, Remediation: "restore the reviewed plan to the Git index and rerun inventory"})
+			continue
+		}
+		if sourceBlob != indexBlob {
+			skips = append(skips, MigrationSkip{Code: "source_revision_mismatch", Message: "reviewed source revision does not contain the indexed plan blob", Path: item.Path, Remediation: "regenerate inventory from an exact committed source"})
 			continue
 		}
 		updated, insertErr := InsertMetadata(current, metadata)

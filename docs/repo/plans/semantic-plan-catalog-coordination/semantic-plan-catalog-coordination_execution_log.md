@@ -1,4 +1,4 @@
-Last updated: 2026-08-01T00:41:23Z (UTC)
+Last updated: 2026-08-01T04:46:17Z (UTC)
 Created: 2026-07-31
 
 # Semantic Plan Catalog And Branch-Aware Coordination Execution Log
@@ -1077,6 +1077,18 @@ before the `EP-05` default-branch gate and the later release-candidate authority
   release-manifest, diff, frozen-register, source-marker enrollment, and failing-local-source
   redaction checks from a clean archive. No shared-workspace or unauthorized repository write,
   release version, tag, or public asset changed.
+- Source-and-mixed integration CI: ready PR `#3` was opened from exact source head
+  `43d11826adadf70c95a5a1493ec6edb47e52c0a1`. Both macOS validation runs passed, while both
+  Windows runs exposed three platform-compatibility defects before merge: checkout line-ending
+  conversion made worktree hashes differ from committed blob bytes, long temporary fixture paths
+  exceeded Git for Windows defaults, and stale-transaction cleanup retained a child evidence handle
+  while renaming its parent directory. The remediation retains exact worktree SHA write
+  preconditions, proves the reviewed revision through clean index/blob identity, enables
+  scanner-owned Git long-path handling, and closes/reopens only the Windows evidence handle around
+  quarantine while revalidating identity and bytes. A new CRLF regression, all focused packages,
+  the complete race-enabled Go suite, Windows amd64 test-binary cross-compilation, vet, all 147
+  Python tests, JSON-schema, Markdown, public-core, release-manifest, and diff gates pass locally.
+  Real Windows execution remains pending the updated PR checks; no failed check was bypassed.
 
 ## EP-07 Delta - Version Bump, Reproducible Release, And Public Verification
 
