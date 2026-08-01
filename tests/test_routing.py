@@ -242,9 +242,9 @@ def test_activation_checkpoint_publishes_only_planning_paths_to_local_remote(tmp
     git("commit", "-m", "Activate example plan")
     git("push", "-u", "origin", "codex/example-plan")
 
-    assert git("show", "origin/codex/example-plan:" + str(plan.relative_to(repository))) == "Status: active"
-    assert git("show", "origin/codex/example-plan:" + str(log.relative_to(repository))) == "Status: active"
-    assert git("show", "origin/codex/example-plan:" + str(code.relative_to(repository))) == "baseline"
+    assert git("show", "origin/codex/example-plan:" + plan.relative_to(repository).as_posix()) == "Status: active"
+    assert git("show", "origin/codex/example-plan:" + log.relative_to(repository).as_posix()) == "Status: active"
+    assert git("show", "origin/codex/example-plan:" + code.relative_to(repository).as_posix()) == "baseline"
     assert "src/application.txt" in git("status", "--short")
     assert not git("for-each-ref", "--format=%(refname)", "refs/remotes/origin").endswith("refs/pull")
 

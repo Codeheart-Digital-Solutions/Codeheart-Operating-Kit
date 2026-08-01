@@ -1,4 +1,4 @@
-Last updated: 2026-08-01T05:02:57Z (UTC)
+Last updated: 2026-08-01T05:12:42Z (UTC)
 Created: 2026-07-31
 
 # Semantic Plan Catalog And Branch-Aware Coordination Execution Log
@@ -1104,6 +1104,14 @@ before the `EP-05` default-branch gate and the later release-candidate authority
   the complete race-enabled Go suite, Windows amd64 test-binary cross-compilation, vet, all 147
   Python tests, JSON-schema, Markdown, public-core, release-manifest, and diff gates pass locally.
   The second Windows rerun remains pending; no failing gate was bypassed.
+- Source-and-mixed integration CI round three: both Windows jobs at exact head
+  `5b627b9238b0b9f6861f1002980e438e2ae9825a` passed the full `go test ./...` step, proving the
+  catalog, cache, and transaction remediations on real Windows. They then reached the previously
+  unexecuted Python routing group and exposed a fixture-only portability defect: the activation
+  proof passed a Windows backslash path to Git's platform-neutral `revision:path` object syntax.
+  The fixture now uses `Path.as_posix()` for all three remote object assertions. The exact focused
+  activation test and all 50 grouped schema, routing, and packaged-resource tests pass locally. A
+  fresh real-Windows rerun remains required; no failed gate was bypassed.
 
 ## EP-07 Delta - Version Bump, Reproducible Release, And Public Verification
 
