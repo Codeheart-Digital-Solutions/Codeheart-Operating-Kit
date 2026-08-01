@@ -34,6 +34,22 @@
     },
     "component_settings": {
       "type": "object",
+      "properties": {
+        "planning-workflows": {
+          "type": "object",
+          "properties": {
+            "plan_catalog_mode": {
+              "type": "string",
+              "enum": ["legacy", "mixed", "canonical"]
+            },
+            "plan_catalog_cutover_revision": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{40}(?:[0-9a-f]{24})?$"
+            }
+          },
+          "additionalProperties": true
+        }
+      },
       "additionalProperties": { "type": "object" }
     },
     "portfolio": {
@@ -41,35 +57,113 @@
       "additionalProperties": false,
       "required": ["role"],
       "properties": {
+        "schema_version": { "type": "integer", "const": 2 },
         "role": {
           "type": "string",
           "enum": ["member", "coordination-home"]
         },
         "member_repository_id": { "type": "string", "minLength": 1 },
+        "coordination_home_id": {
+          "type": "string",
+          "pattern": "^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$"
+        },
         "coordination_home_path": { "type": "string", "minLength": 1 },
-        "coordination_home_register_path": { "type": "string", "minLength": 1 }
+        "coordination_home_register_path": { "type": "string", "minLength": 1 },
+        "discovery": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["sources"],
+          "properties": {
+            "sources": {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["kind", "owner"],
+                "properties": {
+                  "kind": { "type": "string", "const": "github-owner" },
+                  "owner": { "type": "string", "minLength": 1 }
+                }
+              }
+            }
+          }
+        }
       },
       "allOf": [
         {
           "if": {
-            "properties": { "role": { "const": "member" } },
-            "required": ["role"]
+            "properties": { "schema_version": { "const": 2 } },
+            "required": ["schema_version"]
           },
           "then": {
-            "required": [
-              "member_repository_id",
-              "coordination_home_path",
-              "coordination_home_register_path"
+            "allOf": [
+              {
+                "if": {
+                  "properties": { "role": { "const": "member" } },
+                  "required": ["role"]
+                },
+                "then": {
+                  "required": ["member_repository_id", "coordination_home_id"],
+                  "properties": {
+                    "discovery": false,
+                    "member_repository_id": {
+                      "type": "string",
+                      "pattern": "^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$"
+                    },
+                    "coordination_home_id": {
+                      "type": "string",
+                      "pattern": "^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$"
+                    }
+                  }
+                }
+              },
+              {
+                "if": {
+                  "properties": { "role": { "const": "coordination-home" } },
+                  "required": ["role"]
+                },
+                "then": {
+                  "required": ["member_repository_id", "coordination_home_id"],
+                  "properties": {
+                    "member_repository_id": {
+                      "type": "string",
+                      "pattern": "^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$"
+                    },
+                    "coordination_home_id": {
+                      "type": "string",
+                      "pattern": "^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$"
+                    }
+                  }
+                }
+              }
             ]
-          }
-        },
-        {
-          "if": {
-            "properties": { "role": { "const": "coordination-home" } },
-            "required": ["role"]
           },
-          "then": {
-            "required": ["coordination_home_register_path"]
+          "else": {
+            "allOf": [
+              {
+                "if": {
+                  "properties": { "role": { "const": "member" } },
+                  "required": ["role"]
+                },
+                "then": {
+                  "required": [
+                    "member_repository_id",
+                    "coordination_home_path",
+                    "coordination_home_register_path"
+                  ]
+                }
+              },
+              {
+                "if": {
+                  "properties": { "role": { "const": "coordination-home" } },
+                  "required": ["role"]
+                },
+                "then": {
+                  "required": ["coordination_home_register_path"]
+                }
+              }
+            ]
           }
         }
       ]

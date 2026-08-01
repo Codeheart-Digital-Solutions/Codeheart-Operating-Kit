@@ -85,6 +85,54 @@ func parseValueArgs(args []string, specs map[string]bool) (map[string]string, ma
 	return values, bools, positionals, nil
 }
 
+func parseRepeatableValueArgs(args []string, specs map[string]bool, repeatable map[string]bool) (map[string]string, map[string][]string, map[string]bool, []string, error) {
+	values := map[string]string{}
+	multiple := map[string][]string{}
+	bools := map[string]bool{}
+	positionals := []string{}
+	for index := 0; index < len(args); index++ {
+		arg := args[index]
+		if !strings.HasPrefix(arg, "--") {
+			positionals = append(positionals, arg)
+			continue
+		}
+		flagName := arg
+		inlineValue := ""
+		hasInlineValue := false
+		if name, value, ok := strings.Cut(arg, "="); ok {
+			flagName, inlineValue, hasInlineValue = name, value, true
+		}
+		requiresValue, known := specs[flagName]
+		if !known {
+			return nil, nil, nil, nil, fmt.Errorf("unknown option %s", flagName)
+		}
+		if !requiresValue {
+			if hasInlineValue {
+				return nil, nil, nil, nil, fmt.Errorf("option %s does not accept a value", flagName)
+			}
+			bools[flagName] = true
+			continue
+		}
+		value := inlineValue
+		if !hasInlineValue {
+			if index+1 >= len(args) || strings.HasPrefix(args[index+1], "-") {
+				return nil, nil, nil, nil, fmt.Errorf("option %s requires a value", flagName)
+			}
+			index++
+			value = args[index]
+		}
+		if repeatable[flagName] {
+			multiple[flagName] = append(multiple[flagName], value)
+		} else {
+			if _, exists := values[flagName]; exists {
+				return nil, nil, nil, nil, fmt.Errorf("option %s may be supplied only once", flagName)
+			}
+			values[flagName] = value
+		}
+	}
+	return values, multiple, bools, positionals, nil
+}
+
 func validatePurpose(purpose string) error {
 	if purpose == "" {
 		return nil

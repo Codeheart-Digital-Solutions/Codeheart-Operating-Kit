@@ -1,4 +1,4 @@
-Last updated: 2026-07-09T23:30:00Z (UTC)
+Last updated: 2026-07-31T22:23:19Z (UTC)
 
 # Change Operating Kit
 
@@ -27,6 +27,11 @@ For state, lifecycle, installer, or release changes, also run the matching gates
 - build-twice byte comparison plus catalog-to-binary verification for release-pack changes;
 - isolated installer and upgrade success/failure paths for each affected platform;
 - consumer materialization and routing checks when managed guidance changes.
+- low-context routing probes when plan authoring, activation publication, portfolio setup/refresh,
+  or migration routes change;
+- absent-file and preservation tests when scaffold declarations change, including proof that
+  removed fresh surfaces remain preserved in existing consumers;
+- source-to-packaged byte equality for every changed managed or scaffold resource.
 
 Do not use the source repository's ignored `.codeheart/kit/` tree as producer authority. Source
 components, profiles, templates, schemas, Go packages, and maintainer runbooks are canonical.

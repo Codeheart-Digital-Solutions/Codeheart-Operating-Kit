@@ -361,7 +361,9 @@ def test_sync_and_check_parity(go_cli, tmp_path):
 
     for target in [py_target, go_target]:
         (target / "docs/repo/plans/plan-register.md").write_text("custom plan register\n", encoding="utf-8")
-        (target / "docs/repo/plans/coordination-sync-pending.md").unlink()
+        (target / "docs/repo/plans/coordination-sync-pending.md").write_text(
+            "legacy pending evidence\n", encoding="utf-8"
+        )
         managed = target / ".codeheart/kit/docs/agent-interface/README.md"
         managed.write_text("drift\n", encoding="utf-8")
         agents = target / "AGENTS.md"
@@ -377,11 +379,6 @@ def test_sync_and_check_parity(go_cli, tmp_path):
             encoding="utf-8",
         )
         lock = load_yaml(target / ".codeheart/kit.lock.yaml")
-        lock["generated_surfaces"] = [
-            item
-            for item in lock["generated_surfaces"]
-            if item["path"] != "docs/repo/plans/coordination-sync-pending.md"
-        ]
         lock["generated_surfaces"].append({"path": "docs/custom-local.md", "ownership": "scaffold"})
         write_yaml(target / ".codeheart/kit.lock.yaml", lock)
 
@@ -396,7 +393,9 @@ def test_sync_and_check_parity(go_cli, tmp_path):
     assert (py_target / "docs/repo/plans/plan-register.md").read_text(encoding="utf-8") == "custom plan register\n"
     assert (go_target / "docs/repo/plans/plan-register.md").read_text(encoding="utf-8") == "custom plan register\n"
     for target in [py_target, go_target]:
-        assert (target / "docs/repo/plans/coordination-sync-pending.md").exists()
+        assert (target / "docs/repo/plans/coordination-sync-pending.md").read_text(
+            encoding="utf-8"
+        ) == "legacy pending evidence\n"
         agents = (target / "AGENTS.md").read_text(encoding="utf-8")
         assert "local prefix" in agents
         assert "local suffix" in agents
@@ -404,7 +403,9 @@ def test_sync_and_check_parity(go_cli, tmp_path):
         assert "Operation routing and dispatch" in agents
         lock = load_yaml(target / ".codeheart/kit.lock.yaml")
         generated = {item["path"] for item in lock["generated_surfaces"]}
-        assert "docs/repo/plans/coordination-sync-pending.md" in generated
+        assert "docs/repo/plans/coordination-sync-pending.md" not in generated
+        assert "docs/repo/portfolio/README.md" in generated
+        assert "docs/repo/portfolio/strategic-overlay.yaml" in generated
         if target == py_target:
             assert "docs/custom-local.md" in generated
             assert lock["release"] == {"asset_url": release_url, "checksum_sha256": release_sha}

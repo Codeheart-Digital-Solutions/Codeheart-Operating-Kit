@@ -1,0 +1,2025 @@
+{
+  "schema_version": 1,
+  "repository_id": "codeheart-operating-kit",
+  "catalog_mode": "legacy",
+  "source_revision": "3b134a07b806d1522e7cf76fe52e2028d79155c2",
+  "generated_at": "2026-07-31T23:16:08Z",
+  "records": [
+    {
+      "path": "docs/repo/plans/business-docs-placement-clarity/business-docs-placement-clarity_implementation_doc.md",
+      "kind": "implementation",
+      "title": "Overview",
+      "lifecycle": "completed",
+      "source_revision": "3b134a07b806d1522e7cf76fe52e2028d79155c2",
+      "source_sha256": "29d6cdcfac38a1ec38adf0488497325237bc1e1a1cd927bf41fc5f655f6660b7",
+      "metadata_coverage": "legacy",
+      "parse_status": "legacy",
+      "problem_codes": [
+        "legacy_title_layout",
+        "metadata_missing"
+      ],
+      "legacy_evidence": [
+        {
+          "id": "OK-PR-018",
+          "title": "Business Docs Placement Clarity Implementation",
+          "type": "implementation-plan",
+          "purpose": "Clarify the managed Structure Governance `docs/business/` placement rule so it means company or organization business-operating records when a consumer repository intentionally stores them, and explicitly does not mean software product architecture, module design, platform solution design, application business logic, or implementation planning.",
+          "lifecycle": "completed",
+          "owner": "Codeheart-Operating-Kit",
+          "canonical_docs": [
+            "docs/repo/plans/business-docs-placement-clarity/business-docs-placement-clarity_execution_log.md",
+            "docs/repo/plans/business-docs-placement-clarity/business-docs-placement-clarity_implementation_doc.md"
+          ],
+          "created": "2026-06-26",
+          "last_updated": "2026-06-26T21:09:26Z",
+          "relations": [
+            {
+              "kind": "related",
+              "target": "OK-PR-013"
+            },
+            {
+              "kind": "related",
+              "target": "OK-PR-017"
+            },
+            {
+              "kind": "related",
+              "target": "CODEHEART-AUTOMATION-FOUNDRY-PR-009"
+            }
+          ]
+        }
+      ],
+      "legacy_ambiguous": false,
+      "active_branch_touches": [],
+      "dirty_overlap": false
+    },
+    {
+      "path": "docs/repo/plans/codeheart-operating-kit-implementation-planning-quality/codeheart-operating-kit-implementation-planning-quality_implementation_doc.md",
+      "kind": "implementation",
+      "title": "Document Header",
+      "lifecycle": "completed",
+      "source_revision": "3b134a07b806d1522e7cf76fe52e2028d79155c2",
+      "source_sha256": "064f4e906caf172507d34ed30aecc424a9ca15f7a6185ce5233004baefcd7f47",
+      "metadata_coverage": "legacy",
+      "parse_status": "legacy",
+      "problem_codes": [
+        "legacy_title_layout",
+        "metadata_missing"
+      ],
+      "legacy_evidence": [
+        {
+          "id": "OK-PR-002",
+          "title": "Codeheart Operating Kit Implementation-Planning Quality",
+          "type": "implementation-plan",
+          "purpose": "Update managed discovery, implementation-planning, planning-review, and execution workflows so plans preserve intended feature capability and reject policy-only or under-covered implementation.",
+          "lifecycle": "completed",
+          "owner": "Codeheart-Operating-Kit",
+          "canonical_docs": [
+            "docs/repo/plans/codeheart-operating-kit-implementation-planning-quality/codeheart-operating-kit-implementation-planning-quality_implementation_doc.md"
+          ],
+          "created": "2026-06-22",
+          "last_updated": "2026-06-22T18:50:19Z",
+          "relations": [
+            {
+              "kind": "related",
+              "target": "first"
+            }
+          ]
+        }
+      ],
+      "legacy_ambiguous": false,
+      "active_branch_touches": [],
+      "dirty_overlap": false
+    },
+    {
+      "path": "docs/repo/plans/coordination-home-register-id-namespace/coordination-home-register-id-namespace_implementation_doc.md",
+      "kind": "implementation",
+      "title": "Coordination Home Register ID Namespace Implementation Plan",
+      "lifecycle": "completed",
+      "source_revision": "3b134a07b806d1522e7cf76fe52e2028d79155c2",
+      "source_sha256": "52d36ae3c45ddb166b314db0aab7c2d6da6fb4ee3b398fbeb863fe37443dd8fa",
+      "metadata_coverage": "legacy",
+      "parse_status": "legacy",
+      "problem_codes": [
+        "legacy_title_layout",
+        "metadata_missing"
+      ],
+      "legacy_evidence": [
+        {
+          "id": "OK-PR-003",
+          "title": "Coordination Home Register ID Namespace",
+          "type": "implementation-plan",
+          "purpose": "Add managed plan-register doctrine so coordination-home entries use unique IDs for member-repository plans while preserving source local register IDs.",
+          "lifecycle": "completed",
+          "owner": "Codeheart-Operating-Kit",
+          "canonical_docs": [
+            "docs/repo/plans/coordination-home-register-id-namespace/coordination-home-register-id-namespace_implementation_doc.md"
+          ],
+          "created": "2026-06-22",
+          "last_updated": "2026-06-22T19:47:33Z",
+          "relations": [
+            {
+              "kind": "related",
+              "target": "OK-PR-001"
+            },
+            {
+              "kind": "related",
+              "target": "docs/repo/plans/portfolio-coordination-plan-register/portfolio-coordination-plan-register_implementation_doc.md"
+            }
+          ]
+        }
+      ],
+      "legacy_ambiguous": false,
+      "active_branch_touches": [],
+      "dirty_overlap": false
+    },
+    {
+      "path": "docs/repo/plans/discovery-handoff-gate/discovery-handoff-gate_implementation_doc.md",
+      "kind": "implementation",
+      "title": "Discovery Handoff Gate Implementation Plan",
+      "lifecycle": "completed",
+      "source_revision": "3b134a07b806d1522e7cf76fe52e2028d79155c2",
+      "source_sha256": "8d2dc6487b5bd77edd7d214321ed241f477a3ee10aa2a42d7155aaef7068c1b0",
+      "metadata_coverage": "legacy",
+      "parse_status": "legacy",
+      "problem_codes": [
+        "legacy_title_layout",
+        "metadata_missing"
+      ],
+      "legacy_evidence": [
+        {
+          "id": "OK-PR-012",
+          "title": "Discovery Handoff Gate Implementation",
+          "type": "implementation-plan",
+          "purpose": "Implement a managed planning-workflow guardrail that stops normal implementation-plan drafting from discovery documents whose implementation capability scope has not been approved, delegated, or explicitly revised; publish the instruction-only `v0.1.13` release; and sync the released kit into the named consumer repositories.",
+          "lifecycle": "completed",
+          "owner": "Codeheart-Operating-Kit",
+          "canonical_docs": [
+            "docs/repo/plans/discovery-handoff-gate/discovery-handoff-gate_execution_log.md",
+            "docs/repo/plans/discovery-handoff-gate/discovery-handoff-gate_implementation_doc.md"
+          ],
+          "created": "2026-06-25",
+          "last_updated": "2026-06-25T13:45:59Z",
+          "relations": [
+            {
+              "kind": "related",
+              "target": "OK-PR-011"
+            },
+            {
+              "kind": "related",
+              "target": "OK-PR-002"
+            },
+            {
+              "kind": "related",
+              "target": "managed"
+            }
+          ]
+        }
+      ],
+      "legacy_ambiguous": false,
+      "active_branch_touches": [],
+      "dirty_overlap": false
+    },
+    {
+      "path": "docs/repo/plans/kit-feedback-intake/kit-feedback-intake_discovery_doc.md",
+      "kind": "discovery",
+      "title": "Overview",
+      "lifecycle": "active",
+      "source_revision": "3b134a07b806d1522e7cf76fe52e2028d79155c2",
+      "source_sha256": "03c6cbe47ae4902371dd896b9e9b317c04f46ceb068ac60d42ab2597bc752f3f",
+      "metadata_coverage": "legacy",
+      "parse_status": "legacy",
+      "problem_codes": [
+        "legacy_title_layout",
+        "metadata_missing"
+      ],
+      "legacy_evidence": [],
+      "legacy_ambiguous": false,
+      "active_branch_touches": [],
+      "dirty_overlap": false
+    },
+    {
+      "path": "docs/repo/plans/kit-feedback-intake/kit-feedback-intake_implementation_doc.md",
+      "kind": "implementation",
+      "title": "Overview",
+      "lifecycle": "completed",
+      "source_revision": "3b134a07b806d1522e7cf76fe52e2028d79155c2",
+      "source_sha256": "e65bf59f97cee54309d143689895360d8f47dba6c79de301c679f4897bfc397f",
+      "metadata_coverage": "legacy",
+      "parse_status": "legacy",
+      "problem_codes": [
+        "legacy_title_layout",
+        "metadata_missing"
+      ],
+      "legacy_evidence": [],
+      "legacy_ambiguous": false,
+      "active_branch_touches": [],
+      "dirty_overlap": false
+    },
+    {
+      "path": "docs/repo/plans/local-runtime-environment-standard/local-runtime-environment-standard_discovery_doc.md",
+      "kind": "discovery",
+      "title": "Local Runtime Environment Standard Discovery",
+      "lifecycle": "draft",
+      "source_revision": "3b134a07b806d1522e7cf76fe52e2028d79155c2",
+      "source_sha256": "0aea485a0f2b8c1253ed7301447a583e0c44b0b11eb3c9f6ebcb991c01daecc9",
+      "metadata_coverage": "legacy",
+      "parse_status": "legacy",
+      "problem_codes": [
+        "metadata_missing"
+      ],
+      "legacy_evidence": [
+        {
+          "id": "OK-PR-015",
+          "title": "Local Runtime Environment Standard Discovery",
+          "type": "discovery-plan",
+          "purpose": "Discover a reusable Operating Kit convention for ignored repo-local machine/runtime state, including the default Python virtual environment path for Foundry and Operating Kit tooling such as `foundry-ai`, and clarify how generic environment-readiness routing handles missing local tools in any blocked agent interaction.",
+          "lifecycle": "draft",
+          "owner": "Codeheart-Operating-Kit",
+          "canonical_docs": [
+            "docs/repo/plans/local-runtime-environment-standard/local-runtime-environment-standard_discovery_doc.md"
+          ],
+          "created": "2026-06-26",
+          "last_updated": "2026-06-26T14:10:39Z",
+          "relations": [
+            {
+              "kind": "child",
+              "target": "OK-PR-016"
+            },
+            {
+              "kind": "related",
+              "target": "OK-PR-009"
+            },
+            {
+              "kind": "related",
+              "target": "OK-PR-010"
+            },
+            {
+              "kind": "related",
+              "target": "OK-PR-005"
+            },
+            {
+              "kind": "related",
+              "target": "OK-PR-007"
+            },
+            {
+              "kind": "related",
+              "target": "Foundry"
+            }
+          ]
+        }
+      ],
+      "legacy_ambiguous": false,
+      "active_branch_touches": [],
+      "dirty_overlap": false
+    },
+    {
+      "path": "docs/repo/plans/local-runtime-environment-standard/local-runtime-environment-standard_implementation_doc.md",
+      "kind": "implementation",
+      "title": "Local Runtime Environment Standard Implementation Plan",
+      "lifecycle": "completed",
+      "source_revision": "3b134a07b806d1522e7cf76fe52e2028d79155c2",
+      "source_sha256": "9727d9755e72f4a2f2e40338b1d39115cf9882a108205207cbf26e8aa2af3ba1",
+      "metadata_coverage": "legacy",
+      "parse_status": "legacy",
+      "problem_codes": [
+        "legacy_title_layout",
+        "metadata_missing"
+      ],
+      "legacy_evidence": [
+        {
+          "id": "OK-PR-016",
+          "title": "Local Runtime Environment Standard Implementation",
+          "type": "implementation-plan",
+          "purpose": "Implement the accepted Operating Kit local runtime standard, including `.codeheart/local/` as ignored local machine/runtime state, `.codeheart/local/envs/python/` as the default Python venv, additive kit config/schema behavior, init/sync `.gitignore` readiness, managed readiness doctrine, tests, packaged-resource mirrors, and downstream Foundry AI Execution handoff.",
+          "lifecycle": "completed",
+          "owner": "Codeheart-Operating-Kit",
+          "canonical_docs": [
+            "docs/repo/plans/local-runtime-environment-standard/local-runtime-environment-standard_execution_log.md",
+            "docs/repo/plans/local-runtime-environment-standard/local-runtime-environment-standard_implementation_doc.md"
+          ],
+          "created": "2026-06-26",
+          "last_updated": "2026-06-26T14:38:50Z",
+          "relations": [
+            {
+              "kind": "child",
+              "target": "OK-PR-017"
+            },
+            {
+              "kind": "depends-on",
+              "target": "OK-PR-015"
+            },
+            {
+              "kind": "related",
+              "target": "OK-PR-009"
+            },
+            {
+              "kind": "related",
+              "target": "OK-PR-010"
+            },
+            {
+              "kind": "related",
+              "target": "OK-PR-005"
+            },
+            {
+              "kind": "related",
+              "target": "OK-PR-007"
+            },
+            {
+              "kind": "related",
+              "target": "Foundry"
+            }
+          ]
+        }
+      ],
+      "legacy_ambiguous": false,
+      "active_branch_touches": [],
+      "dirty_overlap": false
+    },
+    {
+      "path": "docs/repo/plans/module-extension-state-routing/module-extension-state-routing_discovery_doc.md",
+      "kind": "discovery",
+      "title": "Module Extension State Routing Discovery",
+      "lifecycle": "draft",
+      "source_revision": "3b134a07b806d1522e7cf76fe52e2028d79155c2",
+      "source_sha256": "0cc8b365f094b3ad133b7fb1b59efbc01498a38817606fbaf54acc4bc9e0c4a7",
+      "metadata_coverage": "legacy",
+      "parse_status": "legacy",
+      "problem_codes": [
+        "metadata_missing"
+      ],
+      "legacy_evidence": [
+        {
+          "id": "OK-PR-006",
+          "title": "Module Extension State Routing Discovery",
+          "type": "discovery-plan",
+          "purpose": "Discover the generic Operating Kit placement and routing convention for committed, non-secret, consumer-owned module and extension state under `docs/repo/state/\u003cid\u003e/`.",
+          "lifecycle": "draft",
+          "owner": "Codeheart-Operating-Kit",
+          "canonical_docs": [
+            "docs/repo/plans/module-extension-state-routing/module-extension-state-routing_discovery_doc.md"
+          ],
+          "created": "2026-06-23",
+          "last_updated": "2026-06-23T13:41:25Z",
+          "relations": [
+            {
+              "kind": "related",
+              "target": "OK-PR-005"
+            },
+            {
+              "kind": "related",
+              "target": "Foundry"
+            },
+            {
+              "kind": "related",
+              "target": "managed"
+            }
+          ]
+        }
+      ],
+      "legacy_ambiguous": false,
+      "active_branch_touches": [],
+      "dirty_overlap": false
+    },
+    {
+      "path": "docs/repo/plans/module-extension-state-routing/module-extension-state-routing_implementation_doc.md",
+      "kind": "implementation",
+      "title": "Module Extension State Routing Implementation Plan",
+      "lifecycle": "completed",
+      "source_revision": "3b134a07b806d1522e7cf76fe52e2028d79155c2",
+      "source_sha256": "8177d084bbc8081b500e1cabae532bed295bac94bbceda9e6ff785090e506f92",
+      "metadata_coverage": "legacy",
+      "parse_status": "legacy",
+      "problem_codes": [
+        "legacy_title_layout",
+        "metadata_missing"
+      ],
+      "legacy_evidence": [
+        {
+          "id": "OK-PR-008",
+          "title": "Module Extension State Routing Implementation",
+          "type": "implementation-plan",
+          "purpose": "Implement managed Operating Kit structure-governance doctrine, generic agent routing, packaged-resource mirroring, tests, and release preparation for committed non-secret module and extension state under `docs/repo/state/\u003cid\u003e/`.",
+          "lifecycle": "completed",
+          "owner": "Codeheart-Operating-Kit",
+          "canonical_docs": [
+            "docs/repo/plans/module-extension-state-routing/module-extension-state-routing_implementation_doc.md"
+          ],
+          "created": "2026-06-23",
+          "last_updated": "2026-06-23T18:26:27Z",
+          "relations": [
+            {
+              "kind": "depends-on",
+              "target": "OK-PR-006"
+            },
+            {
+              "kind": "related",
+              "target": "OK-PR-007"
+            },
+            {
+              "kind": "related",
+              "target": "managed"
+            },
+            {
+              "kind": "related",
+              "target": "Foundry"
+            }
+          ]
+        }
+      ],
+      "legacy_ambiguous": false,
+      "active_branch_touches": [],
+      "dirty_overlap": false
+    },
+    {
+      "path": "docs/repo/plans/operating-kit-script-asset-roles/operating-kit-script-asset-roles_discovery_doc.md",
+      "kind": "discovery",
+      "title": "Operating Kit Script Asset Roles Discovery",
+      "lifecycle": "draft",
+      "source_revision": "3b134a07b806d1522e7cf76fe52e2028d79155c2",
+      "source_sha256": "1bebe20bae509c4c80367dbf189370e123937156bd51bb3cdd120de2e075d4ca",
+      "metadata_coverage": "legacy",
+      "parse_status": "legacy",
+      "problem_codes": [
+        "legacy_header_status",
+        "metadata_missing"
+      ],
+      "legacy_evidence": [
+        {
+          "id": "OK-PR-025",
+          "title": "Operating Kit Script Asset Roles Discovery And Implementation Plan",
+          "type": "discovery-plan + implementation-plan",
+          "purpose": "Define and plan the Operating Kit source-doctrine update for reusable script asset roles. The discovery and draft implementation plan add `primitive script`, `workflow script`, and `helper` as role vocabulary inside L2 reusable script assets, keep `thin command wrapper` as the existing L3 maturity state, clarify contract-based workflow composition, helper promotion, ad hoc script boundaries, compact `scripts/README.md` role indexing, and managed/cloud portability guidance. The implementation plan also adds compact conditional planning, execution, and planning review hooks while keeping concrete module scripts, validators, generated registries, release, and consumer sync out of scope.",
+          "lifecycle": "completed",
+          "owner": "Codeheart-Operating-Kit",
+          "canonical_docs": [
+            "docs/repo/plans/operating-kit-script-asset-roles/operating-kit-script-asset-roles_discovery_doc.md",
+            "docs/repo/plans/operating-kit-script-asset-roles/operating-kit-script-asset-roles_execution_log.md",
+            "docs/repo/plans/operating-kit-script-asset-roles/operating-kit-script-asset-roles_implementation_doc.md"
+          ],
+          "created": "2026-07-08",
+          "last_updated": "2026-07-08T14:30:26Z",
+          "relations": [
+            {
+              "kind": "related",
+              "target": "OK-PR-022"
+            },
+            {
+              "kind": "related",
+              "target": "OK-PR-014"
+            },
+            {
+              "kind": "related",
+              "target": "OK-PR-013"
+            },
+            {
+              "kind": "related",
+              "target": "OK-PR-007"
+            }
+          ]
+        }
+      ],
+      "legacy_ambiguous": false,
+      "active_branch_touches": [],
+      "dirty_overlap": false
+    },
+    {
+      "path": "docs/repo/plans/operating-kit-script-asset-roles/operating-kit-script-asset-roles_implementation_doc.md",
+      "kind": "implementation",
+      "title": "Operating Kit Script Asset Roles Implementation Plan",
+      "lifecycle": "completed",
+      "source_revision": "3b134a07b806d1522e7cf76fe52e2028d79155c2",
+      "source_sha256": "62d042bed7557f214e4c03bfca0f024ae9ce05274bdabc3d54f84fdd317f17bc",
+      "metadata_coverage": "legacy",
+      "parse_status": "legacy",
+      "problem_codes": [
+        "legacy_title_layout",
+        "metadata_missing"
+      ],
+      "legacy_evidence": [
+        {
+          "id": "OK-PR-025",
+          "title": "Operating Kit Script Asset Roles Discovery And Implementation Plan",
+          "type": "discovery-plan + implementation-plan",
+          "purpose": "Define and plan the Operating Kit source-doctrine update for reusable script asset roles. The discovery and draft implementation plan add `primitive script`, `workflow script`, and `helper` as role vocabulary inside L2 reusable script assets, keep `thin command wrapper` as the existing L3 maturity state, clarify contract-based workflow composition, helper promotion, ad hoc script boundaries, compact `scripts/README.md` role indexing, and managed/cloud portability guidance. The implementation plan also adds compact conditional planning, execution, and planning review hooks while keeping concrete module scripts, validators, generated registries, release, and consumer sync out of scope.",
+          "lifecycle": "completed",
+          "owner": "Codeheart-Operating-Kit",
+          "canonical_docs": [
+            "docs/repo/plans/operating-kit-script-asset-roles/operating-kit-script-asset-roles_discovery_doc.md",
+            "docs/repo/plans/operating-kit-script-asset-roles/operating-kit-script-asset-roles_execution_log.md",
+            "docs/repo/plans/operating-kit-script-asset-roles/operating-kit-script-asset-roles_implementation_doc.md"
+          ],
+          "created": "2026-07-08",
+          "last_updated": "2026-07-08T14:30:26Z",
+          "relations": [
+            {
+              "kind": "related",
+              "target": "OK-PR-022"
+            },
+            {
+              "kind": "related",
+              "target": "OK-PR-014"
+            },
+            {
+              "kind": "related",
+              "target": "OK-PR-013"
+            },
+            {
+              "kind": "related",
+              "target": "OK-PR-007"
+            }
+          ]
+        }
+      ],
+      "legacy_ambiguous": false,
+      "active_branch_touches": [],
+      "dirty_overlap": false
+    },
+    {
+      "path": "docs/repo/plans/operating-kit-self-contained-bootstrap/operating-kit-self-contained-bootstrap_implementation_doc.md",
+      "kind": "implementation",
+      "title": "Operating Kit Self-Contained Bootstrap Implementation Plan",
+      "lifecycle": "completed",
+      "source_revision": "3b134a07b806d1522e7cf76fe52e2028d79155c2",
+      "source_sha256": "ce03f70cf570e49d8fd19becb927a800262693cdb69e3e06937b1536bd40ac6c",
+      "metadata_coverage": "legacy",
+      "parse_status": "legacy",
+      "problem_codes": [
+        "legacy_title_layout",
+        "metadata_missing"
+      ],
+      "legacy_evidence": [
+        {
+          "id": "OK-PR-024",
+          "title": "Operating Kit Self-Contained Bootstrap Implementation",
+          "type": "implementation-plan",
+          "purpose": "Implement a self-contained Operating Kit bootstrap for fresh macOS and Windows machines by replacing the Python-wheel-first root CLI distribution with a Go CLI, binary release packs, legacy Python-wheel migration, and behavior parity tests against the current Python CLI.",
+          "lifecycle": "completed",
+          "owner": "Codeheart-Operating-Kit",
+          "canonical_docs": [
+            "docs/repo/plans/operating-kit-self-contained-bootstrap/operating-kit-self-contained-bootstrap_execution_log.md",
+            "docs/repo/plans/operating-kit-self-contained-bootstrap/operating-kit-self-contained-bootstrap_implementation_doc.md"
+          ],
+          "created": "2026-07-04",
+          "last_updated": "2026-07-04T23:31:11Z",
+          "relations": [
+            {
+              "kind": "depends-on",
+              "target": "Codeheart-HQ:CODEHEART-HQ-PR-009"
+            },
+            {
+              "kind": "related",
+              "target": "OK-PR-017"
+            },
+            {
+              "kind": "related",
+              "target": "OK-PR-010"
+            },
+            {
+              "kind": "related",
+              "target": "docs/repo/runbooks/change-operating-kit.md"
+            },
+            {
+              "kind": "related",
+              "target": "docs/repo/runbooks/release-operating-kit.md"
+            }
+          ]
+        }
+      ],
+      "legacy_ambiguous": false,
+      "active_branch_touches": [],
+      "dirty_overlap": false
+    },
+    {
+      "path": "docs/repo/plans/operating-kit-state-release-architecture/operating-kit-state-release-architecture_discovery_doc.md",
+      "kind": "discovery",
+      "title": "Operating Kit State And Release Architecture Discovery",
+      "lifecycle": "completed",
+      "source_revision": "3b134a07b806d1522e7cf76fe52e2028d79155c2",
+      "source_sha256": "01143365817781640cd3de2999cf1d2851ad9d5cc17063565003458fe847de30",
+      "metadata_coverage": "legacy",
+      "parse_status": "legacy",
+      "problem_codes": [
+        "metadata_missing"
+      ],
+      "legacy_evidence": [
+        {
+          "id": "OK-PR-026",
+          "title": "Operating Kit State And Release Architecture Discovery And Implementation Plan",
+          "type": "discovery-plan + implementation-plan",
+          "purpose": "Define and plan the source implementation for safe Operating Kit lifecycle commands, one typed desired-state authority, runtime schema enforcement, lock-v2 migration, transactional reconciliation, non-circular release provenance, reproducible packs, cross-platform upgrade, and source-repository producer mode through a minimum reliable foundation with three internal packages, one lifecycle runbook, transient transaction evidence, and automated validation.",
+          "lifecycle": "completed",
+          "owner": "Codeheart-Operating-Kit",
+          "canonical_docs": [
+            "docs/repo/plans/operating-kit-state-release-architecture/operating-kit-state-release-architecture_discovery_doc.md",
+            "docs/repo/plans/operating-kit-state-release-architecture/operating-kit-state-release-architecture_execution_log.md",
+            "docs/repo/plans/operating-kit-state-release-architecture/operating-kit-state-release-architecture_implementation_doc.md"
+          ],
+          "created": "2026-07-09",
+          "last_updated": "2026-07-10T07:44:05Z",
+          "relations": [
+            {
+              "kind": "related",
+              "target": "OK-PR-024"
+            },
+            {
+              "kind": "related",
+              "target": "OK-PR-017"
+            },
+            {
+              "kind": "related",
+              "target": "OK-PR-013"
+            },
+            {
+              "kind": "related",
+              "target": "docs/repo/runbooks/release-operating-kit.md"
+            }
+          ]
+        }
+      ],
+      "legacy_ambiguous": false,
+      "active_branch_touches": [],
+      "dirty_overlap": false
+    },
+    {
+      "path": "docs/repo/plans/operating-kit-state-release-architecture/operating-kit-state-release-architecture_implementation_doc.md",
+      "kind": "implementation",
+      "title": "Operating Kit State And Release Architecture - Minimum Reliable Foundation Plan",
+      "lifecycle": "completed",
+      "source_revision": "3b134a07b806d1522e7cf76fe52e2028d79155c2",
+      "source_sha256": "a89c45361fc19045f89bc552e25fe71f933fa15d9b79d558472c100c82b1cdd2",
+      "metadata_coverage": "legacy",
+      "parse_status": "legacy",
+      "problem_codes": [
+        "legacy_title_layout",
+        "metadata_missing"
+      ],
+      "legacy_evidence": [
+        {
+          "id": "OK-PR-026",
+          "title": "Operating Kit State And Release Architecture Discovery And Implementation Plan",
+          "type": "discovery-plan + implementation-plan",
+          "purpose": "Define and plan the source implementation for safe Operating Kit lifecycle commands, one typed desired-state authority, runtime schema enforcement, lock-v2 migration, transactional reconciliation, non-circular release provenance, reproducible packs, cross-platform upgrade, and source-repository producer mode through a minimum reliable foundation with three internal packages, one lifecycle runbook, transient transaction evidence, and automated validation.",
+          "lifecycle": "completed",
+          "owner": "Codeheart-Operating-Kit",
+          "canonical_docs": [
+            "docs/repo/plans/operating-kit-state-release-architecture/operating-kit-state-release-architecture_discovery_doc.md",
+            "docs/repo/plans/operating-kit-state-release-architecture/operating-kit-state-release-architecture_execution_log.md",
+            "docs/repo/plans/operating-kit-state-release-architecture/operating-kit-state-release-architecture_implementation_doc.md"
+          ],
+          "created": "2026-07-09",
+          "last_updated": "2026-07-10T07:44:05Z",
+          "relations": [
+            {
+              "kind": "related",
+              "target": "OK-PR-024"
+            },
+            {
+              "kind": "related",
+              "target": "OK-PR-017"
+            },
+            {
+              "kind": "related",
+              "target": "OK-PR-013"
+            },
+            {
+              "kind": "related",
+              "target": "docs/repo/runbooks/release-operating-kit.md"
+            }
+          ]
+        }
+      ],
+      "legacy_ambiguous": false,
+      "active_branch_touches": [],
+      "dirty_overlap": false
+    },
+    {
+      "path": "docs/repo/plans/operation-routing-dispatch-standard/operation-routing-dispatch-standard_discovery_doc.md",
+      "kind": "discovery",
+      "title": "Operation Routing And Dispatch Standard Discovery",
+      "lifecycle": "draft",
+      "source_revision": "3b134a07b806d1522e7cf76fe52e2028d79155c2",
+      "source_sha256": "d7b33556377022fbd35786ce2d35dc7eb8104d99a07d47a2544c6a8645931004",
+      "metadata_coverage": "legacy",
+      "parse_status": "legacy",
+      "problem_codes": [
+        "metadata_missing"
+      ],
+      "legacy_evidence": [
+        {
+          "id": "OK-PR-011",
+          "title": "Operation Routing And Dispatch Standard Discovery",
+          "type": "discovery-plan",
+          "purpose": "Discover shared Operating Kit doctrine for pre-execution routing and dispatch, including authority hierarchy, capability advertisements, route registries, route cards, ambiguity handling, and the split between generic Operating Kit routing behavior and domain-owned route details.",
+          "lifecycle": "draft",
+          "owner": "Codeheart-Operating-Kit",
+          "canonical_docs": [
+            "docs/repo/plans/operation-routing-dispatch-standard/operation-routing-dispatch-standard_discovery_doc.md"
+          ],
+          "created": "2026-06-25",
+          "last_updated": "2026-06-25T12:18:33Z",
+          "relations": [
+            {
+              "kind": "related",
+              "target": "OK-PR-005"
+            },
+            {
+              "kind": "related",
+              "target": "OK-PR-006"
+            },
+            {
+              "kind": "related",
+              "target": "OK-PR-009"
+            },
+            {
+              "kind": "related",
+              "target": "future"
+            }
+          ]
+        }
+      ],
+      "legacy_ambiguous": false,
+      "active_branch_touches": [],
+      "dirty_overlap": false
+    },
+    {
+      "path": "docs/repo/plans/operation-routing-dispatch-standard/operation-routing-dispatch-standard_implementation_doc.md",
+      "kind": "implementation",
+      "title": "Operation Routing And Dispatch Standard Implementation Plan",
+      "lifecycle": "draft",
+      "source_revision": "3b134a07b806d1522e7cf76fe52e2028d79155c2",
+      "source_sha256": "cd8540b6c0909920d960a1f45c292cba5cb57fee9a388bd599c20c9e341aa45c",
+      "metadata_coverage": "legacy",
+      "parse_status": "legacy",
+      "problem_codes": [
+        "legacy_title_layout",
+        "metadata_missing"
+      ],
+      "legacy_evidence": [
+        {
+          "id": "OK-PR-013",
+          "title": "Operation Routing And Dispatch Standard Implementation",
+          "type": "implementation-plan",
+          "purpose": "Implement managed Operating Kit operation-routing and dispatch doctrine, including a two-pass routing-surface inventory and consolidation flow, Agent Interface routing reference, compact root route, Structure Governance placement rules, runbook and planning hooks, fresh low-context routing probes, packaged-resource mirrors, validation, and release preparation.",
+          "lifecycle": "draft",
+          "owner": "Codeheart-Operating-Kit",
+          "canonical_docs": [
+            "docs/repo/plans/operation-routing-dispatch-standard/operation-routing-dispatch-standard_implementation_doc.md"
+          ],
+          "created": "2026-06-25",
+          "last_updated": "2026-06-25T13:14:40Z",
+          "relations": [
+            {
+              "kind": "depends-on",
+              "target": "OK-PR-011"
+            },
+            {
+              "kind": "depends-on",
+              "target": "OK-PR-012"
+            },
+            {
+              "kind": "related",
+              "target": "OK-PR-005"
+            },
+            {
+              "kind": "related",
+              "target": "OK-PR-006"
+            },
+            {
+              "kind": "related",
+              "target": "OK-PR-009"
+            },
+            {
+              "kind": "related",
+              "target": "future"
+            }
+          ]
+        }
+      ],
+      "legacy_ambiguous": false,
+      "active_branch_touches": [],
+      "dirty_overlap": false
+    },
+    {
+      "path": "docs/repo/plans/plan-register-dirty-target-safety/plan-register-dirty-target-safety_implementation_doc.md",
+      "kind": "implementation",
+      "title": "Plan Register Dirty Target Safety Implementation Plan",
+      "lifecycle": "completed",
+      "source_revision": "3b134a07b806d1522e7cf76fe52e2028d79155c2",
+      "source_sha256": "f2c2efde6e696dbb6c14ad267f8b8cde954ebf701826f3045693a6dc6800e17a",
+      "metadata_coverage": "legacy",
+      "parse_status": "legacy",
+      "problem_codes": [
+        "legacy_title_layout",
+        "metadata_missing"
+      ],
+      "legacy_evidence": [
+        {
+          "id": "OK-PR-023",
+          "title": "Plan Register Dirty Target Safety Implementation",
+          "type": "implementation-plan",
+          "purpose": "Clarify managed plan-register doctrine so agents distinguish unrelated dirty repository state from target-register conflicts before deciding whether to update a coordination-home register directly or record pending sync.",
+          "lifecycle": "completed",
+          "owner": "Codeheart-Operating-Kit",
+          "canonical_docs": [
+            "docs/repo/plans/plan-register-dirty-target-safety/plan-register-dirty-target-safety_execution_log.md",
+            "docs/repo/plans/plan-register-dirty-target-safety/plan-register-dirty-target-safety_implementation_doc.md"
+          ],
+          "created": "2026-06-29",
+          "last_updated": "2026-06-29T20:23:54Z",
+          "relations": [
+            {
+              "kind": "related",
+              "target": "OK-PR-013"
+            },
+            {
+              "kind": "related",
+              "target": "OK-PR-004"
+            },
+            {
+              "kind": "related",
+              "target": "OK-PR-003"
+            },
+            {
+              "kind": "related",
+              "target": "OK-PR-022"
+            }
+          ]
+        }
+      ],
+      "legacy_ambiguous": false,
+      "active_branch_touches": [],
+      "dirty_overlap": false
+    },
+    {
+      "path": "docs/repo/plans/plan-register-portfolio-doctrine-refinement/plan-register-portfolio-doctrine-refinement_implementation_doc.md",
+      "kind": "implementation",
+      "title": "Plan Register Portfolio Doctrine Refinement Implementation Plan",
+      "lifecycle": "completed",
+      "source_revision": "3b134a07b806d1522e7cf76fe52e2028d79155c2",
+      "source_sha256": "5432aa2d93fff56b641b1340e5867ecfe6fb3f170a632595062ec6172874dbf9",
+      "metadata_coverage": "legacy",
+      "parse_status": "legacy",
+      "problem_codes": [
+        "legacy_title_layout",
+        "metadata_missing"
+      ],
+      "legacy_evidence": [
+        {
+          "id": "OK-PR-004",
+          "title": "Plan Register Portfolio Doctrine Refinement",
+          "type": "implementation-plan",
+          "purpose": "Refine managed plan-register doctrine with local and coordination-home reference shapes, repository-qualified ID guidance, canonical pointer examples, relation ownership, and public-safe portfolio overview conventions.",
+          "lifecycle": "completed",
+          "owner": "Codeheart-Operating-Kit",
+          "canonical_docs": [
+            "docs/repo/plans/plan-register-portfolio-doctrine-refinement/plan-register-portfolio-doctrine-refinement_implementation_doc.md"
+          ],
+          "created": "2026-06-22",
+          "last_updated": "2026-06-22T21:18:13Z",
+          "relations": [
+            {
+              "kind": "related",
+              "target": "OK-PR-003"
+            },
+            {
+              "kind": "related",
+              "target": "OK-PR-001"
+            },
+            {
+              "kind": "related",
+              "target": "docs/repo/plans/portfolio-coordination-plan-register/portfolio-coordination-plan-register_implementation_doc.md"
+            },
+            {
+              "kind": "related",
+              "target": "consumer-local"
+            }
+          ]
+        }
+      ],
+      "legacy_ambiguous": false,
+      "active_branch_touches": [],
+      "dirty_overlap": false
+    },
+    {
+      "path": "docs/repo/plans/plan-register-session-lifecycle-hardening/plan-register-session-lifecycle-hardening_implementation_doc.md",
+      "kind": "implementation",
+      "title": "Plan Register Session And Lifecycle Hardening Implementation Plan",
+      "lifecycle": "completed",
+      "source_revision": "3b134a07b806d1522e7cf76fe52e2028d79155c2",
+      "source_sha256": "43d25795c9b8b323540482ef62519e991dc483f4b3df2ab0f54eed2e31f83f06",
+      "metadata_coverage": "legacy",
+      "parse_status": "legacy",
+      "problem_codes": [
+        "legacy_title_layout",
+        "metadata_missing"
+      ],
+      "legacy_evidence": [
+        {
+          "id": "OK-PR-001",
+          "title": "Plan Register Session And Lifecycle Hardening",
+          "type": "implementation-plan",
+          "purpose": "Harden Operating Kit plan-register doctrine for self-contained session-reference resolution and lifecycle grouping.",
+          "lifecycle": "completed",
+          "owner": "Codeheart-Operating-Kit",
+          "canonical_docs": [
+            "docs/repo/plans/plan-register-session-lifecycle-hardening/plan-register-session-lifecycle-hardening_implementation_doc.md"
+          ],
+          "created": "2026-06-21",
+          "last_updated": "2026-06-21T19:30:29Z",
+          "relations": [
+            {
+              "kind": "related",
+              "target": "Portfolio"
+            }
+          ]
+        }
+      ],
+      "legacy_ambiguous": false,
+      "active_branch_touches": [],
+      "dirty_overlap": false
+    },
+    {
+      "path": "docs/repo/plans/portfolio-coordination-plan-register/portfolio-coordination-plan-register_discovery_doc.md",
+      "kind": "discovery",
+      "title": "Operating Kit Portfolio Coordination And Plan Register Model Discovery",
+      "lifecycle": "completed",
+      "source_revision": "3b134a07b806d1522e7cf76fe52e2028d79155c2",
+      "source_sha256": "5dfa6f7a117d9995da298ff9ba388589acfbadacea04dba980f85a498231023a",
+      "metadata_coverage": "legacy",
+      "parse_status": "legacy",
+      "problem_codes": [
+        "metadata_missing"
+      ],
+      "legacy_evidence": [],
+      "legacy_ambiguous": false,
+      "active_branch_touches": [],
+      "dirty_overlap": false
+    },
+    {
+      "path": "docs/repo/plans/portfolio-coordination-plan-register/portfolio-coordination-plan-register_implementation_doc.md",
+      "kind": "implementation",
+      "title": "Portfolio Coordination And Plan Register Implementation Plan",
+      "lifecycle": "completed",
+      "source_revision": "3b134a07b806d1522e7cf76fe52e2028d79155c2",
+      "source_sha256": "da256236d48a2782e8e1138316f71d80621cc8492d0bc816fd48b99ad1902111",
+      "metadata_coverage": "legacy",
+      "parse_status": "legacy",
+      "problem_codes": [
+        "legacy_title_layout",
+        "metadata_missing"
+      ],
+      "legacy_evidence": [],
+      "legacy_ambiguous": false,
+      "active_branch_touches": [],
+      "dirty_overlap": false
+    },
+    {
+      "path": "docs/repo/plans/repo-feedback-capture/repo-feedback-capture_discovery_doc.md",
+      "kind": "discovery",
+      "title": "Repo Feedback Capture And Issue Intake Discovery",
+      "lifecycle": "draft",
+      "source_revision": "3b134a07b806d1522e7cf76fe52e2028d79155c2",
+      "source_sha256": "18ec2b1cf61637dd6b1c4d01c0a18a95173c36283396c3101367d38afe775fa8",
+      "metadata_coverage": "legacy",
+      "parse_status": "legacy",
+      "problem_codes": [
+        "metadata_missing"
+      ],
+      "legacy_evidence": [
+        {
+          "id": "OK-PR-020",
+          "title": "Repo Feedback Capture And Issue Intake Discovery",
+          "type": "discovery-plan",
+          "purpose": "Discover a reusable Operating Kit standard for how agents recognize repo-specific feedback during runbook execution, check whether the owning repository's GitHub Issues intake already works, route to it when available, handle demand-driven setup only when issue intake is unavailable or incomplete, suppress repeated prompts after user decline, classify issues, protect privacy, and promote accepted feedback into direct patches, batches, discovery, or implementation planning.",
+          "lifecycle": "implementation-handoff-ready",
+          "owner": "Codeheart-Operating-Kit",
+          "canonical_docs": [
+            "docs/repo/plans/repo-feedback-capture/repo-feedback-capture_discovery_doc.md"
+          ],
+          "created": "2026-06-29",
+          "last_updated": "2026-07-02T13:16:41Z",
+          "relations": [
+            {
+              "kind": "child",
+              "target": "OK-PR-021"
+            },
+            {
+              "kind": "related",
+              "target": "docs/repo/plans/kit-feedback-intake/kit-feedback-intake_discovery_doc.md"
+            },
+            {
+              "kind": "related",
+              "target": "docs/repo/plans/kit-feedback-intake/kit-feedback-intake_implementation_doc.md"
+            },
+            {
+              "kind": "related",
+              "target": "OK-PR-011"
+            },
+            {
+              "kind": "related",
+              "target": "OK-PR-013"
+            },
+            {
+              "kind": "related",
+              "target": "OK-PR-005"
+            },
+            {
+              "kind": "related",
+              "target": "OK-PR-007"
+            },
+            {
+              "kind": "related",
+              "target": "OK-PR-009"
+            },
+            {
+              "kind": "related",
+              "target": "OK-PR-010"
+            }
+          ]
+        }
+      ],
+      "legacy_ambiguous": false,
+      "active_branch_touches": [],
+      "dirty_overlap": false
+    },
+    {
+      "path": "docs/repo/plans/repo-feedback-capture/repo-feedback-capture_implementation_doc.md",
+      "kind": "implementation",
+      "title": "Overview",
+      "lifecycle": "completed",
+      "source_revision": "3b134a07b806d1522e7cf76fe52e2028d79155c2",
+      "source_sha256": "54efc59530222f7331332312bc764a2250a6f0a34e14c33180c39cb0734b3ace",
+      "metadata_coverage": "legacy",
+      "parse_status": "legacy",
+      "problem_codes": [
+        "legacy_title_layout",
+        "metadata_missing"
+      ],
+      "legacy_evidence": [
+        {
+          "id": "OK-PR-021",
+          "title": "Repo Feedback Capture And Issue Intake Implementation",
+          "type": "implementation-plan",
+          "purpose": "Implement managed Operating Kit repo feedback capture by adding optional `repo_feedback` config schema support, capture and setup runbooks, item-format guidance, installed root route visibility, packaged-resource mirrors, validation, release surfaces, and fresh-repo proof while keeping GitHub issue creation and repository setup approval-gated.",
+          "lifecycle": "completed",
+          "owner": "Codeheart-Operating-Kit",
+          "canonical_docs": [
+            "docs/repo/plans/repo-feedback-capture/repo-feedback-capture_execution_log.md",
+            "docs/repo/plans/repo-feedback-capture/repo-feedback-capture_implementation_doc.md"
+          ],
+          "created": "2026-06-29",
+          "last_updated": "2026-07-02T13:16:41Z",
+          "relations": [
+            {
+              "kind": "depends-on",
+              "target": "OK-PR-020"
+            },
+            {
+              "kind": "related",
+              "target": "docs/repo/plans/kit-feedback-intake/kit-feedback-intake_implementation_doc.md"
+            },
+            {
+              "kind": "related",
+              "target": "OK-PR-011"
+            },
+            {
+              "kind": "related",
+              "target": "OK-PR-013"
+            },
+            {
+              "kind": "related",
+              "target": "OK-PR-005"
+            },
+            {
+              "kind": "related",
+              "target": "OK-PR-007"
+            },
+            {
+              "kind": "related",
+              "target": "OK-PR-010"
+            }
+          ]
+        }
+      ],
+      "legacy_ambiguous": false,
+      "active_branch_touches": [],
+      "dirty_overlap": false
+    },
+    {
+      "path": "docs/repo/plans/runbook-authoring-standards/runbook-authoring-standards_discovery_doc.md",
+      "kind": "discovery",
+      "title": "Runbook Authoring Standards Discovery",
+      "lifecycle": "draft",
+      "source_revision": "3b134a07b806d1522e7cf76fe52e2028d79155c2",
+      "source_sha256": "c87cb2042d4a2cccdd1dde2f724d8c50f6ffccb1f22bfb546508042ea4c08208",
+      "metadata_coverage": "legacy",
+      "parse_status": "legacy",
+      "problem_codes": [
+        "metadata_missing"
+      ],
+      "legacy_evidence": [
+        {
+          "id": "OK-PR-005",
+          "title": "Runbook Authoring Standards Discovery",
+          "type": "discovery-plan",
+          "purpose": "Discover reusable Operating Kit standards for human-facing, agent-facing, hybrid, and maintainer runbooks so future runbooks have clear user scripts, explicit execution paths, source of truth, stop conditions, evidence, and validation.",
+          "lifecycle": "draft",
+          "owner": "Codeheart-Operating-Kit",
+          "canonical_docs": [
+            "docs/repo/plans/runbook-authoring-standards/runbook-authoring-standards_discovery_doc.md"
+          ],
+          "created": "2026-06-23",
+          "last_updated": "2026-06-23T12:02:14Z",
+          "relations": [
+            {
+              "kind": "related",
+              "target": "OK-PR-002"
+            },
+            {
+              "kind": "related",
+              "target": "consumer-discovered"
+            },
+            {
+              "kind": "related",
+              "target": "managed"
+            }
+          ]
+        }
+      ],
+      "legacy_ambiguous": false,
+      "active_branch_touches": [],
+      "dirty_overlap": false
+    },
+    {
+      "path": "docs/repo/plans/runbook-authoring-standards/runbook-authoring-standards_implementation_doc.md",
+      "kind": "implementation",
+      "title": "Runbook Authoring Standards Implementation Plan",
+      "lifecycle": "completed",
+      "source_revision": "3b134a07b806d1522e7cf76fe52e2028d79155c2",
+      "source_sha256": "0db887a5246bc50ac7345c768597fea65af8218652bc7353f7b90b805031e8dc",
+      "metadata_coverage": "legacy",
+      "parse_status": "legacy",
+      "problem_codes": [
+        "legacy_title_layout",
+        "metadata_missing"
+      ],
+      "legacy_evidence": [
+        {
+          "id": "OK-PR-007",
+          "title": "Runbook Authoring Standards Implementation",
+          "type": "implementation-plan",
+          "purpose": "Implement the managed Operating Kit runbook authoring standard with audience classification, compact intention blocks, human-facing and agent-facing quality rules, planning workflow hooks, packaged resource mirroring, public release publication, and consumer sync proof.",
+          "lifecycle": "completed",
+          "owner": "Codeheart-Operating-Kit",
+          "canonical_docs": [
+            "docs/repo/plans/runbook-authoring-standards/runbook-authoring-standards_implementation_doc.md"
+          ],
+          "created": "2026-06-23",
+          "last_updated": "2026-06-23T17:44:23Z",
+          "relations": [
+            {
+              "kind": "depends-on",
+              "target": "OK-PR-005"
+            },
+            {
+              "kind": "related",
+              "target": "OK-PR-006"
+            },
+            {
+              "kind": "related",
+              "target": "OK-PR-002"
+            },
+            {
+              "kind": "related",
+              "target": "managed"
+            }
+          ]
+        }
+      ],
+      "legacy_ambiguous": false,
+      "active_branch_touches": [],
+      "dirty_overlap": false
+    },
+    {
+      "path": "docs/repo/plans/runbook-to-script-promotion-standard/runbook-to-script-promotion-standard_discovery_doc.md",
+      "kind": "discovery",
+      "title": "Runbook-To-Script Promotion Standard Discovery",
+      "lifecycle": "draft",
+      "source_revision": "3b134a07b806d1522e7cf76fe52e2028d79155c2",
+      "source_sha256": "2c2b757366c6bd82b29b0c45d0869f0e8333d602e72f80f4deb14f13a142d684",
+      "metadata_coverage": "legacy",
+      "parse_status": "legacy",
+      "problem_codes": [
+        "metadata_missing"
+      ],
+      "legacy_evidence": [
+        {
+          "id": "OK-PR-019",
+          "title": "Runbook-To-Script Promotion Standard Discovery",
+          "type": "discovery-plan",
+          "purpose": "Discover a reusable Operating Kit standard for deciding when runbook steps or operational recipes should be promoted to scripts, what first-script scaffolding is required, when infrastructure helpers or domain folders are justified, when package/CLI promotion is warranted, and how promoted scripts preserve runbook approval, safety, output, and testing expectations.",
+          "lifecycle": "draft",
+          "owner": "Codeheart-Operating-Kit",
+          "canonical_docs": [
+            "docs/repo/plans/runbook-to-script-promotion-standard/runbook-to-script-promotion-standard_discovery_doc.md"
+          ],
+          "created": "2026-06-29",
+          "last_updated": "2026-06-29T14:30:44Z",
+          "relations": [
+            {
+              "kind": "child",
+              "target": "OK-PR-022"
+            },
+            {
+              "kind": "related",
+              "target": "OK-PR-014"
+            },
+            {
+              "kind": "related",
+              "target": "OK-PR-005"
+            },
+            {
+              "kind": "related",
+              "target": "OK-PR-007"
+            },
+            {
+              "kind": "related",
+              "target": "OK-PR-011"
+            },
+            {
+              "kind": "related",
+              "target": "OK-PR-013"
+            },
+            {
+              "kind": "related",
+              "target": "OK-PR-009"
+            },
+            {
+              "kind": "related",
+              "target": "OK-PR-017"
+            }
+          ]
+        }
+      ],
+      "legacy_ambiguous": false,
+      "active_branch_touches": [],
+      "dirty_overlap": false
+    },
+    {
+      "path": "docs/repo/plans/runbook-to-script-promotion-standard/runbook-to-script-promotion-standard_implementation_doc.md",
+      "kind": "implementation",
+      "title": "Runbook-To-Script Promotion Standard Implementation Plan",
+      "lifecycle": "completed",
+      "source_revision": "3b134a07b806d1522e7cf76fe52e2028d79155c2",
+      "source_sha256": "0b882eec081ac6081220586f4c8ba5bfeceeb31b919d640c9fc256c54dc426c6",
+      "metadata_coverage": "legacy",
+      "parse_status": "legacy",
+      "problem_codes": [
+        "legacy_title_layout",
+        "metadata_missing"
+      ],
+      "legacy_evidence": [
+        {
+          "id": "OK-PR-022",
+          "title": "Runbook-To-Script Promotion Standard Implementation",
+          "type": "implementation-plan",
+          "purpose": "Implement managed Operating Kit doctrine for promoting fragile, repeated, or evidence-bearing runbook mechanics into reusable script assets without turning whole runbooks into premature CLIs, APIs, or broad automation wrappers.",
+          "lifecycle": "completed",
+          "owner": "Codeheart-Operating-Kit",
+          "canonical_docs": [
+            "docs/repo/plans/runbook-to-script-promotion-standard/runbook-to-script-promotion-standard_execution_log.md",
+            "docs/repo/plans/runbook-to-script-promotion-standard/runbook-to-script-promotion-standard_implementation_doc.md"
+          ],
+          "created": "2026-06-29",
+          "last_updated": "2026-06-29T15:01:31Z",
+          "relations": [
+            {
+              "kind": "depends-on",
+              "target": "OK-PR-019"
+            },
+            {
+              "kind": "related",
+              "target": "OK-PR-014"
+            },
+            {
+              "kind": "related",
+              "target": "OK-PR-005"
+            },
+            {
+              "kind": "related",
+              "target": "OK-PR-007"
+            },
+            {
+              "kind": "related",
+              "target": "OK-PR-011"
+            },
+            {
+              "kind": "related",
+              "target": "OK-PR-013"
+            },
+            {
+              "kind": "related",
+              "target": "OK-PR-017"
+            }
+          ]
+        }
+      ],
+      "legacy_ambiguous": false,
+      "active_branch_touches": [],
+      "dirty_overlap": false
+    },
+    {
+      "path": "docs/repo/plans/runtime-materialization-hardening/runtime-materialization-hardening_implementation_doc.md",
+      "kind": "implementation",
+      "title": "Consumer Runtime Materialization And Terminal Handoff Hardening Implementation Plan",
+      "lifecycle": "completed",
+      "source_revision": "3b134a07b806d1522e7cf76fe52e2028d79155c2",
+      "source_sha256": "1d952ad36e3df8f811384aff4841804382ae79237fb80e5add47bb73fbb4b7cc",
+      "metadata_coverage": "legacy",
+      "parse_status": "legacy",
+      "problem_codes": [
+        "legacy_title_layout",
+        "metadata_missing"
+      ],
+      "legacy_evidence": [
+        {
+          "id": "OK-PR-017",
+          "title": "Consumer Runtime Materialization Hardening Implementation",
+          "type": "implementation-plan",
+          "purpose": "Harden the Operating Kit local tooling and agent-interface standards so consumer-mode runtime tooling is materialized from durable module/package content into ignored local runtime state without editable development links, generated install metadata in managed snapshots, or global runtime mutation, and so runbooks use visible-terminal handoff for user-entered terminal prompts instead of hidden agent tool prompts; release the Operating Kit update; apply the first adopter through an AI Execution module release; refresh the HQ AI Execution snapshot; and sync the released kit into HQ, Foundry, the named private platform repository, and Operating Kit repos.",
+          "lifecycle": "completed",
+          "owner": "Codeheart-Operating-Kit",
+          "canonical_docs": [
+            "docs/repo/plans/runtime-materialization-hardening/runtime-materialization-hardening_execution_log.md",
+            "docs/repo/plans/runtime-materialization-hardening/runtime-materialization-hardening_implementation_doc.md"
+          ],
+          "created": "2026-06-26",
+          "last_updated": "2026-06-26T16:33:33Z",
+          "relations": [
+            {
+              "kind": "depends-on",
+              "target": "OK-PR-016"
+            },
+            {
+              "kind": "related",
+              "target": "OK-PR-009"
+            },
+            {
+              "kind": "related",
+              "target": "OK-PR-010"
+            },
+            {
+              "kind": "related",
+              "target": "OK-PR-005"
+            },
+            {
+              "kind": "related",
+              "target": "OK-PR-007"
+            },
+            {
+              "kind": "related",
+              "target": "CODEHEART-AUTOMATION-FOUNDRY-PR-007"
+            }
+          ]
+        }
+      ],
+      "legacy_ambiguous": false,
+      "active_branch_touches": [],
+      "dirty_overlap": false
+    },
+    {
+      "path": "docs/repo/plans/semantic-plan-catalog-coordination/semantic-plan-catalog-coordination_discovery_doc.md",
+      "kind": "discovery",
+      "title": "Semantic Plan Catalog And Branch-Aware Coordination Discovery",
+      "lifecycle": "draft",
+      "source_revision": "3b134a07b806d1522e7cf76fe52e2028d79155c2",
+      "source_sha256": "ce0a3799576aaf7316d14ade69927e619aa4867f05b95258f281eabc4c9e31f4",
+      "metadata_coverage": "legacy",
+      "parse_status": "legacy",
+      "problem_codes": [
+        "metadata_missing"
+      ],
+      "legacy_evidence": [
+        {
+          "id": "OK-PR-027",
+          "title": "Semantic Plan Catalog And Branch-Aware Coordination Discovery",
+          "type": "discovery-plan",
+          "purpose": "Re-evaluate the manual sequential plan-register model and define candidate requirements for stable semantic identity, separate discovery and implementation records, first-class plan families, rich canonical metadata, generated local views, complete coordination-home coverage, automatic member discovery from existing portfolio configuration, on-demand source refresh, default-branch baselines, changed-plan branch overlays, publication checkpoints, reusable coordination-home setup, and semantic legacy migration.",
+          "lifecycle": "draft",
+          "owner": "Codeheart-Operating-Kit",
+          "canonical_docs": [
+            "docs/repo/plans/semantic-plan-catalog-coordination/semantic-plan-catalog-coordination_discovery_doc.md"
+          ],
+          "created": "2026-07-30",
+          "last_updated": "2026-07-31T09:22:30Z",
+          "relations": [
+            {
+              "kind": "related",
+              "target": "OK-PR-004"
+            },
+            {
+              "kind": "related",
+              "target": "OK-PR-003"
+            },
+            {
+              "kind": "related",
+              "target": "OK-PR-023"
+            },
+            {
+              "kind": "related",
+              "target": "OK-PR-001"
+            },
+            {
+              "kind": "related",
+              "target": ""
+            }
+          ]
+        }
+      ],
+      "legacy_ambiguous": false,
+      "active_branch_touches": [],
+      "dirty_overlap": false
+    },
+    {
+      "path": "docs/repo/plans/semantic-plan-catalog-coordination/semantic-plan-catalog-coordination_implementation_doc.md",
+      "kind": "implementation",
+      "title": "Semantic Plan Catalog And Branch-Aware Coordination Implementation Plan",
+      "lifecycle": "active",
+      "source_revision": "3b134a07b806d1522e7cf76fe52e2028d79155c2",
+      "source_sha256": "dcf3c527fadb2e508684d24dd4ecaa7b18342ce28403387c98420ec3059dbc5c",
+      "metadata_coverage": "legacy",
+      "parse_status": "legacy",
+      "problem_codes": [
+        "legacy_title_layout",
+        "metadata_missing"
+      ],
+      "legacy_evidence": [
+        {
+          "id": "OK-PR-028",
+          "title": "Semantic Plan Catalog And Branch-Aware Coordination Implementation",
+          "type": "implementation-plan",
+          "purpose": "Implement the approved semantic plan catalog as a backwards-compatible Operating Kit capability with marker-bounded canonical metadata, repository-qualified semantic IDs, separate discovery, implementation, and family records, generated local views, guarded semantic migration, config-driven portfolio membership, default-branch baselines, plan-changing unmerged-branch overlays, local Git and authenticated GitHub-through-`gh` adapters, coordination-owned strategic overlays, activation-based plan checkpoint publication, and a producer-repository catalog cutover. The plan finishes with dynamic next-patch selection, reproducible macOS and Windows release packs, an explicit publication gate, and public-asset verification while leaving consumer rollout for later repository-owned execution.",
+          "lifecycle": "active",
+          "owner": "Codeheart-Operating-Kit",
+          "canonical_docs": [
+            "docs/repo/plans/semantic-plan-catalog-coordination/semantic-plan-catalog-coordination_implementation_doc.md"
+          ],
+          "created": "2026-07-31",
+          "last_updated": "2026-07-31T10:59:19Z",
+          "relations": [
+            {
+              "kind": "depends-on",
+              "target": "OK-PR-027"
+            },
+            {
+              "kind": "related",
+              "target": "OK-PR-004"
+            },
+            {
+              "kind": "related",
+              "target": "OK-PR-003"
+            },
+            {
+              "kind": "related",
+              "target": "OK-PR-023"
+            },
+            {
+              "kind": "related",
+              "target": "OK-PR-001"
+            }
+          ]
+        }
+      ],
+      "legacy_ambiguous": false,
+      "active_branch_touches": [],
+      "dirty_overlap": false
+    },
+    {
+      "path": "docs/repo/plans/tooling-environment-readiness/tooling-environment-readiness_discovery_doc.md",
+      "kind": "discovery",
+      "title": "Tooling Environment Readiness Discovery",
+      "lifecycle": "draft",
+      "source_revision": "3b134a07b806d1522e7cf76fe52e2028d79155c2",
+      "source_sha256": "f45192cb4e89b819f291fab092a85e509729a7e3189a4aa61dd5b701a8931150",
+      "metadata_coverage": "legacy",
+      "parse_status": "legacy",
+      "problem_codes": [
+        "metadata_missing"
+      ],
+      "legacy_evidence": [
+        {
+          "id": "OK-PR-009",
+          "title": "Tooling Environment Readiness Discovery",
+          "type": "discovery-plan",
+          "purpose": "Discover shared Operating Kit doctrine for local tooling and environment readiness, including missing-tool routing, package-manager/bootstrap guidance boundaries, module-owned tool declarations, local readiness evidence placement, and approval-gated install or repair flows.",
+          "lifecycle": "draft",
+          "owner": "Codeheart-Operating-Kit",
+          "canonical_docs": [
+            "docs/repo/plans/tooling-environment-readiness/tooling-environment-readiness_discovery_doc.md"
+          ],
+          "created": "2026-06-24",
+          "last_updated": "2026-06-24T13:38:01Z"
+        }
+      ],
+      "legacy_ambiguous": false,
+      "active_branch_touches": [],
+      "dirty_overlap": false
+    },
+    {
+      "path": "docs/repo/plans/tooling-environment-readiness/tooling-environment-readiness_implementation_doc.md",
+      "kind": "implementation",
+      "title": "Tooling Environment Readiness Implementation Plan",
+      "lifecycle": "completed",
+      "source_revision": "3b134a07b806d1522e7cf76fe52e2028d79155c2",
+      "source_sha256": "1a8a7ffd72a72c45fd17e040514eb7c9bf49d1d0f44d95e50af2ce604b51e0d1",
+      "metadata_coverage": "legacy",
+      "parse_status": "legacy",
+      "problem_codes": [
+        "legacy_title_layout",
+        "metadata_missing"
+      ],
+      "legacy_evidence": [
+        {
+          "id": "OK-PR-010",
+          "title": "Tooling Environment Readiness Implementation",
+          "type": "implementation-plan",
+          "purpose": "Implement one central Operating Kit tooling-readiness route, installed route visibility, runbook-authoring and planning hooks, packaged-resource mirroring, tests, and `0.1.12` release preparation for local environment blockers encountered during module onboarding or operation.",
+          "lifecycle": "completed",
+          "owner": "Codeheart-Operating-Kit",
+          "canonical_docs": [
+            "docs/repo/plans/tooling-environment-readiness/tooling-environment-readiness_implementation_doc.md"
+          ],
+          "created": "2026-06-24",
+          "last_updated": "2026-06-24T14:37:00Z",
+          "relations": [
+            {
+              "kind": "depends-on",
+              "target": "OK-PR-009"
+            },
+            {
+              "kind": "related",
+              "target": "OK-PR-007"
+            },
+            {
+              "kind": "related",
+              "target": "OK-PR-008"
+            },
+            {
+              "kind": "related",
+              "target": "Foundry"
+            }
+          ]
+        }
+      ],
+      "legacy_ambiguous": false,
+      "active_branch_touches": [],
+      "dirty_overlap": false
+    }
+  ],
+  "unpaired_legacy_evidence": [
+    {
+      "id": "OK-PR-014",
+      "title": "Operational Recipe Maturity Standard Implementation Pointer",
+      "type": "implementation-plan",
+      "purpose": "Compact source-repo pointer to the HQ-owned implementation plan that adds a generic Operating Kit standard for identifying, structuring, validating, reviewing, and deliberately promoting operational recipes inside runbooks without forcing premature scripts, commands, wrappers, APIs, Foundry packaging conventions, or M365 module adoption.",
+      "lifecycle": "completed",
+      "owner": "Codeheart-HQ",
+      "canonical_docs": [],
+      "created": "2026-06-25",
+      "last_updated": "2026-06-25T20:42:30Z",
+      "relations": [
+        {
+          "kind": "related",
+          "target": "OK-PR-013"
+        },
+        {
+          "kind": "related",
+          "target": "OK-PR-007"
+        },
+        {
+          "kind": "related",
+          "target": "OK-PR-008"
+        }
+      ]
+    }
+  ],
+  "coverage": {
+    "formal_records": 33,
+    "canonical_metadata": 0,
+    "legacy_records": 33,
+    "invalid_records": 0,
+    "unreadable_records": 0,
+    "unsafe_records": 0,
+    "unpaired_legacy_evidence": 1,
+    "active_branch_touches": 0,
+    "dirty_overlaps": 0
+  },
+  "problems": [
+    {
+      "code": "legacy_title_layout",
+      "message": "implementation layout uses the generic H1 'Document Header' with compatibility title handling",
+      "path": "docs/repo/plans/business-docs-placement-clarity/business-docs-placement-clarity_implementation_doc.md",
+      "severity": "warning",
+      "remediation": "new canonical plans use their human-readable title as the direct H1; retain this compatibility layout only for existing documents"
+    },
+    {
+      "code": "metadata_missing",
+      "message": "docs/repo/plans/business-docs-placement-clarity/business-docs-placement-clarity_implementation_doc.md has no bounded Codeheart plan metadata block",
+      "path": "docs/repo/plans/business-docs-placement-clarity/business-docs-placement-clarity_implementation_doc.md",
+      "severity": "warning",
+      "remediation": "add reviewed canonical metadata through the migration workflow"
+    },
+    {
+      "code": "legacy_title_layout",
+      "message": "implementation layout uses the generic H1 'Document Header' with compatibility title handling",
+      "path": "docs/repo/plans/codeheart-operating-kit-implementation-planning-quality/codeheart-operating-kit-implementation-planning-quality_implementation_doc.md",
+      "severity": "warning",
+      "remediation": "new canonical plans use their human-readable title as the direct H1; retain this compatibility layout only for existing documents"
+    },
+    {
+      "code": "metadata_missing",
+      "message": "docs/repo/plans/codeheart-operating-kit-implementation-planning-quality/codeheart-operating-kit-implementation-planning-quality_implementation_doc.md has no bounded Codeheart plan metadata block",
+      "path": "docs/repo/plans/codeheart-operating-kit-implementation-planning-quality/codeheart-operating-kit-implementation-planning-quality_implementation_doc.md",
+      "severity": "warning",
+      "remediation": "add reviewed canonical metadata through the migration workflow"
+    },
+    {
+      "code": "legacy_title_layout",
+      "message": "implementation layout uses the generic H1 'Document Header' with compatibility title handling",
+      "path": "docs/repo/plans/coordination-home-register-id-namespace/coordination-home-register-id-namespace_implementation_doc.md",
+      "severity": "warning",
+      "remediation": "new canonical plans use their human-readable title as the direct H1; retain this compatibility layout only for existing documents"
+    },
+    {
+      "code": "metadata_missing",
+      "message": "docs/repo/plans/coordination-home-register-id-namespace/coordination-home-register-id-namespace_implementation_doc.md has no bounded Codeheart plan metadata block",
+      "path": "docs/repo/plans/coordination-home-register-id-namespace/coordination-home-register-id-namespace_implementation_doc.md",
+      "severity": "warning",
+      "remediation": "add reviewed canonical metadata through the migration workflow"
+    },
+    {
+      "code": "legacy_title_layout",
+      "message": "implementation layout uses the generic H1 'Document Header' with compatibility title handling",
+      "path": "docs/repo/plans/discovery-handoff-gate/discovery-handoff-gate_implementation_doc.md",
+      "severity": "warning",
+      "remediation": "new canonical plans use their human-readable title as the direct H1; retain this compatibility layout only for existing documents"
+    },
+    {
+      "code": "metadata_missing",
+      "message": "docs/repo/plans/discovery-handoff-gate/discovery-handoff-gate_implementation_doc.md has no bounded Codeheart plan metadata block",
+      "path": "docs/repo/plans/discovery-handoff-gate/discovery-handoff-gate_implementation_doc.md",
+      "severity": "warning",
+      "remediation": "add reviewed canonical metadata through the migration workflow"
+    },
+    {
+      "code": "legacy_title_layout",
+      "message": "implementation layout uses the generic H1 'Document Header' with compatibility title handling",
+      "path": "docs/repo/plans/kit-feedback-intake/kit-feedback-intake_discovery_doc.md",
+      "severity": "warning",
+      "remediation": "new canonical plans use their human-readable title as the direct H1; retain this compatibility layout only for existing documents"
+    },
+    {
+      "code": "metadata_missing",
+      "message": "docs/repo/plans/kit-feedback-intake/kit-feedback-intake_discovery_doc.md has no bounded Codeheart plan metadata block",
+      "path": "docs/repo/plans/kit-feedback-intake/kit-feedback-intake_discovery_doc.md",
+      "severity": "warning",
+      "remediation": "add reviewed canonical metadata through the migration workflow"
+    },
+    {
+      "code": "legacy_title_layout",
+      "message": "implementation layout uses the generic H1 'Document Header' with compatibility title handling",
+      "path": "docs/repo/plans/kit-feedback-intake/kit-feedback-intake_implementation_doc.md",
+      "severity": "warning",
+      "remediation": "new canonical plans use their human-readable title as the direct H1; retain this compatibility layout only for existing documents"
+    },
+    {
+      "code": "metadata_missing",
+      "message": "docs/repo/plans/kit-feedback-intake/kit-feedback-intake_implementation_doc.md has no bounded Codeheart plan metadata block",
+      "path": "docs/repo/plans/kit-feedback-intake/kit-feedback-intake_implementation_doc.md",
+      "severity": "warning",
+      "remediation": "add reviewed canonical metadata through the migration workflow"
+    },
+    {
+      "code": "metadata_missing",
+      "message": "docs/repo/plans/local-runtime-environment-standard/local-runtime-environment-standard_discovery_doc.md has no bounded Codeheart plan metadata block",
+      "path": "docs/repo/plans/local-runtime-environment-standard/local-runtime-environment-standard_discovery_doc.md",
+      "severity": "warning",
+      "remediation": "add reviewed canonical metadata through the migration workflow"
+    },
+    {
+      "code": "legacy_title_layout",
+      "message": "implementation layout uses the generic H1 'Document Header' with compatibility title handling",
+      "path": "docs/repo/plans/local-runtime-environment-standard/local-runtime-environment-standard_implementation_doc.md",
+      "severity": "warning",
+      "remediation": "new canonical plans use their human-readable title as the direct H1; retain this compatibility layout only for existing documents"
+    },
+    {
+      "code": "metadata_missing",
+      "message": "docs/repo/plans/local-runtime-environment-standard/local-runtime-environment-standard_implementation_doc.md has no bounded Codeheart plan metadata block",
+      "path": "docs/repo/plans/local-runtime-environment-standard/local-runtime-environment-standard_implementation_doc.md",
+      "severity": "warning",
+      "remediation": "add reviewed canonical metadata through the migration workflow"
+    },
+    {
+      "code": "metadata_missing",
+      "message": "docs/repo/plans/module-extension-state-routing/module-extension-state-routing_discovery_doc.md has no bounded Codeheart plan metadata block",
+      "path": "docs/repo/plans/module-extension-state-routing/module-extension-state-routing_discovery_doc.md",
+      "severity": "warning",
+      "remediation": "add reviewed canonical metadata through the migration workflow"
+    },
+    {
+      "code": "legacy_title_layout",
+      "message": "implementation layout uses the generic H1 'Document Header' with compatibility title handling",
+      "path": "docs/repo/plans/module-extension-state-routing/module-extension-state-routing_implementation_doc.md",
+      "severity": "warning",
+      "remediation": "new canonical plans use their human-readable title as the direct H1; retain this compatibility layout only for existing documents"
+    },
+    {
+      "code": "metadata_missing",
+      "message": "docs/repo/plans/module-extension-state-routing/module-extension-state-routing_implementation_doc.md has no bounded Codeheart plan metadata block",
+      "path": "docs/repo/plans/module-extension-state-routing/module-extension-state-routing_implementation_doc.md",
+      "severity": "warning",
+      "remediation": "add reviewed canonical metadata through the migration workflow"
+    },
+    {
+      "code": "legacy_header_status",
+      "message": "legacy status \"implementation-handoff-ready\" is represented as lifecycle \"draft\"",
+      "path": "docs/repo/plans/operating-kit-script-asset-roles/operating-kit-script-asset-roles_discovery_doc.md",
+      "severity": "warning",
+      "remediation": "preserve the historical header during metadata-only migration and semantically review lifecycle before canonical cutover"
+    },
+    {
+      "code": "metadata_missing",
+      "message": "docs/repo/plans/operating-kit-script-asset-roles/operating-kit-script-asset-roles_discovery_doc.md has no bounded Codeheart plan metadata block",
+      "path": "docs/repo/plans/operating-kit-script-asset-roles/operating-kit-script-asset-roles_discovery_doc.md",
+      "severity": "warning",
+      "remediation": "add reviewed canonical metadata through the migration workflow"
+    },
+    {
+      "code": "legacy_title_layout",
+      "message": "implementation layout uses the generic H1 'Document Header' with compatibility title handling",
+      "path": "docs/repo/plans/operating-kit-script-asset-roles/operating-kit-script-asset-roles_implementation_doc.md",
+      "severity": "warning",
+      "remediation": "new canonical plans use their human-readable title as the direct H1; retain this compatibility layout only for existing documents"
+    },
+    {
+      "code": "metadata_missing",
+      "message": "docs/repo/plans/operating-kit-script-asset-roles/operating-kit-script-asset-roles_implementation_doc.md has no bounded Codeheart plan metadata block",
+      "path": "docs/repo/plans/operating-kit-script-asset-roles/operating-kit-script-asset-roles_implementation_doc.md",
+      "severity": "warning",
+      "remediation": "add reviewed canonical metadata through the migration workflow"
+    },
+    {
+      "code": "legacy_title_layout",
+      "message": "implementation layout uses the generic H1 'Document Header' with compatibility title handling",
+      "path": "docs/repo/plans/operating-kit-self-contained-bootstrap/operating-kit-self-contained-bootstrap_implementation_doc.md",
+      "severity": "warning",
+      "remediation": "new canonical plans use their human-readable title as the direct H1; retain this compatibility layout only for existing documents"
+    },
+    {
+      "code": "metadata_missing",
+      "message": "docs/repo/plans/operating-kit-self-contained-bootstrap/operating-kit-self-contained-bootstrap_implementation_doc.md has no bounded Codeheart plan metadata block",
+      "path": "docs/repo/plans/operating-kit-self-contained-bootstrap/operating-kit-self-contained-bootstrap_implementation_doc.md",
+      "severity": "warning",
+      "remediation": "add reviewed canonical metadata through the migration workflow"
+    },
+    {
+      "code": "metadata_missing",
+      "message": "docs/repo/plans/operating-kit-state-release-architecture/operating-kit-state-release-architecture_discovery_doc.md has no bounded Codeheart plan metadata block",
+      "path": "docs/repo/plans/operating-kit-state-release-architecture/operating-kit-state-release-architecture_discovery_doc.md",
+      "severity": "warning",
+      "remediation": "add reviewed canonical metadata through the migration workflow"
+    },
+    {
+      "code": "legacy_title_layout",
+      "message": "implementation layout uses the generic H1 'Document Header' with compatibility title handling",
+      "path": "docs/repo/plans/operating-kit-state-release-architecture/operating-kit-state-release-architecture_implementation_doc.md",
+      "severity": "warning",
+      "remediation": "new canonical plans use their human-readable title as the direct H1; retain this compatibility layout only for existing documents"
+    },
+    {
+      "code": "metadata_missing",
+      "message": "docs/repo/plans/operating-kit-state-release-architecture/operating-kit-state-release-architecture_implementation_doc.md has no bounded Codeheart plan metadata block",
+      "path": "docs/repo/plans/operating-kit-state-release-architecture/operating-kit-state-release-architecture_implementation_doc.md",
+      "severity": "warning",
+      "remediation": "add reviewed canonical metadata through the migration workflow"
+    },
+    {
+      "code": "metadata_missing",
+      "message": "docs/repo/plans/operation-routing-dispatch-standard/operation-routing-dispatch-standard_discovery_doc.md has no bounded Codeheart plan metadata block",
+      "path": "docs/repo/plans/operation-routing-dispatch-standard/operation-routing-dispatch-standard_discovery_doc.md",
+      "severity": "warning",
+      "remediation": "add reviewed canonical metadata through the migration workflow"
+    },
+    {
+      "code": "legacy_title_layout",
+      "message": "implementation layout uses the generic H1 'Document Header' with compatibility title handling",
+      "path": "docs/repo/plans/operation-routing-dispatch-standard/operation-routing-dispatch-standard_implementation_doc.md",
+      "severity": "warning",
+      "remediation": "new canonical plans use their human-readable title as the direct H1; retain this compatibility layout only for existing documents"
+    },
+    {
+      "code": "metadata_missing",
+      "message": "docs/repo/plans/operation-routing-dispatch-standard/operation-routing-dispatch-standard_implementation_doc.md has no bounded Codeheart plan metadata block",
+      "path": "docs/repo/plans/operation-routing-dispatch-standard/operation-routing-dispatch-standard_implementation_doc.md",
+      "severity": "warning",
+      "remediation": "add reviewed canonical metadata through the migration workflow"
+    },
+    {
+      "code": "legacy_title_layout",
+      "message": "implementation layout uses the generic H1 'Document Header' with compatibility title handling",
+      "path": "docs/repo/plans/plan-register-dirty-target-safety/plan-register-dirty-target-safety_implementation_doc.md",
+      "severity": "warning",
+      "remediation": "new canonical plans use their human-readable title as the direct H1; retain this compatibility layout only for existing documents"
+    },
+    {
+      "code": "metadata_missing",
+      "message": "docs/repo/plans/plan-register-dirty-target-safety/plan-register-dirty-target-safety_implementation_doc.md has no bounded Codeheart plan metadata block",
+      "path": "docs/repo/plans/plan-register-dirty-target-safety/plan-register-dirty-target-safety_implementation_doc.md",
+      "severity": "warning",
+      "remediation": "add reviewed canonical metadata through the migration workflow"
+    },
+    {
+      "code": "legacy_title_layout",
+      "message": "implementation layout uses the generic H1 'Document Header' with compatibility title handling",
+      "path": "docs/repo/plans/plan-register-portfolio-doctrine-refinement/plan-register-portfolio-doctrine-refinement_implementation_doc.md",
+      "severity": "warning",
+      "remediation": "new canonical plans use their human-readable title as the direct H1; retain this compatibility layout only for existing documents"
+    },
+    {
+      "code": "metadata_missing",
+      "message": "docs/repo/plans/plan-register-portfolio-doctrine-refinement/plan-register-portfolio-doctrine-refinement_implementation_doc.md has no bounded Codeheart plan metadata block",
+      "path": "docs/repo/plans/plan-register-portfolio-doctrine-refinement/plan-register-portfolio-doctrine-refinement_implementation_doc.md",
+      "severity": "warning",
+      "remediation": "add reviewed canonical metadata through the migration workflow"
+    },
+    {
+      "code": "legacy_title_layout",
+      "message": "implementation layout uses the generic H1 'Document Header' with compatibility title handling",
+      "path": "docs/repo/plans/plan-register-session-lifecycle-hardening/plan-register-session-lifecycle-hardening_implementation_doc.md",
+      "severity": "warning",
+      "remediation": "new canonical plans use their human-readable title as the direct H1; retain this compatibility layout only for existing documents"
+    },
+    {
+      "code": "metadata_missing",
+      "message": "docs/repo/plans/plan-register-session-lifecycle-hardening/plan-register-session-lifecycle-hardening_implementation_doc.md has no bounded Codeheart plan metadata block",
+      "path": "docs/repo/plans/plan-register-session-lifecycle-hardening/plan-register-session-lifecycle-hardening_implementation_doc.md",
+      "severity": "warning",
+      "remediation": "add reviewed canonical metadata through the migration workflow"
+    },
+    {
+      "code": "legacy_canonical_path_missing",
+      "message": "legacy register entry \"OK-PR-014\" has no local canonical document path",
+      "path": "docs/repo/plans/plan-register.md",
+      "severity": "warning",
+      "remediation": "review the entry as unpaired legacy evidence"
+    },
+    {
+      "code": "legacy_evidence_unpaired",
+      "message": "legacy register entry \"OK-PR-014\" does not identify an enumerated local canonical document",
+      "path": "docs/repo/plans/plan-register.md",
+      "severity": "warning",
+      "remediation": "retain it in inventory for semantic reconciliation"
+    },
+    {
+      "code": "metadata_missing",
+      "message": "docs/repo/plans/portfolio-coordination-plan-register/portfolio-coordination-plan-register_discovery_doc.md has no bounded Codeheart plan metadata block",
+      "path": "docs/repo/plans/portfolio-coordination-plan-register/portfolio-coordination-plan-register_discovery_doc.md",
+      "severity": "warning",
+      "remediation": "add reviewed canonical metadata through the migration workflow"
+    },
+    {
+      "code": "legacy_title_layout",
+      "message": "implementation layout uses the generic H1 'Document Header' with compatibility title handling",
+      "path": "docs/repo/plans/portfolio-coordination-plan-register/portfolio-coordination-plan-register_implementation_doc.md",
+      "severity": "warning",
+      "remediation": "new canonical plans use their human-readable title as the direct H1; retain this compatibility layout only for existing documents"
+    },
+    {
+      "code": "metadata_missing",
+      "message": "docs/repo/plans/portfolio-coordination-plan-register/portfolio-coordination-plan-register_implementation_doc.md has no bounded Codeheart plan metadata block",
+      "path": "docs/repo/plans/portfolio-coordination-plan-register/portfolio-coordination-plan-register_implementation_doc.md",
+      "severity": "warning",
+      "remediation": "add reviewed canonical metadata through the migration workflow"
+    },
+    {
+      "code": "metadata_missing",
+      "message": "docs/repo/plans/repo-feedback-capture/repo-feedback-capture_discovery_doc.md has no bounded Codeheart plan metadata block",
+      "path": "docs/repo/plans/repo-feedback-capture/repo-feedback-capture_discovery_doc.md",
+      "severity": "warning",
+      "remediation": "add reviewed canonical metadata through the migration workflow"
+    },
+    {
+      "code": "legacy_title_layout",
+      "message": "implementation layout uses the generic H1 'Document Header' with compatibility title handling",
+      "path": "docs/repo/plans/repo-feedback-capture/repo-feedback-capture_implementation_doc.md",
+      "severity": "warning",
+      "remediation": "new canonical plans use their human-readable title as the direct H1; retain this compatibility layout only for existing documents"
+    },
+    {
+      "code": "metadata_missing",
+      "message": "docs/repo/plans/repo-feedback-capture/repo-feedback-capture_implementation_doc.md has no bounded Codeheart plan metadata block",
+      "path": "docs/repo/plans/repo-feedback-capture/repo-feedback-capture_implementation_doc.md",
+      "severity": "warning",
+      "remediation": "add reviewed canonical metadata through the migration workflow"
+    },
+    {
+      "code": "metadata_missing",
+      "message": "docs/repo/plans/runbook-authoring-standards/runbook-authoring-standards_discovery_doc.md has no bounded Codeheart plan metadata block",
+      "path": "docs/repo/plans/runbook-authoring-standards/runbook-authoring-standards_discovery_doc.md",
+      "severity": "warning",
+      "remediation": "add reviewed canonical metadata through the migration workflow"
+    },
+    {
+      "code": "legacy_title_layout",
+      "message": "implementation layout uses the generic H1 'Document Header' with compatibility title handling",
+      "path": "docs/repo/plans/runbook-authoring-standards/runbook-authoring-standards_implementation_doc.md",
+      "severity": "warning",
+      "remediation": "new canonical plans use their human-readable title as the direct H1; retain this compatibility layout only for existing documents"
+    },
+    {
+      "code": "metadata_missing",
+      "message": "docs/repo/plans/runbook-authoring-standards/runbook-authoring-standards_implementation_doc.md has no bounded Codeheart plan metadata block",
+      "path": "docs/repo/plans/runbook-authoring-standards/runbook-authoring-standards_implementation_doc.md",
+      "severity": "warning",
+      "remediation": "add reviewed canonical metadata through the migration workflow"
+    },
+    {
+      "code": "metadata_missing",
+      "message": "docs/repo/plans/runbook-to-script-promotion-standard/runbook-to-script-promotion-standard_discovery_doc.md has no bounded Codeheart plan metadata block",
+      "path": "docs/repo/plans/runbook-to-script-promotion-standard/runbook-to-script-promotion-standard_discovery_doc.md",
+      "severity": "warning",
+      "remediation": "add reviewed canonical metadata through the migration workflow"
+    },
+    {
+      "code": "legacy_title_layout",
+      "message": "implementation layout uses the generic H1 'Document Header' with compatibility title handling",
+      "path": "docs/repo/plans/runbook-to-script-promotion-standard/runbook-to-script-promotion-standard_implementation_doc.md",
+      "severity": "warning",
+      "remediation": "new canonical plans use their human-readable title as the direct H1; retain this compatibility layout only for existing documents"
+    },
+    {
+      "code": "metadata_missing",
+      "message": "docs/repo/plans/runbook-to-script-promotion-standard/runbook-to-script-promotion-standard_implementation_doc.md has no bounded Codeheart plan metadata block",
+      "path": "docs/repo/plans/runbook-to-script-promotion-standard/runbook-to-script-promotion-standard_implementation_doc.md",
+      "severity": "warning",
+      "remediation": "add reviewed canonical metadata through the migration workflow"
+    },
+    {
+      "code": "legacy_title_layout",
+      "message": "implementation layout uses the generic H1 'Document Header' with compatibility title handling",
+      "path": "docs/repo/plans/runtime-materialization-hardening/runtime-materialization-hardening_implementation_doc.md",
+      "severity": "warning",
+      "remediation": "new canonical plans use their human-readable title as the direct H1; retain this compatibility layout only for existing documents"
+    },
+    {
+      "code": "metadata_missing",
+      "message": "docs/repo/plans/runtime-materialization-hardening/runtime-materialization-hardening_implementation_doc.md has no bounded Codeheart plan metadata block",
+      "path": "docs/repo/plans/runtime-materialization-hardening/runtime-materialization-hardening_implementation_doc.md",
+      "severity": "warning",
+      "remediation": "add reviewed canonical metadata through the migration workflow"
+    },
+    {
+      "code": "metadata_missing",
+      "message": "docs/repo/plans/semantic-plan-catalog-coordination/semantic-plan-catalog-coordination_discovery_doc.md has no bounded Codeheart plan metadata block",
+      "path": "docs/repo/plans/semantic-plan-catalog-coordination/semantic-plan-catalog-coordination_discovery_doc.md",
+      "severity": "warning",
+      "remediation": "add reviewed canonical metadata through the migration workflow"
+    },
+    {
+      "code": "legacy_title_layout",
+      "message": "implementation layout uses the generic H1 'Document Header' with compatibility title handling",
+      "path": "docs/repo/plans/semantic-plan-catalog-coordination/semantic-plan-catalog-coordination_implementation_doc.md",
+      "severity": "warning",
+      "remediation": "new canonical plans use their human-readable title as the direct H1; retain this compatibility layout only for existing documents"
+    },
+    {
+      "code": "metadata_missing",
+      "message": "docs/repo/plans/semantic-plan-catalog-coordination/semantic-plan-catalog-coordination_implementation_doc.md has no bounded Codeheart plan metadata block",
+      "path": "docs/repo/plans/semantic-plan-catalog-coordination/semantic-plan-catalog-coordination_implementation_doc.md",
+      "severity": "warning",
+      "remediation": "add reviewed canonical metadata through the migration workflow"
+    },
+    {
+      "code": "metadata_missing",
+      "message": "docs/repo/plans/tooling-environment-readiness/tooling-environment-readiness_discovery_doc.md has no bounded Codeheart plan metadata block",
+      "path": "docs/repo/plans/tooling-environment-readiness/tooling-environment-readiness_discovery_doc.md",
+      "severity": "warning",
+      "remediation": "add reviewed canonical metadata through the migration workflow"
+    },
+    {
+      "code": "legacy_title_layout",
+      "message": "implementation layout uses the generic H1 'Document Header' with compatibility title handling",
+      "path": "docs/repo/plans/tooling-environment-readiness/tooling-environment-readiness_implementation_doc.md",
+      "severity": "warning",
+      "remediation": "new canonical plans use their human-readable title as the direct H1; retain this compatibility layout only for existing documents"
+    },
+    {
+      "code": "metadata_missing",
+      "message": "docs/repo/plans/tooling-environment-readiness/tooling-environment-readiness_implementation_doc.md has no bounded Codeheart plan metadata block",
+      "path": "docs/repo/plans/tooling-environment-readiness/tooling-environment-readiness_implementation_doc.md",
+      "severity": "warning",
+      "remediation": "add reviewed canonical metadata through the migration workflow"
+    }
+  ]
+}

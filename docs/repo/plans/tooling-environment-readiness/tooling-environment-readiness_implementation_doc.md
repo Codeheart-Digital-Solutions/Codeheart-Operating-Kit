@@ -8,6 +8,29 @@ Execution log: docs/repo/plans/tooling-environment-readiness/tooling-environment
 
 ## Tooling Environment Readiness Implementation Plan
 
+<!-- BEGIN CODEHEART PLAN METADATA -->
+```yaml
+plan:
+    capabilities:
+        - tooling-readiness
+    catalog_metadata_updated: "2026-07-31T23:16:16Z"
+    first_cataloged: "2026-07-31T23:16:16Z"
+    id: codeheart-operating-kit.implementation.tooling-environment-readiness
+    kind: implementation
+    legacy_aliases:
+        - OK-PR-010
+    products:
+        - codeheart-operating-kit
+    purpose: Implement one central tooling-readiness route with managed guidance, planning hooks, packaging, and tests.
+    relations:
+        - kind: depends-on
+          target: codeheart-operating-kit.discovery.tooling-environment-readiness
+    schema_version: 1
+    strategic_themes:
+        - tooling-readiness
+```
+<!-- END CODEHEART PLAN METADATA -->
+
 Overview: Add an Operating Kit managed tooling-readiness route so agents have one clear way to
 handle missing local tools during module onboarding or module operations. The implementation is an
 instruction-only Operating Kit release: it creates one central readiness runbook with a small

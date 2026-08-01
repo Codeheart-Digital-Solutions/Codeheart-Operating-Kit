@@ -1,6 +1,8 @@
 import json
+import re
 import subprocess
 import sys
+from copy import deepcopy
 from pathlib import Path
 
 from codeheart_operating_kit.manifest import load_yaml
@@ -12,8 +14,18 @@ ROOT = Path(__file__).resolve().parents[1]
 def validate_instance(schema, instance):
     errors = []
 
+    def resolve_ref(ref):
+        current = schema
+        for part in ref.removeprefix("#/").split("/"):
+            current = current[part]
+        return current
+
     def validate(subschema, value, location):
         if not isinstance(subschema, dict):
+            return
+        ref = subschema.get("$ref")
+        if isinstance(ref, str) and ref.startswith("#/"):
+            validate(resolve_ref(ref), value, location)
             return
         expected_type = subschema.get("type")
         if expected_type == "object" or "properties" in subschema or "required" in subschema:
@@ -28,16 +40,37 @@ def validate_instance(schema, instance):
                 for key in value:
                     if key not in properties:
                         errors.append(f"{location}: unknown {key}")
+            elif isinstance(subschema.get("additionalProperties"), dict):
+                for key in value:
+                    if key not in properties:
+                        validate(subschema["additionalProperties"], value[key], f"{location}.{key}")
             for key, property_schema in properties.items():
                 if key in value:
                     validate(property_schema, value[key], f"{location}.{key}")
         elif expected_type == "integer" and not isinstance(value, int):
             errors.append(f"{location}: expected integer")
+        elif expected_type == "boolean" and not isinstance(value, bool):
+            errors.append(f"{location}: expected boolean")
+        elif expected_type == "array":
+            if not isinstance(value, list):
+                errors.append(f"{location}: expected array")
+                return
+            if len(value) < subschema.get("minItems", 0):
+                errors.append(f"{location}: too few items")
+            if subschema.get("uniqueItems") and len({json.dumps(item, sort_keys=True) for item in value}) != len(value):
+                errors.append(f"{location}: duplicate item")
+            for index, item in enumerate(value):
+                validate(subschema.get("items", {}), item, f"{location}[{index}]")
         elif expected_type == "string":
             if not isinstance(value, str):
                 errors.append(f"{location}: expected string")
             elif len(value) < subschema.get("minLength", 0):
                 errors.append(f"{location}: too short")
+
+        if isinstance(value, int) and value < subschema.get("minimum", value):
+            errors.append(f"{location}: below minimum")
+        if isinstance(value, str) and "pattern" in subschema and re.search(subschema["pattern"], value) is None:
+            errors.append(f"{location}: pattern mismatch")
 
         if "const" in subschema and value != subschema["const"]:
             errors.append(f"{location}: expected const {subschema['const']}")
@@ -47,8 +80,15 @@ def validate_instance(schema, instance):
         for clause in subschema.get("allOf", []):
             condition = clause.get("if")
             then = clause.get("then")
-            if condition and then and condition_matches(condition, value):
-                validate(then, value, location)
+            otherwise = clause.get("else")
+            if condition:
+                if condition_matches(condition, value):
+                    if then:
+                        validate(then, value, location)
+                elif otherwise:
+                    validate(otherwise, value, location)
+            else:
+                validate(clause, value, location)
 
     def condition_matches(condition, value):
         before = list(errors)
@@ -100,6 +140,10 @@ def github_repo_feedback():
 
 def kit_config_schema():
     return json.loads((ROOT / "schemas/kit-config.schema.json").read_text(encoding="utf-8"))
+
+
+def durable_schema(name):
+    return json.loads((ROOT / "schemas" / name).read_text(encoding="utf-8"))
 
 
 def test_state_foundation_schemas_are_versioned_and_declared():
@@ -217,6 +261,193 @@ def test_kit_config_schema_accepts_no_portfolio_block():
     config = base_config()
 
     assert_config_valid(config)
+
+
+def test_kit_config_schema_reserves_discovery_sources_for_coordination_homes():
+    portfolio_schema = kit_config_schema()["properties"]["portfolio"]
+    member_rule = portfolio_schema["allOf"][0]["then"]["allOf"][0]["then"]
+
+    assert member_rule["properties"]["discovery"] is False
+
+
+def test_plan_catalog_schemas_define_strict_versioned_contracts():
+    expected = {
+        "plan-metadata.schema.json": {"plan"},
+        "plan-catalog.schema.json": {
+            "schema_version", "coordination_home_id", "started_at", "completed_at", "complete",
+            "members", "observations", "candidates", "errors", "metrics",
+        },
+        "plan-migration-ledger.schema.json": {
+            "schema_version", "repository_id", "inventory_revision", "reviewed_at", "records",
+        },
+        "portfolio-local-sources.schema.json": {"schema_version", "sources"},
+        "portfolio-strategic-overlay.schema.json": {
+            "schema_version", "coordination_home_id", "families", "themes", "relations",
+            "priorities", "analyses",
+        },
+    }
+    for filename, required in expected.items():
+        schema = json.loads((ROOT / "schemas" / filename).read_text(encoding="utf-8"))
+        assert schema["$schema"] == "https://json-schema.org/draft/2020-12/schema"
+        assert schema["additionalProperties"] is False
+        if filename == "plan-metadata.schema.json":
+            assert set(schema["required"]) == required
+            assert set(schema["properties"]["plan"]["required"]) == {
+                "schema_version", "id", "kind", "purpose", "first_cataloged",
+                "catalog_metadata_updated",
+            }
+        else:
+            assert set(schema["required"]) == required
+
+
+def test_every_new_durable_schema_accepts_a_positive_instance_and_rejects_a_negative_one():
+    commit = "a" * 40
+    digest = "b" * 64
+    timestamp = "2026-07-31T10:00:00Z"
+    cases = {
+        "plan-metadata.schema.json": (
+            {
+                "plan": {
+                    "schema_version": 1,
+                    "id": "example.discovery.catalog",
+                    "kind": "discovery",
+                    "purpose": "Define the catalog",
+                    "first_cataloged": timestamp,
+                    "catalog_metadata_updated": timestamp,
+                    "products": ["operating-kit"],
+                }
+            },
+            lambda value: value["plan"].update({"unknown": True}),
+            "unknown unknown",
+        ),
+        "plan-catalog.schema.json": (
+            {
+                "schema_version": 1,
+                "coordination_home_id": "example-home",
+                "started_at": timestamp,
+                "completed_at": timestamp,
+                "complete": True,
+                "members": [],
+                "observations": [],
+                "candidates": [],
+                "errors": [],
+                "metrics": {
+                    "duration_ms": 0,
+                    "source_count": 0,
+                    "member_count": 0,
+                    "candidate_count": 0,
+                    "observation_count": 0,
+                    "stale_count": 0,
+                    "api_call_count": 0,
+                    "max_concurrency": 1,
+                },
+            },
+            lambda value: value["metrics"].update({"max_concurrency": 0}),
+            "below minimum",
+        ),
+        "plan-migration-ledger.schema.json": (
+            {
+                "schema_version": 1,
+                "repository_id": "example",
+                "inventory_revision": commit,
+                "reviewed_at": timestamp,
+                "records": [
+                    {
+                        "path": "docs/repo/plans/catalog_discovery_doc.md",
+                        "source_revision": commit,
+                        "source_sha256": digest,
+                        "decision": {
+                            "id": "example.discovery.catalog",
+                            "kind": "discovery",
+                            "purpose": "Define the catalog",
+                            "first_cataloged": timestamp,
+                            "catalog_metadata_updated": timestamp,
+                        },
+                        "confidence": "high",
+                        "ambiguity": [],
+                        "evidence": ["Reviewed the canonical plan"],
+                        "legacy_aliases": ["PR01"],
+                        "conflicts": [],
+                        "deferred": False,
+                        "branch_owner": "none",
+                    }
+                ],
+            },
+            lambda value: value.pop("inventory_revision"),
+            "missing inventory_revision",
+        ),
+        "portfolio-local-sources.schema.json": (
+            load_yaml(ROOT / "tests/fixtures/portfolio/local-sources.yaml"),
+            lambda value: value["sources"][0].update({"kind": "worktree"}),
+            "expected const local-git-root",
+        ),
+        "portfolio-strategic-overlay.schema.json": (
+            load_yaml(ROOT / "tests/fixtures/portfolio/strategic-overlay.yaml"),
+            lambda value: value.pop("analyses"),
+            "missing analyses",
+        ),
+    }
+
+    for name, (positive, make_negative, expected_error) in cases.items():
+        schema = durable_schema(name)
+        assert validate_instance(schema, positive) == [], name
+        negative = deepcopy(positive)
+        make_negative(negative)
+        errors = validate_instance(schema, negative)
+        assert any(expected_error in error for error in errors), (name, errors)
+
+
+def test_kit_config_schema_accepts_v2_member_and_home_fixtures():
+    for name in ["kit-config-v2-member.yaml", "kit-config-v2-home.yaml"]:
+        config = load_yaml(ROOT / "tests" / "fixtures" / "portfolio" / name)
+        assert_config_valid(config)
+
+
+def test_kit_config_schema_accepts_v1_path_only_coordination_home_fixture():
+    config = load_yaml(
+        ROOT / "tests" / "fixtures" / "portfolio" / "kit-config-v1-home.yaml"
+    )
+
+    assert_config_valid(config)
+
+
+def test_kit_config_schema_validates_mixed_cutover_revision_shape():
+    config = base_config()
+    config["component_settings"]["planning-workflows"] = {
+        "plan_catalog_mode": "mixed",
+        "plan_catalog_cutover_revision": "a" * 40,
+    }
+    assert_config_valid(config)
+    config["component_settings"]["planning-workflows"][
+        "plan_catalog_cutover_revision"
+    ] = "not-a-commit"
+    assert_config_invalid(config, "pattern mismatch")
+
+
+def test_kit_config_schema_rejects_v2_home_without_member_repository_id():
+    config = load_yaml(
+        ROOT / "tests" / "fixtures" / "portfolio" /
+        "kit-config-v2-home-missing-repository-id.yaml"
+    )
+    assert_config_invalid(config, "missing member_repository_id")
+
+
+def test_kit_config_schema_preserves_portfolio_v1_and_defaults_catalog_mode_to_legacy():
+    member = base_config()
+    member["portfolio"] = {
+        "role": "member",
+        "member_repository_id": "legacy-member",
+        "coordination_home_path": "../home",
+        "coordination_home_register_path": "docs/repo/plans/plan-register.md",
+    }
+    home = base_config()
+    home["portfolio"] = {
+        "role": "coordination-home",
+        "coordination_home_register_path": "docs/repo/plans/plan-register.md",
+    }
+    assert_config_valid(member)
+    assert_config_valid(home)
+    assert "planning-workflows" not in member["component_settings"]
 
 
 def test_kit_config_schema_accepts_no_repo_feedback_block():

@@ -1,9 +1,10 @@
-Last updated: 2026-06-25T13:05:46Z (UTC)
+Last updated: 2026-07-31T22:23:19Z (UTC)
 
 # Planning Workflows
 
 This component owns managed guidance for discovery, implementation planning, implementation-plan
-execution, planning document review, planning document lifecycle, and plan-register maintenance.
+execution, planning document review, semantic plan catalogs, portfolio coordination, migration,
+and the stable plan-register entry point.
 
 ## Use
 
@@ -15,8 +16,12 @@ execution, planning document review, planning document lifecycle, and plan-regis
   including goal-style runs.
 - Use `runbooks/review-planning-document.md` to review discovery and implementation documents for
   quality and execution readiness.
-- Use `runbooks/maintain-plan-register.md` to update local and configured coordination-home plan
-  registers for material planning lifecycle and relationship changes.
+- Use `runbooks/maintain-plan-register.md` to select legacy maintenance versus mixed/canonical
+  derived-view behavior.
+- Use `runbooks/configure-portfolio-coordination.md` to preview and configure a member or
+  coordination home.
+- Use `runbooks/refresh-portfolio-catalog.md` before current portfolio analysis.
+- Use `runbooks/migrate-plan-catalog.md` for reviewed legacy-to-canonical adoption.
 - Use `../agent-interface/reference/runbook-authoring-standard.md` when plans create or
   materially change durable runbooks.
 - Use `../agent-interface/reference/operation-routing-and-dispatch.md` when plans create or
@@ -24,9 +29,12 @@ execution, planning document review, planning document lifecycle, and plan-regis
 - Use `reference/planning-document-lifecycle.md` for planning metadata, statuses, execution logs,
   plan bundles, subplans, plan families, program folders, attachments, archives, and index
   maintenance.
-- Use `reference/plan-register-format.md` for `docs/repo/plans/plan-register.md` entry shape,
-  repository-qualified IDs, canonical document pointers, lifecycle snapshots, relation
-  vocabulary, session refs, coordination-home member entries, and coordination notes.
+- Use `reference/plan-catalog-format.md` for canonical metadata, semantic IDs, families, modes,
+  derived views, source observations, and compatibility.
+- Use `reference/portfolio-coordination-format.md` for roles, configuration, exact membership,
+  discovery sources, cache completeness, and strategic overlays.
+- Use `reference/plan-register-format.md` for the stable entry point, legacy evidence, frozen
+  mixed-mode baseline, and no-manual-append behavior.
 
 ## Boundaries
 

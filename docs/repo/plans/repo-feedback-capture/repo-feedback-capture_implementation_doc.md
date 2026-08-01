@@ -6,6 +6,29 @@ Status: completed
 
 ## Overview
 
+<!-- BEGIN CODEHEART PLAN METADATA -->
+```yaml
+plan:
+    capabilities:
+        - repo-feedback-capture
+    catalog_metadata_updated: "2026-07-31T23:16:16Z"
+    first_cataloged: "2026-07-31T23:16:16Z"
+    id: codeheart-operating-kit.implementation.repo-feedback-capture
+    kind: implementation
+    legacy_aliases:
+        - OK-PR-021
+    products:
+        - codeheart-operating-kit
+    purpose: Implement managed feedback capture, issue-intake setup, routing, packaging, and validation.
+    relations:
+        - kind: depends-on
+          target: codeheart-operating-kit.discovery.repo-feedback-capture
+    schema_version: 1
+    strategic_themes:
+        - feedback-driven-improvement
+```
+<!-- END CODEHEART PLAN METADATA -->
+
 This implementation plan turns the approved repo feedback capture discovery into a shippable
 Operating Kit v1. It adds managed agent guidance for capturing repo-specific feedback as a
 Codeheart GitHub organization member feature, a check-first GitHub Issues flow behind an existing

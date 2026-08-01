@@ -1,0 +1,18 @@
+schema_version: 1
+selected_profile: standard
+project_display_name: Example Member
+selected_setup_folder: .
+local_consumer_layer:
+  repo_docs_path: docs/repo/
+  agent_memory_path: docs/agent-memory/
+  user_layer_path: .codeheart/user/
+  local_machine_layer_path: .codeheart/local/
+component_settings:
+  planning-workflows:
+    plan_catalog_mode: mixed
+    plan_catalog_cutover_revision: 0123456789abcdef0123456789abcdef01234567
+portfolio:
+  schema_version: 2
+  role: member
+  member_repository_id: example-member
+  coordination_home_id: example-home

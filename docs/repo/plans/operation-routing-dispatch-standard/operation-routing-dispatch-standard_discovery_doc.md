@@ -4,6 +4,29 @@ Status: draft
 
 # Operation Routing And Dispatch Standard Discovery
 
+<!-- BEGIN CODEHEART PLAN METADATA -->
+```yaml
+plan:
+    capabilities:
+        - operation-routing
+    catalog_metadata_updated: "2026-07-31T23:16:16Z"
+    first_cataloged: "2026-07-31T23:16:16Z"
+    id: codeheart-operating-kit.discovery.operation-routing-dispatch-standard
+    kind: discovery
+    legacy_aliases:
+        - OK-PR-011
+    products:
+        - codeheart-operating-kit
+    purpose: Define shared pre-execution routing, authority, capability, ambiguity, and dispatch doctrine.
+    relations:
+        - kind: related
+          target: codeheart-operating-kit.implementation.operation-routing-dispatch-standard
+    schema_version: 1
+    strategic_themes:
+        - reliable-routing
+```
+<!-- END CODEHEART PLAN METADATA -->
+
 ## Overview
 
 This discovery investigates whether Codeheart Operating Kit should define a reusable routing and

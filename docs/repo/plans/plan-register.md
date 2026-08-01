@@ -1,4 +1,4 @@
-Last updated: 2026-07-10T07:44:05Z (UTC)
+Last updated: 2026-07-31T23:08:19Z (UTC)
 
 # Plan Register
 
@@ -13,14 +13,23 @@ Follow `.codeheart/kit/docs/planning-workflows/reference/plan-register-format.md
 fields and `.codeheart/kit/docs/planning-workflows/runbooks/maintain-plan-register.md` for
 maintenance.
 
+> Frozen legacy evidence: current plan authority is derived from canonical plan metadata and
+> `codeheart-operating-kit plans list`. Do not append or renumber entries after mixed cutover.
+
 ## Register Coverage
 
 Coverage note: This register currently lists public Operating Kit repository plans that have been
 entered during plan-register adoption. Earlier repository plans may be added during later register
-maintenance. `OK-PR-024` is the completed and released implementation plan for removing Python/pip
-from the base Operating Kit bootstrap by porting root commands to a self-contained Go CLI, adding
-macOS and Windows binary release packs, legacy Python-wheel migration, and explicit behavior
-parity tests.
+maintenance. `OK-PR-028` is the active implementation plan for the approved semantic catalog,
+compatibility migration, portfolio scanner, managed coordination UX, activation publication,
+producer cutover, integrated proof, and an approval-gated producer release. `OK-PR-027` is the
+implementation-handoff-ready discovery for semantic plan identity, rich canonical metadata,
+complete portfolio coverage, automatic config-driven member discovery, on-demand coordination
+refresh, default-branch baselines, changed-plan branch overlays, reusable coordination-home setup,
+activation-based plan publication, and parallel semantic migration.
+`OK-PR-024` is the completed and released implementation plan for removing Python/pip from the
+base Operating Kit bootstrap by porting root commands to a self-contained Go CLI, adding macOS and
+Windows binary release packs, legacy Python-wheel migration, and explicit behavior parity tests.
 `OK-PR-022` is the completed implementation plan for generic runbook-to-script promotion doctrine,
 including reusable script asset guidance, current doctrine alignment, and instruction-only release
 readiness. `OK-PR-021` is the completed implementation plan for Operating Kit-guided repo feedback
@@ -36,6 +45,120 @@ implementation. Local validation and real macOS/Windows CI pass; the implementat
 subsequently released in Operating Kit `v0.1.22` under separate authorization.
 
 ## Entries
+
+## OK-PR-028 - Semantic Plan Catalog And Branch-Aware Coordination Implementation
+
+Type: implementation-plan
+Purpose: Implement the approved semantic plan catalog as a backwards-compatible Operating Kit
+capability with marker-bounded canonical metadata, repository-qualified semantic IDs, separate
+discovery, implementation, and family records, generated local views, guarded semantic migration,
+config-driven portfolio membership, default-branch baselines, plan-changing unmerged-branch
+overlays, local Git and authenticated GitHub-through-`gh` adapters, coordination-owned strategic
+overlays, activation-based plan checkpoint publication, and a producer-repository catalog cutover.
+The plan finishes with dynamic next-patch selection, reproducible macOS and Windows release packs,
+an explicit publication gate, and public-asset verification while leaving consumer rollout for
+later repository-owned execution.
+Status: active
+Owner / repository: Codeheart-Operating-Kit
+Canonical docs:
+docs/repo/plans/semantic-plan-catalog-coordination/semantic-plan-catalog-coordination_implementation_doc.md
+Created: 2026-07-31
+Last updated: 2026-07-31T10:59:19Z (UTC)
+Priority / ordering note: Separate implementation record under the current compatibility register
+convention. Seven epics establish contracts, local compatibility and migration, portfolio scanning,
+managed UX and publication authority, producer semantic migration, integrated validation, and an
+approval-gated producer release. Execution is active on
+`codex/semantic-plan-catalog-coordination`.
+The draft incorporates its first planning review: configuration inputs and producer authority are
+explicit, coordination homes catalog themselves through one role and a stable repository ID,
+remote scans use scanner-owned bare mirrors with completeness gates, producer cutover uses
+remote-overlay validation, fresh pending-sync scaffolding retires, and activation remains an L1
+agent workflow rather than a publication command.
+Execution was activated by the user on 2026-07-31. That activation authorizes the plan-only normal
+commit and push checkpoint on the unambiguous work branch without a second push prompt. Release
+preparation is planned in `EP-07`, but tag creation and public publication still require explicit
+authority covering the target-version rule, presented release-candidate source tree, remote
+validation, distribution boundary, and conditional publication. Activation does not authorize a
+PR, merge, consumer sync, or other-repository write.
+
+Relations:
+- depends-on: OK-PR-027 - Semantic Plan Catalog And Branch-Aware Coordination Discovery
+- related: OK-PR-004 - Plan Register Portfolio Doctrine Refinement
+- related: OK-PR-003 - Coordination Home Register ID Namespace
+- related: OK-PR-023 - Plan Register Dirty Target Safety Implementation
+- related: OK-PR-001 - Plan Register Session And Lifecycle Hardening
+
+Session refs:
+- created: 2026-07-31, current session, drafted from the user-approved discovery decisions and
+  capability scopes.
+- material update: 2026-07-31, current session, applied all first-review recommendations and kept
+  the original six-epic capability boundary.
+- material update: 2026-07-31, current session, added a seventh epic for dynamic patch-version
+  selection, reproducible release construction, macOS and real-Windows evidence, explicit
+  publication authority, public release, and public-asset verification.
+- material update: 2026-07-31, current session, activated implementation and created the execution
+  log on `codex/semantic-plan-catalog-coordination`.
+
+Coordination note:
+- Canonical Operating Kit source implementation plan; no portfolio coordination is configured in
+  this checkout.
+- Routing-bearing and recipe-bearing.
+- Consumer impact is deliberately split across instruction-only, validator-only,
+  backwards-compatible scaffold, consumer-migration, placement/generated-path, and security or
+  safety policy effects.
+- Source execution and approval-gated release affect this producer only. Consumer rollout and
+  writes in other repositories remain separately authorized work.
+- Active implementation authority; public release remains gated by `EP-07`.
+
+## OK-PR-027 - Semantic Plan Catalog And Branch-Aware Coordination Discovery
+
+Type: discovery-plan
+Purpose: Re-evaluate the manual sequential plan-register model and define candidate requirements
+for stable semantic identity, separate discovery and implementation records, first-class plan
+families, rich canonical metadata, generated local views, complete coordination-home coverage,
+automatic member discovery from existing portfolio configuration, on-demand source refresh,
+default-branch baselines, changed-plan branch overlays, publication checkpoints, reusable
+coordination-home setup, and semantic legacy migration.
+Status: draft
+Owner / repository: Codeheart-Operating-Kit
+Canonical docs:
+docs/repo/plans/semantic-plan-catalog-coordination/semantic-plan-catalog-coordination_discovery_doc.md
+Created: 2026-07-30
+Last updated: 2026-07-31T09:22:30Z (UTC)
+Priority / ordering note: Implementation-handoff-ready discovery. `OK-PR-027` is assigned under the
+current register convention and becomes a legacy alias under the approved
+`<repository>.<kind>.<stable-slug>` identity model. The user approved the canonical metadata,
+identity, family, on-demand scan, all-unmerged-branch diff, local Git and GitHub adapter, nested
+portfolio v2, activation-publication, compatibility migration, and coordination-home capability
+scope. Only non-blocking implementation-evidence questions remain.
+
+Relations:
+- related: OK-PR-004 - Plan Register Portfolio Doctrine Refinement
+- related: OK-PR-003 - Coordination Home Register ID Namespace
+- related: OK-PR-023 - Plan Register Dirty Target Safety Implementation
+- related: OK-PR-001 - Plan Register Session And Lifecycle Hardening
+- related:
+  docs/repo/plans/portfolio-coordination-plan-register/portfolio-coordination-plan-register_discovery_doc.md
+
+Session refs:
+- created: 2026-07-30, not recorded
+- material update: 2026-07-31, not recorded, simplified synchronization and portfolio onboarding;
+  retained rich canonical metadata and existing portfolio configuration; adopted default-branch
+  baselines plus changed-plan branch overlays; and required a reusable low-context
+  coordination-home setup route.
+- material update: 2026-07-31, not recorded, approved and froze all implementation-shaping
+  decisions, defined activation as plan-only commit-and-push authority, closed the blocking
+  questions, specified parallel optimistic migration, and added implementation capability scopes.
+
+Coordination note:
+- Canonical Operating Kit redesign discovery; no portfolio coordination is configured in this
+  checkout.
+- Routing-bearing and recipe-bearing.
+- The current manual register remains authoritative until a separately approved implementation and
+  migration replace it.
+- Preliminary consumer impact includes instruction-only, validator-only, consumer-migration,
+  placement-contract, generated-surface, and safety-policy considerations.
+- Implementation-handoff-ready; not implementation execution authority.
 
 ## OK-PR-026 - Operating Kit State And Release Architecture Discovery And Implementation Plan
 

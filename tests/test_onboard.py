@@ -83,7 +83,9 @@ def test_onboard_yes_writes_and_creates_adoption_report(tmp_path):
     assert (tmp_path / ".codeheart/reports/adoption-cleanup-report.md").exists()
     assert (tmp_path / ".codeheart/kit/docs/agent-interface/reference/operation-routing-and-dispatch.md").exists()
     assert (tmp_path / "docs/repo/plans/plan-register.md").exists()
-    assert (tmp_path / "docs/repo/plans/coordination-sync-pending.md").exists()
+    assert (tmp_path / "docs/repo/portfolio/README.md").exists()
+    assert (tmp_path / "docs/repo/portfolio/strategic-overlay.yaml").exists()
+    assert not (tmp_path / "docs/repo/plans/coordination-sync-pending.md").exists()
     agents_text = (tmp_path / "AGENTS.md").read_text(encoding="utf-8")
     kit_readme_text = (tmp_path / ".codeheart/kit/README.md").read_text(encoding="utf-8")
     assert "local instructions" in agents_text

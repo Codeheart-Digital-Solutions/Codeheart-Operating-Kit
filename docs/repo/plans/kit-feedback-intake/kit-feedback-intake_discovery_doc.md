@@ -6,6 +6,27 @@ Status: active
 
 ## Overview
 
+<!-- BEGIN CODEHEART PLAN METADATA -->
+```yaml
+plan:
+    capabilities:
+        - kit-feedback-intake
+    catalog_metadata_updated: "2026-07-31T23:16:16Z"
+    first_cataloged: "2026-07-31T23:16:16Z"
+    id: codeheart-operating-kit.discovery.kit-feedback-intake
+    kind: discovery
+    products:
+        - codeheart-operating-kit
+    purpose: Define a public-safe intake model for consumer feedback, doctrine gaps, sync issues, and product ideas.
+    relations:
+        - kind: related
+          target: codeheart-operating-kit.implementation.kit-feedback-intake
+    schema_version: 1
+    strategic_themes:
+        - feedback-driven-improvement
+```
+<!-- END CODEHEART PLAN METADATA -->
+
 This discovery defines how Codeheart Operating Kit should collect consumer feedback, kit doctrine
 gaps, sync issues, and product ideas without letting users or agents hand-edit managed kit content
 inside consumer repositories.

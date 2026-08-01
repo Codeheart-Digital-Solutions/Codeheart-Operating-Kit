@@ -1,4 +1,4 @@
-Last updated: 2026-07-08T14:07:02Z (UTC)
+Last updated: 2026-07-31T22:23:19Z (UTC)
 
 # Draft Implementation Plan
 
@@ -225,8 +225,8 @@ Mark the probe `not applicable` only when the changed work is not routing-bearin
 - Remove special characters and collapse duplicate hyphens.
 - When implementation work spans multiple repositories, identify the repository that owns the work
   boundary before creating the canonical implementation plan. Place the canonical plan in that
-  owning repository's planning root. Use local or coordination-home plan registers as pointers to
-  the canonical plan, not as the canonical home by default.
+  owning repository's planning root. Coordination derives observations from its pushed canonical
+  document; it does not become the plan's canonical home.
 - Put the plan in the owning `plans/` folder or plan bundle according to the planning lifecycle
   reference.
 
@@ -242,6 +242,13 @@ Status: draft
 
 Use the current UTC clock for `Last updated`. Preserve `Created` after initial creation. Keep the
 plan as `Status: draft` until the user explicitly approves execution.
+
+Read the repository catalog mode before authoring. In mixed and canonical mode, add the exact
+bounded metadata block from `../reference/plan-catalog-format.md` immediately below the canonical
+plan title. Use kind `implementation`, choose a stable semantic ID from meaning rather than a
+sequential register number, relate the discovery/family when evidence supports it, and omit
+unsupported optional classifications. In legacy mode, retain compatibility behavior until an
+explicit migration.
 
 ## Required Top-Level Structure
 
@@ -403,31 +410,53 @@ For an affected blocked epic:
 Use `BLOCKER: no` for decisions that can be safely defaulted, deferred, or resolved during
 execution without changing the main path.
 
-## Plan Register Hook
+## Activation And Plan-Checkpoint Publication
 
-When implementation planning creates or materially updates a `*_implementation_doc.md`, maintain
-the local plan register if the change affects plan identity, scope, lifecycle status, parent or
-child relationships, dependencies, supersession, related plans, implementation path, or review
-outcome.
+A user's unambiguous request to activate a specific implementation plan is approval to:
 
-Use `maintain-plan-register.md` for the procedure and `../reference/plan-register-format.md` for
-entry shape. The sequence is:
+- set that plan to `Status: active` and make directly required plan metadata/log changes;
+- create or use its unambiguous work branch;
+- commit only that canonical planning checkpoint and directly required planning metadata; and
+- normally push that branch so the authority is recoverable and visible to coordination.
 
-1. Update `docs/repo/plans/plan-register.md` in the local repository.
-2. When portfolio coordination is configured, use the target-register compatibility test in
-   `maintain-plan-register.md` before choosing direct coordination-home update versus pending
-   sync.
-3. When the coordination-home register update is compatible, update the configured
-   coordination-home register.
-4. When the coordination home is unavailable, unwritable, or unsafe under that compatibility test,
-   record pending sync in `docs/repo/plans/coordination-sync-pending.md` and continue the local
-   planning task.
+Do not ask for a second push approval for that bounded checkpoint. The same rule applies when the
+user explicitly requests a material update to an already active plan.
 
-Record creating or material-update session refs when a session ID is available. Do not block
-implementation planning when no session ID is available.
+This authority excludes unrelated dirty files, implementation code not already included in the
+requested checkpoint, another plan, ambiguous targets or branches, PR creation, merge, release,
+force-push, branch deletion, history rewrite, destructive Git, credential changes, rejected-push
+bypass, and any broader external action. Activation remains an L1 managed workflow; do not invent
+an activation/commit/push CLI.
 
-Do not update the register for typos, formatting-only edits, timestamp-only edits, or mechanical
-checklist progress that does not change lifecycle, relationships, scope, or implementation path.
+Before publication:
+
+1. resolve the exact plan, repository, and work branch;
+2. inspect status and exclude unrelated changes;
+3. validate mode-aware metadata and planning docs;
+4. show or record the exact included planning paths;
+5. create an intentional plan-only commit; and
+6. perform a normal push without force.
+
+Stop on an ambiguous target/branch, overlapping unrelated dirty content, missing auth, policy
+rejection, non-fast-forward or other rejected normal push, or a repository instruction requiring
+narrower authority. Report the local commit and visibility limitation; do not escalate the Git
+operation. Successful normal push makes the plan observable on the next complete coordination-home
+refresh. Execution may begin on that active pushed work branch without waiting for merge.
+
+Evidence is a fresh-agent Git transcript or equivalent non-secret record containing repository,
+branch, included paths, commit identity, normal-push result, and exclusions. Static tests must prove
+both the positive plan-only authority and every negative boundary above.
+
+## Catalog And Register Hook
+
+When implementation planning creates or materially updates a formal plan:
+
+1. validate lifecycle and mode-aware metadata with `plans validate`;
+2. use `plans list` as the current local view;
+3. use `maintain-plan-register.md` only for legacy compatibility or the stable entry point;
+4. do not append numbered entries in mixed/canonical mode or create new pending-sync files; and
+5. use the activation publication contract above only when the user's request activates the plan
+   or materially updates an active one.
 
 ## Section 4 - Future Planning
 

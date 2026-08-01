@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "secret_policy": "placeholder-only-never-capture",
+  "entries": [
+    {
+      "kind": "executable-plan-adjacent-file",
+      "path": "docs/repo/plans/adversarial/run-me.sh",
+      "git_mode": "100755",
+      "content": "exit 97",
+      "must_execute": false
+    },
+    {
+      "kind": "git-hook",
+      "path": ".githooks/post-checkout",
+      "git_mode": "100755",
+      "content": "exit 98",
+      "must_execute": false
+    },
+    {
+      "kind": "malformed-metadata",
+      "path": "docs/repo/plans/adversarial/adversarial_discovery_doc.md",
+      "content": "BEGIN MARKER WITHOUT A VALID YAML END",
+      "must_execute": false
+    },
+    {
+      "kind": "path-traversal-name",
+      "path": "docs/repo/plans/../outside_discovery_doc.md",
+      "content": "descriptor-only invalid path",
+      "must_execute": false
+    },
+    {
+      "kind": "oversized-metadata",
+      "path": "docs/repo/plans/adversarial/oversized_implementation_doc.md",
+      "declared_size_bytes": 1048577,
+      "content": "descriptor-only oversized metadata",
+      "must_execute": false
+    },
+    {
+      "kind": "secret-like-placeholder",
+      "path": "docs/repo/plans/adversarial/placeholder_discovery_doc.md",
+      "content": "Authorization: Bearer EXAMPLE_TOKEN_PLACEHOLDER",
+      "must_execute": false
+    }
+  ]
+}

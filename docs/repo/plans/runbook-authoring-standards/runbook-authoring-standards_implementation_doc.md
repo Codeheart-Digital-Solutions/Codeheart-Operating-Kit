@@ -8,6 +8,29 @@ Execution log: docs/repo/plans/runbook-authoring-standards/runbook-authoring-sta
 
 ## Runbook Authoring Standards Implementation Plan
 
+<!-- BEGIN CODEHEART PLAN METADATA -->
+```yaml
+plan:
+    capabilities:
+        - runbook-authoring
+    catalog_metadata_updated: "2026-07-31T23:16:16Z"
+    first_cataloged: "2026-07-31T23:16:16Z"
+    id: codeheart-operating-kit.implementation.runbook-authoring-standards
+    kind: implementation
+    legacy_aliases:
+        - OK-PR-007
+    products:
+        - codeheart-operating-kit
+    purpose: Implement audience-aware runbook doctrine, planning hooks, packaged guidance, and validation.
+    relations:
+        - kind: depends-on
+          target: codeheart-operating-kit.discovery.runbook-authoring-standards
+    schema_version: 1
+    strategic_themes:
+        - runbook-quality
+```
+<!-- END CODEHEART PLAN METADATA -->
+
 Overview: Add an Operating Kit managed runbook authoring standard that makes new and materially
 changed runbooks clearer for their intended audience. The implementation is an instruction-only
 Operating Kit release: it creates the standard, routes it from managed docs, integrates it into

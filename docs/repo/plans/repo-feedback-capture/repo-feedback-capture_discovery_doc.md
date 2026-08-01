@@ -4,6 +4,29 @@ Status: draft
 
 # Repo Feedback Capture And Issue Intake Discovery
 
+<!-- BEGIN CODEHEART PLAN METADATA -->
+```yaml
+plan:
+    capabilities:
+        - repo-feedback-capture
+    catalog_metadata_updated: "2026-07-31T23:16:16Z"
+    first_cataloged: "2026-07-31T23:16:16Z"
+    id: codeheart-operating-kit.discovery.repo-feedback-capture
+    kind: discovery
+    legacy_aliases:
+        - OK-PR-020
+    products:
+        - codeheart-operating-kit
+    purpose: Define how agents recognize, route, classify, and safely capture repository-specific feedback.
+    relations:
+        - kind: related
+          target: codeheart-operating-kit.implementation.repo-feedback-capture
+    schema_version: 1
+    strategic_themes:
+        - feedback-driven-improvement
+```
+<!-- END CODEHEART PLAN METADATA -->
+
 ## Discovery Status
 
 Input state: new Operating Kit doctrine request after repo and module operations showed that

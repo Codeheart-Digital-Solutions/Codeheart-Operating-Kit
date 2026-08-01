@@ -6,6 +6,29 @@ Status: draft
 
 ## Operation Routing And Dispatch Standard Implementation Plan
 
+<!-- BEGIN CODEHEART PLAN METADATA -->
+```yaml
+plan:
+    capabilities:
+        - operation-routing
+    catalog_metadata_updated: "2026-07-31T23:16:16Z"
+    first_cataloged: "2026-07-31T23:16:16Z"
+    id: codeheart-operating-kit.implementation.operation-routing-dispatch-standard
+    kind: implementation
+    legacy_aliases:
+        - OK-PR-013
+    products:
+        - codeheart-operating-kit
+    purpose: Implement managed routing doctrine, route inventories, low-context probes, and packaged guidance.
+    relations:
+        - kind: depends-on
+          target: codeheart-operating-kit.discovery.operation-routing-dispatch-standard
+    schema_version: 1
+    strategic_themes:
+        - reliable-routing
+```
+<!-- END CODEHEART PLAN METADATA -->
+
 Overview: Implement the approved Operating Kit routing and dispatch standard so future agents
 route repeated, structural, external, sensitive, module, product, or ambiguous work before
 choosing tools, connectors, APIs, browser surfaces, scripts, or runbooks. The implementation

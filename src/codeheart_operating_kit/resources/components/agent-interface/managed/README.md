@@ -1,4 +1,4 @@
-Last updated: 2026-07-10T11:29:07Z (UTC)
+Last updated: 2026-07-31T22:23:19Z (UTC)
 
 # Agent Interface
 
@@ -6,10 +6,10 @@ This managed domain owns how an installed consumer introduces the Operating Kit 
 local owners extend instructions, and how agents find managed docs without reading the full kit
 inventory for every task.
 
-The root `AGENTS.md` managed block may route configured portfolio coordination to the planning
-workflow register-maintenance runbook. It stays generic: repository-specific coordination paths,
-membership decisions, and planning state belong in `.codeheart/kit.config.yaml` and local
-repository documents, not in the managed bootstrap text.
+The root `AGENTS.md` managed block routes semantic plan authoring, catalog migration, portfolio
+setup, and refresh to planning workflows. It stays generic: repository identities, authorized
+source scopes, strategic interpretation, and plan content belong in shared config, ignored local
+state, and repository-owned documents, not in the managed bootstrap text.
 
 ## Routes
 
@@ -35,3 +35,5 @@ repository documents, not in the managed bootstrap text.
 - Capture repo feedback: `runbooks/capture-repo-feedback.md`
 - Enable GitHub Issues feedback intake: `runbooks/enable-github-issues-feedback-intake.md`
 - Installed fallback inventory: `.codeheart/kit/README.md`
+- Semantic plan catalog and portfolio coordination:
+  `../planning-workflows/README.md`

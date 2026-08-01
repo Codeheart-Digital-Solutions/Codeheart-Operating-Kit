@@ -4,6 +4,29 @@ Status: draft
 
 # Tooling Environment Readiness Discovery
 
+<!-- BEGIN CODEHEART PLAN METADATA -->
+```yaml
+plan:
+    capabilities:
+        - tooling-readiness
+    catalog_metadata_updated: "2026-07-31T23:16:16Z"
+    first_cataloged: "2026-07-31T23:16:16Z"
+    id: codeheart-operating-kit.discovery.tooling-environment-readiness
+    kind: discovery
+    legacy_aliases:
+        - OK-PR-009
+    products:
+        - codeheart-operating-kit
+    purpose: Define shared missing-tool routing, environment readiness, and approval-gated install or repair boundaries.
+    relations:
+        - kind: related
+          target: codeheart-operating-kit.implementation.tooling-environment-readiness
+    schema_version: 1
+    strategic_themes:
+        - tooling-readiness
+```
+<!-- END CODEHEART PLAN METADATA -->
+
 ## Overview
 
 This discovery investigates whether Codeheart Operating Kit should define shared tooling and

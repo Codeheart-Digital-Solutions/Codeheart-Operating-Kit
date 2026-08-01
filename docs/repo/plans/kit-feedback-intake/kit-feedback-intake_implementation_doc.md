@@ -8,6 +8,27 @@ Execution log: kit-feedback-intake_execution_log.md
 
 ## Overview
 
+<!-- BEGIN CODEHEART PLAN METADATA -->
+```yaml
+plan:
+    capabilities:
+        - kit-feedback-intake
+    catalog_metadata_updated: "2026-07-31T23:16:16Z"
+    first_cataloged: "2026-07-31T23:16:16Z"
+    id: codeheart-operating-kit.implementation.kit-feedback-intake
+    kind: implementation
+    products:
+        - codeheart-operating-kit
+    purpose: Deliver a public GitHub feedback intake and maintainer triage workflow without enabling consumer edits to managed content.
+    relations:
+        - kind: depends-on
+          target: codeheart-operating-kit.discovery.kit-feedback-intake
+    schema_version: 1
+    strategic_themes:
+        - feedback-driven-improvement
+```
+<!-- END CODEHEART PLAN METADATA -->
+
 This implementation plan turns the approved kit feedback intake discovery into a shippable v1 for
 Codeheart Operating Kit. It adds a public GitHub issue intake surface, managed consumer guidance,
 maintainer triage guidance, label taxonomy, release notes, and validation without adding a CLI

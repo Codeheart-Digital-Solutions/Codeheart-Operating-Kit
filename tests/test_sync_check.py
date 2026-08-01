@@ -91,13 +91,16 @@ def test_sync_adds_feedback_draft_gitignore_to_existing_install(tmp_path):
     assert text.count("# Codeheart Operating Kit local machine layer") == 1
 
 
-def test_sync_creates_missing_plan_state_files_and_merges_lock_records(tmp_path):
+def test_sync_creates_current_scaffolds_and_preserves_legacy_pending_sync(tmp_path):
     main(["init", str(tmp_path), "--project-name", "Example-Automation"])
     for relative in [
         "docs/repo/plans/plan-register.md",
-        "docs/repo/plans/coordination-sync-pending.md",
+        "docs/repo/portfolio/README.md",
+        "docs/repo/portfolio/strategic-overlay.yaml",
     ]:
         (tmp_path / relative).unlink()
+    pending = tmp_path / "docs/repo/plans/coordination-sync-pending.md"
+    pending.write_text("legacy pending evidence\n", encoding="utf-8")
     lock = read_lock(tmp_path)
     lock["generated_surfaces"] = [
         item
@@ -105,7 +108,8 @@ def test_sync_creates_missing_plan_state_files_and_merges_lock_records(tmp_path)
         if item["path"]
         not in {
             "docs/repo/plans/plan-register.md",
-            "docs/repo/plans/coordination-sync-pending.md",
+            "docs/repo/portfolio/README.md",
+            "docs/repo/portfolio/strategic-overlay.yaml",
         }
     ]
     lock["generated_surfaces"].append({"path": "docs/custom-local.md", "ownership": "scaffold"})
@@ -116,9 +120,13 @@ def test_sync_creates_missing_plan_state_files_and_merges_lock_records(tmp_path)
     refreshed = read_lock(tmp_path)
     generated = {item["path"] for item in refreshed["generated_surfaces"]}
     assert (tmp_path / "docs/repo/plans/plan-register.md").exists()
-    assert (tmp_path / "docs/repo/plans/coordination-sync-pending.md").exists()
+    assert (tmp_path / "docs/repo/portfolio/README.md").exists()
+    assert (tmp_path / "docs/repo/portfolio/strategic-overlay.yaml").exists()
+    assert pending.read_text(encoding="utf-8") == "legacy pending evidence\n"
     assert "docs/repo/plans/plan-register.md" in generated
-    assert "docs/repo/plans/coordination-sync-pending.md" in generated
+    assert "docs/repo/portfolio/README.md" in generated
+    assert "docs/repo/portfolio/strategic-overlay.yaml" in generated
+    assert "docs/repo/plans/coordination-sync-pending.md" not in generated
     assert "docs/custom-local.md" in generated
 
 
@@ -131,6 +139,7 @@ def test_sync_preserves_existing_plan_state_files_byte_for_byte(tmp_path, monkey
         "docs/repo/plans/coordination-sync-pending.md": "custom pending sync\n",
     }
     for relative, text in custom_content.items():
+        (tmp_path / relative).parent.mkdir(parents=True, exist_ok=True)
         (tmp_path / relative).write_text(text, encoding="utf-8")
 
     main(["sync", str(tmp_path)])
@@ -161,7 +170,8 @@ def test_sync_refreshes_existing_agents_managed_block_and_preserves_local_conten
     assert "local prefix" in refreshed
     assert "local suffix" in refreshed
     assert "stale managed block" not in refreshed
-    assert "Plan registers and configured portfolio coordination" in refreshed
+    assert "Plan catalog views and legacy-register compatibility" in refreshed
+    assert "Portfolio refresh before current analysis" in refreshed
     assert ".codeheart/kit/docs/planning-workflows/runbooks/maintain-plan-register.md" in refreshed
     assert "Operation routing and dispatch" in refreshed
     assert ".codeheart/kit/docs/agent-interface/reference/operation-routing-and-dispatch.md" in refreshed

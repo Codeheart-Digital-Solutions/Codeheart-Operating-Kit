@@ -1,0 +1,90 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/schemas/portfolio-strategic-overlay.schema.json",
+  "title": "Codeheart Portfolio Strategic Overlay",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "coordination_home_id", "families", "themes", "relations", "priorities", "analyses"],
+  "properties": {
+    "schema_version": { "type": "integer", "const": 1 },
+    "coordination_home_id": { "$ref": "#/$defs/identifier" },
+    "families": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "title", "purpose"],
+        "properties": {
+          "id": { "$ref": "#/$defs/identifier" },
+          "title": { "type": "string", "minLength": 1 },
+          "purpose": { "type": "string", "minLength": 1 },
+          "members": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/planId" } }
+        }
+      }
+    },
+    "themes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "title"],
+        "properties": {
+          "id": { "$ref": "#/$defs/identifier" },
+          "title": { "type": "string", "minLength": 1 },
+          "description": { "type": "string" }
+        }
+      }
+    },
+    "relations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["kind", "source", "target"],
+        "properties": {
+          "kind": { "type": "string", "enum": ["parent", "child", "supersedes", "superseded-by", "depends-on", "blocks", "related", "overlaps"] },
+          "source": { "$ref": "#/$defs/planId" },
+          "target": { "$ref": "#/$defs/planId" },
+          "rationale": { "type": "string" }
+        }
+      }
+    },
+    "priorities": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["target", "rank"],
+        "properties": {
+          "target": { "$ref": "#/$defs/planId" },
+          "rank": { "type": "integer", "minimum": 1 },
+          "rationale": { "type": "string" }
+        }
+      }
+    },
+    "analyses": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "title", "updated_at", "summary"],
+        "properties": {
+          "id": { "$ref": "#/$defs/identifier" },
+          "title": { "type": "string", "minLength": 1 },
+          "updated_at": { "type": "string", "format": "date-time", "pattern": "Z$" },
+          "summary": { "type": "string", "minLength": 1 }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "pattern": "^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$"
+    },
+    "planId": {
+      "type": "string",
+      "pattern": "^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.(?:discovery|implementation|family)\\.[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$"
+    }
+  }
+}

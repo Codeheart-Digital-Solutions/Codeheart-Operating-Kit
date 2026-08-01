@@ -8,6 +8,26 @@ Execution log: docs/repo/plans/discovery-handoff-gate/discovery-handoff-gate_exe
 
 ## Discovery Handoff Gate Implementation Plan
 
+<!-- BEGIN CODEHEART PLAN METADATA -->
+```yaml
+plan:
+    capabilities:
+        - discovery-handoff
+    catalog_metadata_updated: "2026-07-31T23:16:16Z"
+    first_cataloged: "2026-07-31T23:16:16Z"
+    id: codeheart-operating-kit.implementation.discovery-handoff-gate
+    kind: implementation
+    legacy_aliases:
+        - OK-PR-012
+    products:
+        - codeheart-operating-kit
+    purpose: Prevent implementation planning from bypassing an unresolved discovery capability handoff.
+    schema_version: 1
+    strategic_themes:
+        - planning-quality
+```
+<!-- END CODEHEART PLAN METADATA -->
+
 Overview: Add a small Operating Kit planning guardrail so implementation-plan drafting cannot
 quietly proceed from a discovery document whose implementation capability scope has not been
 approved, delegated, or explicitly revised by the user. The change is intentionally narrow: it

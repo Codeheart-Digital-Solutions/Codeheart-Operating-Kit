@@ -1,7 +1,7 @@
 schema_version: 1
 profile:
   id: standard
-  version: "0.1.23"
+  version: "0.1.24"
   name: Standard
   description: Base public Operating Kit profile for general agent-first repositories and folders.
   selected_components:
@@ -32,9 +32,13 @@ profile:
       ownership: scaffold
       source: components/planning-workflows/scaffolds/plan-register.md
       install_when: absent
-    - path: docs/repo/plans/coordination-sync-pending.md
+    - path: docs/repo/portfolio/README.md
       ownership: scaffold
-      source: components/planning-workflows/scaffolds/coordination-sync-pending.md
+      source: components/planning-workflows/scaffolds/portfolio-README.md
+      install_when: absent
+    - path: docs/repo/portfolio/strategic-overlay.yaml
+      ownership: scaffold
+      source: components/planning-workflows/scaffolds/portfolio-strategic-overlay.yaml
       install_when: absent
     - path: docs/agent-memory/README.md
       ownership: scaffold

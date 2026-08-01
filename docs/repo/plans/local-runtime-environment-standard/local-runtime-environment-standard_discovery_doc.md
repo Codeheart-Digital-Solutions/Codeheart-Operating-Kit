@@ -4,6 +4,29 @@ Status: draft
 
 # Local Runtime Environment Standard Discovery
 
+<!-- BEGIN CODEHEART PLAN METADATA -->
+```yaml
+plan:
+    capabilities:
+        - local-runtime-standard
+    catalog_metadata_updated: "2026-07-31T23:16:16Z"
+    first_cataloged: "2026-07-31T23:16:16Z"
+    id: codeheart-operating-kit.discovery.local-runtime-environment-standard
+    kind: discovery
+    legacy_aliases:
+        - OK-PR-015
+    products:
+        - codeheart-operating-kit
+    purpose: Define a reusable convention for ignored repository-local runtime state and missing-tool readiness routing.
+    relations:
+        - kind: related
+          target: codeheart-operating-kit.implementation.local-runtime-environment-standard
+    schema_version: 1
+    strategic_themes:
+        - local-runtime-reliability
+```
+<!-- END CODEHEART PLAN METADATA -->
+
 ## Discovery Status
 
 Input state: new Operating Kit doctrine question after AI Execution onboarding exposed that

@@ -5,6 +5,27 @@ Completed: 2026-07-09
 
 # Operating Kit State And Release Architecture Discovery
 
+<!-- BEGIN CODEHEART PLAN METADATA -->
+```yaml
+plan:
+    capabilities:
+        - state-release-architecture
+    catalog_metadata_updated: "2026-07-31T23:16:16Z"
+    first_cataloged: "2026-07-31T23:16:16Z"
+    id: codeheart-operating-kit.discovery.state-release-architecture
+    kind: discovery
+    products:
+        - codeheart-operating-kit
+    purpose: Define safe desired state, reconciliation, release provenance, and cross-platform upgrade architecture.
+    relations:
+        - kind: related
+          target: codeheart-operating-kit.implementation.state-release-architecture
+    schema_version: 1
+    strategic_themes:
+        - reproducible-lifecycle
+```
+<!-- END CODEHEART PLAN METADATA -->
+
 ## Discovery Status
 
 Input state: `review-or-cleanup` followed by a user-requested focused architecture discovery.

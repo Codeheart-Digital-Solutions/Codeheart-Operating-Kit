@@ -1,0 +1,170 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/schemas/plan-catalog.schema.json",
+  "title": "Codeheart Source-Derived Plan Catalog",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "coordination_home_id",
+    "started_at",
+    "completed_at",
+    "complete",
+    "members",
+    "observations",
+    "candidates",
+    "errors",
+    "metrics"
+  ],
+  "properties": {
+    "schema_version": { "type": "integer", "const": 1 },
+    "coordination_home_id": { "$ref": "#/$defs/identifier" },
+    "started_at": { "$ref": "#/$defs/timestamp" },
+    "completed_at": { "$ref": "#/$defs/timestamp" },
+    "last_complete_scan_at": { "$ref": "#/$defs/timestamp" },
+    "complete": { "type": "boolean" },
+    "members": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["repository_id", "source_kind", "default_ref", "source_revision", "self_member"],
+        "properties": {
+          "repository_id": { "$ref": "#/$defs/identifier" },
+          "source_kind": { "type": "string", "enum": ["local-git", "github"] },
+          "source_locator": { "type": "string", "minLength": 1 },
+          "default_ref": { "type": "string", "minLength": 1 },
+          "source_revision": { "$ref": "#/$defs/commit" },
+          "self_member": { "type": "boolean" }
+        }
+      }
+    },
+    "observations": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/observation" }
+    },
+    "candidates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["source_locator", "reason"],
+        "properties": {
+          "source_locator": { "type": "string", "minLength": 1 },
+          "repository_id": { "$ref": "#/$defs/identifier" },
+          "reason": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "errors": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/error" }
+    },
+    "metrics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["duration_ms", "source_count", "member_count", "candidate_count", "observation_count", "stale_count", "api_call_count", "max_concurrency"],
+      "properties": {
+        "duration_ms": { "type": "integer", "minimum": 0 },
+        "source_count": { "type": "integer", "minimum": 0 },
+        "member_count": { "type": "integer", "minimum": 0 },
+        "candidate_count": { "type": "integer", "minimum": 0 },
+        "observation_count": { "type": "integer", "minimum": 0 },
+        "stale_count": { "type": "integer", "minimum": 0 },
+        "api_call_count": { "type": "integer", "minimum": 0 },
+        "max_concurrency": { "type": "integer", "minimum": 1 }
+      }
+    }
+  },
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "pattern": "^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$"
+    },
+    "planId": {
+      "type": "string",
+      "pattern": "^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.(?:discovery|implementation|family)\\.[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$"
+    },
+    "commit": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40,64}$"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "Z$"
+    },
+    "relation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "target"],
+      "properties": {
+        "kind": { "type": "string", "enum": ["parent", "child", "supersedes", "superseded-by", "depends-on", "blocks", "related"] },
+        "target": { "$ref": "#/$defs/planId" }
+      }
+    },
+    "observation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "repository_id",
+        "plan_id",
+        "title",
+        "kind",
+        "purpose",
+        "lifecycle",
+        "canonical_path",
+        "ref",
+        "commit",
+        "content_sha256",
+        "visibility",
+        "verification",
+        "observed_at",
+        "stale",
+        "conflict"
+      ],
+      "properties": {
+        "repository_id": { "$ref": "#/$defs/identifier" },
+        "plan_id": { "$ref": "#/$defs/planId" },
+        "title": { "type": "string", "minLength": 1 },
+        "kind": { "type": "string", "enum": ["discovery", "implementation", "family"] },
+        "purpose": { "type": "string", "minLength": 1 },
+        "lifecycle": { "type": "string", "enum": ["draft", "active", "completed", "superseded", "archived"] },
+        "family": { "$ref": "#/$defs/planId" },
+        "products": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/publicIdentifier" } },
+        "capabilities": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/publicIdentifier" } },
+        "strategic_themes": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/publicIdentifier" } },
+        "relations": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/relation" } },
+        "legacy_aliases": { "type": "array", "uniqueItems": true, "items": { "type": "string", "minLength": 1 } },
+        "canonical_path": { "type": "string", "minLength": 1 },
+        "ref": { "type": "string", "minLength": 1 },
+        "commit": { "$ref": "#/$defs/commit" },
+        "pull_request": { "type": "string", "minLength": 1 },
+        "content_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "visibility": { "type": "string", "enum": ["default", "unmerged-branch"] },
+        "verification": { "type": "string", "enum": ["verified", "unverified", "inaccessible"] },
+        "observed_at": { "$ref": "#/$defs/timestamp" },
+        "source_changed_at": { "$ref": "#/$defs/timestamp" },
+        "stale": { "type": "boolean" },
+        "conflict": { "type": "boolean" }
+      }
+    },
+    "error": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["code", "message"],
+      "properties": {
+        "code": { "type": "string", "minLength": 1 },
+        "message": { "type": "string", "minLength": 1 },
+        "source_locator": { "type": "string", "minLength": 1 },
+        "repository_id": { "$ref": "#/$defs/identifier" },
+        "ref": { "type": "string", "minLength": 1 },
+        "retryable": { "type": "boolean" }
+      }
+    },
+    "publicIdentifier": {
+      "type": "string",
+      "pattern": "^[a-z0-9](?:[a-z0-9._-]*[a-z0-9])?$"
+    }
+  }
+}

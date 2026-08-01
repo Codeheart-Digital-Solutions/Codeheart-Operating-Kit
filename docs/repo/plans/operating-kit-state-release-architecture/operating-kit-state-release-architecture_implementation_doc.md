@@ -8,6 +8,29 @@ Execution log: operating-kit-state-release-architecture_execution_log.md
 
 ## Operating Kit State And Release Architecture - Minimum Reliable Foundation Plan
 
+<!-- BEGIN CODEHEART PLAN METADATA -->
+```yaml
+plan:
+    capabilities:
+        - state-release-architecture
+    catalog_metadata_updated: "2026-07-31T23:16:16Z"
+    first_cataloged: "2026-07-31T23:16:16Z"
+    id: codeheart-operating-kit.implementation.state-release-architecture
+    kind: implementation
+    legacy_aliases:
+        - OK-PR-026
+    products:
+        - codeheart-operating-kit
+    purpose: Implement typed desired state, transactional reconciliation, release provenance, and cross-platform upgrade foundations.
+    relations:
+        - kind: depends-on
+          target: codeheart-operating-kit.discovery.state-release-architecture
+    schema_version: 1
+    strategic_themes:
+        - reproducible-lifecycle
+```
+<!-- END CODEHEART PLAN METADATA -->
+
 Overview: Implement the approved state-and-release capability as a minimum reliable foundation,
 not as a new governance framework. The plan improves how the Operating Kit installs, checks,
 repairs, synchronizes, upgrades, and releases itself. It does not attempt a broad redesign of

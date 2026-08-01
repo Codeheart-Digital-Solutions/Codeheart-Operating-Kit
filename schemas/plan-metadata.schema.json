@@ -1,0 +1,100 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/schemas/plan-metadata.schema.json",
+  "title": "Codeheart Canonical Plan Metadata",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["plan"],
+  "properties": {
+    "plan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "id",
+        "kind",
+        "purpose",
+        "first_cataloged",
+        "catalog_metadata_updated"
+      ],
+      "properties": {
+        "schema_version": { "type": "integer", "const": 1 },
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.(?:discovery|implementation|family)\\.[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$"
+        },
+        "kind": {
+          "type": "string",
+          "enum": ["discovery", "implementation", "family"]
+        },
+        "purpose": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^[^\\r\\n]+$"
+        },
+        "first_cataloged": {
+          "type": "string",
+          "format": "date-time",
+          "pattern": "Z$"
+        },
+        "catalog_metadata_updated": {
+          "type": "string",
+          "format": "date-time",
+          "pattern": "Z$"
+        },
+        "family": { "$ref": "#/$defs/planId" },
+        "products": { "$ref": "#/$defs/publicIdentifiers" },
+        "capabilities": { "$ref": "#/$defs/publicIdentifiers" },
+        "strategic_themes": { "$ref": "#/$defs/publicIdentifiers" },
+        "relations": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["kind", "target"],
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "parent",
+                  "child",
+                  "supersedes",
+                  "superseded-by",
+                  "depends-on",
+                  "blocks",
+                  "related"
+                ]
+              },
+              "target": { "$ref": "#/$defs/planId" }
+            }
+          }
+        },
+        "legacy_aliases": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "planId": {
+      "type": "string",
+      "pattern": "^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.(?:discovery|implementation|family)\\.[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$"
+    },
+    "publicIdentifiers": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "pattern": "^[a-z0-9](?:[a-z0-9._-]*[a-z0-9])?$"
+      }
+    }
+  }
+}

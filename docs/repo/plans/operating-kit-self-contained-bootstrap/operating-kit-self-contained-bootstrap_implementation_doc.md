@@ -7,6 +7,26 @@ Execution log: docs/repo/plans/operating-kit-self-contained-bootstrap/operating-
 
 ## Operating Kit Self-Contained Bootstrap Implementation Plan
 
+<!-- BEGIN CODEHEART PLAN METADATA -->
+```yaml
+plan:
+    capabilities:
+        - self-contained-bootstrap
+    catalog_metadata_updated: "2026-07-31T23:16:16Z"
+    first_cataloged: "2026-07-31T23:16:16Z"
+    id: codeheart-operating-kit.implementation.self-contained-bootstrap
+    kind: implementation
+    legacy_aliases:
+        - OK-PR-024
+    products:
+        - codeheart-operating-kit
+    purpose: Replace the Python-first root bootstrap with self-contained macOS and Windows CLI release packs.
+    schema_version: 1
+    strategic_themes:
+        - self-contained-runtime
+```
+<!-- END CODEHEART PLAN METADATA -->
+
 Overview: Replace the Python-wheel-first Operating Kit CLI distribution with a self-contained Go
 CLI and platform release packs so fresh macOS and Windows machines can install, repair, and run
 base Operating Kit onboarding without Python, pip, Homebrew, Git, GitHub CLI, Node.js, or a

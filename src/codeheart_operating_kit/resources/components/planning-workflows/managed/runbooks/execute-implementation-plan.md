@@ -1,4 +1,4 @@
-Last updated: 2026-07-08T14:07:02Z (UTC)
+Last updated: 2026-07-31T22:23:19Z (UTC)
 
 # Execute Implementation Plan
 
@@ -16,7 +16,7 @@ meaningful divergence and evidence, and stop before unapproved scope or authorit
 
 Success:
 The implemented plan satisfies its stated outcomes, validation and review gates pass, execution
-evidence is recorded, and lifecycle/register state is updated where required.
+evidence is recorded, and lifecycle/catalog visibility is updated where required.
 
 Agent judgment boundary:
 The agent may add low-risk tasks required for the epic outcome and choose safe local defaults. It
@@ -69,6 +69,7 @@ files.
 Before execution:
 
 - confirm the plan header has `Status: active`;
+- confirm mixed/canonical mode metadata validates and identifies this implementation record;
 - if the plan is `draft`, `completed`, `superseded`, or `archived`, stop and ask before executing.
 
 During execution:
@@ -86,6 +87,29 @@ After successful execution:
 - add or preserve `Execution log: <relative/path>`;
 - do not archive the plan unless the user explicitly asks or the plan includes an approved archive
   task.
+
+## Activation Publication Preflight
+
+When the current user request activates the plan, publish the bounded planning checkpoint before
+source implementation:
+
+1. resolve the exact repository, canonical plan, and unambiguous work branch;
+2. include only the plan, execution log, and directly required planning metadata;
+3. validate the planning checkpoint;
+4. create or use the work branch, create an intentional plan-only commit, and normally push it;
+5. record repository, branch, paths, commit, normal-push result, and exclusions without secrets.
+
+The activation request itself is approval for this one plan-only branch/use/commit/normal-push
+checkpoint; do not ask for a duplicate push prompt. Execution may continue on that active pushed
+branch without waiting for a PR or merge.
+
+This is not authority for unrelated dirty files, unauthorized implementation code, another plan,
+PR creation, merge, release, force-push, branch deletion, history rewrite, destructive Git, or a
+broader external action. Stop on ambiguity, overlapping dirty paths, auth failure, policy rejection,
+or rejected normal push. Preserve and report the local checkpoint; do not bypass the rejection.
+
+For a user-requested material update to an active plan, apply the same bounded checkpoint after the
+plan/log change validates. Routine checkbox progress does not trigger a publication checkpoint.
 
 ## Execution Contract
 
@@ -326,35 +350,21 @@ When the plan and log conflict:
 - use the execution log to understand what changed during execution and why;
 - correct the conflicting document before closing the epic or plan.
 
-## Plan Register Hook
+## Catalog And Visibility Hook
 
-When implementation execution changes a plan's lifecycle or material path, maintain the local plan
-register. Material execution changes include activation, completion, supersession, archive state,
-major implementation-path changes, new parent or child links, changed dependencies, changed
-related-plan links, and execution handoff changes.
+The implementation plan and execution log remain canonical execution state. On activation,
+completion, supersession, archive, or user-requested material active-plan change:
 
-Use `maintain-plan-register.md` for the procedure and `../reference/plan-register-format.md` for
-entry shape. The sequence is:
+1. update the canonical header/content and metadata chronology as applicable;
+2. run `codeheart-operating-kit plans validate` and inspect `plans list`;
+3. keep mixed/canonical `plan-register.md` frozen and avoid new pending-sync files;
+4. follow `maintain-plan-register.md` only for legacy compatibility; and
+5. use the bounded publication preflight above when the user requested activation or a material
+   update to an active plan.
 
-1. Update `docs/repo/plans/plan-register.md` in the local repository.
-2. When portfolio coordination is configured, use the target-register compatibility test in
-   `maintain-plan-register.md` before choosing direct coordination-home update versus pending
-   sync.
-3. When the coordination-home register update is compatible, update the configured
-   coordination-home register.
-4. When the coordination home is unavailable, unwritable, or unsafe under that compatibility test,
-   record pending sync in `docs/repo/plans/coordination-sync-pending.md` and continue the local
-   execution task.
-
-The implementation plan and execution log remain the canonical execution state. The register is an
-index snapshot and should not duplicate epic progress, validation details, review logs, or
-execution evidence.
-
-Record material-update session refs when a session ID is available. Do not block execution when no
-session ID is available.
-
-Do not update the register for typos, formatting-only edits, timestamp-only edits, or mechanical
-checklist progress that does not change lifecycle, relationships, or implementation path.
+After a successful push, coordination visibility still depends on the next complete home refresh.
+After push failure or before push, state that the checkpoint is local-only. Completion does not
+authorize a PR, merge, or release.
 
 ## Final User Summary
 

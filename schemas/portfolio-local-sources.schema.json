@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/schemas/portfolio-local-sources.schema.json",
+  "title": "Codeheart Portfolio Local Sources",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "sources"],
+  "properties": {
+    "schema_version": { "type": "integer", "const": 1 },
+    "sources": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["kind", "root"],
+        "properties": {
+          "kind": { "type": "string", "const": "local-git-root" },
+          "root": { "type": "string", "minLength": 1 }
+        }
+      }
+    }
+  }
+}
