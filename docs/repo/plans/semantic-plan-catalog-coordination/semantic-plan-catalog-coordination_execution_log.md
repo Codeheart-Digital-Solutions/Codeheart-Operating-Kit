@@ -1,4 +1,4 @@
-Last updated: 2026-08-01T00:36:53Z (UTC)
+Last updated: 2026-08-01T00:41:23Z (UTC)
 Created: 2026-07-31
 
 # Semantic Plan Catalog And Branch-Aware Coordination Execution Log
@@ -970,6 +970,17 @@ coverage and canonical cutover pending default-branch enrollment.
   enrollment exists on the actual default branch. Therefore the producer remains mixed and no
   canonical-cutover checkbox is claimed. Default-branch integration is a repository-governance
   action outside the current plan-only push authority.
+- Isolated rollout simulation: an exact local clone and local bare remote reproduced the intended
+  two-integration sequence without changing GitHub. A merge commit integrating source plus mixed
+  enrollment produced 33 canonical default-branch observations, one self-member, no candidates or
+  scan errors, and complete remote validation. A synthetic unmerged plan-changing branch added
+  exactly one verified branch observation while retaining all 33 baseline observations. Switching
+  only the simulated producer config to canonical passed remote validation and JSON listing before
+  and after a second merge commit. The final simulated default branch remained canonical with 33
+  canonical local records, 34 remote observations, zero invalid/unreadable/unsafe records, no
+  dirty overlap, and the frozen register byte-identical to baseline `3b134a0`. This proves the
+  mechanics and merge-commit topology but does not substitute for actual GitHub integration or
+  current live-remote reconciliation.
 
 ## EP-06 Delta - Integrated Validation And Release-Candidate Handoff
 
