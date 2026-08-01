@@ -1,4 +1,4 @@
-Last updated: 2026-08-01T00:27:10Z (UTC)
+Last updated: 2026-08-01T00:36:53Z (UTC)
 Created: 2026-07-31
 Status: active
 Execution log: semantic-plan-catalog-coordination_execution_log.md
@@ -1706,7 +1706,7 @@ owner-repository plan or explicitly scoped portfolio rollout.
 
 - [x] Extend `.github/workflows/validate.yml` with supported-platform plan metadata, migration, local Git overlay, and grouped CLI tests.
 - [x] Add an isolated repository and local bare-remote fixture for recorded fresh-agent activation publication probes.
-- [ ] Add static authority-contract assertions and fresh-agent refusal scenarios for unrelated staged files, ambiguous branch scope, rejected normal push, PR creation, merge, release, force-push, branch deletion, and destructive commands.
+- [x] Add static authority-contract assertions and fresh-agent refusal scenarios for unrelated staged files, ambiguous branch scope, rejected normal push, PR creation, merge, release, force-push, branch deletion, and destructive commands.
 - [x] Add adversarial branch fixtures containing executable files, hooks, malformed metadata, path traversal names, oversized metadata, and secret-like text.
 - [x] Add low-context routing probes for semantic plan reference, member authoring, coordination-home setup, current analysis, failed refresh, migration skip, and activation publication.
 - [x] Benchmark representative local and fake-GitHub portfolios and record repository, branch, plan, API-call, duration, and concurrency evidence.
@@ -1749,7 +1749,7 @@ owner-repository plan or explicitly scoped portfolio rollout.
 ### Validation Tasks
 
 - [ ] Prove all mandatory local and cross-platform gates pass from a clean fixture state.
-- [ ] Prove activation publication through static managed-contract tests and a recorded fresh-agent local-remote probe without a publication CLI.
+- [x] Prove activation publication through static managed-contract tests and a recorded fresh-agent local-remote probe without a publication CLI.
 - [ ] Prove source completion leaves release tags, public assets, consumer sync, and other-repository writes untouched before EP-07.
 - [x] Prove every discovery must-cover requirement maps to one designated passing evidence item.
 - [x] Prove migration and rollout documentation preserves repository ownership and ordinary parallel work.

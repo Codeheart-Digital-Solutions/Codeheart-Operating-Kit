@@ -1,4 +1,4 @@
-Last updated: 2026-08-01T00:27:10Z (UTC)
+Last updated: 2026-08-01T00:36:53Z (UTC)
 Created: 2026-07-31
 
 # Semantic Plan Catalog And Branch-Aware Coordination Execution Log
@@ -1052,6 +1052,20 @@ before the `EP-05` default-branch gate and the later release-candidate authority
   focused race suite, vet, schema, Markdown, public-core, release-manifest, diff, Windows-amd64
   cross-compilation, and source-CLI local catalog checks pass. Fresh-agent evidence and a new
   independent source review remain pending.
+- Source gate round two: accepted exact remediation commit
+  `deb39dc5b851c056471a2510c579a254e04f9a81` with no material findings. From copied exact managed
+  routing and activation instructions, the fresh reviewer created an isolated repository and bare
+  remote, activated branch `codex/probe-activation`, committed only the canonical implementation
+  plan and sibling execution log as `0801958e3e8d7493488fbf04f4eaa34bd4aef405`, and normally pushed
+  it without a second approval. Unrelated `src/app.txt` remained dirty locally with baseline bytes
+  on the remote; the remote branch diff contained only the two planning files and no PR ref.
+  Negative probes stopped or refused unrelated staged files, ambiguous repository or branch,
+  unauthorized code, PR, merge, release, force-push, deletion, history rewrite, destructive Git,
+  missing authentication, policy rejection, and rejected normal push. The reviewer independently
+  passed the full Go and 147-test Python suites, race, vet, schema, Markdown, public-core,
+  release-manifest, diff, frozen-register, source-marker enrollment, and failing-local-source
+  redaction checks from a clean archive. No shared-workspace or unauthorized repository write,
+  release version, tag, or public asset changed.
 
 ## EP-07 Delta - Version Bump, Reproducible Release, And Public Verification
 
