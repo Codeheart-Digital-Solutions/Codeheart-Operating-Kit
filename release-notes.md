@@ -1,12 +1,11 @@
-Last updated: 2026-07-31T23:43:02Z (UTC)
+Last updated: 2026-08-01T06:31:15Z (UTC)
 
 # Codeheart Operating Kit Release Notes
 
-## Unreleased - Semantic Plan Catalog And Branch-Aware Coordination
+## v0.1.24 Release Notes
 
-The next release adds repository-owned semantic plan metadata, generated local views, guarded
-legacy migration, and on-demand branch-aware portfolio coordination. The final patch version is
-selected only in the release epic after current public tags are checked.
+`v0.1.24` adds repository-owned semantic plan metadata, generated local views, guarded legacy
+migration, and on-demand branch-aware portfolio coordination.
 
 ### Included
 
@@ -64,10 +63,13 @@ selected only in the release epic after current public tags are checked.
 ### Validation And Release Boundary
 
 - Local Go/Python, schema, Markdown, public-core, manifest, packaging, routing, migration,
-  containment, adversarial, and reproducibility gates precede the release candidate.
-- macOS universal and real Windows x64 execution remain mandatory. Tagging, public assets,
-  signing-boundary acceptance, consumer upgrades, portfolio rollout, and other-repository writes
-  remain unchanged until the explicit release gate is authorized.
+  containment, adversarial, and reproducibility gates precede publication.
+- macOS universal and real Windows x64 remain the supported release platforms. Assets remain
+  unsigned and unnotarized under the explicitly approved HTTPS-plus-SHA-256 internal/prototype
+  boundary; the residual risk is the lack of publisher identity attestation beyond GitHub
+  transport, repository control, and the published digest chain.
+- This release makes portfolio rollout possible but does not upgrade a coordination home or member,
+  migrate another repository, or modify a consumer plan or portfolio configuration.
 
 ## v0.1.23 Release Notes
 

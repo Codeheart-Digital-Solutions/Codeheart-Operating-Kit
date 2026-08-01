@@ -1,4 +1,4 @@
-Last updated: 2026-08-01T05:39:21Z (UTC)
+Last updated: 2026-08-01T06:46:12Z (UTC)
 Created: 2026-07-31
 Status: active
 Execution log: semantic-plan-catalog-coordination_execution_log.md
@@ -1724,7 +1724,7 @@ owner-repository plan or explicitly scoped portfolio rollout.
 - [x] Verify source and packaged resource identity for every changed embedded file.
 - [x] Review the implementation against every frozen discovery decision, capability must-cover item, explicit exclusion, and success-evidence statement.
 - [x] Produce repository-scoped migration handoff summaries without changing any additional repository.
-- [ ] Record the validated source revision and hand it to EP-07 with release version, tag, public assets, consumer installations, and other repositories unchanged.
+- [x] Record the validated source revision and hand it to EP-07 with release version, tag, public assets, consumer installations, and other repositories unchanged.
 
 ### G) Implementation Notes
 
@@ -1748,9 +1748,9 @@ owner-repository plan or explicitly scoped portfolio rollout.
 
 ### Validation Tasks
 
-- [ ] Prove all mandatory local and cross-platform gates pass from a clean fixture state.
+- [x] Prove all mandatory local and cross-platform gates pass from a clean fixture state.
 - [x] Prove activation publication through static managed-contract tests and a recorded fresh-agent local-remote probe without a publication CLI.
-- [ ] Prove source completion leaves release tags, public assets, consumer sync, and other-repository writes untouched before EP-07.
+- [x] Prove source completion leaves release tags, public assets, consumer sync, and other-repository writes untouched before EP-07.
 - [x] Prove every discovery must-cover requirement maps to one designated passing evidence item.
 - [x] Prove migration and rollout documentation preserves repository ownership and ordinary parallel work.
 
@@ -1876,18 +1876,18 @@ release-runbook authorization are resolved.
 
 ### F) Tasks Checklist
 
-- [ ] Re-read `docs/repo/runbooks/release-operating-kit.md` and record the final consumer-impact classification, migration requirement, and release scope.
-- [ ] Resolve the next unused patch from current public tags and record `v0.1.24` only while `v0.1.23` remains latest.
-- [ ] Update root, binary, legacy-compatibility, component, profile, packaged-resource, installer, fixture, and workflow version surfaces to the selected version.
-- [ ] Add versioned release notes covering command UX, contracts, compatibility, producer migration, consumer adoption, rollout prerequisites, safety boundaries, and known residual risk.
-- [ ] Regenerate content identity and verify every source-to-packaged-resource mirror after the version bump.
-- [ ] Run public-core, Markdown, JSON Schema, content-identity, Go, Python compatibility, installer, and release-contract validation from the versioned source tree.
-- [ ] Build macOS universal and Windows x64 release packs twice in separate output directories and prove byte-identical archives.
-- [ ] Verify required pack members, Python-payload exclusion, external-catalog sequencing, and the complete catalog-to-binary digest chain.
-- [ ] Run isolated macOS fresh-install, upgrade dry-run, upgrade apply, replacement failure, reconciliation failure, and post-check failure paths.
-- [ ] Generate and verify sidecar SHA-256 checksum files for every proposed public asset.
-- [ ] Record signing and notarization evidence plus the intended distribution boundary in the release-candidate summary.
-- [ ] Present the resolved version, candidate source tree, local evidence, remote validation actions, distribution boundary, conditional publication action, and rollback boundary for explicit user authorization.
+- [x] Re-read `docs/repo/runbooks/release-operating-kit.md` and record the final consumer-impact classification, migration requirement, and release scope.
+- [x] Resolve the next unused patch from current public tags and record `v0.1.24` only while `v0.1.23` remains latest.
+- [x] Update root, binary, legacy-compatibility, component, profile, packaged-resource, installer, fixture, and workflow version surfaces to the selected version.
+- [x] Add versioned release notes covering command UX, contracts, compatibility, producer migration, consumer adoption, rollout prerequisites, safety boundaries, and known residual risk.
+- [x] Regenerate content identity and verify every source-to-packaged-resource mirror after the version bump.
+- [x] Run public-core, Markdown, JSON Schema, content-identity, Go, Python compatibility, installer, and release-contract validation from the versioned source tree.
+- [x] Build macOS universal and Windows x64 release packs twice in separate output directories and prove byte-identical archives.
+- [x] Verify required pack members, Python-payload exclusion, external-catalog sequencing, and the complete catalog-to-binary digest chain.
+- [x] Run isolated macOS fresh-install, upgrade dry-run, upgrade apply, replacement failure, reconciliation failure, and post-check failure paths.
+- [x] Generate and verify sidecar SHA-256 checksum files for every proposed public asset.
+- [x] Record signing and notarization evidence plus the intended distribution boundary in the release-candidate summary.
+- [x] Present the resolved version, candidate source tree, local evidence, remote validation actions, distribution boundary, conditional publication action, and rollback boundary for explicit user authorization.
 - [ ] Create and push the release-candidate commit on the unambiguous branch under the recorded release-execution authority.
 - [ ] Dispatch the real-Windows fresh-install, upgrade dry-run, upgrade apply, replacement failure, reconciliation failure, and post-check failure matrix and retain CI evidence.
 - [ ] Verify the release target still equals the validated commit and rerun invalidated gates after every intervening source change.
@@ -1924,8 +1924,8 @@ release-runbook authorization are resolved.
 
 ### Validation Tasks
 
-- [ ] Prove one selected version across source identity, packaged resources, binaries, installers, fixtures, workflows, archives, and external catalog.
-- [ ] Prove two builds produce byte-identical supported-platform packs and a coherent external-catalog digest chain.
+- [x] Prove one selected version across source identity, packaged resources, binaries, installers, fixtures, workflows, archives, and external catalog.
+- [x] Prove two builds produce byte-identical supported-platform packs and a coherent external-catalog digest chain.
 - [ ] Prove isolated macOS and real-Windows install, upgrade, failure, rollback, and recovery behavior from the release candidate.
 - [ ] Prove tag and public assets originate from the exact validated commit under recorded publication authority.
 - [ ] Prove public downloads match recorded sidecars and succeed in isolated update-check, fresh-install, and upgrade smoke tests.

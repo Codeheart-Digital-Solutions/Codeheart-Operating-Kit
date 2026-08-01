@@ -92,7 +92,7 @@ jobs:
         run: |
           set -euo pipefail
           VERSION="${{ steps.package-version.outputs.version }}"
-          OLD_VERSION="0.1.22"
+          OLD_VERSION="0.1.23"
           OLD_HOME="$RUNNER_TEMP/codeheart-ok-old"
           mkdir -p "$OLD_HOME/bin"
           go build -trimpath -buildvcs=false \
@@ -217,7 +217,7 @@ jobs:
         shell: pwsh
         run: |
           $Version = "${{ steps.package-version.outputs.version }}"
-          $OldVersion = "0.1.22"
+          $OldVersion = "0.1.23"
           $OldHome = "$env:RUNNER_TEMP\codeheart-ok-old"
           New-Item -ItemType Directory -Force -Path "$OldHome\bin" | Out-Null
           go build -trimpath -buildvcs=false `

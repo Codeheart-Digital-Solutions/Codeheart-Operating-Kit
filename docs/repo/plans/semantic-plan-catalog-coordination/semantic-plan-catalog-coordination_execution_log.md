@@ -1,4 +1,4 @@
-Last updated: 2026-08-01T06:10:04Z (UTC)
+Last updated: 2026-08-01T06:46:12Z (UTC)
 Created: 2026-07-31
 
 # Semantic Plan Catalog And Branch-Aware Coordination Execution Log
@@ -14,7 +14,9 @@ The user explicitly activated the seven-epic implementation and authorized the b
 checkpoint on 2026-07-31. Execution uses
 `codex/semantic-plan-catalog-coordination` and proceeds in epic order. Existing unrelated
 `.codeheart/`, agent-memory, and pending-sync work remains outside the activation checkpoint.
-Public release execution remains subject to the `EP-07` release gate recorded in the plan.
+The user explicitly authorized the `EP-07` release gate on 2026-08-01 after the exact producer
+source and cutover evidence was presented. The release remains bounded to this producer repository;
+coordination-home and member rollout remains separate repository-owned follow-up work.
 
 ## Epic Delta Index
 
@@ -24,9 +26,9 @@ Public release execution remains subject to the `EP-07` release gate recorded in
 | `EP-02` | completed | Added compatibility reconciliation, deterministic views, Git inventory, grouped commands, and optimistic transactional migration. | Accepted in round twenty-three |
 | `EP-03` | completed | Added exact portfolio configuration and membership, local/GitHub discovery with optional PR enrichment, scanner-owned policy-confined bare mirrors, byte-aware default and unmerged-branch observations, atomic complete cache, and remote-overlay commands; hardened compatibility, evidence completeness, source authority, remote normalization, local namespace containment, atomic publication, and Git command-policy confinement after review. | Accepted in round fourteen |
 | `EP-04` | completed | Added exact semantic-catalog and portfolio references, mode-aware planning and activation publication doctrine, setup/refresh/migration recipes, stable entry-point and strategy scaffolds, routing, declarations, packaged mirrors, and materialization tests. | Accepted in round three |
-| `EP-05` | active | Began the producer-only compatibility migration with an explicit legacy-mode identity/config adoption and frozen-register baseline sequence. | Pending |
-| `EP-06` | active | Added cross-platform grouped validation, low-context and activation probes, adversarial fixtures, public-safe remote evidence, impact/release/adoption documentation, discovery evidence mapping, benchmarks, and read-only migration handoffs; immutable candidate handoff remains pending. | Pending |
-| `EP-07` | pending | None yet. | Pending explicit release gate |
+| `EP-05` | completed | Migrated all 33 producer plans, reconciled semantic titles, proved complete live default-branch coverage, and cut the producer from mixed to canonical mode without rewriting the frozen register. | Accepted in round three after a test-only Windows portability correction |
+| `EP-06` | completed | Proved the source capability on macOS and real Windows, retained public and repository boundaries, and handed exact validated source `b0afd1a` plus identical-tree integration `a982acb` to the release epic. | Accepted; exact-head CI and post-merge live reconciliation passed |
+| `EP-07` | active | Resolved unused patch `v0.1.24`, retained the unsigned internal/prototype boundary, and received explicit release-execution authority. | Release validation pending |
 
 ## Review Gate Metrics
 
@@ -913,8 +915,8 @@ Status: completed and accepted in review round three.
 
 ## EP-05 Delta - Producer Semantic Migration And Catalog Cutover
 
-Status: active; all 33 local records are canonical in mixed mode, with remote/default-branch
-coverage and canonical cutover pending default-branch enrollment.
+Status: completed; all 33 local records are canonical, default-branch coverage is complete, and
+the producer is in canonical mode on `origin/main`.
 
 - Safe sequence correction: the task list originally placed the frozen-register notice after mixed
   adoption. The implemented runtime requires current register bytes to match the exact legacy
@@ -984,8 +986,8 @@ coverage and canonical cutover pending default-branch enrollment.
 
 ## EP-06 Delta - Integrated Validation And Release-Candidate Handoff
 
-Status: active; source-level validation is clean, but immutable candidate handoff cannot close
-before the `EP-05` default-branch gate and the later release-candidate authority boundary.
+Status: completed; exact validated source and post-merge integration revisions were handed to
+`EP-07` with release and consumer state unchanged.
 
 - Cross-platform validation surface: macOS and Windows workflow jobs now run grouped plan catalog,
   migration, portfolio-overlay, command, CLI, routing, schema, and packaged-resource tests. The
@@ -1165,10 +1167,78 @@ before the `EP-05` default-branch gate and the later release-candidate authority
   race-enabled portfolio tests, vet, JSON-schema, Markdown-header, public-core, release-manifest,
   and diff gates also pass. A fresh exact-head CI run remains required and no failed check is
   bypassed.
+- Canonical-cutover closure: the final test-only head
+  `b0afd1afb07bc3b6400129ccf0141983ad302b6b` was accepted in review round three and passed both
+  macOS and both real-Windows jobs. Ready PR `#4` merged as
+  `a982acb45440508ca8947db1fc933cbd2609ad7a`; the validated head is its second parent, both
+  revisions have tree `8818f29ed75db3d59d504b11f5072d803d395c3d`, and no failed check was
+  bypassed. A fresh post-merge source CLI scan of the actual default branch remained canonical and
+  complete for one self-member and 33 default observations, with no branch observations, scan
+  errors, stale facts, or conflicts.
+- Exact EP-06 handoff: `b0afd1afb07bc3b6400129ccf0141983ad302b6b` is the validated source revision
+  and `a982acb45440508ca8947db1fc933cbd2609ad7a` is its identical-tree default-branch integration.
+  At handoff, public release `v0.1.23` remained latest, neither revision had a tag, release jobs were
+  skipped, no consumer was synchronized, and no coordination home, member, or additional
+  repository was modified.
 
 ## EP-07 Delta - Version Bump, Reproducible Release, And Public Verification
 
-Status: pending. The explicit release gate remains unresolved until the release candidate exists.
+Status: active. Live preflight confirmed `v0.1.23` remains the latest public release, `v0.1.24` is
+unused, and `origin/main` still points to `a982acb45440508ca8947db1fc933cbd2609ad7a`.
+
+- Final consumer-impact classification: `instruction-only change`, `validator-only change`,
+  `backwards-compatible scaffold addition`, `consumer migration required`, and `security or safety
+  policy change`, plus an additive non-breaking placement/local-cache effect. Semantic adoption is
+  a reviewed repository-owned migration after upgrade; upgrade alone does not rewrite plans.
+- Release scope and boundary: publish the macOS universal and Windows x64 packs, external catalog,
+  bootstrap, installers, release notes, and checksum sidecars from one validated `v0.1.24` commit.
+  The release remains unsigned and unnotarized under the explicitly accepted
+  HTTPS-plus-SHA-256 internal/prototype boundary. Coordination-home and member installation,
+  portfolio rollout, signing infrastructure, and writes to other repositories remain excluded.
+- Authority: on 2026-08-01 the user explicitly authorized the resolved `v0.1.24` release, candidate
+  branch push, remote validation, retained unsigned internal/prototype distribution boundary,
+  conditional annotated tag and public publication after all gates pass, and post-publication
+  verification. Any validation failure stops publication; pre-publication rollback is simply to
+  leave the candidate branch unmerged or untagged, and no consumer state is in scope.
+- Versioned source: root manifest, Go and Python identities, package metadata, bootstrap, macOS and
+  Windows installer defaults, release-candidate fixture, current-version behavior tests, and
+  upgrade workflow baselines now resolve coherently to `0.1.24`; independent component versions
+  remain their already validated semantic versions. Root and packaged manifests are byte-identical,
+  and release-manifest, source/package parity, JSON-schema, Markdown-header, public-core, and diff
+  validation passed.
+- Full local gates: `go test -race ./...` passed, `go vet ./internal/... ./cmd/...` passed, all 147
+  Python tests passed in an isolated no-project pytest runtime, and the focused manifest, release,
+  commands, CLI, installer, asset, schema, and packaging suites passed. The isolated Python command
+  neither read nor changed the repository's unrelated untracked `uv.lock`.
+- Reproducibility and pack shape: two independent output trees were byte-identical for both packs,
+  their sidecars, and the relative-URL catalog; a third final-URL build reproduced both pack bytes
+  exactly. Each platform pack contains `INSTALL.md`, its platform binary, `bootstrap.md`,
+  `checksums.txt`, `content-manifest.yaml`, both installers, `pack-manifest.json`, and
+  `release-notes.md`, with no wheel, `dist-info`, or other Python payload.
+- Candidate digest chain: macOS archive
+  `eb428815a4367924a1806d9f132c25aa8574534289fe49f1cd20d54377b5160a`, pack manifest
+  `d341a0ca45855ba89c8a07d668daf1b81ecd417ead42ad901212c26573de76a6`, payload checksums
+  `8527044941634bbf794e5b57da3f623ba6373b2dc1e9f8eb8cc2909f6a1eabc1`, and universal binary
+  `d1371cd06d46feb7db631fa12b855c6171906d2447073f4802bcda4e389bf045`; Windows archive
+  `8f520b4c16b19d0fb18ecf4d0775a0511e14469f2db044055d1424ceef362daf`, pack manifest
+  `92467d915be7ceede818216065bf2032cc5bcaa67df0a7e571066860847d544e`, payload checksums
+  `6233f7a9d80a8d214d4e0534a31927765bfb14d302bbd6907af879e1b351d943`, and x64 PE binary
+  `8e9e29d90bc38219ffcc4800ddb249cff86eb3b111763fb049ac32171b61e38d`. Both packs bind content
+  manifest `a78a171e4bab62329f8f1d7fa1c7fdfb388892797ee59d9abe7d52de50bc4ad5`; the final-URL external
+  catalog is `6460ee8e2d268874da7d831e999502bafb3b7320115edb546230a78a3bd8186d`.
+- Candidate public set: eight primary assets—two packs, external catalog, bootstrap, both installers,
+  content manifest, and release notes—plus eight verified SHA-256 sidecars are staged only under
+  `/private/tmp`. No public asset exists yet. The primary source digests are bootstrap
+  `bc8f10ed87c0677d12839d9bd71553eb882bb1b09dd83d9cf48c5c30e60aff1b`, macOS installer
+  `6689b639ca96e2b82d00d5fd05be12817f604d27b8bcb6312beec55d020a9a98`, Windows installer
+  `99257956b69a73c0d5a1f46974d5b0c4bc07f18e3f4787bb8b8d6de33171fe6a`, and release notes
+  `46d90521f30e9dae2ee1416141d9c6cca0c76d93fb65248815abd0e9380d5fcd`.
+- Isolated macOS evidence: explicit checksum mismatch failed before installation; verified fresh
+  install reported `0.1.24`; a locally built `0.1.23` compatibility binary initialized an isolated
+  consumer; upgrade dry-run preserved the binary and lock hashes; approved upgrade replaced the
+  binary with `0.1.24`; and final `check` reported current. The race-enabled release and transaction
+  suites supplied native failed-reconciliation, staged/replacement, committed post-check, rollback,
+  retained-recovery, and retry evidence. Real-Windows execution remains the next remote gate.
 
 ## Final Validation
 
