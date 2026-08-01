@@ -1,11 +1,11 @@
-Last updated: 2026-08-01T06:46:12Z (UTC)
+Last updated: 2026-08-01T07:24:08Z (UTC)
 Created: 2026-07-31
 
 # Semantic Plan Catalog And Branch-Aware Coordination Execution Log
 
 Plan: `semantic-plan-catalog-coordination_implementation_doc.md`
 Mode: goal-style implementation
-Status: active
+Status: completed
 Overall divergence: none at activation
 
 ## Summary
@@ -28,7 +28,7 @@ coordination-home and member rollout remains separate repository-owned follow-up
 | `EP-04` | completed | Added exact semantic-catalog and portfolio references, mode-aware planning and activation publication doctrine, setup/refresh/migration recipes, stable entry-point and strategy scaffolds, routing, declarations, packaged mirrors, and materialization tests. | Accepted in round three |
 | `EP-05` | completed | Migrated all 33 producer plans, reconciled semantic titles, proved complete live default-branch coverage, and cut the producer from mixed to canonical mode without rewriting the frozen register. | Accepted in round three after a test-only Windows portability correction |
 | `EP-06` | completed | Proved the source capability on macOS and real Windows, retained public and repository boundaries, and handed exact validated source `b0afd1a` plus identical-tree integration `a982acb` to the release epic. | Accepted; exact-head CI and post-merge live reconciliation passed |
-| `EP-07` | active | Resolved unused patch `v0.1.24`, retained the unsigned internal/prototype boundary, and received explicit release-execution authority. | Release validation pending |
+| `EP-07` | completed | Released `v0.1.24` from the exact validated candidate, verified all 16 public assets, and passed candidate plus post-publication validation on macOS and real Windows. | Accepted independently; public release and post-publication matrix verified |
 
 ## Review Gate Metrics
 
@@ -1183,8 +1183,9 @@ Status: completed; exact validated source and post-merge integration revisions w
 
 ## EP-07 Delta - Version Bump, Reproducible Release, And Public Verification
 
-Status: active. Live preflight confirmed `v0.1.23` remains the latest public release, `v0.1.24` is
-unused, and `origin/main` still points to `a982acb45440508ca8947db1fc933cbd2609ad7a`.
+Status: completed. Live preflight confirmed `v0.1.23` was the latest public release, selected the
+unused `v0.1.24` patch, and completed the authorized public release without modifying a consumer,
+coordination home, member repository, portfolio configuration, or additional checkout.
 
 - Final consumer-impact classification: `instruction-only change`, `validator-only change`,
   `backwards-compatible scaffold addition`, `consumer migration required`, and `security or safety
@@ -1238,8 +1239,60 @@ unused, and `origin/main` still points to `a982acb45440508ca8947db1fc933cbd2609a
   consumer; upgrade dry-run preserved the binary and lock hashes; approved upgrade replaced the
   binary with `0.1.24`; and final `check` reported current. The race-enabled release and transaction
   suites supplied native failed-reconciliation, staged/replacement, committed post-check, rollback,
-  retained-recovery, and retry evidence. Real-Windows execution remains the next remote gate.
+  retained-recovery, and retry evidence. The subsequent real-Windows candidate and public-release
+  gates passed as recorded below.
+
+- Release-candidate checkpoint and independent gate: commit
+  `bd24387bde371cad8c22fc8b91a3d75f32b8511b` was normally pushed on
+  `codex/semantic-plan-catalog-release-handoff`. The fresh independent `EP-07` reviewer accepted
+  that exact commit with no material findings after independently passing the release validators,
+  full Go suite, vet, all 147 Python tests, protected-path checks, candidate shape, and digest
+  comparison. Ready PR `#5` passed both push and pull-request macOS and real-Windows jobs, then
+  merged as `4ed2f4265a8108e9447f22e8b85e0955951417e4`. The candidate and merge commit have identical tree
+  `0ac7b0cb4c976505822d5af2d4b3519db6ee77aa`; no failed check was bypassed.
+- Exact tag and publication identity: annotated tag object
+  `6b7f8718e67c7cb4c607e1e2c49c736728157035` peels to the exact validated candidate
+  `bd24387bde371cad8c22fc8b91a3d75f32b8511b`. Public release
+  `https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/tag/v0.1.24`
+  was published at `2026-08-01T07:09:00Z` as a non-draft, non-prerelease release. It contains the
+  two platform packs, external catalog, bootstrap, both installers, content manifest, release
+  notes, and one SHA-256 sidecar for each primary asset: 16 uploaded assets in total.
+- Public-byte verification: all eight downloaded primary assets passed their published sidecars,
+  and all 16 live files were byte-identical to the locally validated publication set. The live
+  archive, catalog, manifest, installer, bootstrap, and release-note digests therefore match the
+  candidate digest chain recorded above.
+- Public behavior verification: the live `v0.1.24` macOS and Windows installers both rejected a
+  deliberately wrong checksum before installation, completed clean fresh installs from public
+  packs, onboarded isolated consumers, and passed `check`. A separate isolated macOS consumer
+  installed public `v0.1.23`, discovered public `v0.1.24` through the default latest-release
+  update check, preserved binary and lock hashes during the `v0.1.24` dry run, completed the
+  authorized live upgrade, reported binary version `0.1.24`, and finished current.
+- Post-publication workflow evidence: workflow-dispatch run
+  `https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/actions/runs/30689193507`
+  completed successfully at merge commit `4ed2f4265a8108e9447f22e8b85e0955951417e4`. Its macOS
+  public-release job passed in 9 seconds, macOS validation in 3 minutes 23 seconds, Windows
+  public-release in 27 seconds, and real-Windows validation in 10 minutes 8 seconds. The only
+  annotations report GitHub's automatic Node.js 20-to-24 action runtime transition; they are an
+  operational maintenance notice, not a release failure.
+- Closure boundary: the compatibility register remains byte-identical to its frozen mixed-mode
+  baseline and is not rewritten to express current status. The canonical plan and this execution
+  log now carry completion status. No coordination-home installation, member installation,
+  portfolio configuration, member plan, other repository, or extra checkout changed. The release
+  enables but does not execute portfolio rollout; that remains a separately authorized future
+  plan beginning with a fresh coordination-home scan and repository-by-repository upgrade and
+  inventory.
+- Closure-document validation: the source CLI validates canonical mode with all 33 records and no
+  error, while retaining only the accepted compatibility warnings. JSON Schema, Markdown-header,
+  public-core, release-manifest, diff, and frozen-register byte checks pass; the only tracked
+  closure changes are this plan and execution log.
 
 ## Final Validation
 
-Pending completion of all seven epics.
+All seven epics are complete. The producer is canonical with 33 semantic plan records; the source,
+migration, branch-aware portfolio coordination, managed doctrine, producer cutover, integrated
+validation, release construction, exact tag, public assets, and public install/upgrade paths all
+passed their designated gates. The independent final release review found no material issue, the
+post-publication macOS and real-Windows matrix is green, and the approved unsigned
+internal/prototype boundary is the only intentional distribution qualification. Portfolio rollout
+and signing/notarization infrastructure remain explicitly deferred rather than incomplete work in
+this plan.
