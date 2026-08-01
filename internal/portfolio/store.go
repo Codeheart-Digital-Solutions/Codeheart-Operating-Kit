@@ -10,6 +10,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/internal/state"
 )
@@ -131,11 +132,47 @@ func storeCompleteCatalogWithHook(root string, catalog Catalog, hook func(string
 		}
 		return false, false, statErr
 	}
+	if existingPresent && catalogTargetMustCloseBeforeReplace() {
+		if err := existing.Close(); err != nil {
+			return false, true, fmt.Errorf("portfolio_cache_install_failed: close existing cache authority: %w", err)
+		}
+	}
 	// Root.Rename performs one same-directory old-to-new replacement. Readers
 	// therefore observe either the previous complete file or the new complete
 	// file; there is no remove-then-install gap.
-	if err := parent.Rename(temporaryName, target); err != nil {
-		return false, existingPresent, fmt.Errorf("portfolio_cache_install_failed: %w", err)
+	var renameErr error
+	for attempt := 0; attempt < fileShareRetryAttempts; attempt++ {
+		renameErr = parent.Rename(temporaryName, target)
+		if renameErr == nil || !isTransientFileSharingError(renameErr) {
+			break
+		}
+		if err := bound.Verify(); err != nil {
+			cleanupTemporary = false
+			return false, existingPresent, err
+		}
+		if existingPresent {
+			current, statErr := parent.Lstat(target)
+			if statErr != nil && isTransientFileSharingError(statErr) {
+				time.Sleep(fileShareRetryDelay)
+				continue
+			}
+			if statErr != nil || !os.SameFile(existingInfo, current) {
+				return false, true, fmt.Errorf("portfolio_cache_changed: existing cache identity changed while publication was waiting")
+			}
+		} else if _, statErr := parent.Lstat(target); !os.IsNotExist(statErr) {
+			if statErr != nil && isTransientFileSharingError(statErr) {
+				time.Sleep(fileShareRetryDelay)
+				continue
+			}
+			if statErr == nil {
+				return false, false, fmt.Errorf("portfolio_cache_changed: cache appeared while publication was waiting")
+			}
+			return false, false, statErr
+		}
+		time.Sleep(fileShareRetryDelay)
+	}
+	if renameErr != nil {
+		return false, existingPresent, fmt.Errorf("portfolio_cache_install_failed: %w", renameErr)
 	}
 	cleanupTemporary = false
 	installedInfo, err := parent.Lstat(target)

@@ -182,21 +182,37 @@ func BuildMigrationPlan(root string, ledger MigrationLedger) (MigrationPlan, err
 			continue
 		}
 		currentDigest := sha256.Sum256(current)
-		if hex.EncodeToString(currentDigest[:]) != item.SourceSHA256 {
-			skips = append(skips, MigrationSkip{Code: "source_mismatch", Message: "current plan bytes no longer match the reviewed source hash", Path: item.Path, Remediation: "inventory and semantically reevaluate the latest plan"})
-			continue
-		}
+		currentSHA256 := hex.EncodeToString(currentDigest[:])
+		checkoutBytesMatchReviewedSource := currentSHA256 == item.SourceSHA256
 		dirty, dirtyErr := gitPathDirty(root, item.Path)
 		if dirtyErr != nil {
 			skips = append(skips, MigrationSkip{Code: "dirty_check_failed", Message: dirtyErr.Error(), Path: item.Path})
 			continue
 		}
 		if dirty {
-			skips = append(skips, MigrationSkip{Code: "dirty_plan_overlap", Message: "target plan has uncommitted changes", Path: item.Path, Remediation: "have the current branch owner migrate or stabilize the plan first"})
+			if !checkoutBytesMatchReviewedSource {
+				skips = append(skips, MigrationSkip{Code: "source_mismatch", Message: "current plan bytes no longer match the reviewed source", Path: item.Path, Remediation: "inventory and semantically reevaluate the latest plan"})
+			} else {
+				skips = append(skips, MigrationSkip{Code: "dirty_plan_overlap", Message: "target plan has uncommitted changes", Path: item.Path, Remediation: "have the current branch owner migrate or stabilize the plan first"})
+			}
 			continue
 		}
 		if refs := touches[item.Path]; len(refs) > 0 {
 			skips = append(skips, MigrationSkip{Code: "active_branch_ownership", Message: "target plan is changed on unmerged refs: " + strings.Join(refs, ", "), Path: item.Path, Remediation: "assign migration to the branch owner or wait for reconciliation"})
+			continue
+		}
+		sourceBytes, gitErr := gitBytes(root, "show", item.SourceRevision+":"+item.Path)
+		if gitErr != nil {
+			skips = append(skips, MigrationSkip{Code: "source_revision_unavailable", Message: gitErr.Error(), Path: item.Path, Remediation: "retain the source commit and rerun inventory"})
+			continue
+		}
+		sourceDigest := sha256.Sum256(sourceBytes)
+		if hex.EncodeToString(sourceDigest[:]) != item.SourceSHA256 {
+			skips = append(skips, MigrationSkip{Code: "source_revision_mismatch", Message: "reviewed source revision does not contain the reviewed plan blob", Path: item.Path, Remediation: "regenerate inventory from an exact committed source"})
+			continue
+		}
+		if !checkoutBytesMatchReviewedSource && !bytes.Equal(bytes.ReplaceAll(current, []byte("\r\n"), []byte("\n")), bytes.ReplaceAll(sourceBytes, []byte("\r\n"), []byte("\n"))) {
+			skips = append(skips, MigrationSkip{Code: "source_mismatch", Message: "clean checkout bytes differ from the reviewed source beyond line-ending conversion", Path: item.Path, Remediation: "remove checkout filters or regenerate inventory from the exact working bytes"})
 			continue
 		}
 		sourceBlob, gitErr := gitText(root, "rev-parse", "--verify", item.SourceRevision+":"+item.Path)
@@ -229,7 +245,7 @@ func BuildMigrationPlan(root string, ledger MigrationLedger) (MigrationPlan, err
 			skips = append(skips, MigrationSkip{Code: first.Code, Message: first.Message, Path: item.Path, Remediation: first.Remediation})
 			continue
 		}
-		actions = append(actions, reconcile.Action{Kind: "replace", Target: item.Path, Owner: "repo-plan", Content: updated, Mode: 0o644, ExpectedSHA256: item.SourceSHA256})
+		actions = append(actions, reconcile.Action{Kind: "replace", Target: item.Path, Owner: "repo-plan", Content: updated, Mode: 0o644, ExpectedSHA256: currentSHA256})
 	}
 
 	filePlan, err := reconcile.BuildFilePlan("plans migrate", root, string(observed.Classification), []state.Classification{observed.Classification}, actions)

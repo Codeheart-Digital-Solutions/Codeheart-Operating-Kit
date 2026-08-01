@@ -1,4 +1,4 @@
-Last updated: 2026-08-01T04:46:17Z (UTC)
+Last updated: 2026-08-01T05:02:57Z (UTC)
 Created: 2026-07-31
 
 # Semantic Plan Catalog And Branch-Aware Coordination Execution Log
@@ -1089,6 +1089,21 @@ before the `EP-05` default-branch gate and the later release-candidate authority
   the complete race-enabled Go suite, Windows amd64 test-binary cross-compilation, vet, all 147
   Python tests, JSON-schema, Markdown, public-core, release-manifest, and diff gates pass locally.
   Real Windows execution remains pending the updated PR checks; no failed check was bypassed.
+- Source-and-mixed integration CI round two: updated head
+  `6b9ef22a019623d1eaf2245911660a0b93823a83` passed both macOS runs. Both Windows runs confirmed
+  that long-path mirror refresh and stale-transaction cleanup were fixed, then exposed two residual
+  boundaries: a later clean branch checkout could convert line endings after inventory, and cache
+  replacement/read verification could encounter Windows sharing or identity-change races. The
+  second remediation defines a clean inventory SHA as the committed blob SHA, permits migration
+  only when differing clean checkout bytes normalize to that blob through line endings alone, and
+  derives the transaction precondition from the exact current bytes. The publisher closes its own
+  Windows target handle before replacement and retries only bounded sharing failures while
+  revalidating parent and target identity; `ReadCachedCatalog` retries only bounded sharing or
+  atomic identity-change reads. The concurrency regression now exercises that supported catalog
+  API. Focused packages, repeated CRLF/branch tests, 20 race-enabled cache-publication repetitions,
+  the complete race-enabled Go suite, Windows amd64 test-binary cross-compilation, vet, all 147
+  Python tests, JSON-schema, Markdown, public-core, release-manifest, and diff gates pass locally.
+  The second Windows rerun remains pending; no failing gate was bypassed.
 
 ## EP-07 Delta - Version Bump, Reproducible Release, And Public Verification
 

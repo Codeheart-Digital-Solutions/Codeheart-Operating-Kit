@@ -450,7 +450,15 @@ func markObservationConflicts(observations []plancatalog.SourceObservation) {
 }
 
 func ReadCachedCatalog(root string) (Catalog, error) {
-	data, err := readRootRegular(root, CatalogPath)
+	var data []byte
+	var err error
+	for attempt := 0; attempt < fileShareRetryAttempts; attempt++ {
+		data, err = readRootRegular(root, CatalogPath)
+		if err == nil || (!errors.Is(err, errRootRegularChanged) && !isTransientFileSharingError(err)) {
+			break
+		}
+		time.Sleep(fileShareRetryDelay)
+	}
 	if err != nil {
 		return Catalog{}, err
 	}

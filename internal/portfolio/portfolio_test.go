@@ -1062,17 +1062,14 @@ func TestConcurrentCacheReadersSeeOnlyOldOrNewCompleteBytes(t *testing.T) {
 				return
 			default:
 			}
-			data, err := os.ReadFile(cachePath)
+			catalog, err := ReadCachedCatalog(root)
 			if err != nil {
 				readerDone <- err
 				return
 			}
-			if !bytes.Equal(data, oldBytes) {
-				var decoded Catalog
-				if err := json.Unmarshal(data, &decoded); err != nil || decoded.CompletedAt != newCatalog.CompletedAt {
-					readerDone <- fmt.Errorf("reader observed neither complete cache")
-					return
-				}
+			if catalog.CompletedAt != oldCatalog.CompletedAt && catalog.CompletedAt != newCatalog.CompletedAt {
+				readerDone <- fmt.Errorf("reader observed neither complete cache")
+				return
 			}
 		}
 	}()

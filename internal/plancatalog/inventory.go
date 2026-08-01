@@ -129,6 +129,13 @@ func BuildInventory(root string, now time.Time) (Inventory, error) {
 		dirty, dirtyErr := gitPathDirty(root, candidate.Path)
 		if dirtyErr != nil {
 			inventory.Problems = append(inventory.Problems, Problem{Code: "git_dirty_check_failed", Message: dirtyErr.Error(), Path: candidate.Path, Severity: SeverityError})
+		} else if !dirty && sourceSHA != "" {
+			sourceBytes, sourceErr := gitBytes(root, "show", revision+":"+candidate.Path)
+			if sourceErr != nil {
+				inventory.Problems = append(inventory.Problems, Problem{Code: "source_revision_unavailable", Message: sourceErr.Error(), Path: candidate.Path, Severity: SeverityError, Remediation: "commit the reviewed plan or regenerate inventory from a coherent revision"})
+			} else {
+				sourceSHA = sha256Text(sourceBytes)
+			}
 		}
 		branchTouches := append([]string{}, touches[candidate.Path]...)
 		if dirty {

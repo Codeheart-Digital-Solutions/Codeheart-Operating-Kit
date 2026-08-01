@@ -2,6 +2,7 @@ package portfolio
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -11,6 +12,8 @@ import (
 
 	"github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/internal/state"
 )
+
+var errRootRegularChanged = errors.New("contained regular file changed during read")
 
 type Role string
 
@@ -142,7 +145,7 @@ func readRootRegular(root, relative string) ([]byte, error) {
 	defer file.Close()
 	opened, err := file.Stat()
 	if err != nil || !os.SameFile(info, opened) {
-		return nil, fmt.Errorf("%s identity changed while opening", relative)
+		return nil, fmt.Errorf("%w: %s identity changed while opening", errRootRegularChanged, relative)
 	}
 	data, err := io.ReadAll(file)
 	if err != nil {
@@ -153,18 +156,18 @@ func readRootRegular(root, relative string) ([]byte, error) {
 	}
 	current, err := bound.directory.Lstat(name)
 	if err != nil || !os.SameFile(info, current) {
-		return nil, fmt.Errorf("%s identity changed while reading", relative)
+		return nil, fmt.Errorf("%w: %s identity changed while reading", errRootRegularChanged, relative)
 	}
 	opened, err = file.Stat()
 	if err != nil || !os.SameFile(current, opened) {
-		return nil, fmt.Errorf("%s descriptor identity changed while reading", relative)
+		return nil, fmt.Errorf("%w: %s descriptor identity changed while reading", errRootRegularChanged, relative)
 	}
 	if _, err := file.Seek(0, io.SeekStart); err != nil {
 		return nil, err
 	}
 	verified, err := io.ReadAll(file)
 	if err != nil || !bytes.Equal(data, verified) {
-		return nil, fmt.Errorf("%s bytes changed while reading", relative)
+		return nil, fmt.Errorf("%w: %s bytes changed while reading", errRootRegularChanged, relative)
 	}
 	return data, nil
 }

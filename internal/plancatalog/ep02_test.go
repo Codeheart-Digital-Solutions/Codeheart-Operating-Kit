@@ -666,6 +666,18 @@ func TestMigrationAcceptsCleanCheckoutLineEndingConversion(t *testing.T) {
 	if status := runGitTest(t, root, "status", "--porcelain=v1", "--", alpha); status != "" {
 		t.Fatalf("line-ending conversion unexpectedly dirtied the checkout: %q", status)
 	}
+	inventory, err := BuildInventory(root, time.Date(2026, 7, 31, 12, 0, 0, 0, time.UTC))
+	if err != nil {
+		t.Fatal(err)
+	}
+	record := inventoryRecordByPath(t, inventory, alpha)
+	sourceBytes, err := gitBytes(root, "show", inventory.SourceRevision+":"+alpha)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if record.SourceSHA256 != sha256Text(sourceBytes) || record.SourceSHA256 == sha256Text(mustReadFile(t, filepath.Join(root, filepath.FromSlash(alpha)))) {
+		t.Fatalf("inventory did not retain the committed blob identity across checkout conversion: %#v", record)
+	}
 
 	plan, err := BuildMigrationPlan(root, migrationLedger(t, root))
 	if err != nil || len(plan.FilePlan.Actions) != 2 || len(plan.Skips) != 0 {
@@ -994,7 +1006,10 @@ func migrationLedger(t *testing.T, root string) MigrationLedger {
 	t.Helper()
 	revision := runGitTest(t, root, "rev-parse", "HEAD")
 	record := func(path, id string, kind Kind, purpose, alias string) MigrationRecord {
-		data := mustReadFile(t, filepath.Join(root, filepath.FromSlash(path)))
+		data, err := gitBytes(root, "show", revision+":"+path)
+		if err != nil {
+			t.Fatal(err)
+		}
 		digest := sha256.Sum256(data)
 		return MigrationRecord{
 			Path: path, SourceRevision: revision, SourceSHA256: hex.EncodeToString(digest[:]),
@@ -1127,6 +1142,17 @@ func mustReadFile(t *testing.T, path string) []byte {
 		t.Fatal(err)
 	}
 	return data
+}
+
+func inventoryRecordByPath(t *testing.T, inventory Inventory, path string) InventoryRecord {
+	t.Helper()
+	for _, record := range inventory.Records {
+		if record.Path == path {
+			return record
+		}
+	}
+	t.Fatalf("inventory record missing for %s", path)
+	return InventoryRecord{}
 }
 
 func appendFile(t *testing.T, path, content string) {
