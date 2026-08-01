@@ -1,4 +1,4 @@
-Last updated: 2026-08-01T00:36:53Z (UTC)
+Last updated: 2026-08-01T05:39:21Z (UTC)
 Created: 2026-07-31
 Status: active
 Execution log: semantic-plan-catalog-coordination_execution_log.md
@@ -1555,7 +1555,7 @@ branch after source hashes stabilize.
 ### F) Tasks Checklist
 
 - [x] Create the plan-scoped execution log before migration evidence is collected.
-- [ ] Run `codeheart-operating-kit plans inventory --remote-overlays --output docs/repo/plans/semantic-plan-catalog-coordination/attachments/producer-plan-migration-inventory.json .` from the producer work branch.
+- [x] Run `codeheart-operating-kit plans inventory --remote-overlays --output docs/repo/plans/semantic-plan-catalog-coordination/attachments/producer-plan-migration-inventory.json .` from the producer work branch.
 - [x] Reconcile every inventory record against `docs/repo/plans/plan-register.md`, sibling documents, execution evidence, and current lifecycle headers.
 - [x] Assign one stable semantic ID, kind, purpose, first-cataloged time, catalog-update time, and legacy alias set to every formal record.
 - [x] Record evidence-backed family, product, capability, theme, and relation values in `producer-plan-migration-ledger.yaml`.
@@ -1568,12 +1568,12 @@ branch after source hashes stabilize.
 - [x] Adopt `.codeheart/kit.config.yaml` as shared tracked producer configuration with the approved stable repository identity and `plan_catalog_mode: mixed`.
 - [x] Apply the reviewed ledger with `codeheart-operating-kit plans migrate --ledger docs/repo/plans/semantic-plan-catalog-coordination/attachments/producer-plan-migration-ledger.yaml --yes .`.
 - [x] Add the frozen-authority and generated-listing notice to `docs/repo/plans/plan-register.md` without deleting historical entries.
-- [ ] Re-run remote-overlay inventory and semantically review every record created, changed, skipped, and deferred during the migration window.
+- [x] Re-run remote-overlay inventory and semantically review every record created, changed, skipped, and deferred during the migration window.
 - [x] Assign contested plan migration to each current branch owner and record the resulting source evidence in the ledger.
 - [x] Apply reviewed reconciliation entries with the same guarded migration command.
-- [ ] Run `codeheart-operating-kit plans validate --remote-overlays .` in mixed mode and resolve every canonical-record blocker.
-- [ ] Change producer catalog mode from `mixed` to `canonical` after default and active-overlay coverage passes.
-- [ ] Run `codeheart-operating-kit plans validate --remote-overlays .` and `codeheart-operating-kit plans list --format json .` in canonical mode.
+- [x] Run `codeheart-operating-kit plans validate --remote-overlays .` in mixed mode and resolve every canonical-record blocker.
+- [x] Change producer catalog mode from `mixed` to `canonical` after default and active-overlay coverage passes.
+- [x] Run `codeheart-operating-kit plans validate --remote-overlays .` and `codeheart-operating-kit plans list --format json .` in canonical mode.
 - [x] Re-run the migration apply and record the zero-change idempotency result.
 - [x] Run `python3 scripts/validate-public-core.py` across the migrated repository and record the result.
 
@@ -1604,7 +1604,7 @@ branch after source hashes stabilize.
 - [x] Prove the inventory count equals canonical discovery, implementation, and qualifying family record counts.
 - [x] Prove every migrated legacy register ID resolves to exactly one canonical record alias, with each exception recorded as a documented ambiguity.
 - [x] Prove all metadata-only changes preserve pre-migration content-update header values.
-- [ ] Prove `plans validate --remote-overlays` covers the default branch and every accessible active plan-changing branch before canonical cutover.
+- [x] Prove `plans validate --remote-overlays` covers the default branch and every accessible active plan-changing branch before canonical cutover.
 - [x] Prove a second migration apply produces zero canonical plan changes.
 
 ## EP-06 - Integrated Validation And Release-Candidate Handoff

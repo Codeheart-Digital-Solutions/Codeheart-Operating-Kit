@@ -1,4 +1,4 @@
-Last updated: 2026-08-01T05:12:42Z (UTC)
+Last updated: 2026-08-01T05:39:21Z (UTC)
 Created: 2026-07-31
 
 # Semantic Plan Catalog And Branch-Aware Coordination Execution Log
@@ -1112,6 +1112,27 @@ before the `EP-05` default-branch gate and the later release-candidate authority
   The fixture now uses `Path.as_posix()` for all three remote object assertions. The exact focused
   activation test and all 50 grouped schema, routing, and packaged-resource tests pass locally. A
   fresh real-Windows rerun remains required; no failed gate was bypassed.
+- Source-and-mixed integration closure: both macOS and both real-Windows validation jobs passed at
+  exact head `f40682ccdf4fba289fa3337568e0503b555d6a1c`, including the complete Go, Python,
+  schema, packaging, staged-install, and upgrade-smoke surfaces. Public release jobs remained
+  correctly skipped. Ready PR `#3` was merged through merge commit
+  `4b1b7d43f22740fcd2532f96f2a76d291d3e4aee`, whose parents are the prior default branch and the
+  exact validated source head; baseline `3b134a07b806d1522e7cf76fe52e2028d79155c2` remains an
+  ancestor. No failed check was bypassed and no release artifact was published.
+- Live EP-05 reconciliation and canonical-cutover preparation: a fresh source CLI built from merge
+  `4b1b7d43f22740fcd2532f96f2a76d291d3e4aee` inventoried 33 formal records, all canonical, with
+  no invalid, unreadable, unsafe, active-branch-touch, or dirty-overlap records. The complete
+  pushed-evidence scan observed one enrolled self-member and 33 verified default-branch plans,
+  with no candidates, scan errors, stale/conflicting observations, or unmerged plan-changing
+  overlay observations. All five accessible remote refs were ancestors of `origin/main`. Mixed
+  remote validation passed; the reviewed ledger reapplied with zero writes, 33 `already_applied`
+  skips, and no blocker. The producer then entered canonical mode, where live remote validation
+  passed and JSON listing returned 33 unique semantic IDs (12 discovery, 21 implementation, zero
+  legacy rows). The plan-scoped inventory was refreshed in canonical mode; the historical
+  register-only `OK-PR-014` pointer remains an intentional warning-level evidence record rather
+  than an invented local plan. The full Go suite, all 147 Python tests, vet, JSON-schema,
+  Markdown-header, public-core, release-manifest, and diff gates passed with the cutover changes in
+  the worktree.
 
 ## EP-07 Delta - Version Bump, Reproducible Release, And Public Verification
 
