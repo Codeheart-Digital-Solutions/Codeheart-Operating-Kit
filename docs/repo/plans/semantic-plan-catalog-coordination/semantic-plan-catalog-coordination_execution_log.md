@@ -1,4 +1,4 @@
-Last updated: 2026-07-31T23:50:52Z (UTC)
+Last updated: 2026-08-01T00:27:10Z (UTC)
 Created: 2026-07-31
 
 # Semantic Plan Catalog And Branch-Aware Coordination Execution Log
@@ -980,11 +980,14 @@ before the `EP-05` default-branch gate and the later release-candidate authority
   migration, portfolio-overlay, command, CLI, routing, schema, and packaged-resource tests. The
   affected Go packages also cross-compiled successfully for Windows amd64 in this worktree. Real
   Windows execution remains release-candidate evidence and is not claimed locally.
-- Low-context and activation evidence: installed-route probes cover semantic reference, member
+- Low-context and activation fixtures: installed-route probes cover semantic reference, member
   authoring, coordination-home setup, refresh-before-analysis, incomplete-refresh disclosure,
-  migration skips, and activation boundaries. An isolated repository and local bare remote prove
+  migration skips, and activation boundaries. An automated isolated repository and local bare
+  remote fixture proves
   that activation publishes only the selected plan and execution-log checkpoint while unrelated
-  code remains local; no PR is created and no publication CLI was added.
+  code remains local; no PR is created and no publication CLI was added. This fixture is not by
+  itself fresh-agent evidence; the independent positive and negative probe remains an `EP-06`
+  review-gate condition.
 - Negative and adversarial evidence: static managed-contract assertions cover unrelated staged
   files, ambiguous scope, rejected normal push, PR, merge, release, force-push, branch deletion,
   destructive Git, auth failure, and policy rejection. The adversarial descriptor includes an
@@ -994,9 +997,11 @@ before the `EP-05` default-branch gate and the later release-candidate authority
   real local-remote adversarial branch test confirms neither its executable nor hook runs and its
   ignored sentinel/placeholder bytes do not enter scan output.
 - Public artifact hardening: remote-overlay plan validation and inventory now redact absolute and
-  `file:` machine locators to stable `local-git` evidence labels. A regression covers members,
-  candidates, scan errors, and preservation of ordinary provider locators. Exact locators remain
-  only in ignored scanner-local cache for operational recovery.
+  `file:` machine locators to stable `local-git` evidence labels and replace internal scan-error
+  messages with fixed public descriptions. A regression covers members, candidates, scan errors,
+  preservation of ordinary provider locators, and an end-to-end failing local-source inventory
+  artifact. Exact locators and internal error detail remain only in ignored scanner-local cache for
+  operational recovery.
 - Benchmarks: a representative local inventory measured one repository, one local/default view,
   33 plans, zero provider API calls, concurrency one, and 1.07 seconds wall time. The deterministic
   fake-GitHub portfolio measured two repositories, two branches, four plans, two API calls,
@@ -1035,6 +1040,18 @@ before the `EP-05` default-branch gate and the later release-candidate authority
   `a85bc2e0151f1d3d63d4999190c7a20810d24f22` was committed and normally pushed to
   `codex/semantic-plan-catalog-coordination`. It contains only the active plan/log and plan-scoped
   inventory, impact, and discovery-evidence attachments; implementation source remains local.
+- Source gate round one: immutable local candidate
+  `bdb386618b927151c64122a812bfb7b033060fc1` was rejected with two high and one medium finding.
+  The reviewer found that default-branch enrollment still depended on the producer's untracked
+  consumer installation, public error messages could retain absolute local paths, and the recorded
+  activation evidence was an automated fixture rather than a fresh-agent probe.
+- Source gate remediation: normal consumers retain installed-marker-plus-lock enrollment, while a
+  Kit source repository may use a schema-valid tracked root content manifest without committing
+  `.codeheart/kit/` or a lock. Remote-overlay public artifacts now use fixed error descriptions and
+  have an end-to-end failing-local-source redaction test. The full Go suite, 147 Python tests,
+  focused race suite, vet, schema, Markdown, public-core, release-manifest, diff, Windows-amd64
+  cross-compilation, and source-CLI local catalog checks pass. Fresh-agent evidence and a new
+  independent source review remain pending.
 
 ## EP-07 Delta - Version Bump, Reproducible Release, And Public Verification
 

@@ -221,8 +221,26 @@ func publicRemoteOverlayEvidence(result portfolio.ScanResult) portfolio.ScanResu
 	for index := range result.Catalog.Errors {
 		scanError := &result.Catalog.Errors[index]
 		scanError.SourceLocator = publicSourceLocator(scanError.SourceLocator, scanError.RepositoryID)
+		scanError.Message = publicScanErrorMessage(scanError.Code)
 	}
 	return result
+}
+
+func publicScanErrorMessage(code string) string {
+	switch code {
+	case "source_discovery_failed":
+		return "configured portfolio source discovery failed"
+	case "self_remote_unavailable":
+		return "coordination repository remote evidence is unavailable"
+	case "mirror_refresh_failed":
+		return "remote repository evidence could not be refreshed"
+	case "membership_evidence_unavailable", "membership_validation_failed":
+		return "default-branch membership evidence is unavailable or invalid"
+	case "github_auth_unavailable", "github_access_denied", "github_rate_limit_exhausted", "github_retry_exhausted":
+		return "configured GitHub source could not be read completely"
+	default:
+		return "remote portfolio scan reported an error"
+	}
 }
 
 func publicSourceLocator(locator, repositoryID string) string {

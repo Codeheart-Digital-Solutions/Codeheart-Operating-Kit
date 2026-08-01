@@ -8,11 +8,12 @@ import (
 )
 
 type MembershipInput struct {
-	ConfigData []byte
-	LockData   []byte
-	KitMarker  []byte
-	HomeID     string
-	Self       bool
+	ConfigData      []byte
+	LockData        []byte
+	KitMarker       []byte
+	KitSourceMarker []byte
+	HomeID          string
+	Self            bool
 }
 
 type MembershipDecision struct {
@@ -26,14 +27,20 @@ type MembershipDecision struct {
 var errPortfolioBlockMissing = errors.New("portfolio block missing")
 
 func EvaluateMembership(input MembershipInput) MembershipDecision {
-	if len(input.KitMarker) == 0 {
+	installedMarker := len(input.KitMarker) > 0
+	sourceMarker := len(input.KitSourceMarker) > 0 && looksLikeKitSourceMarker(input.KitSourceMarker)
+	if !installedMarker && !sourceMarker {
 		return MembershipDecision{Reason: "default_branch_kit_marker_missing"}
 	}
-	if len(input.LockData) == 0 {
-		return MembershipDecision{Reason: "default_branch_kit_lock_missing"}
-	}
-	if err := validateRemoteLock(input.LockData); err != nil {
-		return MembershipDecision{Incomplete: true, Reason: "default_branch_kit_lock_invalid: " + err.Error()}
+	if installedMarker {
+		if len(input.LockData) == 0 {
+			return MembershipDecision{Reason: "default_branch_kit_lock_missing"}
+		}
+		if err := validateRemoteLock(input.LockData); err != nil {
+			return MembershipDecision{Incomplete: true, Reason: "default_branch_kit_lock_invalid: " + err.Error()}
+		}
+	} else if err := validateKitSourceMarker(input.KitSourceMarker); err != nil {
+		return MembershipDecision{Incomplete: true, Reason: "default_branch_kit_source_marker_invalid: " + err.Error()}
 	}
 	if len(input.ConfigData) == 0 {
 		return MembershipDecision{Reason: "default_branch_portfolio_config_missing"}
@@ -105,4 +112,25 @@ func validateRemoteLock(data []byte) error {
 		return err
 	}
 	return state.Validate(schema, value)
+}
+
+func looksLikeKitSourceMarker(data []byte) bool {
+	value, err := state.DecodeYAMLMap(data)
+	if err != nil {
+		return false
+	}
+	for _, field := range []string{"schema_version", "version", "compatibility", "components", "profiles", "consumer_impact"} {
+		if value[field] == nil {
+			return false
+		}
+	}
+	return true
+}
+
+func validateKitSourceMarker(data []byte) error {
+	value, err := state.DecodeYAMLMap(data)
+	if err != nil {
+		return err
+	}
+	return state.Validate(state.ContentManifestSchema, value)
 }

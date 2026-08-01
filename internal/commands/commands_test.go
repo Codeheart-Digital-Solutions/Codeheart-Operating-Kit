@@ -908,7 +908,7 @@ func TestPlanRemoteOverlayEvidenceRedactsMachineLocalSourceLocators(t *testing.T
 			{RepositoryID: "public-member", SourceLocator: "github.com/example/public-member"},
 		},
 		Candidates: []portfolio.Candidate{{RepositoryID: "candidate-member", SourceLocator: "file:" + root}},
-		Errors:     []portfolio.ScanError{{Code: "example", SourceLocator: root}},
+		Errors:     []portfolio.ScanError{{Code: "example", Message: "cannot read " + root, SourceLocator: root}},
 	}}
 	public := publicRemoteOverlayEvidence(result)
 	encoded, err := json.Marshal(public)
@@ -925,6 +925,46 @@ func TestPlanRemoteOverlayEvidenceRedactsMachineLocalSourceLocators(t *testing.T
 	}
 	if public.Catalog.Members[1].SourceLocator != "github.com/example/public-member" {
 		t.Fatalf("public provider locator changed: %+v", public.Catalog.Members[1])
+	}
+	if public.Catalog.Errors[0].Message != "remote portfolio scan reported an error" {
+		t.Fatalf("public scan error message = %q", public.Catalog.Errors[0].Message)
+	}
+}
+
+func TestPlansRemoteOverlayInventoryRedactsFailingLocalSourceMessage(t *testing.T) {
+	root := t.TempDir()
+	remote := filepath.Join(t.TempDir(), "remote.git")
+	if output, err := exec.Command("git", "init", "--bare", remote).CombinedOutput(); err != nil {
+		t.Fatalf("init bare remote: %v\n%s", err, output)
+	}
+	runGitCommandTest(t, root, "init", "-b", "main")
+	runGitCommandTest(t, root, "config", "user.email", "test@example.invalid")
+	runGitCommandTest(t, root, "config", "user.name", "Remote Error Redaction Test")
+	config := []byte("schema_version: 1\nselected_profile: standard\nproject_display_name: Error Redaction Home\nselected_setup_folder: .\nlocal_consumer_layer:\n  repo_docs_path: docs/repo/\n  agent_memory_path: docs/agent-memory/\n  user_layer_path: .codeheart/user/\n  local_machine_layer_path: .codeheart/local/\ncomponent_settings:\n  planning-workflows:\n    plan_catalog_mode: canonical\nportfolio:\n  schema_version: 2\n  role: coordination-home\n  member_repository_id: error-redaction-home\n  coordination_home_id: example-home\n")
+	lock := []byte("schema_version: 1\nkit_version: 0.1.23\nselected_profile: standard\nselected_components: []\nrelease:\n  asset_url: local-test\n  checksum_sha256: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\nmanaged_paths: []\ngenerated_surfaces: []\ncli_repair:\n  installed_cli_path: codeheart-operating-kit\n  repair_source_url: local-test\nupdate_check:\n  last_update_check_at: \"2026-07-01T00:00:00Z\"\n  next_update_check_due: \"2026-08-01T00:00:00Z\"\n  latest_seen_version: 0.1.23\n  update_status: current\nnative_capabilities: {}\n")
+	writeCommandFixtureFile(t, root, state.ConfigPath, config)
+	writeCommandFixtureFile(t, root, state.LockPath, lock)
+	writeCommandFixtureFile(t, root, ".codeheart/kit/README.md", []byte("# Installed Kit\n"))
+	plan := bytes.ReplaceAll(remoteOverlayPlan("Error redaction baseline"), []byte("remote-example.discovery.remote-example"), []byte("error-redaction-home.discovery.baseline"))
+	writeCommandFixtureFile(t, root, "docs/repo/plans/error-redaction/error-redaction_discovery_doc.md", plan)
+	runGitCommandTest(t, root, "add", ".")
+	runGitCommandTest(t, root, "commit", "-m", "Remote error redaction baseline")
+	runGitCommandTest(t, root, "remote", "add", "origin", remote)
+	runGitCommandTest(t, root, "push", "-u", "origin", "main")
+	runGitCommandTest(t, remote, "symbolic-ref", "HEAD", "refs/heads/main")
+
+	missingRoot := filepath.Join(t.TempDir(), "missing-local-source")
+	localSources := []byte(fmt.Sprintf("schema_version: 1\nsources:\n  - kind: local-git-root\n    root: %s\n", missingRoot))
+	writeCommandFixtureFile(t, root, portfolio.LocalSourcesPath, localSources)
+	destination := filepath.Join(root, "remote-overlay-error.json")
+	var stdout bytes.Buffer
+	var stderr bytes.Buffer
+	if code := RunPlans([]string{"inventory", "--remote-overlays", "--output", destination, root}, &stdout, &stderr); code != 1 {
+		t.Fatalf("remote inventory code=%d stdout=%s stderr=%s", code, stdout.String(), stderr.String())
+	}
+	data := mustRead(t, destination)
+	if bytes.Contains(data, []byte(missingRoot)) || !bytes.Contains(data, []byte(`"code": "source_discovery_failed"`)) || !bytes.Contains(data, []byte(`"message": "configured portfolio source discovery failed"`)) {
+		t.Fatalf("public failing-source artifact was not safely redacted:\n%s", data)
 	}
 }
 

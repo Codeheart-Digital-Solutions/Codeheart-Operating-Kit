@@ -155,12 +155,58 @@ func TestMembershipRequiresDefaultBranchKitLockV2IdentityAndMatchingHome(t *test
 	if decision := EvaluateMembership(missingMarker); decision.Member || decision.Reason != "default_branch_kit_marker_missing" {
 		t.Fatalf("missing-marker membership = %+v", decision)
 	}
+	sourceRepository := valid
+	sourceRepository.KitMarker = nil
+	sourceRepository.LockData = nil
+	sourceRepository.KitSourceMarker = []byte(testKitSourceMarkerYAML)
+	if decision := EvaluateMembership(sourceRepository); !decision.Member || decision.RepositoryID != "example-member" {
+		t.Fatalf("Kit source membership = %+v", decision)
+	}
+	invalidSourceRepository := sourceRepository
+	invalidSourceRepository.KitSourceMarker = []byte(strings.Replace(testKitSourceMarkerYAML, "schema_version: 1", "schema_version: 99", 1))
+	if decision := EvaluateMembership(invalidSourceRepository); decision.Member || !decision.Incomplete || !strings.HasPrefix(decision.Reason, "default_branch_kit_source_marker_invalid:") {
+		t.Fatalf("invalid Kit source membership = %+v", decision)
+	}
 	legacy := valid
 	legacyConfig := strings.Replace(portfolioConfig("member", "example-member", "example-home"), "  schema_version: 2\n", "", 1)
 	legacyConfig = strings.Replace(legacyConfig, "  coordination_home_id: example-home\n", "  coordination_home_id: example-home\n  coordination_home_path: ../home\n  coordination_home_register_path: docs/repo/plans/plan-register.md\n", 1)
 	legacy.ConfigData = []byte(legacyConfig)
 	if decision := EvaluateMembership(legacy); decision.Member || decision.Reason != "portfolio_v2_required_for_enrollment" {
 		t.Fatalf("v1 membership = %+v", decision)
+	}
+}
+
+func TestPortfolioScanEnrollsKitSourceRepositoryWithoutConsumerInstallation(t *testing.T) {
+	fixture := newPortfolioGitFixture(t)
+	for _, relative := range []string{LockPath, KitMarkerPath} {
+		if err := os.Remove(filepath.Join(fixture.member, filepath.FromSlash(relative))); err != nil {
+			t.Fatal(err)
+		}
+	}
+	writePortfolioFile(t, fixture.member, KitSourceMarkerPath, []byte(testKitSourceMarkerYAML))
+	runPortfolioGit(t, fixture.member, "add", "-A", LockPath, KitMarkerPath, KitSourceMarkerPath)
+	runPortfolioGit(t, fixture.member, "commit", "-m", "Use producer source marker")
+	runPortfolioGit(t, fixture.member, "push", "origin", "main")
+
+	config := Config{SchemaVersion: 2, Role: RoleCoordinationHome, RepositoryID: "example-home", CoordinationHomeID: "example-coordination", Root: fixture.home}
+	result, err := Scan(context.Background(), ScanOptions{
+		Root: fixture.home, Config: config, Sources: []Source{NewLocalGitSource(fixture.parent, ExecRunner{})},
+		Runner: ExecRunner{}, Now: time.Date(2026, 8, 1, 8, 0, 0, 0, time.UTC),
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !result.Catalog.Complete {
+		t.Fatalf("source-repository scan incomplete: %+v", result.Catalog.Errors)
+	}
+	found := false
+	for _, member := range result.Catalog.Members {
+		if member.RepositoryID == "example-member" {
+			found = true
+		}
+	}
+	if !found {
+		t.Fatalf("source repository was not enrolled: members=%+v candidates=%+v", result.Catalog.Members, result.Catalog.Candidates)
 	}
 }
 
@@ -1274,6 +1320,30 @@ update_check:
   latest_seen_version: 0.1.23
   update_status: current
 native_capabilities: {}
+`
+
+const testKitSourceMarkerYAML = `schema_version: 1
+version: 0.1.23
+compatibility:
+  lock_schema_versions: [1]
+  config_schema_versions: [1]
+  operation_result_schema_version: 1
+  platforms: [macos-universal, windows-x64]
+  commands: [init, repair, sync, update-check, upgrade, check]
+components:
+  - id: planning-workflows
+    version: 0.1.23
+    manifest_path: components/planning-workflows/component.yaml
+    checksum_sha256: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+    consumer_impact: []
+profiles:
+  - id: standard
+    version: 0.1.23
+    manifest_path: profiles/standard.yaml
+    checksum_sha256: bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+    graph_sha256: cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+    components: [planning-workflows]
+consumer_impact: []
 `
 
 func writePortfolioPlan(t *testing.T, root, relative, title, id, purpose string) {

@@ -91,8 +91,10 @@ A discovered repository becomes a member only when all applicable evidence succe
 default branch:
 
 1. it is inside an explicitly authorized GitHub-owner or local-root source;
-2. `.codeheart/kit/README.md` proves a Kit installation marker;
-3. `.codeheart/kit.lock.yaml` is readable and valid;
+2. either `.codeheart/kit/README.md` proves a Kit installation or the Operating Kit producer's
+   schema-valid root `manifest.yaml` proves the equivalent Kit source marker;
+3. an installed Kit's `.codeheart/kit.lock.yaml` is readable and valid; a producer source marker
+   does not require or authorize committing a consumer installation;
 4. `.codeheart/kit.config.yaml` is readable and valid;
 5. `portfolio.role` is valid for membership;
 6. `member_repository_id` is stable and present;
@@ -103,6 +105,11 @@ The coordination home's own default branch follows the same evidence boundary an
 once through self-membership. A feature branch cannot enroll a repository. A malformed declaration
 is an error, not a candidate success. Missing or mismatched evidence produces a candidate or
 exclusion reason without ingesting plan content.
+
+The source-marker alternative exists only for the Operating Kit producer, whose tracked
+`manifest.yaml` is validated against the Kit content-manifest schema. It keeps producer source
+authority separate from `.codeheart/kit/` consumer installation state; it does not infer membership
+from a repository name and does not relax role, repository-ID, home-ID, or authorized-scope checks.
 
 ## Discovery Sources And Read Boundary
 

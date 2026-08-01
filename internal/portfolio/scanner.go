@@ -250,7 +250,8 @@ func scanRepository(ctx context.Context, manager MirrorManager, source Repositor
 	configData, configErr := readMembershipEvidence(ctx, repository, ConfigPath)
 	lockData, lockErr := readMembershipEvidence(ctx, repository, LockPath)
 	markerData, markerErr := readMembershipEvidence(ctx, repository, KitMarkerPath)
-	if configErr != nil || lockErr != nil || markerErr != nil {
+	sourceMarkerData, sourceMarkerErr := readMembershipEvidence(ctx, repository, KitSourceMarkerPath)
+	if configErr != nil || lockErr != nil || markerErr != nil || sourceMarkerErr != nil {
 		result.Errors = append(result.Errors, ScanError{
 			Code:          "membership_evidence_unavailable",
 			Message:       "default-branch Kit membership evidence could not be read completely",
@@ -259,7 +260,7 @@ func scanRepository(ctx context.Context, manager MirrorManager, source Repositor
 		})
 		return result
 	}
-	decision := EvaluateMembership(MembershipInput{ConfigData: configData, LockData: lockData, KitMarker: markerData, HomeID: home.CoordinationHomeID, Self: source.Self && home.Role == RoleCoordinationHome})
+	decision := EvaluateMembership(MembershipInput{ConfigData: configData, LockData: lockData, KitMarker: markerData, KitSourceMarker: sourceMarkerData, HomeID: home.CoordinationHomeID, Self: source.Self && home.Role == RoleCoordinationHome})
 	if !decision.Member {
 		if decision.Incomplete || source.Self {
 			result.Errors = append(result.Errors, ScanError{

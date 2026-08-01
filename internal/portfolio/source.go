@@ -57,14 +57,15 @@ func canonicalHostPath(host, repositoryPath string) string {
 }
 
 const (
-	ConfigPath       = ".codeheart/kit.config.yaml"
-	LockPath         = ".codeheart/kit.lock.yaml"
-	KitMarkerPath    = ".codeheart/kit/README.md"
-	LocalSourcesPath = ".codeheart/local/portfolio/sources.yaml"
-	CatalogPath      = ".codeheart/local/portfolio/catalog.json"
-	MirrorRootPath   = ".codeheart/local/portfolio/git"
-	ScanLockPath     = ".codeheart-portfolio.scan.lock"
-	OverlayPath      = "docs/repo/portfolio/strategic-overlay.yaml"
+	ConfigPath          = ".codeheart/kit.config.yaml"
+	LockPath            = ".codeheart/kit.lock.yaml"
+	KitMarkerPath       = ".codeheart/kit/README.md"
+	KitSourceMarkerPath = "manifest.yaml"
+	LocalSourcesPath    = ".codeheart/local/portfolio/sources.yaml"
+	CatalogPath         = ".codeheart/local/portfolio/catalog.json"
+	MirrorRootPath      = ".codeheart/local/portfolio/git"
+	ScanLockPath        = ".codeheart-portfolio.scan.lock"
+	OverlayPath         = "docs/repo/portfolio/strategic-overlay.yaml"
 )
 
 // Source discovers remote repositories. It does not read a developer worktree or interpret plans.
