@@ -1,6 +1,6 @@
-Last updated: 2026-08-01T06:46:12Z (UTC)
+Last updated: 2026-08-01T07:24:08Z (UTC)
 Created: 2026-07-31
-Status: active
+Status: completed
 Execution log: semantic-plan-catalog-coordination_execution_log.md
 
 # Document Header
@@ -57,15 +57,11 @@ required planning metadata to be committed and normally pushed on the unambiguou
 That request does not authorize unrelated files, implementation code outside the approved scope,
 pull-request creation, merge, release, force-push, branch deletion, or destructive Git actions.
 
-This is a draft implementation plan, not execution authority. It does not authorize source edits,
-semantic migration, commits, pushes, pull requests, releases, consumer upgrades, or changes in
-other repositories until the user activates the plan. Activation will include the bounded plan
-publication checkpoint defined above. Release preparation is part of the activated execution
-scope, but tag creation and public publication pause at the `EP-07` release gate until the user
-explicitly authorizes the target-version rule, presented release-candidate source tree, remote
-validation actions, distribution boundary, and conditional publication after every gate passes. A
-future activation request may include that explicit release authority. Cross-repository rollout
-remains a separate authority gate.
+The user activated this implementation plan and later separately authorized the `EP-07` release
+gate, including the resolved version, presented release-candidate source tree, remote validation,
+retained unsigned internal/prototype distribution boundary, and conditional tag and public
+publication after every gate passed. The implementation and `v0.1.24` release are complete.
+Cross-repository rollout remains a separate authority gate.
 
 Essential context:
 
@@ -1888,14 +1884,14 @@ release-runbook authorization are resolved.
 - [x] Generate and verify sidecar SHA-256 checksum files for every proposed public asset.
 - [x] Record signing and notarization evidence plus the intended distribution boundary in the release-candidate summary.
 - [x] Present the resolved version, candidate source tree, local evidence, remote validation actions, distribution boundary, conditional publication action, and rollback boundary for explicit user authorization.
-- [ ] Create and push the release-candidate commit on the unambiguous branch under the recorded release-execution authority.
-- [ ] Dispatch the real-Windows fresh-install, upgrade dry-run, upgrade apply, replacement failure, reconciliation failure, and post-check failure matrix and retain CI evidence.
-- [ ] Verify the release target still equals the validated commit and rerun invalidated gates after every intervening source change.
-- [ ] Create and push the annotated version tag at the exact locally and remotely validated commit under the confirmed publication authority.
-- [ ] Publish the packs, external catalog, bootstrap, installers, release notes, and checksum sidecars as one public release.
-- [ ] Verify public asset URLs and digests, then run isolated public update-check, fresh-install, and upgrade smoke tests.
-- [ ] Record the release URL, tag, commit, assets, digests, macOS evidence, Windows evidence, signing state, authority, and residual risk in the execution log.
-- [ ] Update the producer plan indexes and compatibility register to the released status while leaving coordination homes, member repositories, and additional checkouts unchanged.
+- [x] Create and push the release-candidate commit on the unambiguous branch under the recorded release-execution authority.
+- [x] Dispatch the real-Windows fresh-install, upgrade dry-run, upgrade apply, replacement failure, reconciliation failure, and post-check failure matrix and retain CI evidence.
+- [x] Verify the release target still equals the validated commit and rerun invalidated gates after every intervening source change.
+- [x] Create and push the annotated version tag at the exact locally and remotely validated commit under the confirmed publication authority.
+- [x] Publish the packs, external catalog, bootstrap, installers, release notes, and checksum sidecars as one public release.
+- [x] Verify public asset URLs and digests, then run isolated public update-check, fresh-install, and upgrade smoke tests.
+- [x] Record the release URL, tag, commit, assets, digests, macOS evidence, Windows evidence, signing state, authority, and residual risk in the execution log.
+- [x] Record released status in the canonical plan and execution log while preserving the frozen compatibility register and leaving coordination homes, member repositories, and additional checkouts unchanged.
 
 ### G) Implementation Notes
 
@@ -1918,18 +1914,19 @@ release-runbook authorization are resolved.
 
 ### H) Open Questions
 
-- `OQ-5`: resolve the target version from live public tags at epic entry.
-- `OQ-6`: resolve and record the signing/notarization and intended-audience boundary before
-  publication.
+- `OQ-5`: resolved as `v0.1.24` after live public-tag preflight confirmed `v0.1.23` was latest and
+  `v0.1.24` was unused.
+- `OQ-6`: resolved as unsigned and unnotarized distribution limited to the explicitly approved
+  internal/prototype audience, with HTTPS transport and published SHA-256 sidecars.
 
 ### Validation Tasks
 
 - [x] Prove one selected version across source identity, packaged resources, binaries, installers, fixtures, workflows, archives, and external catalog.
 - [x] Prove two builds produce byte-identical supported-platform packs and a coherent external-catalog digest chain.
-- [ ] Prove isolated macOS and real-Windows install, upgrade, failure, rollback, and recovery behavior from the release candidate.
-- [ ] Prove tag and public assets originate from the exact validated commit under recorded publication authority.
-- [ ] Prove public downloads match recorded sidecars and succeed in isolated update-check, fresh-install, and upgrade smoke tests.
-- [ ] Prove release completion leaves every coordination-home installation, member installation, portfolio config, and member plan unchanged.
+- [x] Prove isolated macOS and real-Windows install, upgrade, failure, rollback, and recovery behavior from the release candidate.
+- [x] Prove tag and public assets originate from the exact validated commit under recorded publication authority.
+- [x] Prove public downloads match recorded sidecars and succeed in isolated update-check, fresh-install, and upgrade smoke tests.
+- [x] Prove release completion leaves every coordination-home installation, member installation, portfolio config, and member plan unchanged.
 
 # Section 4 - Future Planning
 
