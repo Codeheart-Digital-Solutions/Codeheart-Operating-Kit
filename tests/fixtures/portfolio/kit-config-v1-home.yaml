@@ -1,0 +1,12 @@
+schema_version: 1
+selected_profile: standard
+project_display_name: Legacy Coordination Home
+selected_setup_folder: .
+local_consumer_layer:
+  repo_docs_path: docs/repo/
+  agent_memory_path: docs/agent-memory/
+  user_layer_path: .codeheart/user/
+component_settings: {}
+portfolio:
+  role: coordination-home
+  coordination_home_register_path: docs/repo/plans/plan-register.md

@@ -1,4 +1,4 @@
-Last updated: 2026-07-08T14:07:02Z (UTC)
+Last updated: 2026-07-31T22:23:19Z (UTC)
 
 # Review Planning Document
 
@@ -225,6 +225,12 @@ Ask at most five targeted questions. Include a recommended default and blast rad
 For implementation documents, verify:
 
 - required lifecycle header exists;
+- repository catalog mode is identified and mixed/canonical metadata uses the exact bounded
+  marker, stable semantic ID, matching kind, public-safe purpose, and correct chronology;
+- metadata-only migration preserves historical `Last updated`, while a real content/lifecycle
+  change updates it normally;
+- discovery, implementation, and family records remain distinct and use evidence-backed families,
+  relations, classifications, and legacy aliases;
 - section order is correct;
 - Section 3 is linear;
 - every epic has acceptance criteria and validation tasks;
@@ -233,6 +239,12 @@ For implementation documents, verify:
 - blocker handling is coherent;
 - future planning does not hide required work;
 - execution log expectations are present for goal-style runs.
+- activation wording, when present, grants only plan/log/direct-metadata branch creation/use,
+  commit, and normal push; excludes unrelated files, code, PR, merge, release, force-push,
+  deletion, destructive Git, ambiguity, auth/policy/rejected-push bypass; and permits execution on
+  the active pushed branch without merge;
+- mixed/canonical guidance uses generated views rather than manual register appends, and portfolio
+  claims distinguish pushed remote observations from local-only work.
 
 For discovery documents, verify:
 
@@ -241,6 +253,8 @@ For discovery documents, verify:
 - recommendations are concrete enough for user review;
 - implementation handoff readiness is not claimed when required implementation-shaping decisions
   remain unresolved.
+- mode-aware metadata and local-versus-pushed visibility are accurate when the repository uses the
+  semantic catalog.
 
 ## Final Review Statement
 

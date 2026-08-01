@@ -1,4 +1,4 @@
-Last updated: 2026-07-31T10:59:19Z (UTC)
+Last updated: 2026-07-31T23:43:02Z (UTC)
 
 # Repo Documentation
 
@@ -21,17 +21,19 @@ This folder contains public repository governance for Codeheart Operating Kit.
 - `runbooks/triage-kit-feedback.md`: ordered maintainer procedure for triaging public kit feedback
   issues.
 - `plans/README.md`: repository-level discovery and implementation plans.
-- `plans/plan-register.md`: lightweight index of registered Operating Kit repository plans.
+- `plans/plan-register.md`: stable compatibility entry point and frozen legacy evidence; current
+  plan views are generated with `codeheart-operating-kit plans list`.
 - `plans/semantic-plan-catalog-coordination/semantic-plan-catalog-coordination_discovery_doc.md`:
   implementation-handoff-ready discovery for semantic plan identity, rich canonical metadata,
   automatic config-driven portfolio discovery, on-demand source refresh, default-branch baselines,
   changed-plan branch overlays, reusable coordination-home setup, activation publication, and
   parallel semantic migration.
 - `plans/semantic-plan-catalog-coordination/semantic-plan-catalog-coordination_implementation_doc.md`:
-  active seven-epic compatibility implementation for canonical plan contracts, derived local views,
-  guarded semantic migration, config-driven portfolio discovery, branch-aware scanning, managed
-  coordination UX, activation publication, producer cutover, cross-platform proof, dynamic patch
-  versioning, and approval-gated public release verification.
+  active seven-epic compatibility implementation. Contracts, local migration mechanics,
+  branch-aware scanning, managed coordination UX, and producer semantic metadata are implemented;
+  local integrated proof, impact classification, migration handoffs, and discovery evidence mapping
+  are complete; remote/default-branch cutover, immutable candidate handoff, dynamic patch
+  versioning, real-Windows proof, and the approval-gated release remain in progress.
 - `plans/semantic-plan-catalog-coordination/semantic-plan-catalog-coordination_execution_log.md`:
   active execution evidence, divergence, review-gate results, migration evidence, and release
   handoff for the semantic plan catalog implementation.

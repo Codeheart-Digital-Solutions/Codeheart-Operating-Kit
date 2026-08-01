@@ -1,4 +1,4 @@
-Last updated: 2026-06-26T15:57:38Z (UTC)
+Last updated: 2026-07-31T22:23:19Z (UTC)
 
 # Placement Contract
 
@@ -57,9 +57,14 @@ The Operating Kit may create or manage these consumer paths when the CLI is impl
 - Committed module or extension routing state targets `docs/repo/state/<module-or-extension-id>/`
   only when a module or extension has real non-secret repo-owned state to store. The Operating Kit
   defines the placement rule but does not scaffold empty state folders by default.
-- Plan-register state files target `docs/repo/plans/plan-register.md` and
-  `docs/repo/plans/coordination-sync-pending.md` as kit-initialized consumer state files. Sync may
-  create them when absent and must not overwrite them when present.
+- The stable plan-catalog entry point targets `docs/repo/plans/plan-register.md` as an absent-file
+  scaffold. Sync may create it when absent and must not overwrite it when present. Existing
+  `coordination-sync-pending.md` files are preserved portfolio-v1 compatibility evidence, but
+  fresh installs do not scaffold them.
+- Coordination-home repository guidance targets `docs/repo/portfolio/README.md` and
+  `docs/repo/portfolio/strategic-overlay.yaml` as absent-file scaffolds. They are repo-owned after
+  creation; configuration may replace only the exact untouched generic overlay placeholder with
+  the approved home ID.
 - Adding these files is additive and does not force migration, movement, rewrite, or archival of
   existing consumer-owned planning or agent-memory content.
 - Root `AGENTS.md` receives the Operating Kit managed block from the agent-interface template while
@@ -67,6 +72,9 @@ The Operating Kit may create or manage these consumer paths when the CLI is impl
 - Local user guidance targets `.codeheart/user/` and must stay ignored or local-only.
 - Local machine/runtime state targets `.codeheart/local/` and must stay ignored or local-only.
   Init and sync may add the ignore rule without creating the directory by default.
+- Portfolio local sources, bare mirrors, and complete factual cache target
+  `.codeheart/local/portfolio/`. They are rebuildable local-machine state and never plan or
+  strategic authority.
 - G1 does not define or scaffold `docs/workspace/`.
 
 ## Consumer-Owned Boundaries
@@ -82,6 +90,10 @@ The Operating Kit may create or manage these consumer paths when the CLI is impl
 - `.codeheart/local/`: generated local runtime/tooling state, such as repo-local virtual
   environments, caches, temporary files, generated shims, package artifacts, or generated install
   metadata. It is machine-local, ignored, and recreatable.
+- `docs/repo/plans/`: canonical repository plans, plan-scoped evidence, and the stable catalog
+  entry point. Current mixed/canonical views are derived rather than committed.
+- `docs/repo/portfolio/`: coordination-home strategic interpretation and local coordination docs;
+  source-derived factual cache does not belong here.
 - `.codeheart/kit.config.yaml`: shared non-secret setup configuration.
 - `.codeheart/kit.lock.yaml`: generated installed-state and update-check metadata.
 

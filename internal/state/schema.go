@@ -11,14 +11,19 @@ import (
 )
 
 const (
-	ComponentSchema       = "schemas/component.schema.json"
-	ProfileSchema         = "schemas/profile.schema.json"
-	LockV1Schema          = "schemas/kit-lock-v1.schema.json"
-	LockV2Schema          = "schemas/kit-lock.schema.json"
-	ConfigV1Schema        = "schemas/kit-config.schema.json"
-	ContentManifestSchema = "schemas/content-manifest.schema.json"
-	ReleaseCatalogSchema  = "schemas/release-catalog.schema.json"
-	PackManifestSchema    = "schemas/pack-manifest.schema.json"
+	ComponentSchema        = "schemas/component.schema.json"
+	ProfileSchema          = "schemas/profile.schema.json"
+	LockV1Schema           = "schemas/kit-lock-v1.schema.json"
+	LockV2Schema           = "schemas/kit-lock.schema.json"
+	ConfigV1Schema         = "schemas/kit-config.schema.json"
+	ContentManifestSchema  = "schemas/content-manifest.schema.json"
+	ReleaseCatalogSchema   = "schemas/release-catalog.schema.json"
+	PackManifestSchema     = "schemas/pack-manifest.schema.json"
+	PlanMetadataSchema     = "schemas/plan-metadata.schema.json"
+	PlanCatalogSchema      = "schemas/plan-catalog.schema.json"
+	PlanMigrationSchema    = "schemas/plan-migration-ledger.schema.json"
+	PortfolioSourcesSchema = "schemas/portfolio-local-sources.schema.json"
+	PortfolioOverlaySchema = "schemas/portfolio-strategic-overlay.schema.json"
 )
 
 var schemaCache = struct {

@@ -1,7 +1,7 @@
 schema_version: 1
 component:
   id: planning-workflows
-  version: "0.1.21"
+  version: "0.1.22"
   name: Planning Workflows
   description: Managed discovery, implementation planning, execution, review, and lifecycle guidance.
   profiles:
@@ -10,6 +10,8 @@ component:
     - "component addition"
     - "instruction-only change"
     - "backwards-compatible scaffold addition"
+    - "consumer migration required"
+    - "security or safety policy change"
   ownership_modes:
     - managed
     - scaffold
@@ -32,17 +34,36 @@ component:
     - source: components/planning-workflows/managed/runbooks/maintain-plan-register.md
       target: .codeheart/kit/docs/planning-workflows/runbooks/maintain-plan-register.md
       ownership: managed
+    - source: components/planning-workflows/managed/runbooks/configure-portfolio-coordination.md
+      target: .codeheart/kit/docs/planning-workflows/runbooks/configure-portfolio-coordination.md
+      ownership: managed
+    - source: components/planning-workflows/managed/runbooks/refresh-portfolio-catalog.md
+      target: .codeheart/kit/docs/planning-workflows/runbooks/refresh-portfolio-catalog.md
+      ownership: managed
+    - source: components/planning-workflows/managed/runbooks/migrate-plan-catalog.md
+      target: .codeheart/kit/docs/planning-workflows/runbooks/migrate-plan-catalog.md
+      ownership: managed
     - source: components/planning-workflows/managed/reference/planning-document-lifecycle.md
       target: .codeheart/kit/docs/planning-workflows/reference/planning-document-lifecycle.md
       ownership: managed
     - source: components/planning-workflows/managed/reference/plan-register-format.md
       target: .codeheart/kit/docs/planning-workflows/reference/plan-register-format.md
       ownership: managed
+    - source: components/planning-workflows/managed/reference/plan-catalog-format.md
+      target: .codeheart/kit/docs/planning-workflows/reference/plan-catalog-format.md
+      ownership: managed
+    - source: components/planning-workflows/managed/reference/portfolio-coordination-format.md
+      target: .codeheart/kit/docs/planning-workflows/reference/portfolio-coordination-format.md
+      ownership: managed
     - source: components/planning-workflows/scaffolds/plan-register.md
       target: docs/repo/plans/plan-register.md
       ownership: scaffold
       install_when: absent
-    - source: components/planning-workflows/scaffolds/coordination-sync-pending.md
-      target: docs/repo/plans/coordination-sync-pending.md
+    - source: components/planning-workflows/scaffolds/portfolio-README.md
+      target: docs/repo/portfolio/README.md
+      ownership: scaffold
+      install_when: absent
+    - source: components/planning-workflows/scaffolds/portfolio-strategic-overlay.yaml
+      target: docs/repo/portfolio/strategic-overlay.yaml
       ownership: scaffold
       install_when: absent

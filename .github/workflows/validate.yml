@@ -33,6 +33,10 @@ jobs:
       - run: python -m pip install --upgrade pip setuptools pytest
       - run: python -m pip install -e .
       - run: go test ./...
+      - name: Validate plan catalog, migration, portfolio overlays, and grouped CLI behavior
+        run: go test ./internal/plancatalog ./internal/portfolio ./internal/commands ./internal/cli
+      - name: Validate installed plan routes, schemas, and packaged resources
+        run: python -m pytest tests/test_json_schemas.py tests/test_routing.py tests/test_packaging_resources.py -q
       - run: python -m pytest tests/test_go_cli_parity.py -q
       - run: python -m pytest tests/test_install_metadata.py tests/test_release_assets.py -q
       - run: python scripts/validate-public-core.py
@@ -133,6 +137,10 @@ jobs:
       - run: python -m pip install --upgrade pip setuptools pytest
       - run: python -m pip install -e .
       - run: go test ./...
+      - name: Validate plan catalog, migration, local Git overlays, and grouped CLI behavior
+        run: go test ./internal/plancatalog ./internal/portfolio ./internal/commands ./internal/cli
+      - name: Validate installed plan routes, schemas, and packaged resources
+        run: python -m pytest tests/test_json_schemas.py tests/test_routing.py tests/test_packaging_resources.py -q
       - run: python -m pytest tests/test_go_cli_parity.py -q
       - run: python scripts/build-release-assets.py --platform windows-x64 --output-dir dist
       - name: Validate Windows staged install without Python on PATH

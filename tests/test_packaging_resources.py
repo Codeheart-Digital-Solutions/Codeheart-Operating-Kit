@@ -39,9 +39,19 @@ def test_packaged_resource_fallback(monkeypatch, tmp_path):
     assert (tmp_path / ".codeheart/kit/docs/agent-interface/reference/operational-recipe-maturity.md").exists()
     assert (tmp_path / ".codeheart/kit/docs/agent-interface/reference/runbook-authoring-standard.md").exists()
     assert (tmp_path / ".codeheart/kit/docs/structure-governance/reference/module-extension-state.md").exists()
+    for relative in [
+        ".codeheart/kit/docs/planning-workflows/reference/plan-catalog-format.md",
+        ".codeheart/kit/docs/planning-workflows/reference/portfolio-coordination-format.md",
+        ".codeheart/kit/docs/planning-workflows/runbooks/configure-portfolio-coordination.md",
+        ".codeheart/kit/docs/planning-workflows/runbooks/refresh-portfolio-catalog.md",
+        ".codeheart/kit/docs/planning-workflows/runbooks/migrate-plan-catalog.md",
+    ]:
+        assert (tmp_path / relative).exists(), relative
     assert (tmp_path / "AGENTS.md").exists()
     assert (tmp_path / "docs/repo/plans/plan-register.md").exists()
-    assert (tmp_path / "docs/repo/plans/coordination-sync-pending.md").exists()
+    assert (tmp_path / "docs/repo/portfolio/README.md").exists()
+    assert (tmp_path / "docs/repo/portfolio/strategic-overlay.yaml").exists()
+    assert not (tmp_path / "docs/repo/plans/coordination-sync-pending.md").exists()
     assert not (tmp_path / "docs/repo/state").exists()
     assert not (tmp_path / ".codeheart/local").exists()
     gitignore = (tmp_path / ".gitignore").read_text(encoding="utf-8")
@@ -54,14 +64,21 @@ def test_changed_source_and_packaged_resources_match():
         "components/planning-workflows/component.yaml",
         "components/planning-workflows/managed/README.md",
         "components/planning-workflows/managed/reference/plan-register-format.md",
+        "components/planning-workflows/managed/reference/plan-catalog-format.md",
+        "components/planning-workflows/managed/reference/portfolio-coordination-format.md",
         "components/planning-workflows/managed/reference/planning-document-lifecycle.md",
         "components/planning-workflows/managed/runbooks/discovery-workflow.md",
         "components/planning-workflows/managed/runbooks/draft-implementation-plan.md",
         "components/planning-workflows/managed/runbooks/execute-implementation-plan.md",
         "components/planning-workflows/managed/runbooks/maintain-plan-register.md",
+        "components/planning-workflows/managed/runbooks/configure-portfolio-coordination.md",
+        "components/planning-workflows/managed/runbooks/refresh-portfolio-catalog.md",
+        "components/planning-workflows/managed/runbooks/migrate-plan-catalog.md",
         "components/planning-workflows/managed/runbooks/review-planning-document.md",
         "components/planning-workflows/scaffolds/coordination-sync-pending.md",
         "components/planning-workflows/scaffolds/plan-register.md",
+        "components/planning-workflows/scaffolds/portfolio-README.md",
+        "components/planning-workflows/scaffolds/portfolio-strategic-overlay.yaml",
         "components/agent-interface/component.yaml",
         "components/agent-interface/managed/README.md",
         "components/agent-interface/managed/kit-readme.md",

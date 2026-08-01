@@ -105,6 +105,33 @@ var commands = []command{
 			{flag: "--json"},
 		},
 	},
+	{
+		name:        "plans",
+		help:        "Validate, list, inventory, and migrate repository plans",
+		usage:       "{validate,list,inventory,migrate} ...",
+		description: "Read canonical plan metadata and guarded legacy migration evidence.",
+		options: []option{
+			{flag: "--json", help: "Emit deterministic structured output where supported"},
+		},
+	},
+	{
+		name:        "portfolio",
+		help:        "Configure and refresh branch-aware portfolio coordination",
+		usage:       "{configure,scan} ...",
+		description: "Discover exactly enrolled repositories and build a complete source-derived plan catalog.",
+	},
+}
+
+var planSubcommands = []command{
+	{name: "validate", help: "Validate repository plan metadata and catalog-mode rules", usage: "[--remote-overlays] [--json] [path]", options: []option{{flag: "path"}, {flag: "--remote-overlays", help: "Refresh scanner-owned mirrors and validate pushed remote plan overlays"}, {flag: "--json"}}},
+	{name: "list", help: "Generate the current repository-scoped plan view", usage: "[--format {text,json}] [--json] [path]", options: []option{{flag: "path"}, {flag: "--format {text,json}", help: "Choose text or deterministic JSON output"}, {flag: "--json", help: "Backward-compatible alias for --format json"}}},
+	{name: "inventory", help: "Record Git-backed migration evidence without changing plans", usage: "--output OUTPUT [--remote-overlays] [--json] [path]", options: []option{{flag: "path"}, {flag: "--output OUTPUT", help: "Required inventory artifact destination"}, {flag: "--remote-overlays", help: "Refresh scanner-owned mirrors and inventory pushed remote plan overlays"}, {flag: "--json"}}},
+	{name: "migrate", help: "Apply an explicitly reviewed migration ledger", usage: "--ledger LEDGER (--dry-run | --yes) [--json] [path]", options: []option{{flag: "path"}, {flag: "--ledger LEDGER"}, {flag: "--dry-run"}, {flag: "--yes"}, {flag: "--json"}}},
+}
+
+var portfolioSubcommands = []command{
+	{name: "configure", help: "Configure member or coordination-home identity and discovery scope", usage: "--role {member,coordination-home} --member-repository-id ID --coordination-home-id ID [--github-owner OWNER]... [--local-root ROOT]... (--dry-run | --yes) [--json] [path]", options: []option{{flag: "path"}, {flag: "--role {member,coordination-home}"}, {flag: "--member-repository-id ID"}, {flag: "--coordination-home-id ID"}, {flag: "--github-owner OWNER"}, {flag: "--local-root ROOT"}, {flag: "--dry-run"}, {flag: "--yes"}, {flag: "--json"}}},
+	{name: "scan", help: "Refresh the complete source-derived portfolio catalog", usage: "[--format {text,json}] [--json] [path]", options: []option{{flag: "path"}, {flag: "--format {text,json}"}, {flag: "--json"}}},
 }
 
 type command struct {
@@ -156,8 +183,14 @@ func Run(args []string, stdout io.Writer, stderr io.Writer) int {
 	cmd, ok := findCommand(args[0])
 	if !ok {
 		printRootHelp(stderr)
-		fmt.Fprintf(stderr, "%s: error: argument command: invalid choice: '%s' (choose from onboard, inspect, init, repair, sync, check, update-check, upgrade)\n", prog, args[0])
+		fmt.Fprintf(stderr, "%s: error: argument command: invalid choice: '%s' (choose from onboard, inspect, init, repair, sync, check, update-check, upgrade, plans, portfolio)\n", prog, args[0])
 		return 2
+	}
+	if cmd.name == "plans" {
+		return runPlansGroup(args[1:], stdout, stderr)
+	}
+	if cmd.name == "portfolio" {
+		return runPortfolioGroup(args[1:], stdout, stderr)
 	}
 
 	if containsCallableHelp(cmd, args[1:]) {
@@ -182,6 +215,10 @@ func Run(args []string, stdout io.Writer, stderr io.Writer) int {
 		return commandimpl.RunUpdateCheck(args[1:], stdout, stderr)
 	case "upgrade":
 		return commandimpl.RunUpgrade(args[1:], stdout, stderr)
+	case "plans":
+		return commandimpl.RunPlans(args[1:], stdout, stderr)
+	case "portfolio":
+		return commandimpl.RunPortfolio(args[1:], stdout, stderr)
 	default:
 		fmt.Fprintf(stderr, "%s: unknown command %q\n", prog, cmd.name)
 		return 2
@@ -230,9 +267,9 @@ func findCommand(name string) (command, bool) {
 }
 
 func printRootHelp(w io.Writer) {
-	fmt.Fprintf(w, "usage: %s [-h] [--version] {onboard,inspect,init,repair,sync,check,update-check,upgrade} ...\n\n", prog)
+	fmt.Fprintf(w, "usage: %s [-h] [--version] {onboard,inspect,init,repair,sync,check,update-check,upgrade,plans,portfolio} ...\n\n", prog)
 	fmt.Fprintln(w, "positional arguments:")
-	fmt.Fprintln(w, "  {onboard,inspect,init,repair,sync,check,update-check,upgrade}")
+	fmt.Fprintln(w, "  {onboard,inspect,init,repair,sync,check,update-check,upgrade,plans,portfolio}")
 	for _, cmd := range commands {
 		fmt.Fprintf(w, "    %-12s %s\n", cmd.name, cmd.help)
 	}
@@ -240,6 +277,94 @@ func printRootHelp(w io.Writer) {
 	fmt.Fprintln(w, "options:")
 	fmt.Fprintln(w, "  -h, --help            show this help message and exit")
 	fmt.Fprintln(w, "  --version             show program's version number and exit")
+}
+
+func runPlansGroup(args []string, stdout io.Writer, stderr io.Writer) int {
+	if len(args) == 0 {
+		printPlansHelp(stderr)
+		fmt.Fprintf(stderr, "%s plans: error: the following arguments are required: subcommand\n", prog)
+		return 2
+	}
+	if args[0] == "-h" || args[0] == "--help" {
+		printPlansHelp(stdout)
+		return 0
+	}
+	subcommand, ok := findPlanSubcommand(args[0])
+	if !ok {
+		printPlansHelp(stderr)
+		fmt.Fprintf(stderr, "%s plans: error: invalid subcommand %q (choose from validate, list, inventory, migrate)\n", prog, args[0])
+		return 2
+	}
+	if containsCallableHelp(subcommand, args[1:]) {
+		printCommandHelp(stdout, command{name: "plans " + subcommand.name, help: subcommand.help, usage: subcommand.usage, description: subcommand.description, options: subcommand.options, epilog: subcommand.epilog})
+		return 0
+	}
+	return commandimpl.RunPlans(args, stdout, stderr)
+}
+
+func findPlanSubcommand(name string) (command, bool) {
+	for _, cmd := range planSubcommands {
+		if cmd.name == name {
+			return cmd, true
+		}
+	}
+	return command{}, false
+}
+
+func printPlansHelp(w io.Writer) {
+	fmt.Fprintf(w, "usage: %s plans [-h] {validate,list,inventory,migrate} ...\n\n", prog)
+	fmt.Fprintln(w, "positional arguments:")
+	fmt.Fprintln(w, "  {validate,list,inventory,migrate}")
+	for _, cmd := range planSubcommands {
+		fmt.Fprintf(w, "    %-12s %s\n", cmd.name, cmd.help)
+	}
+	fmt.Fprintln(w)
+	fmt.Fprintln(w, "options:")
+	fmt.Fprintln(w, "  -h, --help            show this help message and exit")
+}
+
+func runPortfolioGroup(args []string, stdout io.Writer, stderr io.Writer) int {
+	if len(args) == 0 {
+		printPortfolioHelp(stderr)
+		fmt.Fprintf(stderr, "%s portfolio: error: the following arguments are required: subcommand\n", prog)
+		return 2
+	}
+	if args[0] == "-h" || args[0] == "--help" {
+		printPortfolioHelp(stdout)
+		return 0
+	}
+	subcommand, ok := findPortfolioSubcommand(args[0])
+	if !ok {
+		printPortfolioHelp(stderr)
+		fmt.Fprintf(stderr, "%s portfolio: error: invalid subcommand %q (choose from configure, scan)\n", prog, args[0])
+		return 2
+	}
+	if containsCallableHelp(subcommand, args[1:]) {
+		printCommandHelp(stdout, command{name: "portfolio " + subcommand.name, help: subcommand.help, usage: subcommand.usage, description: subcommand.description, options: subcommand.options, epilog: subcommand.epilog})
+		return 0
+	}
+	return commandimpl.RunPortfolio(args, stdout, stderr)
+}
+
+func findPortfolioSubcommand(name string) (command, bool) {
+	for _, cmd := range portfolioSubcommands {
+		if cmd.name == name {
+			return cmd, true
+		}
+	}
+	return command{}, false
+}
+
+func printPortfolioHelp(w io.Writer) {
+	fmt.Fprintf(w, "usage: %s portfolio [-h] {configure,scan} ...\n\n", prog)
+	fmt.Fprintln(w, "positional arguments:")
+	fmt.Fprintln(w, "  {configure,scan}")
+	for _, cmd := range portfolioSubcommands {
+		fmt.Fprintf(w, "    %-12s %s\n", cmd.name, cmd.help)
+	}
+	fmt.Fprintln(w)
+	fmt.Fprintln(w, "options:")
+	fmt.Fprintln(w, "  -h, --help            show this help message and exit")
 }
 
 func printCommandHelp(w io.Writer, cmd command) {

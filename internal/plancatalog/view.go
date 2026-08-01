@@ -1,0 +1,283 @@
+package plancatalog
+
+import (
+	"bytes"
+	"encoding/json"
+	"fmt"
+	"io"
+	"os"
+	"path/filepath"
+	"sort"
+	"strings"
+
+	"github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/internal/state"
+)
+
+type RepositorySettings struct {
+	Mode            CatalogMode `json:"mode"`
+	RepositoryID    string      `json:"repository_id,omitempty"`
+	CutoverRevision string      `json:"cutover_revision,omitempty"`
+}
+
+type RepositorySnapshot struct {
+	Settings       RepositorySettings   `json:"settings"`
+	Records        []Record             `json:"records"`
+	LegacyEntries  []LegacyEntry        `json:"legacy_entries"`
+	Reconciliation LegacyReconciliation `json:"legacy_reconciliation"`
+	Problems       []Problem            `json:"problems"`
+}
+
+type ViewRow struct {
+	ID             string    `json:"id"`
+	Title          string    `json:"title"`
+	Kind           Kind      `json:"kind"`
+	Purpose        string    `json:"purpose,omitempty"`
+	Lifecycle      Lifecycle `json:"lifecycle"`
+	Family         string    `json:"family,omitempty"`
+	CanonicalPath  string    `json:"canonical_path"`
+	Legacy         bool      `json:"legacy"`
+	LegacyEvidence []string  `json:"legacy_evidence"`
+}
+
+type View struct {
+	SchemaVersion int         `json:"schema_version"`
+	Mode          CatalogMode `json:"mode"`
+	RepositoryID  string      `json:"repository_id,omitempty"`
+	Rows          []ViewRow   `json:"rows"`
+	Problems      []Problem   `json:"problems"`
+}
+
+func LoadRepositorySettings(root string) (RepositorySettings, []Problem) {
+	settings := RepositorySettings{Mode: ModeLegacy}
+	configPath := filepath.Join(root, filepath.FromSlash(state.ConfigPath))
+	data, err := os.ReadFile(configPath)
+	if os.IsNotExist(err) {
+		return settings, nil
+	}
+	if err != nil {
+		return settings, []Problem{{Code: "catalog_config_unreadable", Message: err.Error(), Path: state.ConfigPath, Severity: SeverityError}}
+	}
+	config, err := state.DecodeYAMLMap(data)
+	legacyNullComponents := err == nil && config["component_settings"] == nil
+	if legacyNullComponents {
+		config["component_settings"] = map[string]any{}
+	}
+	if err == nil {
+		err = state.Validate(state.ConfigV1Schema, config)
+	}
+	if err != nil {
+		return settings, []Problem{{Code: "catalog_config_invalid", Message: err.Error(), Path: state.ConfigPath, Severity: SeverityError, Remediation: "repair the shared Operating Kit configuration before plan catalog work"}}
+	}
+	components := state.Map(config["component_settings"])
+	planning := state.Map(components["planning-workflows"])
+	mode, ok := ParseCatalogMode(state.AsString(planning["plan_catalog_mode"]))
+	if !ok {
+		return settings, []Problem{{Code: "catalog_mode_invalid", Message: fmt.Sprintf("plan catalog mode %q is invalid", state.AsString(planning["plan_catalog_mode"])), Path: state.ConfigPath, Severity: SeverityError}}
+	}
+	settings.Mode = mode
+	settings.CutoverRevision = state.AsString(planning["plan_catalog_cutover_revision"])
+	portfolio := state.Map(config["portfolio"])
+	settings.RepositoryID = state.AsString(portfolio["member_repository_id"])
+	problems := []Problem{}
+	if legacyNullComponents {
+		problems = append(problems, Problem{Code: "legacy_null_component_settings", Message: "legacy null component_settings was interpreted as an empty object without modifying config bytes", Path: state.ConfigPath, Severity: SeverityInfo, Remediation: "the next reviewed config migration may write an explicit empty mapping"})
+	}
+	if settings.Mode != ModeLegacy && settings.RepositoryID == "" {
+		problems = append(problems, Problem{Code: "repository_identity_missing", Message: "mixed and canonical catalog modes require portfolio.member_repository_id", Path: state.ConfigPath, Severity: SeverityError, Remediation: "configure the stable repository identity before adopting semantic plan IDs"})
+	}
+	if settings.Mode == ModeMixed && settings.CutoverRevision == "" {
+		problems = append(problems, Problem{Code: "mixed_cutover_revision_missing", Message: "mixed catalog mode requires plan_catalog_cutover_revision", Path: state.ConfigPath, Severity: SeverityError, Remediation: "record the exact pre-cutover Git revision that contains the frozen register and grandfathered plans"})
+	}
+	return settings, problems
+}
+
+func LoadRepositorySnapshot(root string) (RepositorySnapshot, error) {
+	settings, settingsProblems := LoadRepositorySettings(root)
+	discovery, err := Discover(root, settings.Mode, settings.RepositoryID)
+	if err != nil {
+		return RepositorySnapshot{}, err
+	}
+	candidates, err := Enumerate(root)
+	if err != nil {
+		return RepositorySnapshot{}, err
+	}
+	entries := []LegacyEntry{}
+	legacyProblems := []Problem{}
+	if data, readErr := readRegularSource(root, LegacyRegisterPath); readErr == nil {
+		entries, legacyProblems = ParseLegacyRegister(data)
+	} else if !os.IsNotExist(readErr) {
+		code := "legacy_register_unreadable"
+		remediation := "repair register readability before using legacy evidence"
+		if ErrorCode(readErr) == "source_unsafe" {
+			code = "legacy_register_unsafe"
+			remediation = "replace the symlink or non-regular source with a contained regular register file"
+		}
+		legacyProblems = append(legacyProblems, Problem{Code: code, Message: readErr.Error(), Path: LegacyRegisterPath, Severity: SeverityError, Remediation: remediation})
+	}
+	reconciliation := ReconcileLegacy(discovery.Records, candidates, entries)
+	problems := append([]Problem{}, settingsProblems...)
+	problems = append(problems, discovery.Problems...)
+	problems = append(problems, legacyProblems...)
+	problems = append(problems, reconciliation.Problems...)
+	for _, entry := range reconciliation.Unpaired {
+		problems = append(problems, Problem{Code: "legacy_evidence_unpaired", Message: fmt.Sprintf("legacy register entry %q does not identify an enumerated local canonical document", entry.ID), Path: LegacyRegisterPath, Severity: SeverityWarning, Remediation: "retain it in inventory for semantic reconciliation"})
+	}
+	if settings.Mode == ModeMixed {
+		baselinePaths, baselineProblems := loadMixedBaseline(root, settings.CutoverRevision)
+		problems = append(problems, baselineProblems...)
+		for _, record := range discovery.Records {
+			if record.Metadata != nil {
+				continue
+			}
+			if len(reconciliation.ByCanonicalPath[record.Path]) > 0 && baselinePaths[record.Path] {
+				continue
+			}
+			problems = append(problems, Problem{Code: "mixed_new_plan_metadata_missing", Message: "mixed mode requires metadata for a formal plan without grandfathered register evidence", Path: record.Path, Severity: SeverityError, Remediation: "author the new plan with canonical metadata or complete reviewed migration evidence"})
+		}
+	}
+	SortProblems(problems)
+	return RepositorySnapshot{
+		Settings:       settings,
+		Records:        discovery.Records,
+		LegacyEntries:  entries,
+		Reconciliation: reconciliation,
+		Problems:       problems,
+	}, nil
+}
+
+func loadMixedBaseline(root, revision string) (map[string]bool, []Problem) {
+	paths := map[string]bool{}
+	if revision == "" {
+		return paths, nil
+	}
+	objectType, err := gitText(root, "cat-file", "-t", revision)
+	if err != nil || objectType != "commit" {
+		if err == nil {
+			err = fmt.Errorf("configured cutover object is %q, not a commit", objectType)
+		}
+		return paths, []Problem{{Code: "mixed_cutover_revision_invalid", Message: err.Error(), Path: state.ConfigPath, Severity: SeverityError, Remediation: "record a reachable pre-cutover commit containing the frozen register and legacy plans"}}
+	}
+	if _, err := gitBytes(root, "merge-base", "--is-ancestor", revision, "HEAD"); err != nil {
+		return paths, []Problem{{Code: "mixed_cutover_revision_not_ancestor", Message: err.Error(), Path: state.ConfigPath, Severity: SeverityError, Remediation: "record a pre-cutover commit that is an ancestor of the current revision"}}
+	}
+	if _, err := gitBytes(root, "cat-file", "-e", revision+":"+state.ConfigPath); err == nil {
+		if !gitRevisionHasRegularFile(root, revision, state.ConfigPath) {
+			return paths, []Problem{{Code: "mixed_cutover_baseline_config_invalid", Message: "cutover configuration is not a regular Git blob", Path: state.ConfigPath, Severity: SeverityError, Remediation: "select a pre-cutover commit with absent or valid legacy catalog configuration"}}
+		}
+		configData, readErr := gitBytes(root, "show", revision+":"+state.ConfigPath)
+		config, decodeErr := state.DecodeAndValidateYAML(state.ConfigV1Schema, configData)
+		if readErr != nil || decodeErr != nil {
+			if readErr == nil {
+				readErr = decodeErr
+			}
+			return paths, []Problem{{Code: "mixed_cutover_baseline_config_invalid", Message: readErr.Error(), Path: state.ConfigPath, Severity: SeverityError, Remediation: "select a pre-cutover commit with absent or valid legacy catalog configuration"}}
+		}
+		planning := state.Map(state.Map(config["component_settings"])["planning-workflows"])
+		mode, validMode := ParseCatalogMode(state.AsString(planning["plan_catalog_mode"]))
+		if !validMode || mode != ModeLegacy {
+			return paths, []Problem{{Code: "mixed_cutover_revision_not_legacy", Message: "configured cutover revision already has a non-legacy plan catalog mode", Path: state.ConfigPath, Severity: SeverityError, Remediation: "record the last legacy-mode commit before mixed adoption"}}
+		}
+	}
+	if !gitRevisionHasRegularFile(root, revision, LegacyRegisterPath) {
+		return paths, []Problem{{Code: "mixed_cutover_revision_unavailable", Message: "cutover revision does not contain a regular frozen plan register", Path: LegacyRegisterPath, Severity: SeverityError, Remediation: "record a pre-cutover commit containing the regular frozen register and legacy plans"}}
+	}
+	registerData, err := gitBytes(root, "show", revision+":"+LegacyRegisterPath)
+	if err != nil {
+		return paths, []Problem{{Code: "mixed_cutover_revision_unavailable", Message: err.Error(), Path: state.ConfigPath, Severity: SeverityError, Remediation: "record a reachable pre-cutover commit containing the frozen register and legacy plans"}}
+	}
+	currentRegister, currentErr := readRegularSource(root, LegacyRegisterPath)
+	if currentErr != nil {
+		return paths, []Problem{{Code: "legacy_register_missing_after_cutover", Message: currentErr.Error(), Path: LegacyRegisterPath, Severity: SeverityError, Remediation: "restore the contained regular frozen register from the cutover revision"}}
+	}
+	if !bytes.Equal(currentRegister, registerData) {
+		return paths, []Problem{{Code: "legacy_register_modified_after_cutover", Message: "plan-register.md differs from the frozen mixed-mode cutover revision", Path: LegacyRegisterPath, Severity: SeverityError, Remediation: "restore the frozen register and author new plans with canonical metadata"}}
+	}
+	entries, _ := ParseLegacyRegister(registerData)
+	for _, entry := range entries {
+		for _, path := range entry.CanonicalDocs {
+			if gitRevisionHasRegularFile(root, revision, path) {
+				paths[path] = true
+			}
+		}
+	}
+	return paths, nil
+}
+
+func gitRevisionHasRegularFile(root, revision, path string) bool {
+	output, err := gitText(root, "ls-tree", revision, "--", path)
+	if err != nil || output == "" {
+		return false
+	}
+	fields := strings.Fields(output)
+	return len(fields) >= 3 && (fields[0] == "100644" || fields[0] == "100755") && fields[1] == "blob"
+}
+
+func BuildView(snapshot RepositorySnapshot) View {
+	rows := make([]ViewRow, 0, len(snapshot.Records))
+	for _, record := range snapshot.Records {
+		row := ViewRow{
+			Title:          record.Header.Title,
+			Kind:           record.ExpectedKind,
+			Lifecycle:      record.Header.Lifecycle,
+			CanonicalPath:  record.Path,
+			Legacy:         record.Metadata == nil,
+			LegacyEvidence: []string{},
+		}
+		matches := snapshot.Reconciliation.ByCanonicalPath[record.Path]
+		for _, match := range matches {
+			row.LegacyEvidence = append(row.LegacyEvidence, match.ID)
+		}
+		if record.Metadata != nil {
+			row.ID = record.Metadata.ID
+			row.Kind = record.Metadata.Kind
+			row.Purpose = record.Metadata.Purpose
+			row.Family = record.Metadata.Family
+		} else if len(matches) == 1 {
+			row.ID = "legacy:" + matches[0].ID
+			row.Purpose = matches[0].Purpose
+		} else if len(matches) > 1 {
+			row.ID = "legacy-ambiguous:" + record.Path
+		} else {
+			row.ID = "legacy-path:" + record.Path
+		}
+		if record.Header.CompatibilityTitle && (row.Title == "Document Header" || row.Title == "Overview") && len(matches) == 1 && matches[0].Title != "" {
+			row.Title = matches[0].Title
+		}
+		rows = append(rows, row)
+	}
+	sort.SliceStable(rows, func(i, j int) bool {
+		if rows[i].ID != rows[j].ID {
+			return rows[i].ID < rows[j].ID
+		}
+		return rows[i].CanonicalPath < rows[j].CanonicalPath
+	})
+	return View{SchemaVersion: 1, Mode: snapshot.Settings.Mode, RepositoryID: snapshot.Settings.RepositoryID, Rows: rows, Problems: append([]Problem{}, snapshot.Problems...)}
+}
+
+func WriteViewJSON(writer io.Writer, view View) error {
+	encoder := json.NewEncoder(writer)
+	encoder.SetEscapeHTML(false)
+	encoder.SetIndent("", "  ")
+	return encoder.Encode(view)
+}
+
+func WriteViewText(writer io.Writer, view View) {
+	fmt.Fprintf(writer, "Plans (%s mode): %d\n", view.Mode, len(view.Rows))
+	for _, row := range view.Rows {
+		family := "-"
+		if row.Family != "" {
+			family = row.Family
+		}
+		fmt.Fprintf(writer, "- %s | %s | %s | %s | family=%s | %s\n", row.Title, row.Kind, row.ID, row.Lifecycle, family, row.CanonicalPath)
+	}
+	if len(view.Problems) > 0 {
+		fmt.Fprintf(writer, "Problems: %d\n", len(view.Problems))
+		for _, problem := range view.Problems {
+			location := strings.TrimSpace(problem.Path)
+			if location != "" {
+				location = " (" + location + ")"
+			}
+			fmt.Fprintf(writer, "- %s %s: %s%s\n", problem.Severity, problem.Code, problem.Message, location)
+		}
+	}
+}

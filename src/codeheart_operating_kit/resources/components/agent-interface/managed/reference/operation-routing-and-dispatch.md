@@ -1,4 +1,4 @@
-Last updated: 2026-07-10T11:29:07Z (UTC)
+Last updated: 2026-07-31T22:23:19Z (UTC)
 
 # Operation Routing And Dispatch
 
@@ -25,6 +25,88 @@ For Operating Kit installation state, the lifecycle command is the route boundar
 requested `update-check` changes only update metadata, `upgrade --yes` performs an approved version
 change, and `check` diagnoses without writing. Full route:
 `.codeheart/kit/docs/agent-interface/runbooks/maintain-operating-kit-installation.md`.
+
+## Planning And Portfolio Route Registry
+
+Route plain-language planning and coordination requests before choosing Git, a provider, or a
+manual register edit.
+
+### `planning.author-or-update`
+
+- Intent patterns: discover, draft a discovery, write or revise an implementation plan, relate
+  plans.
+- Domain/lifecycle: planning workflows; author or maintain.
+- Scope/action: one owning repository and its canonical plan; local write.
+- Authority source: user request plus repository mode and planning runbook.
+- State/live truth: canonical plan, `.codeheart/kit.config.yaml`, and current Git worktree.
+- Default surface: discovery or implementation-planning runbook plus `plans validate/list`.
+- Preconditions: owning repository and plan kind resolved; mixed/canonical metadata available.
+- Approval class: requested local planning write. Drafting alone does not authorize push.
+- Stop: ambiguous owner/plan, blocked discovery handoff, invalid mode, dirty overlap.
+- Evidence: canonical path/ID, validation, mode, changed planning paths.
+
+### `portfolio.configure`
+
+- Intent patterns: make this repo a member, set up a coordination home, add approved discovery
+  scope.
+- Domain/lifecycle: planning workflows; setup.
+- Scope/action: one initialized repository; shared/local configuration write.
+- Authority source: paced user decisions for role, repository ID, home ID, and sources.
+- State/live truth: existing Kit config, local source state, and optional provider preflight.
+- Default surface: `configure-portfolio-coordination.md` and `portfolio configure` preview/apply.
+- Preconditions: explicit stable IDs, source authority, initialized Kit, write approval.
+- Approval class: local write; authenticated read for an approved first scan.
+- Stop: identity conflict, inferred scope, credential content, unsafe overlap, missing approval.
+- Evidence: preview/apply paths, IDs/scope, idempotency, validation and first-scan completeness.
+
+### `portfolio.refresh-and-analyze`
+
+- Intent patterns: refresh the portfolio, current cross-repo work, strategic overview, inspect
+  branch plans.
+- Domain/lifecycle: planning workflows; read/validate.
+- Scope/action: configured coordination home and authorized sources; authenticated read plus
+  rebuildable local cache.
+- Authority source: user request for current facts and committed source scope.
+- State/live truth: provider remotes and current scan result; older cache is historical only.
+- Default surface: `refresh-portfolio-catalog.md` and `portfolio scan --format json`.
+- Preconditions: coordination-home role, tools/auth/access, exact membership evidence.
+- Approval class: configured read-only scopes; no member write.
+- Stop: incomplete scan, failed preflight, missing required source, freshness ambiguity.
+- Evidence: attempt times, completeness, last-complete time, metrics, errors, local-only omission.
+
+### `planning.migrate-catalog`
+
+- Intent patterns: migrate old plans, add semantic metadata, switch mixed/canonical, inventory
+  legacy plans.
+- Domain/lifecycle: planning workflows; migrate.
+- Scope/action: one repository's formal plans and migration evidence; guarded local write.
+- Authority source: reviewed semantic ledger and user approval.
+- State/live truth: current plan bytes, Git revisions/branches, frozen legacy baseline.
+- Default surface: `migrate-plan-catalog.md`, `plans inventory`, and `plans migrate`.
+- Preconditions: compatible CLI, exact baseline, source hashes, branch ownership, dry-run.
+- Approval class: inventory read/evidence; explicit approval for metadata/config writes.
+- Stop: ambiguity, dirty/changed/branch-owned target, invalid ledger, incomplete coverage or scan,
+  recovery-required state.
+- Evidence: inventory, reviewed ledger, hashes, skips/blockers, chronology, idempotency.
+
+### `planning.activate-and-publish-checkpoint`
+
+- Intent patterns: activate this plan, start implementation, materially update this active plan.
+- Domain/lifecycle: planning workflows; activate or maintain.
+- Scope/action: exact plan, sibling log, directly required metadata, unambiguous work branch;
+  bounded local write plus normal Git push.
+- Authority source: the user's activation or material-active-update request.
+- State/live truth: lifecycle/mode, Git branch/status/remote, normal-push result.
+- Default surface: planning/execution runbook and ordinary Git, not a Kit publication command.
+- Preconditions: exact target/branch, plan-only path set, validation, no overlapping dirty work.
+- Approval class: the request grants this one plan-only branch/use/commit/normal-push checkpoint;
+  no second push prompt.
+- Stop: ambiguity, unrelated paths, auth/policy/normal-push rejection, broader external action.
+- Evidence: repository, branch, included paths, commit, push result, explicit exclusions.
+
+Activation authority never includes implementation code outside the approved checkpoint, PR,
+merge, release, force-push, deletion, history rewrite, or destructive Git. After a failed refresh
+or push, disclose the visibility limit rather than selecting a broader execution surface.
 
 ## Dispatch Sequence
 

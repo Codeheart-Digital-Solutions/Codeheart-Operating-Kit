@@ -1,6 +1,73 @@
-Last updated: 2026-07-10T11:35:02Z (UTC)
+Last updated: 2026-07-31T23:43:02Z (UTC)
 
 # Codeheart Operating Kit Release Notes
+
+## Unreleased - Semantic Plan Catalog And Branch-Aware Coordination
+
+The next release adds repository-owned semantic plan metadata, generated local views, guarded
+legacy migration, and on-demand branch-aware portfolio coordination. The final patch version is
+selected only in the release epic after current public tags are checked.
+
+### Included
+
+- Discovery, implementation, and qualifying family records can carry stable repository-qualified
+  semantic IDs, public-safe purpose and classification metadata, relations, and legacy aliases.
+- `plans validate`, `plans list`, `plans inventory`, and `plans migrate` provide local validation,
+  generated views, Git-backed evidence, semantic review, optimistic hashes, dry-run, transactional
+  application, branch-owner skips, and idempotent reconciliation.
+- `portfolio configure` and `portfolio scan` support explicit member or coordination-home identity,
+  config-driven membership, local Git and authenticated GitHub discovery, default-branch baselines,
+  changed-plan overlays from pushed unmerged branches, complete-cache semantics, and a separate
+  repository-owned strategic overlay.
+- Managed discovery, implementation, execution, review, setup, refresh, migration, and routing
+  guidance lets a low-context agent operate the capability from a fresh Kit installation.
+- A plan activation or user-requested material active-plan update authorizes only its canonical
+  plan/log/direct-metadata branch checkpoint, intentional commit, and normal push. It does not
+  authorize code, PR, merge, release, force-push, deletion, or destructive Git.
+
+### Compatibility And Adoption
+
+- Existing repositories continue in `legacy` mode when catalog configuration is absent. Existing
+  registers and pending-sync evidence remain preserved; fresh repositories receive a stable
+  register entry point and no new pending-sync file.
+- Repositories adopting the catalog first upgrade to this release, inventory their current default
+  and pushed active branches, review semantic decisions, enter `mixed` with an exact frozen legacy
+  baseline, migrate unchanged plans, reconcile branch-owned plans, and enter `canonical` only after
+  complete remote-overlay validation.
+- Ordinary work continues during migration. Hash changes, dirty overlap, ambiguity, inaccessible
+  overlays, and active ownership are explicit skips or blockers, never implicit overwrites.
+- A coordination home discovers members from compatible Kit configuration and approved sources;
+  no second committed repository registry or proactive service is introduced.
+
+### Consumer Impact
+
+- `instruction-only change`: managed references, runbooks, root routes, and templates describe
+  semantic authoring, setup, refresh, migration, analysis freshness, and bounded activation push.
+- `validator-only change`: new schemas and Go validation cover metadata, migration ledgers,
+  catalogs, portfolio sources/overlays, config-v2 identity, relations, compatibility modes, and
+  stable diagnostics.
+- `backwards-compatible scaffold addition`: fresh repositories gain repo-owned portfolio README
+  and strategic-overlay scaffolds. Missing files are created; existing README and repository-owned
+  overlay bytes are preserved, except that the exact pristine overlay placeholder may be bound to
+  the approved home ID.
+- `consumer migration required`: semantic adoption requires a repository-owned reviewed migration;
+  it is not forced by upgrade or sync. The existing register remains readable compatibility
+  evidence.
+- Placement/generated/local-path effect: committed plans and strategic interpretation stay under
+  `docs/repo/`; rebuildable catalog, mirror, and machine-source state stays ignored under
+  `.codeheart/local/`. This is additive and not a breaking placement-contract change.
+- `security or safety policy change`: remote branch content is read as inert Git objects and never
+  executed; scanner-owned Git disables hooks and inherited `GIT_*` influence; incomplete scans do
+  not replace complete cache; credentials and machine-local source locators are excluded from
+  commit-suitable remote-overlay evidence.
+
+### Validation And Release Boundary
+
+- Local Go/Python, schema, Markdown, public-core, manifest, packaging, routing, migration,
+  containment, adversarial, and reproducibility gates precede the release candidate.
+- macOS universal and real Windows x64 execution remain mandatory. Tagging, public assets,
+  signing-boundary acceptance, consumer upgrades, portfolio rollout, and other-repository writes
+  remain unchanged until the explicit release gate is authorized.
 
 ## v0.1.23 Release Notes
 

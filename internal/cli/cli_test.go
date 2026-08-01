@@ -18,10 +18,57 @@ func TestRootHelpListsCommands(t *testing.T) {
 	if code != 0 {
 		t.Fatalf("help exit code = %d, want 0; stderr: %s", code, stderr)
 	}
-	for _, command := range []string{"onboard", "inspect", "init", "repair", "sync", "check", "update-check", "upgrade"} {
+	for _, command := range []string{"onboard", "inspect", "init", "repair", "sync", "check", "update-check", "upgrade", "plans", "portfolio"} {
 		if !strings.Contains(stdout, command) {
 			t.Fatalf("root help did not list %q:\n%s", command, stdout)
 		}
+	}
+}
+
+func TestPortfolioGroupedHelpAndInvalidSubcommand(t *testing.T) {
+	code, stdout, stderr := runForTest("portfolio", "--help")
+	if code != 0 || stderr != "" || !strings.Contains(stdout, "configure") || !strings.Contains(stdout, "scan") {
+		t.Fatalf("portfolio help code=%d stdout=%s stderr=%s", code, stdout, stderr)
+	}
+	code, stdout, stderr = runForTest("portfolio", "configure", "--help")
+	if code != 0 || stderr != "" || !strings.Contains(stdout, "--member-repository-id") || !strings.Contains(stdout, "--github-owner") || !strings.Contains(stdout, "--local-root") {
+		t.Fatalf("portfolio configure help code=%d stdout=%s stderr=%s", code, stdout, stderr)
+	}
+	code, stdout, stderr = runForTest("portfolio", "missing")
+	if code != 2 || stdout != "" || !strings.Contains(stderr, "invalid subcommand") {
+		t.Fatalf("portfolio invalid code=%d stdout=%s stderr=%s", code, stdout, stderr)
+	}
+	code, stdout, stderr = runForTest("plans", "validate", "--help")
+	if code != 0 || stderr != "" || !strings.Contains(stdout, "--remote-overlays") {
+		t.Fatalf("plans remote help code=%d stdout=%s stderr=%s", code, stdout, stderr)
+	}
+}
+
+func TestPlansGroupedHelpAndInvalidSubcommand(t *testing.T) {
+	code, stdout, stderr := runForTest("plans", "--help")
+	if code != 0 || stderr != "" {
+		t.Fatalf("plans help code=%d stdout=%s stderr=%s", code, stdout, stderr)
+	}
+	for _, subcommand := range []string{"validate", "list", "inventory", "migrate"} {
+		if !strings.Contains(stdout, subcommand) {
+			t.Fatalf("plans help missing %s:\n%s", subcommand, stdout)
+		}
+	}
+	code, stdout, stderr = runForTest("plans", "migrate", "--help")
+	if code != 0 || stderr != "" || !strings.Contains(stdout, "--ledger LEDGER") || !strings.Contains(stdout, "--yes") {
+		t.Fatalf("plans migrate help code=%d stdout=%s stderr=%s", code, stdout, stderr)
+	}
+	code, stdout, stderr = runForTest("plans", "list", "--help")
+	if code != 0 || stderr != "" || !strings.Contains(stdout, "--format {text,json}") || !strings.Contains(stdout, "Backward-compatible alias") {
+		t.Fatalf("plans list help code=%d stdout=%s stderr=%s", code, stdout, stderr)
+	}
+	code, stdout, stderr = runForTest("plans", "inventory", "--help")
+	if code != 0 || stderr != "" || !strings.Contains(stdout, "--output OUTPUT") || !strings.Contains(stdout, "Required inventory artifact destination") {
+		t.Fatalf("plans inventory help code=%d stdout=%s stderr=%s", code, stdout, stderr)
+	}
+	code, stdout, stderr = runForTest("plans", "missing")
+	if code != 2 || stdout != "" || !strings.Contains(stderr, "invalid subcommand") {
+		t.Fatalf("invalid plans subcommand code=%d stdout=%s stderr=%s", code, stdout, stderr)
 	}
 }
 

@@ -1,4 +1,4 @@
-Last updated: 2026-06-29T19:51:37Z (UTC)
+Last updated: 2026-07-31T22:23:19Z (UTC)
 
 # Discovery Workflow
 
@@ -907,8 +907,8 @@ Use the repository or workspace documentation placement rules when they exist.
 
 When discovery spans multiple repositories, identify the repository that owns the work boundary
 before creating the canonical discovery document. Place the canonical discovery in that owning
-repository's planning root. Use local or coordination-home plan registers as pointers to the
-canonical document, not as the canonical home by default.
+repository's planning root. Coordination derives observations from that repository's pushed
+canonical document; it does not become the document's canonical home.
 
 Default discovery filename:
 
@@ -925,6 +925,12 @@ Status: draft | active | completed | superseded | archived
 ```
 
 Use the current UTC clock for `Last updated`. Preserve `Created` after the document is created.
+
+Read the repository catalog mode before authoring. In mixed and canonical mode, add the exact
+bounded metadata block from `../reference/plan-catalog-format.md` immediately below the canonical
+title. Use kind `discovery`, choose a stable semantic ID from meaning rather than a sequential
+register number, and add only evidence-backed family, relation, and classification fields. In
+legacy mode, retain the current compatibility behavior unless the user requests migration.
 
 Use sections that fit the domain, but ensure the document contains:
 
@@ -1007,30 +1013,20 @@ document.
 If a closed decision changes after handoff, treat the handoff as stale and regenerate it before
 drafting or updating an implementation plan.
 
-## Plan Register Hook
+## Catalog And Visibility Hook
 
-When discovery work creates or materially updates a `*_discovery_doc.md`, maintain the local plan
-register if the change affects plan identity, scope, decision state, lifecycle state, readiness,
-parent or child relationships, dependencies, supersession, related plans, or review outcome.
+When discovery creates or materially updates a formal document:
 
-Use `maintain-plan-register.md` for the procedure and `../reference/plan-register-format.md` for
-entry shape. The sequence is:
+1. validate its lifecycle and mode-aware metadata with `codeheart-operating-kit plans validate`;
+2. use `plans list` as the current local view;
+3. follow `maintain-plan-register.md` only for legacy-mode compatibility or a stable entry point;
+4. do not append numbered entries in mixed/canonical mode or create a v2 pending-sync file; and
+5. explain that coordination sees the plan only after its branch is normally pushed and the home
+   completes a refresh.
 
-1. Update `docs/repo/plans/plan-register.md` in the local repository.
-2. When portfolio coordination is configured, use the target-register compatibility test in
-   `maintain-plan-register.md` before choosing direct coordination-home update versus pending
-   sync.
-3. When the coordination-home register update is compatible, update the configured
-   coordination-home register.
-4. When the coordination home is unavailable, unwritable, or unsafe under that compatibility test,
-   record pending sync in `docs/repo/plans/coordination-sync-pending.md` and continue the local
-   discovery task.
-
-Record creating or material-update session refs when a session ID is available. Do not block
-discovery when no session ID is available.
-
-Do not update the register for typos, formatting-only edits, timestamp-only edits, or mechanical
-checklist progress that does not change lifecycle, relationships, readiness, or decision state.
+Discovery drafting does not itself authorize commit or push. If the user requests activation or a
+material update of an active implementation plan later, use the bounded plan-checkpoint
+publication contract in `draft-implementation-plan.md` and `execute-implementation-plan.md`.
 
 ## Domain Adaptation
 

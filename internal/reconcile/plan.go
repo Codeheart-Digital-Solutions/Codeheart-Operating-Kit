@@ -20,11 +20,62 @@ const (
 )
 
 type Action struct {
-	Kind    string `json:"kind"`
-	Target  string `json:"target"`
-	Owner   string `json:"owner"`
-	Content []byte `json:"-"`
-	Mode    uint32 `json:"mode,omitempty"`
+	Kind           string `json:"kind"`
+	Target         string `json:"target"`
+	Owner          string `json:"owner"`
+	Content        []byte `json:"-"`
+	Mode           uint32 `json:"mode,omitempty"`
+	ExpectedSHA256 string `json:"expected_sha256,omitempty"`
+}
+
+// BuildFilePlan creates a deterministic transaction for already-reviewed repository file
+// replacements. Callers retain responsibility for domain validation; Apply owns containment,
+// optimistic byte preconditions, staging, commit, rollback, and recovery evidence.
+func BuildFilePlan(command, root, stateBefore string, expectedAfter []state.Classification, actions []Action) (Plan, error) {
+	absoluteRoot, err := filepath.Abs(root)
+	if err != nil {
+		return Plan{}, err
+	}
+	plan := Plan{
+		SchemaVersion: 1,
+		Command:       command,
+		Root:          absoluteRoot,
+		StateBefore:   stateBefore,
+		Actions:       append([]Action{}, actions...),
+		Blockers:      []Blocker{},
+		ExpectedAfter: append([]state.Classification{}, expectedAfter...),
+	}
+	if len(plan.ExpectedAfter) == 0 {
+		plan.ExpectedAfter = []state.Classification{state.Classification(stateBefore)}
+	}
+	sort.SliceStable(plan.Actions, func(i, j int) bool { return plan.Actions[i].Target < plan.Actions[j].Target })
+	for _, action := range plan.Actions {
+		if err := ValidateFileTarget(absoluteRoot, action.Target); err != nil {
+			plan.Blockers = append(plan.Blockers, Blocker{Code: "unsafe_target", Message: err.Error(), Path: action.Target})
+		}
+	}
+	for index := 1; index < len(plan.Actions); index++ {
+		if plan.Actions[index-1].Target == plan.Actions[index].Target {
+			plan.Blockers = append(plan.Blockers, Blocker{Code: "duplicate_target", Message: "transaction contains the target more than once", Path: plan.Actions[index].Target})
+		}
+	}
+	plan.ID = planDigest(plan)
+	return plan, nil
+}
+
+// ValidateFileTarget applies the same lexical, symlink/reparse-point, and resolved-parent
+// containment checks used by transaction commit without changing the filesystem.
+func ValidateFileTarget(root, relative string) error {
+	absoluteRoot, err := filepath.Abs(root)
+	if err != nil {
+		return err
+	}
+	canonicalRoot, err := filepath.EvalSymlinks(absoluteRoot)
+	if err != nil {
+		return err
+	}
+	_, err = safeTarget(canonicalRoot, relative)
+	return err
 }
 
 type Request struct {
@@ -180,7 +231,8 @@ func (plan *Plan) addFileAction(root, target, owner string, desired []byte, crea
 		if createOnly || string(existing) == string(desired) {
 			return
 		}
-		plan.Actions = append(plan.Actions, Action{Kind: "replace", Target: target, Owner: owner, Content: desired, Mode: 0o644})
+		digest := sha256.Sum256(existing)
+		plan.Actions = append(plan.Actions, Action{Kind: "replace", Target: target, Owner: owner, Content: desired, Mode: 0o644, ExpectedSHA256: hex.EncodeToString(digest[:])})
 		return
 	}
 	if os.IsNotExist(err) {
@@ -228,7 +280,7 @@ func (plan *Plan) addSafeRemovals(root string, lock map[string]any, graph state.
 			})
 			continue
 		}
-		plan.Actions = append(plan.Actions, Action{Kind: "remove", Target: target, Owner: "managed"})
+		plan.Actions = append(plan.Actions, Action{Kind: "remove", Target: target, Owner: "managed", ExpectedSHA256: hex.EncodeToString(digest[:])})
 	}
 }
 
@@ -313,14 +365,15 @@ func desiredGitignore(path string) ([]byte, bool, error) {
 
 func planDigest(plan Plan) string {
 	type digestAction struct {
-		Kind   string `json:"kind"`
-		Target string `json:"target"`
-		Digest string `json:"digest,omitempty"`
+		Kind           string `json:"kind"`
+		Target         string `json:"target"`
+		Digest         string `json:"digest,omitempty"`
+		ExpectedSHA256 string `json:"expected_sha256,omitempty"`
 	}
 	actions := make([]digestAction, len(plan.Actions))
 	for index, action := range plan.Actions {
 		digest := sha256.Sum256(action.Content)
-		actions[index] = digestAction{Kind: action.Kind, Target: action.Target, Digest: hex.EncodeToString(digest[:])}
+		actions[index] = digestAction{Kind: action.Kind, Target: action.Target, Digest: hex.EncodeToString(digest[:]), ExpectedSHA256: action.ExpectedSHA256}
 	}
 	desiredLock := state.DeepCopy(plan.DesiredLock)
 	if operation := state.Map(desiredLock["last_operation"]); operation != nil {

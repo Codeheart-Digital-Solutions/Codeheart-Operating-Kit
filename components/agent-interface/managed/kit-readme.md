@@ -1,4 +1,4 @@
-Last updated: 2026-07-09T23:30:00Z (UTC)
+Last updated: 2026-07-31T22:23:19Z (UTC)
 
 # Codeheart Operating Kit Inventory
 
@@ -22,6 +22,14 @@ state looks missing, stale, or damaged.
   `.codeheart/kit/docs/agent-interface/reference/operation-routing-and-dispatch.md`
 - Installation lifecycle command selection:
   `.codeheart/kit/docs/agent-interface/runbooks/maintain-operating-kit-installation.md`
+- Semantic plan authoring and local views:
+  `.codeheart/kit/docs/planning-workflows/reference/plan-catalog-format.md`
+- Portfolio configuration:
+  `.codeheart/kit/docs/planning-workflows/runbooks/configure-portfolio-coordination.md`
+- Current portfolio refresh:
+  `.codeheart/kit/docs/planning-workflows/runbooks/refresh-portfolio-catalog.md`
+- Reviewed plan-catalog migration:
+  `.codeheart/kit/docs/planning-workflows/runbooks/migrate-plan-catalog.md`
 
 ## Generated State
 
@@ -29,6 +37,8 @@ state looks missing, stale, or damaged.
 - Shared non-secret config: `.codeheart/kit.config.yaml`
 - Local user layer: `.codeheart/user/`
 - Local machine/runtime layer: `.codeheart/local/`
+- Stable plan-catalog entry point: `docs/repo/plans/plan-register.md`
+- Coordination-home strategy: `docs/repo/portfolio/strategic-overlay.yaml`
 
 ## Module And Extension State
 

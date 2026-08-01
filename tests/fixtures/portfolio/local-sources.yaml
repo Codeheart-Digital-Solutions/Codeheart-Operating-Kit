@@ -1,0 +1,4 @@
+schema_version: 1
+sources:
+  - kind: local-git-root
+    root: /example/development

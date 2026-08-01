@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "mode": "mixed",
+  "repository_id": "example",
+  "rows": [
+    {
+      "id": "legacy:PR-001",
+      "title": "Alpha Discovery",
+      "kind": "discovery",
+      "purpose": "Legacy evidence for alpha",
+      "lifecycle": "draft",
+      "canonical_path": "docs/repo/plans/alpha/alpha_discovery_doc.md",
+      "legacy": true,
+      "legacy_evidence": [
+        "PR-001"
+      ]
+    },
+    {
+      "id": "legacy:PR-002",
+      "title": "Beta Implementation",
+      "kind": "implementation",
+      "purpose": "Legacy evidence for beta",
+      "lifecycle": "active",
+      "canonical_path": "docs/repo/plans/beta/beta_implementation_doc.md",
+      "legacy": true,
+      "legacy_evidence": [
+        "PR-002"
+      ]
+    }
+  ],
+  "problems": [
+    {
+      "code": "metadata_missing",
+      "message": "docs/repo/plans/alpha/alpha_discovery_doc.md has no bounded Codeheart plan metadata block",
+      "path": "docs/repo/plans/alpha/alpha_discovery_doc.md",
+      "severity": "warning",
+      "remediation": "add reviewed canonical metadata through the migration workflow"
+    },
+    {
+      "code": "legacy_title_layout",
+      "message": "implementation layout uses the generic H1 'Document Header' with compatibility title handling",
+      "path": "docs/repo/plans/beta/beta_implementation_doc.md",
+      "severity": "warning",
+      "remediation": "new canonical plans use their human-readable title as the direct H1; retain this compatibility layout only for existing documents"
+    },
+    {
+      "code": "metadata_missing",
+      "message": "docs/repo/plans/beta/beta_implementation_doc.md has no bounded Codeheart plan metadata block",
+      "path": "docs/repo/plans/beta/beta_implementation_doc.md",
+      "severity": "warning",
+      "remediation": "add reviewed canonical metadata through the migration workflow"
+    },
+    {
+      "code": "legacy_evidence_unpaired",
+      "message": "legacy register entry \"PR-999\" does not identify an enumerated local canonical document",
+      "path": "docs/repo/plans/plan-register.md",
+      "severity": "warning",
+      "remediation": "retain it in inventory for semantic reconciliation"
+    }
+  ]
+}

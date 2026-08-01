@@ -1,8 +1,19 @@
-Last updated: 2026-07-31T10:59:19Z (UTC)
+Last updated: 2026-07-31T23:43:02Z (UTC)
 
 # Repo Plans
 
 This folder contains Codeheart Operating Kit repository-level discovery and implementation plans.
+
+Current authority is the metadata inside each formal plan. Use:
+
+```sh
+codeheart-operating-kit plans validate .
+codeheart-operating-kit plans list --format text .
+codeheart-operating-kit plans list --format json .
+```
+
+`plan-register.md` remains a stable link and frozen legacy evidence. Do not append or renumber its
+entries after mixed cutover.
 
 ## Current Plans
 
@@ -13,6 +24,9 @@ This folder contains Codeheart Operating Kit repository-level discovery and impl
   `semantic-plan-catalog-coordination/semantic-plan-catalog-coordination_implementation_doc.md`
 - Semantic plan catalog and branch-aware coordination execution log:
   `semantic-plan-catalog-coordination/semantic-plan-catalog-coordination_execution_log.md`
+- Producer semantic migration inventories, reviewed ledger, consumer-impact record, and discovery
+  capability evidence matrix:
+  `semantic-plan-catalog-coordination/attachments/`
 - Operating Kit state and release architecture discovery:
   `operating-kit-state-release-architecture/operating-kit-state-release-architecture_discovery_doc.md`
 - Operating Kit state and release architecture implementation plan:
