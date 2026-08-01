@@ -1,4 +1,4 @@
-Last updated: 2026-08-01T05:39:21Z (UTC)
+Last updated: 2026-08-01T05:55:48Z (UTC)
 Created: 2026-07-31
 
 # Semantic Plan Catalog And Branch-Aware Coordination Execution Log
@@ -1133,6 +1133,22 @@ before the `EP-05` default-branch gate and the later release-candidate authority
   than an invented local plan. The full Go suite, all 147 Python tests, vet, JSON-schema,
   Markdown-header, public-core, release-manifest, and diff gates passed with the cutover changes in
   the worktree.
+- EP-05 gate review round one: rejected exact commit
+  `c1c136c47976e4ebbcf69008274bbeb98289f96b` with one medium consistency finding. Three migrated
+  implementation plans used their reviewed semantic legacy-register titles in local `plans list`
+  output but published generic historical headings (`Overview` or `Document Header`) in inventory
+  and remote observations. All other migration, coverage, idempotency, frozen-register,
+  public-safety, validation, and unrelated-state checks were accepted.
+- Title-consistency remediation: centralized the existing single-match compatibility-title rule
+  and now uses it for local views, migration inventories, and pushed remote observations. This
+  preserves the three historical document headings and their meaningful content dates while
+  publishing the same reviewed semantic title on every catalog surface; ambiguous or absent legacy
+  evidence still cannot override a document title. Unit and remote-Git regressions cover the
+  resolver, local listing, local inventory, and coordination-home observation together. A fresh
+  live inventory found zero title mismatches across all 33 records, retained complete one-member
+  and 33-observation remote coverage with no errors, and canonical remote validation passed. The
+  complete Go suite, race-enabled catalog/portfolio tests, all 147 Python tests, vet, JSON-schema,
+  Markdown-header, public-core, release-manifest, and diff gates passed.
 
 ## EP-07 Delta - Version Bump, Reproducible Release, And Public Verification
 

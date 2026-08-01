@@ -139,6 +139,56 @@ func TestPortfolioScanUsesRemoteBaselinesAndIndependentChangedBranchObservations
 	}
 }
 
+func TestRemoteCatalogInventoryAndListShareReviewedCompatibilityTitle(t *testing.T) {
+	fixture := newPortfolioGitFixture(t)
+	planPath := "docs/repo/plans/member-plan/member-plan_discovery_doc.md"
+	planData := mustReadPortfolioFile(t, filepath.Join(fixture.member, filepath.FromSlash(planPath)))
+	planData = bytes.Replace(planData, []byte("# Member Plan\n"), []byte("# Document Header\n\n## Overview\n"), 1)
+	writePortfolioFile(t, fixture.member, planPath, planData)
+	register := "## MEMBER-PR-001 - Member Semantic Plan Title\n\nCanonical docs:\n- `" + planPath + "`\n"
+	writePortfolioFile(t, fixture.member, plancatalog.LegacyRegisterPath, []byte(register))
+	runPortfolioGit(t, fixture.member, "add", planPath, plancatalog.LegacyRegisterPath)
+	runPortfolioGit(t, fixture.member, "commit", "-m", "Use compatibility plan title")
+	runPortfolioGit(t, fixture.member, "push", "origin", "main")
+
+	snapshot, err := plancatalog.LoadRepositorySnapshot(fixture.member)
+	if err != nil {
+		t.Fatal(err)
+	}
+	view := plancatalog.BuildView(snapshot)
+	if len(view.Rows) != 1 || view.Rows[0].Title != "Member Semantic Plan Title" {
+		t.Fatalf("local semantic view = %+v", view.Rows)
+	}
+	inventory, err := plancatalog.BuildInventory(fixture.member, time.Date(2026, 7, 31, 12, 0, 0, 0, time.UTC))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(inventory.Records) != 1 || inventory.Records[0].Title != view.Rows[0].Title {
+		t.Fatalf("inventory title = %+v, view title = %+v", inventory.Records, view.Rows)
+	}
+
+	config := Config{SchemaVersion: 2, Role: RoleCoordinationHome, RepositoryID: "example-home", CoordinationHomeID: "example-coordination", Root: fixture.home}
+	result, err := Scan(context.Background(), ScanOptions{
+		Root: fixture.home, Config: config, Sources: []Source{NewLocalGitSource(fixture.parent, ExecRunner{})}, Runner: ExecRunner{},
+		Now: time.Date(2026, 7, 31, 12, 0, 0, 0, time.UTC),
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !result.Catalog.Complete {
+		t.Fatalf("remote catalog incomplete: %+v", result.Catalog.Errors)
+	}
+	for _, observation := range result.Catalog.Observations {
+		if observation.RepositoryID == "example-member" && observation.PlanID == "example-member.discovery.member-plan" && observation.Visibility == "default" {
+			if observation.Title != view.Rows[0].Title {
+				t.Fatalf("remote title = %q, local title = %q", observation.Title, view.Rows[0].Title)
+			}
+			return
+		}
+	}
+	t.Fatal("member default observation missing")
+}
+
 func TestMembershipRequiresDefaultBranchKitLockV2IdentityAndMatchingHome(t *testing.T) {
 	validConfig := []byte(portfolioConfig("member", "example-member", "example-home"))
 	valid := MembershipInput{ConfigData: validConfig, LockData: []byte(testLockYAML), KitMarker: []byte("kit\n"), HomeID: "example-home"}

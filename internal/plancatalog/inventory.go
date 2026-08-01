@@ -91,6 +91,7 @@ func BuildInventory(root string, now time.Time) (Inventory, error) {
 	}
 	for _, candidate := range candidates {
 		record, parsed := recordsByPath[candidate.Path]
+		matches := append([]LegacyEntry{}, snapshot.Reconciliation.ByCanonicalPath[candidate.Path]...)
 		coverage := "invalid"
 		parseStatus := "invalid"
 		planID := ""
@@ -101,14 +102,14 @@ func BuildInventory(root string, now time.Time) (Inventory, error) {
 			coverage = "canonical"
 			parseStatus = "canonical"
 			planID = record.Metadata.ID
-			title = record.Header.Title
+			title = DisplayTitle(record, matches)
 			lifecycle = record.Header.Lifecycle
 			sourceSHA = record.ContentSHA256
 			inventory.Coverage.CanonicalMetadata++
 		} else if parsed {
 			coverage = "legacy"
 			parseStatus = "legacy"
-			title = record.Header.Title
+			title = DisplayTitle(record, matches)
 			lifecycle = record.Header.Lifecycle
 			sourceSHA = record.ContentSHA256
 			inventory.Coverage.LegacyRecords++
@@ -144,7 +145,6 @@ func BuildInventory(root string, now time.Time) (Inventory, error) {
 		if len(branchTouches) > 0 {
 			inventory.Coverage.ActiveBranchTouches++
 		}
-		matches := append([]LegacyEntry{}, snapshot.Reconciliation.ByCanonicalPath[candidate.Path]...)
 		problemCodes := uniqueSortedStrings(problemCodesByPath[candidate.Path])
 		inventory.Records = append(inventory.Records, InventoryRecord{
 			Path:              candidate.Path,

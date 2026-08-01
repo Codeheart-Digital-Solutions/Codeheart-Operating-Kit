@@ -75,6 +75,22 @@ func TestListViewKeepsDiscoveryImplementationAndFamilyAsSeparateRows(t *testing.
 	}
 }
 
+func TestDisplayTitleUsesReviewedLegacyTitleOnlyForOneCompatibilityMatch(t *testing.T) {
+	record := Record{Header: Header{Title: "Overview", CompatibilityTitle: true}}
+	match := LegacyEntry{ID: "PR-001", Title: "Semantic Plan Title"}
+	if title := DisplayTitle(record, []LegacyEntry{match}); title != "Semantic Plan Title" {
+		t.Fatalf("compatibility display title = %q", title)
+	}
+	record.Header.CompatibilityTitle = false
+	if title := DisplayTitle(record, []LegacyEntry{match}); title != "Overview" {
+		t.Fatalf("direct title was overridden = %q", title)
+	}
+	record.Header.CompatibilityTitle = true
+	if title := DisplayTitle(record, []LegacyEntry{match, {ID: "PR-002", Title: "Competing Title"}}); title != "Overview" {
+		t.Fatalf("ambiguous legacy evidence overrode title = %q", title)
+	}
+}
+
 func TestQuotedMetadataMarkersDoNotBecomeCanonicalMetadata(t *testing.T) {
 	data := []byte("Last updated: 2026-07-31T10:00:00Z (UTC)\nCreated: 2026-07-31\nStatus: draft\n\n# Marker Example\n\n```md\n<!-- BEGIN CODEHEART PLAN METADATA -->\n```\n")
 	record, err := ParseDocument("marker_discovery_doc.md", data, KindDiscovery)
