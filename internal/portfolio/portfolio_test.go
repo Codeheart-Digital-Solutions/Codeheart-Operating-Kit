@@ -143,7 +143,16 @@ func TestRemoteCatalogInventoryAndListShareReviewedCompatibilityTitle(t *testing
 	fixture := newPortfolioGitFixture(t)
 	planPath := "docs/repo/plans/member-plan/member-plan_discovery_doc.md"
 	planData := mustReadPortfolioFile(t, filepath.Join(fixture.member, filepath.FromSlash(planPath)))
-	planData = bytes.Replace(planData, []byte("# Member Plan\n"), []byte("# Document Header\n\n## Overview\n"), 1)
+	lineEnding := "\n"
+	if bytes.Contains(planData, []byte("\r\n")) {
+		lineEnding = "\r\n"
+	}
+	originalHeading := []byte("# Member Plan" + lineEnding)
+	if !bytes.Contains(planData, originalHeading) {
+		t.Fatalf("fixture plan heading missing from %s", planPath)
+	}
+	compatibilityHeading := []byte("# Document Header" + lineEnding + lineEnding + "## Overview" + lineEnding)
+	planData = bytes.Replace(planData, originalHeading, compatibilityHeading, 1)
 	writePortfolioFile(t, fixture.member, planPath, planData)
 	register := "## MEMBER-PR-001 - Member Semantic Plan Title\n\nCanonical docs:\n- `" + planPath + "`\n"
 	writePortfolioFile(t, fixture.member, plancatalog.LegacyRegisterPath, []byte(register))

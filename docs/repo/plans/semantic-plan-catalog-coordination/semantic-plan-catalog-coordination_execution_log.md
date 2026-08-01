@@ -1,4 +1,4 @@
-Last updated: 2026-08-01T05:55:48Z (UTC)
+Last updated: 2026-08-01T06:10:04Z (UTC)
 Created: 2026-07-31
 
 # Semantic Plan Catalog And Branch-Aware Coordination Execution Log
@@ -1149,6 +1149,22 @@ before the `EP-05` default-branch gate and the later release-candidate authority
   and 33-observation remote coverage with no errors, and canonical remote validation passed. The
   complete Go suite, race-enabled catalog/portfolio tests, all 147 Python tests, vet, JSON-schema,
   Markdown-header, public-core, release-manifest, and diff gates passed.
+- EP-05 gate review round two: accepted exact head
+  `23e377060c1a53c2851b1b31e3b19cd5a4139045` with no material findings. The reviewer independently
+  matched all 33 IDs, paths, and titles across local list, fresh and committed inventories, and
+  default remote observations; confirmed the single-match-only resolver, same-ref register reads,
+  canonical local/remote validation, zero-change migration, frozen history, and protected-state
+  exclusion; and passed exact-commit catalog/portfolio tests in an isolated clone.
+- Canonical-cutover PR CI round one: ready PR `#4` retained exact accepted head `23e3770`. Both
+  macOS jobs passed, while both real-Windows jobs found one portability defect in the new regression
+  fixture: after branch switching under Git for Windows, CRLF checkout bytes no longer matched the
+  fixture's LF-only heading replacement, so the test correctly observed the unchanged baseline
+  title. Production title resolution was not implicated. The fixture now detects and preserves LF
+  or CRLF explicitly and fails early when its intended heading is absent. The focused regression
+  passes both normally and with inherited `core.autocrlf=true`; the complete Go suite,
+  race-enabled portfolio tests, vet, JSON-schema, Markdown-header, public-core, release-manifest,
+  and diff gates also pass. A fresh exact-head CI run remains required and no failed check is
+  bypassed.
 
 ## EP-07 Delta - Version Bump, Reproducible Release, And Public Verification
 
