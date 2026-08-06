@@ -417,6 +417,10 @@ func candidateDigest(candidates []Candidate) string {
 		if candidate.Provenance.Source.Preview {
 			continue
 		}
+		// A selected commit/index revision is surrounding inventory evidence,
+		// not candidate identity. Clearing it keeps the same candidate set
+		// digest portable across local-index and exact commit-tree adapters.
+		candidate.Provenance.Source.Revision = ""
 		canonical = append(canonical, candidate)
 	}
 	data, _ := json.Marshal(canonical)

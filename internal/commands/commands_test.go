@@ -18,6 +18,7 @@ import (
 	"github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/internal/lockfile"
 	"github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/internal/plancatalog"
 	"github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/internal/portfolio"
+	"github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/internal/reconcile"
 	"github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/internal/state"
 	"github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/internal/yamlmini"
 )
@@ -1137,6 +1138,60 @@ func TestPlansMigrateRequiresExplicitModeAndReviewedLedger(t *testing.T) {
 	stderr.Reset()
 	if code := RunPlans([]string{"migrate", "--dry-run", "."}, &bytes.Buffer{}, &stderr); code != 2 || !strings.Contains(stderr.String(), "--ledger requires a value") {
 		t.Fatalf("migrate ledger error code=%d stderr=%s", code, stderr.String())
+	}
+}
+
+func TestPlansMigrateV2ReportsProjectedReadinessWithoutActivation(t *testing.T) {
+	root := copyPlanCommandFixture(t)
+	inventory, err := plancatalog.BuildInventoryWithOptions(root, time.Date(2026, 8, 6, 10, 0, 0, 0, time.UTC), plancatalog.SnapshotOptions{TargetDiscoveryVersion: plancatalog.DiscoveryV2, TargetCatalogMode: plancatalog.ModeCanonical})
+	if err != nil {
+		t.Fatal(err)
+	}
+	decisions := map[string]plancatalog.MigrationDecision{
+		"docs/repo/plans/alpha/alpha_discovery_doc.md":    {ID: "example.discovery.alpha", Kind: plancatalog.KindDiscovery, Purpose: "Discover alpha", FirstCataloged: "2026-08-06T10:00:00Z", CatalogMetadataUpdated: "2026-08-06T10:00:00Z"},
+		"docs/repo/plans/beta/beta_implementation_doc.md": {ID: "example.implementation.beta", Kind: plancatalog.KindImplementation, Purpose: "Implement beta", FirstCataloged: "2026-08-06T10:00:00Z", CatalogMetadataUpdated: "2026-08-06T10:00:00Z"},
+	}
+	ledger := plancatalog.MigrationLedger{
+		SchemaVersion: 2, RepositoryID: "example", DiscoveryVersion: plancatalog.DiscoveryV2, TargetCatalogMode: plancatalog.ModeCanonical,
+		PolicyDigest: inventory.PolicyDigest, CandidateSetDigest: inventory.CandidateSetDigest, InventoryRevision: inventory.SourceRevision, ReviewedAt: "2026-08-06T10:00:00Z",
+	}
+	for _, candidate := range inventory.Candidates {
+		if candidate.Ownership != plancatalog.OwnershipOwned {
+			continue
+		}
+		ledger.Records = append(ledger.Records, plancatalog.MigrationRecord{
+			CurrentPath: candidate.Path, TargetPath: candidate.Path, SourceRevision: inventory.SourceRevision, SourceSHA256: candidate.Provenance.Source.ContentSHA256,
+			TargetState: &plancatalog.TargetPrecondition{State: "same-path"}, Ownership: plancatalog.OwnershipOwned, Decision: decisions[candidate.Path], Confidence: "high",
+			Ambiguity: []string{}, Evidence: []string{"reviewed CLI fixture"}, LegacyAliases: []string{}, Conflicts: []string{}, Deferred: false, BranchOwner: "none",
+		})
+	}
+	ledgerData, err := state.EncodeYAML(ledger)
+	if err != nil {
+		t.Fatal(err)
+	}
+	ledgerPath := filepath.Join(root, "reviewed-migration-v2.yaml")
+	if err := os.WriteFile(ledgerPath, ledgerData, 0o644); err != nil {
+		t.Fatal(err)
+	}
+	configBefore := mustRead(t, filepath.Join(root, filepath.FromSlash(state.ConfigPath)))
+	registerBefore := mustRead(t, filepath.Join(root, filepath.FromSlash(plancatalog.LegacyRegisterPath)))
+
+	var jsonOutput bytes.Buffer
+	var stderr bytes.Buffer
+	if code := RunPlans([]string{"migrate", "--ledger", ledgerPath, "--dry-run", "--json", root}, &jsonOutput, &stderr); code != 0 {
+		t.Fatalf("v2 migrate JSON exit=%d stderr=%s\n%s", code, stderr.String(), jsonOutput.String())
+	}
+	var outcome plancatalog.MigrationOutcome
+	if err := json.Unmarshal(jsonOutput.Bytes(), &outcome); err != nil || outcome.SchemaVersion != 2 || outcome.Projection == nil || !outcome.Projection.Ready || outcome.ActivationPerformed == nil || *outcome.ActivationPerformed || outcome.Result.Status != reconcile.StatusPlanned {
+		t.Fatalf("v2 migrate outcome=%#v err=%v\n%s", outcome, err, jsonOutput.String())
+	}
+	var textOutput bytes.Buffer
+	stderr.Reset()
+	if code := RunPlans([]string{"migrate", "--ledger", ledgerPath, "--dry-run", root}, &textOutput, &stderr); code != 0 || !strings.Contains(textOutput.String(), "activation performed=false") || !strings.Contains(textOutput.String(), "ready=true") {
+		t.Fatalf("v2 migrate text exit=%d stderr=%s\n%s", code, stderr.String(), textOutput.String())
+	}
+	if !bytes.Equal(configBefore, mustRead(t, filepath.Join(root, filepath.FromSlash(state.ConfigPath)))) || !bytes.Equal(registerBefore, mustRead(t, filepath.Join(root, filepath.FromSlash(plancatalog.LegacyRegisterPath)))) {
+		t.Fatal("v2 migration dry-run changed config or frozen register")
 	}
 }
 

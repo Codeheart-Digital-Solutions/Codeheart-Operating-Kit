@@ -23,8 +23,9 @@ import (
 type PhaseHook func(phase string) error
 
 type ApplyOptions struct {
-	Now  time.Time
-	Hook PhaseHook
+	Now            time.Time
+	Hook           PhaseHook
+	AuthorityCheck func() ([]Blocker, error)
 }
 
 type transactionMarker struct {
@@ -268,6 +269,17 @@ func Apply(plan Plan, options ApplyOptions) (Result, error) {
 	}
 	if err := invokeHook(options.Hook, "validated"); err != nil {
 		return rollbackBound(err)
+	}
+	if options.AuthorityCheck != nil {
+		blockers, authorityErr := options.AuthorityCheck()
+		if authorityErr != nil {
+			return rollbackBound(fmt.Errorf("pre-commit authority check failed: %w", authorityErr))
+		}
+		if len(blockers) > 0 {
+			result.Blockers = append(result.Blockers, blockers...)
+			return rollbackBound(fmt.Errorf("pre-commit authority changed"))
+		}
+		result.Validations = append(result.Validations, Validation{Name: "pre-commit-authority", Status: "passed"})
 	}
 
 	marker.Phase = "committing"

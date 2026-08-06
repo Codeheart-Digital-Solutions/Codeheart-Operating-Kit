@@ -408,6 +408,9 @@ func runPlansMigrate(args []string, stdout io.Writer, stderr io.Writer) int {
 		}
 	} else {
 		reconcile.WriteText(stdout, outcome.Result)
+		if outcome.Projection != nil {
+			fmt.Fprintf(stdout, "Projected %s readiness: candidates=%d canonical=%d grandfathered=%d gaps=%d ready=%t; activation performed=false.\n", outcome.TargetCatalogMode, outcome.Projection.Candidates, outcome.Projection.Canonical, outcome.Projection.Grandfathered, outcome.Projection.Gaps, outcome.Projection.Ready)
+		}
 		for _, skip := range outcome.Skips {
 			fmt.Fprintf(stdout, "- skipped %s: %s (%s)\n", skip.Code, skip.Message, skip.Path)
 		}

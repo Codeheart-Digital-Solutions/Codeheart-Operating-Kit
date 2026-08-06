@@ -1,4 +1,4 @@
-Last updated: 2026-08-06T23:12:00Z (UTC)
+Last updated: 2026-08-06T23:46:20Z (UTC)
 Created: 2026-08-06
 
 # Ownership-Aware Repository-Wide Plan Catalog Discovery Execution Log
@@ -34,7 +34,7 @@ force push, secret exposure, and silent conflict resolution.
 | `EP-01` | completed | Discovery models, pure settings, exclusions, v1/v2 schemas, dispatch, and fresh defaults. | Accepted after two rounds |
 | `EP-02` | completed | Shared Git-backed candidate classifier, local index adapter, exact path and marker semantics, ownership boundaries, and family qualification. | Accepted after six rounds |
 | `EP-03` | completed | Versioned local views, prospective v2/canonical reads, preview evidence, repository-wide branch touches, and output protection. | Accepted after two rounds |
-| `EP-04` | pending | None recorded. | Required |
+| `EP-04` | completed | Guarded schema-v2 migration, direct canonical readiness, optional exact mixed proof, atomic renames, and transaction-time authority binding. | Accepted after four rounds |
 | `EP-05` | pending | None recorded. | Required |
 | `EP-06` | pending | None recorded. | Required, including routing probe |
 | `EP-07` | pending | None recorded. | Required, including cross-platform evidence |
@@ -48,21 +48,29 @@ force push, secret exposure, and silent conflict resolution.
 - Review gate skipped: no.
 - Reviewer mode: fresh read-only subagent when the active environment permits it.
 - Reviewer model and reasoning mode: inherited from the implementing agent.
-- Review rounds: two for EP-01, six for EP-02, and two for EP-03.
+- Review rounds: two for EP-01, six for EP-02, two for EP-03, and four for EP-04.
 - Material findings: two EP-01 P1 findings plus EP-02 findings covering unsafe-source ordering,
   path portability, family authority, marker parsing, v1 compatibility, exact object provenance,
   and deterministic candidate evidence; EP-03 findings covered preview context isolation,
   incomplete target-canonical evidence, and filename-owned kind semantics; all fixed.
-- Files changed because of review: `schemas/kit-config.schema.json`, `internal/plancatalog/view.go`,
-  `internal/plancatalog/plancatalog_test.go`, and `tests/test_json_schemas.py`.
-- Final accepted result: EP-01 through EP-03 accepted; EP-04 through EP-10 pending.
+- EP-04 findings covered v1/v2 authority separation, pre-commit evidence drift, protected register
+  handling, unstaged rename reapplication, executable-mode preservation, deterministic final-state
+  rebinding, and cross-platform Git mode semantics; all fixed.
+- Files changed because of review include `schemas/kit-config.schema.json`, the classifier, local
+  view, migration, commit-tree, and reconcile transaction implementations, their focused tests,
+  and JSON-schema coverage.
+- Final accepted result: EP-01 through EP-04 accepted; EP-05 through EP-10 pending.
 - Approximate added time: about six minutes for EP-01, about thirty-five minutes for EP-02, and
   about twelve minutes for EP-03 review and remediation.
+- EP-04 review and remediation added about thirty-five minutes across four rounds.
 - Token usage: not exposed per review round.
 - Worth-it assessment: yes. EP-02 review prevented unsafe local fallback evidence from becoming
   authority, preserved v1 activation compatibility, and bound fallback reads to exact offline Git
   objects despite replacement refs. EP-03 review prevented preview conflicts from being reported
   safe, ensured canonical readiness always carries v2 evidence, and preserved filename-owned kind.
+- EP-04 review prevented historical v1 evidence from mutating v2 authority, bound policy and
+  candidate evidence inside the reconcile transaction, made protected paths unconditional, and
+  prevented false final-state readiness after source/body/mode drift.
 
 ## Activation Delta
 
@@ -167,9 +175,41 @@ Status: completed and accepted for checkpoint publication.
 
 ## EP-04 Delta - Guarded Migration And Mode Compatibility
 
-Status: pending.
+Status: completed and accepted for checkpoint publication.
 
-No divergence, validation, or review evidence is recorded yet.
+- Kept schema-v1 migration behavior on its historical route and added a hard incompatibility
+  blocker when a v1 ledger is presented to an active discovery-v2 repository.
+- Implemented schema-v2 migration over the exact prospective inventory revision, policy digest,
+  candidate digest, source hashes, owned disposition, branch evidence, dirty state, and target
+  preconditions. Every authoritative candidate requires one reviewed disposition.
+- Added direct legacy-to-canonical preparation without config writes, plus optional mixed deferral
+  only for exact register-proven cutover blobs. Grandfathered plan comparison is byte-exact and no
+  longer tolerates checkout line-ending conversion.
+- Added deterministic in-place metadata insertion and atomic filename correction as no-replace
+  create plus exact-hash remove. Created/Last updated/lifecycle headers, Git executable class, config,
+  frozen register, and original cutover revision are preserved.
+- Added an authority digest over configured settings/problems, config/register bytes, HEAD,
+  policy/candidates/completeness, sources, dirty state, and branch touches. Reconcile revalidates it
+  after staging and immediately before the first repository mutation; drift rolls back without
+  applying plan actions.
+- Added unconditional config/register path protection, including a hostile valid-metadata marker
+  in the frozen register, and exact final-state reapplication proof derived from each reviewed
+  original blob, semantic decision, target precondition, deterministic inserted bytes, and Git
+  executable class. Immediate unstaged rename reapply is a safe no-op.
+- Candidate-set hashing now excludes the surrounding selected revision so identical local-index
+  and exact commit-tree evidence has the same digest; revision remains separately bound inventory
+  evidence. Added one reusable inert exact commit-tree adapter for this proof and later EP-05 use.
+- CLI JSON/text now reports versioned projected candidate/canonical/grandfathered/gap readiness and
+  explicitly states that migration does not activate discovery or catalog mode.
+- Validation: `go test ./internal/plancatalog ./internal/reconcile ./internal/commands -count=1`
+  passed; focused v2 migration/CLI regressions repeated two and three times passed; focused `go
+  vet` passed; JSON-schema tests passed 40 cases; schema validation and `git diff --check` passed.
+  The full Go suite has only the expected managed content-graph digest drift reserved for
+  EP-06/EP-08 parity regeneration.
+- Review gate: four rounds. The accepted remediation covers v1/v2 separation, transaction-time
+  authority revalidation, protected paths, exact mixed proof, deterministic source-to-target
+  final-state binding, immediate rename reapply, source mode preservation, and portable
+  executable-class comparison with an explicit Windows rule. No P1/P2 findings remain.
 
 ## EP-05 Delta - Remote Discovery, Branch Overlays, And Cache Completeness
 

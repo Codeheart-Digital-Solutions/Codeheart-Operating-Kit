@@ -790,10 +790,11 @@ retain mixed mode only for explicit frozen-baseline grandfathering.
 
 - `schemas/plan-migration-ledger.schema.json`
 - `internal/plancatalog/migrate.go`
-- `internal/plancatalog/inventory.go`
 - `internal/plancatalog/view.go`
-- `internal/plancatalog/validate.go`
-- `internal/plancatalog/ep02_test.go`
+- `internal/plancatalog/classifier.go`
+- `internal/plancatalog/git_index.go`
+- `internal/plancatalog/migration_v2_test.go`
+- `internal/reconcile/transaction.go`
 - `internal/commands/plans.go`
 - `internal/commands/commands_test.go`
 
@@ -820,18 +821,18 @@ release evidence claim end-to-end readiness.
 
 ### F) Tasks Checklist
 
-- [ ] Add discovery version, target mode, policy digest, candidate digest, target path, and target preconditions to ledger v2 decoding.
-- [ ] Bind `BuildMigrationPlan` to the exact EP-03 inventory revision, policy, candidate set, source hashes, and branch ownership.
-- [ ] Permit reviewed v2 metadata writes while active config remains legacy and reject incomplete projected canonical coverage.
-- [ ] Generate exact replace actions for in-place metadata insertion while preserving lifecycle header timestamps.
-- [ ] Generate paired no-replace create and exact-hash remove actions for reviewed filename correction in one reconcile transaction.
-- [ ] Reject excluded, prospective-blocked, unowned, preview, malformed, duplicate-ID, dirty, branch-owned, and stale-ledger actions.
-- [ ] Strengthen mixed proof to compare current bytes with exact cutover blobs beyond checkout line endings.
-- [ ] Preserve frozen register bytes and original cutover revision in every legacy, mixed, and canonical migration path.
-- [ ] Add direct legacy-to-canonical readiness, optional mixed deferral, rename collision, rollback, recovery-marker, and idempotent reapply tests.
-- [ ] Add CLI text/JSON evidence for actions, skips, blockers, projected coverage, and explicit no-activation behavior.
-- [ ] Run `go test ./internal/plancatalog ./internal/reconcile ./internal/commands`.
-- [ ] Run dry-run, apply, recovery, and reapply fixtures with byte comparisons for headers and frozen registers.
+- [x] Add discovery version, target mode, policy digest, candidate digest, target path, and target preconditions to ledger v2 decoding.
+- [x] Bind `BuildMigrationPlan` to the exact EP-03 inventory revision, policy, candidate set, source hashes, and branch ownership.
+- [x] Permit reviewed v2 metadata writes while active config remains legacy and reject incomplete projected canonical coverage.
+- [x] Generate exact replace actions for in-place metadata insertion while preserving lifecycle header timestamps.
+- [x] Generate paired no-replace create and exact-hash remove actions for reviewed filename correction in one reconcile transaction.
+- [x] Reject excluded, prospective-blocked, unowned, preview, malformed, duplicate-ID, dirty, branch-owned, and stale-ledger actions.
+- [x] Strengthen mixed proof to compare current bytes with exact cutover blobs beyond checkout line endings.
+- [x] Preserve frozen register bytes and original cutover revision in every legacy, mixed, and canonical migration path.
+- [x] Add direct legacy-to-canonical readiness, optional mixed deferral, rename collision, rollback, recovery-marker, and idempotent reapply tests.
+- [x] Add CLI text/JSON evidence for actions, skips, blockers, projected coverage, and explicit no-activation behavior.
+- [x] Run `go test ./internal/plancatalog ./internal/reconcile ./internal/commands`.
+- [x] Run dry-run, apply, recovery, and reapply fixtures with byte comparisons for headers and frozen registers.
 
 ### G) Implementation Notes
 

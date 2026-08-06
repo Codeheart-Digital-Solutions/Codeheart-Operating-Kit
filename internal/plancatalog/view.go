@@ -333,7 +333,16 @@ func LoadRepositorySnapshotWithOptions(root string, options SnapshotOptions) (Re
 			if record.Metadata != nil {
 				continue
 			}
-			if len(reconciliation.ByCanonicalPath[record.Path]) > 0 && baselinePaths[record.Path] {
+			if len(reconciliation.ByCanonicalPath[record.Path]) > 0 && baselinePaths[record.Path] != "" {
+				current, currentErr := readRegularSource(root, record.Path)
+				if currentErr == nil && sha256Text(current) == baselinePaths[record.Path] {
+					continue
+				}
+				message := "grandfathered filename-only plan bytes differ from the exact mixed-mode cutover blob"
+				if currentErr != nil {
+					message = currentErr.Error()
+				}
+				problems = append(problems, Problem{Code: "mixed_grandfathered_plan_modified", Message: message, Path: record.Path, Severity: SeverityError, Remediation: "restore the exact cutover bytes or add reviewed metadata through migration"})
 				continue
 			}
 			problems = append(problems, Problem{Code: "mixed_new_plan_metadata_missing", Message: "mixed mode requires metadata for a formal plan without grandfathered register evidence", Path: record.Path, Severity: SeverityError, Remediation: "author the new plan with canonical metadata or complete reviewed migration evidence"})
@@ -367,8 +376,8 @@ func problemCodePresent(problems []Problem, code string) bool {
 	return false
 }
 
-func loadMixedBaseline(root, revision string) (map[string]bool, []Problem) {
-	paths := map[string]bool{}
+func loadMixedBaseline(root, revision string) (map[string]string, []Problem) {
+	paths := map[string]string{}
 	if revision == "" {
 		return paths, nil
 	}
@@ -418,7 +427,11 @@ func loadMixedBaseline(root, revision string) (map[string]bool, []Problem) {
 	for _, entry := range entries {
 		for _, path := range entry.CanonicalDocs {
 			if gitRevisionHasRegularFile(root, revision, path) {
-				paths[path] = true
+				data, readErr := gitBytes(root, "show", revision+":"+path)
+				if readErr != nil {
+					return paths, []Problem{{Code: "mixed_cutover_revision_unavailable", Message: readErr.Error(), Path: path, Severity: SeverityError, Remediation: "retain the exact cutover plan blob while mixed compatibility is active"}}
+				}
+				paths[path] = sha256Text(data)
 			}
 		}
 	}

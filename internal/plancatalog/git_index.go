@@ -88,6 +88,40 @@ func ClassifyUntrackedPreview(root string, settings RepositorySettings, mode Cat
 	}, settings.DiscoveryPolicy(true), mode, repositoryID, localWorktreeBoundary(root))
 }
 
+func ClassifyCommitTree(root, revision string, settings RepositorySettings, mode CatalogMode, repositoryID string) (Classification, error) {
+	command := exec.Command("git", "-C", root, "ls-tree", "-r", "-z", "--full-tree", revision)
+	command.Env = append(command.Environ(), "GIT_TERMINAL_PROMPT=0", "GIT_NO_LAZY_FETCH=1", "GIT_NO_REPLACE_OBJECTS=1", "LC_ALL=C")
+	output, err := command.CombinedOutput()
+	if err != nil {
+		return Classification{}, fmt.Errorf("git_tree_unavailable: %w: %s", err, strings.TrimSpace(string(output)))
+	}
+	blobs := []GitBlob{}
+	for _, item := range bytes.Split(output, []byte{0}) {
+		if len(item) == 0 {
+			continue
+		}
+		header, rawPath, ok := bytes.Cut(item, []byte{'\t'})
+		fields := strings.Fields(string(header))
+		if !ok || len(fields) != 3 {
+			return Classification{}, fmt.Errorf("git_tree_invalid: malformed ls-tree record")
+		}
+		blobs = append(blobs, GitBlob{Path: string(rawPath), Mode: GitMode(fields[0]), ObjectID: fields[2], Revision: revision})
+	}
+	batch, err := newIndexBatchReader(root)
+	if err != nil {
+		return Classification{}, err
+	}
+	classification, classifyErr := ClassifyGitBlobs(blobs, batch.Read, settings.DiscoveryPolicy(false), mode, repositoryID, nil)
+	closeErr := batch.Close()
+	if classifyErr != nil {
+		return Classification{}, classifyErr
+	}
+	if closeErr != nil {
+		return Classification{}, closeErr
+	}
+	return classification, nil
+}
+
 func WorktreeV2PlanSignal(root, candidatePath string) (bool, error) {
 	if !strings.EqualFold(filepath.Ext(filepath.FromSlash(candidatePath)), ".md") {
 		return false, nil
