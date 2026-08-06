@@ -29,26 +29,39 @@ type MigrationDecision struct {
 }
 
 type MigrationRecord struct {
-	Path           string            `json:"path" yaml:"path"`
-	SourceRevision string            `json:"source_revision" yaml:"source_revision"`
-	SourceSHA256   string            `json:"source_sha256" yaml:"source_sha256"`
-	Decision       MigrationDecision `json:"decision" yaml:"decision"`
-	Confidence     string            `json:"confidence" yaml:"confidence"`
-	Ambiguity      []string          `json:"ambiguity" yaml:"ambiguity"`
-	Evidence       []string          `json:"evidence" yaml:"evidence"`
-	LegacyAliases  []string          `json:"legacy_aliases" yaml:"legacy_aliases"`
-	Conflicts      []string          `json:"conflicts" yaml:"conflicts"`
-	Deferred       bool              `json:"deferred" yaml:"deferred"`
-	DeferralReason string            `json:"deferral_reason,omitempty" yaml:"deferral_reason,omitempty"`
-	BranchOwner    string            `json:"branch_owner" yaml:"branch_owner"`
+	Path           string              `json:"path,omitempty" yaml:"path,omitempty"`
+	CurrentPath    string              `json:"current_path,omitempty" yaml:"current_path,omitempty"`
+	TargetPath     string              `json:"target_path,omitempty" yaml:"target_path,omitempty"`
+	SourceRevision string              `json:"source_revision" yaml:"source_revision"`
+	SourceSHA256   string              `json:"source_sha256" yaml:"source_sha256"`
+	TargetState    *TargetPrecondition `json:"target_precondition,omitempty" yaml:"target_precondition,omitempty"`
+	Ownership      OwnershipClass      `json:"ownership_disposition,omitempty" yaml:"ownership_disposition,omitempty"`
+	Decision       MigrationDecision   `json:"decision" yaml:"decision"`
+	Confidence     string              `json:"confidence" yaml:"confidence"`
+	Ambiguity      []string            `json:"ambiguity" yaml:"ambiguity"`
+	Evidence       []string            `json:"evidence" yaml:"evidence"`
+	LegacyAliases  []string            `json:"legacy_aliases" yaml:"legacy_aliases"`
+	Conflicts      []string            `json:"conflicts" yaml:"conflicts"`
+	Deferred       bool                `json:"deferred" yaml:"deferred"`
+	DeferralReason string              `json:"deferral_reason,omitempty" yaml:"deferral_reason,omitempty"`
+	BranchOwner    string              `json:"branch_owner" yaml:"branch_owner"`
+}
+
+type TargetPrecondition struct {
+	State  string `json:"state" yaml:"state"`
+	SHA256 string `json:"sha256,omitempty" yaml:"sha256,omitempty"`
 }
 
 type MigrationLedger struct {
-	SchemaVersion     int               `json:"schema_version" yaml:"schema_version"`
-	RepositoryID      string            `json:"repository_id" yaml:"repository_id"`
-	InventoryRevision string            `json:"inventory_revision" yaml:"inventory_revision"`
-	ReviewedAt        string            `json:"reviewed_at" yaml:"reviewed_at"`
-	Records           []MigrationRecord `json:"records" yaml:"records"`
+	SchemaVersion      int               `json:"schema_version" yaml:"schema_version"`
+	RepositoryID       string            `json:"repository_id" yaml:"repository_id"`
+	DiscoveryVersion   DiscoveryVersion  `json:"discovery_version,omitempty" yaml:"discovery_version,omitempty"`
+	TargetCatalogMode  CatalogMode       `json:"target_catalog_mode,omitempty" yaml:"target_catalog_mode,omitempty"`
+	PolicyDigest       string            `json:"policy_digest,omitempty" yaml:"policy_digest,omitempty"`
+	CandidateSetDigest string            `json:"candidate_set_digest,omitempty" yaml:"candidate_set_digest,omitempty"`
+	InventoryRevision  string            `json:"inventory_revision" yaml:"inventory_revision"`
+	ReviewedAt         string            `json:"reviewed_at" yaml:"reviewed_at"`
+	Records            []MigrationRecord `json:"records" yaml:"records"`
 }
 
 type MigrationSkip struct {
@@ -78,7 +91,15 @@ type MigrationApplyOptions struct {
 }
 
 func LoadMigrationLedger(data []byte) (MigrationLedger, error) {
-	if _, err := state.DecodeAndValidateYAML(state.PlanMigrationSchema, data); err != nil {
+	value, err := state.DecodeYAMLMap(data)
+	if err != nil {
+		return MigrationLedger{}, fmt.Errorf("invalid_ledger: %w", err)
+	}
+	schemaPath, err := state.SchemaForPlanMigrationVersion(state.AsInt(value["schema_version"]))
+	if err != nil {
+		return MigrationLedger{}, fmt.Errorf("invalid_ledger: %w", err)
+	}
+	if err := state.Validate(schemaPath, value); err != nil {
 		return MigrationLedger{}, fmt.Errorf("invalid_ledger: %w", err)
 	}
 	var ledger MigrationLedger
@@ -86,6 +107,14 @@ func LoadMigrationLedger(data []byte) (MigrationLedger, error) {
 	decoder.KnownFields(true)
 	if err := decoder.Decode(&ledger); err != nil {
 		return MigrationLedger{}, fmt.Errorf("invalid_ledger: %w", err)
+	}
+	for index := range ledger.Records {
+		if ledger.Records[index].CurrentPath == "" {
+			ledger.Records[index].CurrentPath = ledger.Records[index].Path
+		}
+		if ledger.Records[index].TargetPath == "" {
+			ledger.Records[index].TargetPath = ledger.Records[index].CurrentPath
+		}
 	}
 	return ledger, nil
 }

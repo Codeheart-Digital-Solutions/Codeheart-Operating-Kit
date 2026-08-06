@@ -1,17 +1,13 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/schemas/plan-migration-ledger.schema.json",
-  "title": "Codeheart Plan Metadata Migration Ledger v2",
+  "$id": "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/schemas/plan-migration-ledger-v1.schema.json",
+  "title": "Codeheart Plan Metadata Migration Ledger v1",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "repository_id", "discovery_version", "target_catalog_mode", "policy_digest", "candidate_set_digest", "inventory_revision", "reviewed_at", "records"],
+  "required": ["schema_version", "repository_id", "inventory_revision", "reviewed_at", "records"],
   "properties": {
-    "schema_version": { "type": "integer", "const": 2 },
+    "schema_version": { "type": "integer", "const": 1 },
     "repository_id": { "$ref": "#/$defs/identifier" },
-    "discovery_version": { "type": "integer", "const": 2 },
-    "target_catalog_mode": { "type": "string", "enum": ["mixed", "canonical"] },
-    "policy_digest": { "$ref": "#/$defs/digest" },
-    "candidate_set_digest": { "$ref": "#/$defs/digest" },
     "inventory_revision": { "$ref": "#/$defs/commit" },
     "reviewed_at": { "$ref": "#/$defs/timestamp" },
     "records": {
@@ -20,12 +16,9 @@
         "type": "object",
         "additionalProperties": false,
         "required": [
-          "current_path",
-          "target_path",
+          "path",
           "source_revision",
           "source_sha256",
-          "target_precondition",
-          "ownership_disposition",
           "decision",
           "confidence",
           "ambiguity",
@@ -36,26 +29,9 @@
           "branch_owner"
         ],
         "properties": {
-          "current_path": { "$ref": "#/$defs/path" },
-          "target_path": { "$ref": "#/$defs/path" },
+          "path": { "type": "string", "minLength": 1 },
           "source_revision": { "$ref": "#/$defs/commit" },
-          "source_sha256": { "$ref": "#/$defs/digest" },
-          "target_precondition": {
-            "type": "object",
-            "additionalProperties": false,
-            "required": ["state"],
-            "properties": {
-              "state": { "type": "string", "enum": ["same-path", "absent", "exact"] },
-              "sha256": { "$ref": "#/$defs/digest" }
-            },
-            "allOf": [
-              {
-                "if": { "properties": { "state": { "const": "exact" } }, "required": ["state"] },
-                "then": { "required": ["sha256"] }
-              }
-            ]
-          },
-          "ownership_disposition": { "type": "string", "const": "owned" },
+          "source_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
           "decision": {
             "type": "object",
             "additionalProperties": false,
@@ -132,8 +108,6 @@
       "pattern": "^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.(?:discovery|implementation|family)\\.[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$"
     },
     "commit": { "type": "string", "pattern": "^[0-9a-f]{40,64}$" },
-    "digest": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
-    "path": { "type": "string", "minLength": 1, "pattern": "^[^\\\\\\r\\n]+$" },
     "timestamp": { "type": "string", "format": "date-time", "pattern": "Z$" }
   }
 }

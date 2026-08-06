@@ -174,7 +174,11 @@ func Scan(ctx context.Context, options ScanOptions) (ScanResult, error) {
 		}
 	}
 	sortCatalog(&catalog)
-	if err := state.Validate(state.PlanCatalogSchema, catalog); err != nil {
+	schemaPath, err := state.SchemaForPlanCatalogVersion(catalog.SchemaVersion)
+	if err != nil {
+		return ScanResult{}, fmt.Errorf("portfolio_catalog_invalid: %w", err)
+	}
+	if err := state.Validate(schemaPath, catalog); err != nil {
 		return ScanResult{}, fmt.Errorf("portfolio_catalog_invalid: %w", err)
 	}
 	if err := overlay.VerifyUnchanged(); err != nil {
@@ -473,7 +477,11 @@ func ReadCachedCatalog(root string) (Catalog, error) {
 	if err := json.Unmarshal(data, &catalog); err != nil {
 		return Catalog{}, err
 	}
-	if err := state.Validate(state.PlanCatalogSchema, catalog); err != nil {
+	schemaPath, err := state.SchemaForPlanCatalogVersion(catalog.SchemaVersion)
+	if err != nil {
+		return Catalog{}, err
+	}
+	if err := state.Validate(schemaPath, catalog); err != nil {
 		return Catalog{}, err
 	}
 	return catalog, nil

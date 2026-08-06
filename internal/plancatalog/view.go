@@ -9,14 +9,20 @@ import (
 	"path/filepath"
 	"sort"
 	"strings"
+	"unicode"
 
 	"github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/internal/state"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/unicode/norm"
 )
 
 type RepositorySettings struct {
-	Mode            CatalogMode `json:"mode"`
-	RepositoryID    string      `json:"repository_id,omitempty"`
-	CutoverRevision string      `json:"cutover_revision,omitempty"`
+	Mode             CatalogMode      `json:"mode"`
+	RepositoryID     string           `json:"repository_id,omitempty"`
+	CutoverRevision  string           `json:"cutover_revision,omitempty"`
+	DiscoveryVersion DiscoveryVersion `json:"discovery_version"`
+	ExcludedRoots    []string         `json:"excluded_roots"`
+	PolicyDigest     string           `json:"policy_digest"`
 }
 
 type RepositorySnapshot struct {
@@ -48,7 +54,7 @@ type View struct {
 }
 
 func LoadRepositorySettings(root string) (RepositorySettings, []Problem) {
-	settings := RepositorySettings{Mode: ModeLegacy}
+	settings := defaultRepositorySettings()
 	configPath := filepath.Join(root, filepath.FromSlash(state.ConfigPath))
 	data, err := os.ReadFile(configPath)
 	if os.IsNotExist(err) {
@@ -57,6 +63,29 @@ func LoadRepositorySettings(root string) (RepositorySettings, []Problem) {
 	if err != nil {
 		return settings, []Problem{{Code: "catalog_config_unreadable", Message: err.Error(), Path: state.ConfigPath, Severity: SeverityError}}
 	}
+	return DecodeRepositorySettings(data)
+}
+
+func defaultRepositorySettings() RepositorySettings {
+	settings := RepositorySettings{Mode: ModeLegacy, DiscoveryVersion: DiscoveryV1, ExcludedRoots: []string{}}
+	settings.PolicyDigest = settings.DiscoveryPolicy(false).Digest()
+	return settings
+}
+
+func (settings RepositorySettings) DiscoveryPolicy(includeUntracked bool) DiscoveryPolicy {
+	return DiscoveryPolicy{
+		Version:               settings.DiscoveryVersion,
+		ExcludedRoots:         append([]string{}, settings.ExcludedRoots...),
+		AmbiguitySegments:     append([]string{}, conventionalAmbiguitySegments...),
+		IncludeUntracked:      includeUntracked,
+		AuthoritativeUniverse: "git-regular-blobs",
+	}
+}
+
+// DecodeRepositorySettings decodes config bytes without consulting a checkout. Remote
+// membership evaluation uses this exact decoder for default-branch policy authority.
+func DecodeRepositorySettings(data []byte) (RepositorySettings, []Problem) {
+	settings := defaultRepositorySettings()
 	config, err := state.DecodeYAMLMap(data)
 	legacyNullComponents := err == nil && config["component_settings"] == nil
 	if legacyNullComponents {
@@ -76,6 +105,15 @@ func LoadRepositorySettings(root string) (RepositorySettings, []Problem) {
 	}
 	settings.Mode = mode
 	settings.CutoverRevision = state.AsString(planning["plan_catalog_cutover_revision"])
+	if rawVersion := state.AsInt(planning["plan_catalog_discovery_version"]); rawVersion != 0 {
+		version, valid := ParseDiscoveryVersion(rawVersion)
+		if !valid {
+			return settings, []Problem{{Code: "catalog_discovery_version_invalid", Message: fmt.Sprintf("plan catalog discovery version %d is invalid", rawVersion), Path: state.ConfigPath, Severity: SeverityError}}
+		}
+		settings.DiscoveryVersion = version
+	}
+	ownership := state.Map(planning["plan_catalog_ownership"])
+	settings.ExcludedRoots = stringValues(ownership["excluded_roots"])
 	portfolio := state.Map(config["portfolio"])
 	settings.RepositoryID = state.AsString(portfolio["member_repository_id"])
 	problems := []Problem{}
@@ -88,7 +126,87 @@ func LoadRepositorySettings(root string) (RepositorySettings, []Problem) {
 	if settings.Mode == ModeMixed && settings.CutoverRevision == "" {
 		problems = append(problems, Problem{Code: "mixed_cutover_revision_missing", Message: "mixed catalog mode requires plan_catalog_cutover_revision", Path: state.ConfigPath, Severity: SeverityError, Remediation: "record the exact pre-cutover Git revision that contains the frozen register and grandfathered plans"})
 	}
+	problems = append(problems, validateExcludedRoots(settings.ExcludedRoots)...)
+	sort.Strings(settings.ExcludedRoots)
+	settings.PolicyDigest = settings.DiscoveryPolicy(false).Digest()
+	SortProblems(problems)
 	return settings, problems
+}
+
+func stringValues(value any) []string {
+	items, ok := value.([]any)
+	if !ok {
+		return []string{}
+	}
+	result := make([]string, 0, len(items))
+	for _, item := range items {
+		if text, ok := item.(string); ok {
+			result = append(result, text)
+		}
+	}
+	return result
+}
+
+func validateExcludedRoots(roots []string) []Problem {
+	problems := []Problem{}
+	portable := map[string]string{}
+	for _, root := range roots {
+		code, reason := validateExcludedRoot(root)
+		if code != "" {
+			problems = append(problems, Problem{Code: code, Message: reason, Path: state.ConfigPath, Severity: SeverityError, Remediation: "use a unique slash-normalized repository-relative directory ending in /"})
+			continue
+		}
+		key := cases.Fold().String(norm.NFC.String(root))
+		if prior, exists := portable[key]; exists {
+			problems = append(problems, Problem{Code: "excluded_root_portable_collision", Message: fmt.Sprintf("excluded roots %q and %q collide under portable path comparison", prior, root), Path: state.ConfigPath, Severity: SeverityError, Remediation: "keep one portable spelling"})
+			continue
+		}
+		portable[key] = root
+	}
+	keys := make([]string, 0, len(portable))
+	for key := range portable {
+		keys = append(keys, key)
+	}
+	sort.Strings(keys)
+	for i, left := range keys {
+		for _, right := range keys[i+1:] {
+			if strings.HasPrefix(right, left) {
+				problems = append(problems, Problem{Code: "excluded_roots_overlap", Message: fmt.Sprintf("excluded roots %q and %q overlap", portable[left], portable[right]), Path: state.ConfigPath, Severity: SeverityError, Remediation: "retain only the shallowest intended exclusion"})
+			}
+		}
+	}
+	return problems
+}
+
+func validateExcludedRoot(root string) (string, string) {
+	if root == "" || strings.TrimSpace(root) != root || !strings.HasSuffix(root, "/") {
+		return "excluded_root_invalid", fmt.Sprintf("excluded root %q must be non-empty, trimmed, and end in /", root)
+	}
+	if strings.HasPrefix(root, "/") || strings.Contains(root, "\\") || windowsDriveAbsolute(root) {
+		return "excluded_root_invalid", fmt.Sprintf("excluded root %q must be slash-normalized and repository-relative", root)
+	}
+	if strings.ContainsAny(root, "*?[]{}") {
+		return "excluded_root_glob", fmt.Sprintf("excluded root %q must not contain glob syntax", root)
+	}
+	segments := strings.Split(strings.TrimSuffix(root, "/"), "/")
+	for _, segment := range segments {
+		if segment == "" || segment == "." || segment == ".." {
+			return "excluded_root_escape", fmt.Sprintf("excluded root %q contains an empty or escaping segment", root)
+		}
+		for _, char := range segment {
+			if unicode.IsControl(char) {
+				return "excluded_root_invalid", fmt.Sprintf("excluded root %q contains control characters", root)
+			}
+		}
+	}
+	if norm.NFC.String(root) != root {
+		return "excluded_root_not_normalized", fmt.Sprintf("excluded root %q is not Unicode NFC-normalized", root)
+	}
+	return "", ""
+}
+
+func windowsDriveAbsolute(path string) bool {
+	return len(path) >= 3 && ((path[0] >= 'A' && path[0] <= 'Z') || (path[0] >= 'a' && path[0] <= 'z')) && path[1] == ':' && path[2] == '/'
 }
 
 func LoadRepositorySnapshot(root string) (RepositorySnapshot, error) {

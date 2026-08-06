@@ -130,6 +130,9 @@ type Metrics struct {
 
 type Catalog struct {
 	SchemaVersion      int                             `json:"schema_version"`
+	DiscoveryVersion   plancatalog.DiscoveryVersion    `json:"discovery_version,omitempty"`
+	PolicyDigest       string                          `json:"policy_digest,omitempty"`
+	CandidateSetDigest string                          `json:"candidate_set_digest,omitempty"`
 	CoordinationHomeID string                          `json:"coordination_home_id"`
 	StartedAt          string                          `json:"started_at"`
 	CompletedAt        string                          `json:"completed_at"`

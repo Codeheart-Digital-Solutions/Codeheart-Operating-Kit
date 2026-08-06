@@ -1079,6 +1079,14 @@ func TestInitWritesStandardSurfaces(t *testing.T) {
 	if config["setup_purpose"] != "company-automation" {
 		t.Fatalf("setup_purpose = %#v", config["setup_purpose"])
 	}
+	planning := state.Map(state.Map(config["component_settings"])["planning-workflows"])
+	if state.AsInt(planning["plan_catalog_discovery_version"]) != 2 {
+		t.Fatalf("fresh discovery version = %#v", planning["plan_catalog_discovery_version"])
+	}
+	ownership := state.Map(planning["plan_catalog_ownership"])
+	if roots, ok := ownership["excluded_roots"].([]any); !ok || len(roots) != 0 {
+		t.Fatalf("fresh excluded roots = %#v", ownership["excluded_roots"])
+	}
 	lock, err := lockfile.ReadLock(root)
 	if err != nil {
 		t.Fatalf("ReadLock: %v", err)

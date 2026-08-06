@@ -1,4 +1,4 @@
-Last updated: 2026-08-06T21:13:00Z (UTC)
+Last updated: 2026-08-06T21:41:02Z (UTC)
 Created: 2026-08-06
 Status: active
 Execution log: ownership-aware-plan-catalog-discovery_execution_log.md
@@ -548,19 +548,19 @@ blocks EP-02 through EP-05.
 
 ### F) Tasks Checklist
 
-- [ ] Add `DiscoveryVersion`, `DiscoveryPolicy`, `OwnershipClass`, `CandidateSignal`, and Git provenance types to `internal/plancatalog/model.go`.
-- [ ] Add pure config-byte decoding plus filesystem loading for discovery version and exclusions in `internal/plancatalog/view.go`.
-- [ ] Extend `schemas/kit-config.schema.json` with discovery versions `1` and `2` plus normalized `excluded_roots`.
-- [ ] Copy current ledger schema bytes to `schemas/plan-migration-ledger-v1.schema.json` and define the v2 contract in `schemas/plan-migration-ledger.schema.json`.
-- [ ] Copy current catalog schema bytes to `schemas/plan-catalog-v1.schema.json` and define v2 member/completeness evidence in `schemas/plan-catalog.schema.json`.
-- [ ] Add explicit v1/v2 schema constants and dispatch in `internal/state/schema.go`.
-- [ ] Make `initialConfig` in `internal/commands/lifecycle.go` write fresh discovery-v2 settings.
-- [ ] Make `WriteDefaultState` in `internal/components/components.go` write the same fresh settings.
-- [ ] Make `write_default_state` in `src/codeheart_operating_kit/components.py` preserve fresh-config parity.
-- [ ] Add config, schema-version, historical-evidence, and fresh-default cases to `tests/test_json_schemas.py`, `internal/commands/commands_test.go`, and `tests/test_sync_check.py`.
-- [ ] Run `go test ./internal/plancatalog ./internal/state ./internal/commands`.
-- [ ] Run `python3 -m pytest tests/test_json_schemas.py tests/test_sync_check.py`.
-- [ ] Run `python3 scripts/validate-json-schemas.py`.
+- [x] Add `DiscoveryVersion`, `DiscoveryPolicy`, `OwnershipClass`, `CandidateSignal`, and Git provenance types to `internal/plancatalog/model.go`.
+- [x] Add pure config-byte decoding plus filesystem loading for discovery version and exclusions in `internal/plancatalog/view.go`.
+- [x] Extend `schemas/kit-config.schema.json` with discovery versions `1` and `2` plus normalized `excluded_roots`.
+- [x] Copy current ledger schema bytes to `schemas/plan-migration-ledger-v1.schema.json` and define the v2 contract in `schemas/plan-migration-ledger.schema.json`.
+- [x] Copy current catalog schema bytes to `schemas/plan-catalog-v1.schema.json` and define v2 member/completeness evidence in `schemas/plan-catalog.schema.json`.
+- [x] Add explicit v1/v2 schema constants and dispatch in `internal/state/schema.go`.
+- [x] Make `initialConfig` in `internal/commands/lifecycle.go` write fresh discovery-v2 settings.
+- [x] Make `WriteDefaultState` in `internal/components/components.go` write the same fresh settings.
+- [x] Make `write_default_state` in `src/codeheart_operating_kit/components.py` preserve fresh-config parity.
+- [x] Add config, schema-version, historical-evidence, and fresh-default cases to `tests/test_json_schemas.py`, `internal/commands/commands_test.go`, and `tests/test_sync_check.py`.
+- [x] Run `go test ./internal/plancatalog ./internal/state ./internal/commands`.
+- [x] Run `python3 -m pytest tests/test_json_schemas.py tests/test_sync_check.py`.
+- [x] Run `python3 scripts/validate-json-schemas.py`.
 
 ### G) Implementation Notes
 

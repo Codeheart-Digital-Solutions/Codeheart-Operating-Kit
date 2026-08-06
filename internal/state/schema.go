@@ -20,8 +20,12 @@ const (
 	ReleaseCatalogSchema   = "schemas/release-catalog.schema.json"
 	PackManifestSchema     = "schemas/pack-manifest.schema.json"
 	PlanMetadataSchema     = "schemas/plan-metadata.schema.json"
-	PlanCatalogSchema      = "schemas/plan-catalog.schema.json"
-	PlanMigrationSchema    = "schemas/plan-migration-ledger.schema.json"
+	PlanCatalogV1Schema    = "schemas/plan-catalog-v1.schema.json"
+	PlanCatalogV2Schema    = "schemas/plan-catalog.schema.json"
+	PlanCatalogSchema      = PlanCatalogV2Schema
+	PlanMigrationV1Schema  = "schemas/plan-migration-ledger-v1.schema.json"
+	PlanMigrationV2Schema  = "schemas/plan-migration-ledger.schema.json"
+	PlanMigrationSchema    = PlanMigrationV2Schema
 	PortfolioSourcesSchema = "schemas/portfolio-local-sources.schema.json"
 	PortfolioOverlaySchema = "schemas/portfolio-strategic-overlay.schema.json"
 )
@@ -71,6 +75,28 @@ func SchemaForLockVersion(version int) (string, error) {
 		return LockV2Schema, nil
 	default:
 		return "", fmt.Errorf("unsupported lock schema version %d", version)
+	}
+}
+
+func SchemaForPlanCatalogVersion(version int) (string, error) {
+	switch version {
+	case 1:
+		return PlanCatalogV1Schema, nil
+	case 2:
+		return PlanCatalogV2Schema, nil
+	default:
+		return "", fmt.Errorf("unsupported plan catalog schema version %d", version)
+	}
+}
+
+func SchemaForPlanMigrationVersion(version int) (string, error) {
+	switch version {
+	case 1:
+		return PlanMigrationV1Schema, nil
+	case 2:
+		return PlanMigrationV2Schema, nil
+	default:
+		return "", fmt.Errorf("unsupported plan migration schema version %d", version)
 	}
 }
 

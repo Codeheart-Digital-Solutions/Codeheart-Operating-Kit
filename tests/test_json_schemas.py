@@ -274,10 +274,19 @@ def test_plan_catalog_schemas_define_strict_versioned_contracts():
     expected = {
         "plan-metadata.schema.json": {"plan"},
         "plan-catalog.schema.json": {
+            "schema_version", "discovery_version", "policy_digest", "candidate_set_digest",
+            "coordination_home_id", "started_at", "completed_at", "complete", "members",
+            "observations", "candidates", "errors", "metrics",
+        },
+        "plan-catalog-v1.schema.json": {
             "schema_version", "coordination_home_id", "started_at", "completed_at", "complete",
             "members", "observations", "candidates", "errors", "metrics",
         },
         "plan-migration-ledger.schema.json": {
+            "schema_version", "repository_id", "discovery_version", "target_catalog_mode",
+            "policy_digest", "candidate_set_digest", "inventory_revision", "reviewed_at", "records",
+        },
+        "plan-migration-ledger-v1.schema.json": {
             "schema_version", "repository_id", "inventory_revision", "reviewed_at", "records",
         },
         "portfolio-local-sources.schema.json": {"schema_version", "sources"},
@@ -322,7 +331,10 @@ def test_every_new_durable_schema_accepts_a_positive_instance_and_rejects_a_nega
         ),
         "plan-catalog.schema.json": (
             {
-                "schema_version": 1,
+                "schema_version": 2,
+                "discovery_version": 2,
+                "policy_digest": digest,
+                "candidate_set_digest": "c" * 64,
                 "coordination_home_id": "example-home",
                 "started_at": timestamp,
                 "completed_at": timestamp,
@@ -347,15 +359,22 @@ def test_every_new_durable_schema_accepts_a_positive_instance_and_rejects_a_nega
         ),
         "plan-migration-ledger.schema.json": (
             {
-                "schema_version": 1,
+                "schema_version": 2,
                 "repository_id": "example",
+                "discovery_version": 2,
+                "target_catalog_mode": "canonical",
+                "policy_digest": digest,
+                "candidate_set_digest": "c" * 64,
                 "inventory_revision": commit,
                 "reviewed_at": timestamp,
                 "records": [
                     {
-                        "path": "docs/repo/plans/catalog_discovery_doc.md",
+                        "current_path": "docs/repo/plans/catalog.md",
+                        "target_path": "docs/repo/plans/catalog_discovery_doc.md",
                         "source_revision": commit,
                         "source_sha256": digest,
+                        "target_precondition": {"state": "absent"},
+                        "ownership_disposition": "owned",
                         "decision": {
                             "id": "example.discovery.catalog",
                             "kind": "discovery",
@@ -395,6 +414,34 @@ def test_every_new_durable_schema_accepts_a_positive_instance_and_rejects_a_nega
         make_negative(negative)
         errors = validate_instance(schema, negative)
         assert any(expected_error in error for error in errors), (name, errors)
+
+
+def test_historical_plan_catalog_and_ledger_schemas_remain_v1_only():
+    catalog_v1 = durable_schema("plan-catalog-v1.schema.json")
+    ledger_v1 = durable_schema("plan-migration-ledger-v1.schema.json")
+    assert catalog_v1["properties"]["schema_version"]["const"] == 1
+    assert ledger_v1["properties"]["schema_version"]["const"] == 1
+    assert durable_schema("plan-catalog.schema.json")["properties"]["schema_version"]["const"] == 2
+    assert durable_schema("plan-migration-ledger.schema.json")["properties"]["schema_version"]["const"] == 2
+
+
+def test_kit_config_schema_exposes_exclusions_only_discovery_v2_settings():
+    config = base_config()
+    config["component_settings"]["planning-workflows"] = {
+        "plan_catalog_discovery_version": 2,
+        "plan_catalog_ownership": {"excluded_roots": ["vendor/docs/"]},
+    }
+    assert_config_valid(config)
+    config["component_settings"]["planning-workflows"]["plan_catalog_ownership"][
+        "owned_roots"
+    ] = ["docs/"]
+    assert_config_invalid(config, "unknown owned_roots")
+
+    compatible = base_config()
+    compatible["component_settings"]["planning-workflows"] = {
+        "unrelated_extension_setting": {"enabled": True}
+    }
+    assert_config_valid(compatible)
 
 
 def test_kit_config_schema_accepts_v2_member_and_home_fixtures():

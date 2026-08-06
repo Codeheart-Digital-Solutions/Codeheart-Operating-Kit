@@ -23,6 +23,21 @@ def test_check_detects_drift_and_sync_repairs(tmp_path):
     assert report["drift"] == []
 
 
+def test_python_init_writes_discovery_v2_without_upgrading_existing_config(tmp_path):
+    main(["init", str(tmp_path), "--project-name", "Example-Automation"])
+    config_path = tmp_path / ".codeheart/kit.config.yaml"
+    config = manifest.load_yaml(config_path)
+    planning = config["component_settings"]["planning-workflows"]
+    assert planning == {
+        "plan_catalog_discovery_version": 2,
+        "plan_catalog_ownership": {"excluded_roots": []},
+    }
+
+    original = config_path.read_bytes()
+    main(["sync", str(tmp_path)])
+    assert config_path.read_bytes() == original
+
+
 def test_sync_refreshes_v011_lock_to_installed_cli_metadata(tmp_path, monkeypatch):
     monkeypatch.setenv("CODEHEART_OPERATING_KIT_CLI", "1")
     monkeypatch.setattr("codeheart_operating_kit.commands.sync.sys.platform", "darwin")

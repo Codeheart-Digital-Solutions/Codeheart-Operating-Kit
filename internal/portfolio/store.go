@@ -24,7 +24,11 @@ func storeCompleteCatalogWithHook(root string, catalog Catalog, hook func(string
 		_, readErr := readRootRegular(root, CatalogPath)
 		return false, readErr == nil, nil
 	}
-	if err := state.Validate(state.PlanCatalogSchema, catalog); err != nil {
+	schemaPath, err := state.SchemaForPlanCatalogVersion(catalog.SchemaVersion)
+	if err != nil {
+		return false, false, fmt.Errorf("portfolio_catalog_invalid: %w", err)
+	}
+	if err := state.Validate(schemaPath, catalog); err != nil {
 		return false, false, fmt.Errorf("portfolio_catalog_invalid: %w", err)
 	}
 	data, err := json.MarshalIndent(catalog, "", "  ")

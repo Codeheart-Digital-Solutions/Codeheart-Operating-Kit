@@ -88,12 +88,23 @@ func initialConfig(projectName, purpose, selectedFolder string) map[string]any {
 			"user_layer_path":          ".codeheart/user/",
 			"local_machine_layer_path": ".codeheart/local/",
 		},
-		"component_settings": map[string]any{},
+		"component_settings": freshComponentSettings(),
 	}
 	if purpose != "" {
 		config["setup_purpose"] = purpose
 	}
 	return config
+}
+
+func freshComponentSettings() map[string]any {
+	return map[string]any{
+		"planning-workflows": map[string]any{
+			"plan_catalog_discovery_version": 2,
+			"plan_catalog_ownership": map[string]any{
+				"excluded_roots": []any{},
+			},
+		},
+	}
 }
 
 func desiredLifecycleLock(command string, observed state.Observed, graph state.Graph, now time.Time) (map[string]any, error) {

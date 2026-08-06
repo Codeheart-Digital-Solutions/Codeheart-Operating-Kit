@@ -1,14 +1,11 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/schemas/plan-catalog.schema.json",
-  "title": "Codeheart Source-Derived Plan Catalog v2",
+  "$id": "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/schemas/plan-catalog-v1.schema.json",
+  "title": "Codeheart Source-Derived Plan Catalog v1",
   "type": "object",
   "additionalProperties": false,
   "required": [
     "schema_version",
-    "discovery_version",
-    "policy_digest",
-    "candidate_set_digest",
     "coordination_home_id",
     "started_at",
     "completed_at",
@@ -20,10 +17,7 @@
     "metrics"
   ],
   "properties": {
-    "schema_version": { "type": "integer", "const": 2 },
-    "discovery_version": { "type": "integer", "const": 2 },
-    "policy_digest": { "$ref": "#/$defs/digest" },
-    "candidate_set_digest": { "$ref": "#/$defs/digest" },
+    "schema_version": { "type": "integer", "const": 1 },
     "coordination_home_id": { "$ref": "#/$defs/identifier" },
     "started_at": { "$ref": "#/$defs/timestamp" },
     "completed_at": { "$ref": "#/$defs/timestamp" },
@@ -34,18 +28,14 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["repository_id", "source_kind", "default_ref", "source_revision", "self_member", "discovery_version", "policy_digest", "candidate_set_digest", "complete"],
+        "required": ["repository_id", "source_kind", "default_ref", "source_revision", "self_member"],
         "properties": {
           "repository_id": { "$ref": "#/$defs/identifier" },
           "source_kind": { "type": "string", "enum": ["local-git", "github"] },
           "source_locator": { "type": "string", "minLength": 1 },
           "default_ref": { "type": "string", "minLength": 1 },
           "source_revision": { "$ref": "#/$defs/commit" },
-          "self_member": { "type": "boolean" },
-          "discovery_version": { "type": "integer", "const": 2 },
-          "policy_digest": { "$ref": "#/$defs/digest" },
-          "candidate_set_digest": { "$ref": "#/$defs/digest" },
-          "complete": { "type": "boolean" }
+          "self_member": { "type": "boolean" }
         }
       }
     },
@@ -98,10 +88,6 @@
     "commit": {
       "type": "string",
       "pattern": "^[0-9a-f]{40,64}$"
-    },
-    "digest": {
-      "type": "string",
-      "pattern": "^[0-9a-f]{64}$"
     },
     "timestamp": {
       "type": "string",
