@@ -1,6 +1,7 @@
-Last updated: 2026-08-06T20:15:12Z (UTC)
+Last updated: 2026-08-06T21:13:00Z (UTC)
 Created: 2026-08-06
-Status: draft
+Status: active
+Execution log: ownership-aware-plan-catalog-discovery_execution_log.md
 
 # Document Header
 
@@ -41,12 +42,12 @@ hard-unowned boundaries and explicit `excluded_roots` are the only ownership con
 implementation. There is no `owned_roots` setting, docs-root registry, automatic activation,
 forced mixed-mode transition, plan-register rewrite, or second cutover revision.
 
-This plan is `Status: draft`. It is manual-review-ready planning input, not implementation or
-release authority. The current user authorization covers this plan-only checkpoint and normal
-push. It does not authorize creating an execution log, changing runtime code, activating this
-plan, publishing a release, modifying a consumer, opening a pull request, or changing
-Codeheart-HQ. A later execution request must follow the implementation-execution runbook and
-record execution evidence in the sibling execution log.
+The user activated this plan for goal-style implementation on 2026-08-06. Execution is authorized
+on `codex/operating-kit-multi-root-plan-catalog` after the bounded plan, execution-log, and nearest-
+index activation checkpoint validates and is normally pushed. This authority covers the producer
+implementation and planned review checkpoints. It does not authorize a pull request, merge,
+release, tag, consumer upgrade, Codeheart-HQ change, destructive Git action, history rewrite, or
+force push.
 
 Planning-checkpoint validation note: the current implementation-planning runbook requires the
 generic `# Document Header` top-level section with the canonical title beneath it, while the current
@@ -304,16 +305,18 @@ owned by a separately authorized release task.
 - Recommended default: retain discovery v1 for at least one released compatibility cycle and keep
   removal outside this implementation plan. Removal requires separate discovery/release approval.
 
-### OQ-02 - Initial Conventional Ambiguity Segment Set
+### OQ-02 - Later Conventional Ambiguity Segment Refinement
 
 - `BLOCKER: no`.
-- Affects: EP-02, EP-03, EP-07.
-- Unlocks: the exact first-release list used by the prospective blocker classifier and fixtures.
-- Recommended default: start with the discovery list (`vendor`, `third_party`, `third-party`,
-  `external`, `deps`, `dependencies`, `node_modules`, `fixtures`, `testdata`, `examples`,
-  `generated`, `.generated`, `build`, `dist`, `out`, `target`, `.venv`, `venv`), compare it with
-  producer fixtures and public-safe consumer evidence, then change the list only with an explicit
-  fixture and documented rationale.
+- First-implementation decision: freeze the exact discovery-v2 ambiguity segments as `vendor`,
+  `third_party`, `third-party`, `external`, `deps`, `dependencies`, `node_modules`, `fixtures`,
+  `testdata`, `examples`, `generated`, `.generated`, `build`, `dist`, `out`, `target`, `.venv`, and
+  `venv`.
+- EP-02 through EP-08 must not add or remove segments from this set. Matching a plan signal beneath
+  one of these segments produces prospective-blocker evidence until the path is moved or its root is
+  explicitly listed in `excluded_roots`.
+- Deferred question: later additions or removals require public-safe adoption evidence, explicit
+  positive and negative fixtures, prospective inventory impact, release notes, and separate review.
 
 ### Assumptions
 
@@ -323,8 +326,9 @@ owned by a separately authorized release task.
 - `A-03`: Existing reconcile create/replace/remove actions can express reviewed rename plus content
   insertion atomically with exact source and target preconditions.
 - `A-04`: The existing maximum portfolio concurrency of four remains sufficient.
-- `A-05`: The current GitHub Actions macOS and Windows jobs remain the authoritative cross-platform
-  release-candidate environments.
+- `A-05`: The current GitHub Actions macOS and Windows jobs remain authoritative supported-platform
+  environments; this plan adds an Ubuntu semantic-validation job without adding a Linux release
+  asset or Linux distribution support.
 - `A-06`: HQ remains paused and available only as a later consumer-owned validation target after an
   approved release.
 
@@ -358,6 +362,13 @@ owned by a separately authorized release task.
 5. Alternatives rejected: recursive globs, host filesystem walks, and per-file `git show` calls are
    inconsistent, unsafe, or unbounded.
 
+Local nested-repository evidence and remote tree evidence have different representable boundaries.
+The local adapter must detect a nested `.git` directory or file below the outer repository root,
+without following it, and mark indexed descendants unsafe/incomplete. The outer repository's own
+Git directory is not a nested boundary. A selected remote commit tree has no worktree-only `.git`
+state: mode `160000` gitlinks are hard-unowned, while `100644` and `100755` blobs belong to the
+selected outer commit. The remote adapter must not claim to detect an unrepresented nested worktree.
+
 ### AD-03 - Owned By Default With Exclusions Only
 
 1. Problem being solved: a root allowlist silently omits future domains, while tracking alone can
@@ -385,6 +396,12 @@ owned by a separately authorized release task.
    filename/qualification-owned, and lifecycle stays header-owned.
 5. Alternatives rejected: filename-only scanning hides malformed placement; metadata-only
    authority removes human-readable kind; directory-only family rules misclassify routers.
+
+Discovery v2 intentionally has no child-count or directory-shape validity requirement for a family.
+Family authority and validity come from the exact `README.md`, valid family metadata, matching
+family ID/kind, eligible owned path, and normal header rules. Child appearance or disappearance is
+visible only through independently classified records; it cannot create, remove, validate, or
+invalidate family authority. Relationships between records remain metadata-owned.
 
 ### AD-05 - Explicit Activation And Version-Honest Evidence
 
@@ -449,7 +466,7 @@ owned by a separately authorized release task.
 | EP-02 | One shared classifier discovers and validates arbitrary-depth local Git-index candidates. | XL | EP-01 |
 | EP-03 | List, validate, and inventory expose authoritative v2 plus prospective and preview evidence consistently. | L | EP-02 |
 | EP-04 | Guarded migration supports complete direct legacy-to-canonical preparation and optional mixed grandfathering. | XL | EP-03 |
-| EP-05 | Remote defaults and branch overlays use the shared classifier with version-honest completeness and cache preservation. | XL | EP-02, EP-03 |
+| EP-05 | Remote defaults and branch overlays use the shared classifier with version-honest completeness and cache preservation. | XL | EP-04 |
 | EP-06 | Managed doctrine, routing, templates, and packaged mirrors describe the implemented contract exactly. | L | EP-04, EP-05 |
 | EP-07 | The complete fixture, unit, CLI, remote, performance, packaging, and cross-platform matrix passes. | XL | EP-01 through EP-06 |
 | EP-08 | Consumer-impact, migration, release-note, release-readiness, and HQ handoff evidence is complete without publishing. | M | EP-07 |
@@ -612,6 +629,7 @@ signals, and establishes metadata-qualified family authority with deterministic 
   stay visible with reason evidence.
 - Exact `README.md` plus valid family metadata creates v2 family authority; directory shape alone
   never does.
+- Zero, one, or many descendant records do not affect v2 family authority or validity.
 - Output ordering is bytewise deterministic across host platforms.
 
 ### E) Dependencies And Critical-Path Notes
@@ -625,10 +643,11 @@ work. Keep `internal/plancatalog` independent of `internal/portfolio`.
 - [ ] Implement NUL-safe index-stage enumeration and batch blob metadata reads in `internal/plancatalog/git_index.go`.
 - [ ] Refactor `Enumerate`, `Discover`, and `FormalPathKind` in `internal/plancatalog/discover.go` to use version-selected v1 compatibility and v2 shared classification paths.
 - [ ] Add exact lowercase path-segment, extension, suffix, portable-collision, and normalization validation.
-- [ ] Add hard-unowned checks for managed state, local state, user state, symlinks, gitlinks, nested repositories, escaping paths, and non-regular sources.
-- [ ] Add conventional ambiguity classification plus exclusions-only resolution using the EP-01 policy.
+- [ ] Add local hard-unowned checks for managed state, local state, user state, symlinks, nested `.git` file/directory boundaries below the outer repository root, gitlinks, escaping paths, and non-regular sources without following unsafe entries.
+- [ ] Add remote hard-unowned handling for mode `160000` gitlinks while treating only selected-tree modes `100644` and `100755` as authoritative outer-commit blobs.
+- [ ] Add conventional ambiguity classification for the frozen Section 2.2 segment set plus exclusions-only resolution using the EP-01 policy.
 - [ ] Extend marker scanning in `internal/plancatalog/metadata.go` for fenced code, indented code, structural placement, malformed markers, and metadata-only candidates.
-- [ ] Implement metadata-qualified family validation and v1-family prospective migration evidence in `internal/plancatalog/family.go`.
+- [ ] Implement exact-`README.md`, metadata-kind, semantic-ID-kind, owned-path, and header family validation plus v1-family prospective migration evidence in `internal/plancatalog/family.go` without child-count and directory-shape validity checks.
 - [ ] Update `ValidateRecords` with stable metadata-missing, filename-missing, kind-mismatch, duplicate-ID, misplaced, overlap, unowned, excluded, case, portability, family, and unsafe-source behavior.
 - [ ] Create multi-root fixtures covering root docs, deeply nested docs, repeated docs segments, metadata-only paths, malformed metadata, exclusions, conventional blockers, and family routers.
 - [ ] Add local classifier parity, deterministic ordering, case, Unicode, symlink, gitlink, nested-repository, and hostile-content tests.
@@ -639,7 +658,9 @@ work. Keep `internal/plancatalog` independent of `internal/portfolio`.
 
 Index membership decides authority; bound worktree bytes remain the local validation content for
 tracked paths and must retain identity checks. Missing, replaced, intent-to-add, conflicted-stage,
-and racy paths produce explicit incomplete/unsafe evidence. The classifier reads inert bytes only.
+racy, and ancestor-nested-repository paths produce explicit incomplete/unsafe evidence. Remote
+commit-tree classification rejects gitlinks and does not infer worktree-only `.git` boundaries from
+regular outer-commit blobs. The classifier reads inert bytes only.
 
 The misplaced-metadata anomaly pass may inspect tracked Markdown outside eligible docs but can
 only emit diagnostics; it cannot create authority. Case-variant extensions are diagnostic-only.
@@ -649,7 +670,8 @@ before dependent API changes. Never recover by falling back silently from v2 to 
 
 ### H) Open Questions
 
-- OQ-02 is non-blocking; use its recommended initial list and preserve evidence for later tuning.
+- OQ-02 is deferred; implement the exact frozen Section 2.2 list and preserve evidence for a later
+  separately reviewed refinement.
 
 ## 3.3 EP-03 - Local Views, Prospective Reads, And Authoring Preview
 
@@ -726,7 +748,7 @@ result becomes migration input.
 
 ### H) Open Questions
 
-None. OQ-02 changes only the evidence-backed conventional list, not CLI shape.
+None. Later OQ-02 refinement remains outside this implementation and does not change CLI shape.
 
 ## 3.4 EP-04 - Guarded Migration And Mode Compatibility
 
@@ -859,6 +881,9 @@ v2 evidence replaces the last complete cache.
   and IDs as local committed-tree classification.
 - Remote Git reads remain inert and never checkout content, follow symlinks/gitlinks, run hooks,
   inherit unsafe Git environment, or execute repository bytes.
+- Remote mode `160000` gitlinks are hard-unowned; regular selected-tree blobs are outer-commit
+  authority, and remote evidence never claims detection of unrepresented worktree-only `.git`
+  boundaries.
 - Added and materially changed branch candidates produce observations with repository, ref,
   commit, path, content hash, verification, visibility, and source-change evidence.
 - Same-byte rename suppression occurs only when old/new eligibility, ownership, and kind match.
@@ -871,8 +896,8 @@ v2 evidence replaces the last complete cache.
 
 ### E) Dependencies And Critical-Path Notes
 
-Depends on EP-02 classifier and EP-03 structured provenance. It may proceed in parallel with EP-04
-after EP-03, then both converge in EP-06.
+Depends on EP-04. Reuse the frozen EP-02 classifier and EP-03 structured provenance after guarded
+migration behavior is complete; execution remains linear before EP-06.
 
 ### F) Tasks Checklist
 
@@ -1015,7 +1040,8 @@ its compatibility/safety boundaries.
 - Exercise platform-specific case, separator, Unicode, symlink/reparse, gitlink, nested-repo, and
   rename behavior.
 - Run full Go/Python/schema/Markdown/public-core/package/resource suites.
-- Add release-candidate workflow assertions where current jobs lack v2 coverage.
+- Add one Ubuntu semantic-validation job while retaining the existing macOS and Windows validation
+  jobs and their supported release assets.
 
 ### C) Files Touched
 
@@ -1054,11 +1080,11 @@ to the owning epic and require its checkpoint to be corrected before EP-08.
 - [ ] Map each discovery acceptance criterion to named Go, Python, schema, routing, packaging, benchmark, macOS, Linux, and Windows tests.
 - [ ] Add filename-only, metadata-only, malformed, mismatch, duplicate, misplaced, excluded, prospective-blocked, unowned, unsafe, and preview fixtures.
 - [ ] Add root docs, deeply nested docs, repeated docs segments, case variants, Unicode collisions, symlinks, gitlinks, nested repositories, and escape fixtures.
-- [ ] Add metadata-qualified family, router README, wrong-filename family, malformed family, v1-family migration, and unchanged-README branch fixtures.
+- [ ] Add metadata-qualified zero-child, one-child, many-child, router README, wrong-filename family, malformed family, v1-family migration, and unchanged-README branch fixtures.
 - [ ] Add direct legacy-to-canonical, optional mixed, frozen-register, original-cutover, source-hash, candidate-digest, dirty, branch-owned, rollback, and recovery tests.
 - [ ] Add remote v2 member, v1 member, inaccessible member, branch policy, rename, cache preservation, inert content, and redaction tests.
 - [ ] Implement the 100,000-path and 10,000-Markdown benchmark in `classifier_benchmark_test.go` with deterministic process and memory assertions.
-- [ ] Extend `.github/workflows/validate.yml` only where current macOS and Windows jobs lack discovery-v2 command coverage.
+- [ ] Add an `ubuntu-latest` semantic-validation job to `.github/workflows/validate.yml` that runs `go test ./...`, the focused plan-catalog/portfolio/command suites, Python schema/routing/resource tests, and JSON-schema/Markdown/public-core validators without Linux release-asset generation and distribution advertising.
 - [ ] Run `go test ./...`.
 - [ ] Run `go test ./internal/plancatalog ./internal/portfolio ./internal/commands ./internal/cli`.
 - [ ] Run `python3 -m pytest`.
@@ -1078,8 +1104,7 @@ platform job.
 
 ### H) Open Questions
 
-- OQ-02 can refine the conventional list before fixture freeze; it does not change the classifier
-  architecture or block the epic.
+- OQ-02 refinement is deferred beyond this implementation; EP-07 tests the frozen Section 2.2 list.
 
 ## 3.8 EP-08 - Release Readiness And Consumer Handoff Evidence
 
@@ -1182,8 +1207,9 @@ not authorize cache deletion, version changes, publication, or consumer work.
 
 ## 4.2 Future Considerations
 
-- Reassess the conventional ambiguity list from public-safe adoption findings without weakening
-  the exclusions-only contract.
+- Reassess the frozen conventional ambiguity list only in a later reviewed contract change backed by
+  public-safe adoption findings, positive and negative fixtures, prospective inventory impact, and
+  release notes without weakening the exclusions-only contract.
 - Evaluate v1 removal only after portfolio homes can prove every required member supplies v2
   evidence.
 - Consider a fuller CommonMark parser only when real documents exceed the bounded structural
@@ -1203,6 +1229,14 @@ not authorize cache deletion, version changes, publication, or consumer work.
   comprehensive validation, bounded release readiness, and post-release HQ handoff. No execution,
   release, or consumer authority was granted.
 - 2026-08-06: Completed a main-thread planning review against the implementation-planning and
-  planning-document-review runbooks; confirmed linear capability coverage, exact file/symbol
-  surfaces, non-blocking OQ-01/OQ-02 handling, per-epic validation/recovery/checkpoints, draft-only
-  authority, and the release/HQ stop boundaries.
+  planning-document-review runbooks; checked capability coverage, file/symbol surfaces,
+  non-blocking OQ-01/OQ-02 handling, per-epic validation/recovery/checkpoints, draft-only authority,
+  and the release/HQ stop boundaries.
+- 2026-08-06: Applied review defaults: distinguished local nested-repository evidence from remote
+  gitlinks/outer-commit blobs, removed directory-shape validity from v2 families, made EP-05 linear
+  after EP-04, required an Ubuntu semantic-validation job without a Linux release asset, and froze
+  the first discovery-v2 conventional ambiguity segment set while deferring later refinement.
+- 2026-08-06: Activated the plan for goal-style producer implementation on
+  `codex/operating-kit-multi-root-plan-catalog`; added the sibling execution log and retained the
+  pull-request, merge, release, tag, consumer, HQ, destructive-Git, history-rewrite, and force-push
+  stop boundaries.

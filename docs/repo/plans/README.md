@@ -1,4 +1,4 @@
-Last updated: 2026-07-31T23:43:02Z (UTC)
+Last updated: 2026-08-06T21:13:00Z (UTC)
 
 # Repo Plans
 
@@ -18,6 +18,12 @@ entries after mixed cutover.
 ## Current Plans
 
 - Plan register: `plan-register.md`
+- Ownership-aware repository-wide plan catalog discovery:
+  `ownership-aware-plan-catalog-discovery/ownership-aware-plan-catalog-discovery_discovery_doc.md`
+- Ownership-aware repository-wide plan catalog implementation plan:
+  `ownership-aware-plan-catalog-discovery/ownership-aware-plan-catalog-discovery_implementation_doc.md`
+- Ownership-aware repository-wide plan catalog execution log:
+  `ownership-aware-plan-catalog-discovery/ownership-aware-plan-catalog-discovery_execution_log.md`
 - Semantic plan catalog and branch-aware coordination discovery:
   `semantic-plan-catalog-coordination/semantic-plan-catalog-coordination_discovery_doc.md`
 - Semantic plan catalog and branch-aware coordination implementation and release plan:
