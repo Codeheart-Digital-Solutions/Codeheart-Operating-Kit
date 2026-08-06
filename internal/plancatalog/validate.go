@@ -21,6 +21,10 @@ var relationKinds = map[string]bool{
 }
 
 func ValidateRecords(records []Record, mode CatalogMode, repositoryID string) []Problem {
+	return ValidateRecordsForDiscovery(records, mode, repositoryID, DiscoveryV1)
+}
+
+func ValidateRecordsForDiscovery(records []Record, mode CatalogMode, repositoryID string, discoveryVersion DiscoveryVersion) []Problem {
 	problems := []Problem{}
 	byID := map[string][]Record{}
 	families := map[string]bool{}
@@ -54,9 +58,10 @@ func ValidateRecords(records []Record, mode CatalogMode, repositoryID string) []
 		problems = append(problems, validateAliases(record)...)
 		byID[metadata.ID] = append(byID[metadata.ID], record)
 		if metadata.Kind == KindFamily {
-			families[metadata.ID] = true
-			if !record.FamilyQualified {
-				problems = append(problems, Problem{Code: "family_placement_invalid", Message: "family metadata requires a qualifying second-sibling family README", Path: record.Path, PlanID: metadata.ID, Severity: SeverityError})
+			familyProblems := validateFamilyRecord(record, discoveryVersion)
+			problems = append(problems, familyProblems...)
+			if len(familyProblems) == 0 {
+				families[metadata.ID] = true
 			}
 		}
 	}
@@ -81,7 +86,7 @@ func ValidateRecords(records []Record, mode CatalogMode, repositoryID string) []
 			continue
 		}
 		if !families[record.Metadata.Family] {
-			problems = append(problems, Problem{Code: "family_record_missing", Message: fmt.Sprintf("family %q has no qualifying canonical family record", record.Metadata.Family), Path: record.Path, PlanID: record.Metadata.ID, Severity: SeverityWarning, Remediation: "create the family README when the second-sibling trigger is reached"})
+			problems = append(problems, Problem{Code: "family_record_missing", Message: fmt.Sprintf("family %q has no qualifying canonical family record", record.Metadata.Family), Path: record.Path, PlanID: record.Metadata.ID, Severity: SeverityWarning, Remediation: "create an exact README.md with valid family metadata in an owned docs path"})
 		}
 	}
 	if mode != ModeLegacy && mode != ModeMixed && mode != ModeCanonical {

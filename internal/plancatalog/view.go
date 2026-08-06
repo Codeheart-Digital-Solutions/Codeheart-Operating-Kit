@@ -211,13 +211,29 @@ func windowsDriveAbsolute(path string) bool {
 
 func LoadRepositorySnapshot(root string) (RepositorySnapshot, error) {
 	settings, settingsProblems := LoadRepositorySettings(root)
-	discovery, err := Discover(root, settings.Mode, settings.RepositoryID)
-	if err != nil {
-		return RepositorySnapshot{}, err
-	}
-	candidates, err := Enumerate(root)
-	if err != nil {
-		return RepositorySnapshot{}, err
+	var discovery Discovery
+	var candidates []Candidate
+	if settings.DiscoveryVersion == DiscoveryV2 {
+		classification, err := ClassifyLocalIndex(root, settings, settings.Mode, settings.RepositoryID)
+		if err != nil {
+			return RepositorySnapshot{}, err
+		}
+		discovery = classification.Discovery
+		for _, candidate := range classification.Candidates {
+			if candidate.Ownership == OwnershipOwned {
+				candidates = append(candidates, candidate)
+			}
+		}
+	} else {
+		var err error
+		discovery, err = Discover(root, settings.Mode, settings.RepositoryID)
+		if err != nil {
+			return RepositorySnapshot{}, err
+		}
+		candidates, err = Enumerate(root)
+		if err != nil {
+			return RepositorySnapshot{}, err
+		}
 	}
 	entries := []LegacyEntry{}
 	legacyProblems := []Problem{}

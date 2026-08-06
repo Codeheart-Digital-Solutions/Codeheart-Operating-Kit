@@ -84,6 +84,26 @@ func ParseDocument(path string, data []byte, expectedKind Kind) (Record, error) 
 	return record, nil
 }
 
+// parseMetadataBlockAnywhere recovers valid metadata independently of the
+// canonical document header. Classifier validation uses this only to retain
+// identity evidence when another structural error makes ParseDocument fail.
+func parseMetadataBlockAnywhere(path string, data []byte) (Metadata, error) {
+	lines := strings.Split(strings.ReplaceAll(string(data), "\r\n", "\n"), "\n")
+	beginIndexes := lineIndexesOutsideFences(lines, MetadataBeginMarker)
+	endIndexes := lineIndexesOutsideFences(lines, MetadataEndMarker)
+	if len(beginIndexes) != 1 || len(endIndexes) != 1 {
+		return Metadata{}, &CodedError{Code: "metadata_marker_count", Err: fmt.Errorf("%s must contain exactly one begin marker and one end marker", path)}
+	}
+	begin, end := beginIndexes[0], endIndexes[0]
+	if end <= begin {
+		return Metadata{}, &CodedError{Code: "metadata_marker_order", Err: fmt.Errorf("%s metadata end marker must follow its begin marker", path)}
+	}
+	if end-begin < 3 || strings.TrimSpace(lines[begin+1]) != "```yaml" || strings.TrimSpace(lines[end-1]) != "```" {
+		return Metadata{}, &CodedError{Code: "metadata_fence_invalid", Err: fmt.Errorf("%s metadata markers must contain one visible fenced yaml block", path)}
+	}
+	return decodeMetadata([]byte(strings.Join(lines[begin+2:end-1], "\n") + "\n"))
+}
+
 func ParseHeader(data []byte) (Header, error) {
 	header, _, err := parseHeaderAndTitle(data)
 	return header, err
@@ -234,13 +254,17 @@ func lineIndexesOutsideFences(lines []string, target string) []int {
 	fenceCharacter := byte(0)
 	fenceLength := 0
 	for index, line := range lines {
+		if markdownIndentedOrQuoted(line) {
+			continue
+		}
 		trimmed := strings.TrimSpace(line)
-		if character, length, ok := markdownFence(trimmed); ok {
-			if fenceCharacter == 0 {
+		if fenceCharacter == 0 {
+			if character, length, ok := markdownFence(trimmed); ok {
 				fenceCharacter, fenceLength = character, length
-			} else if character == fenceCharacter && length >= fenceLength {
-				fenceCharacter, fenceLength = 0, 0
+				continue
 			}
+		} else if markdownFenceCloses(trimmed, fenceCharacter, fenceLength) {
+			fenceCharacter, fenceLength = 0, 0
 			continue
 		}
 		if fenceCharacter == 0 && trimmed == target {
@@ -248,6 +272,31 @@ func lineIndexesOutsideFences(lines []string, target string) []int {
 		}
 	}
 	return indexes
+}
+
+func markdownFenceCloses(line string, character byte, minimum int) bool {
+	if len(line) < minimum || line[0] != character {
+		return false
+	}
+	length := 0
+	for length < len(line) && line[length] == character {
+		length++
+	}
+	return length >= minimum && strings.TrimSpace(line[length:]) == ""
+}
+
+func hasGenuineMetadataMarker(data []byte) bool {
+	lines := strings.Split(strings.ReplaceAll(string(data), "\r\n", "\n"), "\n")
+	return len(lineIndexesOutsideFences(lines, MetadataBeginMarker)) > 0 || len(lineIndexesOutsideFences(lines, MetadataEndMarker)) > 0
+}
+
+func markdownIndentedOrQuoted(line string) bool {
+	if strings.HasPrefix(line, "\t") || strings.HasPrefix(line, "    ") {
+		return true
+	}
+	trimmed := strings.TrimLeft(line, " ")
+	leading := len(line) - len(trimmed)
+	return leading <= 3 && strings.HasPrefix(trimmed, ">")
 }
 
 func markdownFence(line string) (byte, int, bool) {
@@ -258,6 +307,9 @@ func markdownFence(line string) (byte, int, bool) {
 	length := 0
 	for length < len(line) && line[length] == character {
 		length++
+	}
+	if character == '`' && strings.Contains(line[length:], "`") {
+		return 0, 0, false
 	}
 	return character, length, length >= 3
 }

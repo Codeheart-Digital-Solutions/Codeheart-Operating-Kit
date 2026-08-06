@@ -81,6 +81,53 @@ func TestParseRejectsMissingMisplacedMultipleAndUnknownMetadata(t *testing.T) {
 	}
 }
 
+func TestMetadataMarkersRemainInertBehindNonClosingFenceText(t *testing.T) {
+	for _, fence := range []string{"```", "~~~"} {
+		data := strings.Join([]string{
+			fence + "md",
+			fence + "not-a-close",
+			MetadataBeginMarker,
+			fence,
+			"",
+		}, "\n")
+		if hasGenuineMetadataMarker([]byte(data)) {
+			t.Fatalf("%q trailing text incorrectly closed the fence", fence)
+		}
+	}
+}
+
+func TestBacktickInFenceInfoDoesNotOpenFence(t *testing.T) {
+	data := []byte("```lang`invalid\n" + MetadataBeginMarker + "\n")
+	if !hasGenuineMetadataMarker(data) {
+		t.Fatal("a CommonMark-invalid backtick fence opener hid a genuine metadata marker")
+	}
+}
+
+func TestInvalidFamilyRecordDoesNotSatisfyFamilyReference(t *testing.T) {
+	familyMetadata := metadataForTest("example.family.invalid", KindFamily, "Invalid family placement")
+	childMetadata := metadataForTest("example.discovery.child", KindDiscovery, "Child")
+	childMetadata.Family = familyMetadata.ID
+	records := []Record{
+		{Path: "docs/family/not-a-readme.md", Metadata: &familyMetadata},
+		{Path: "docs/family/child_discovery_doc.md", Metadata: &childMetadata, ExpectedKind: KindDiscovery},
+	}
+	problems := ValidateRecordsForDiscovery(records, ModeCanonical, "example", DiscoveryV2)
+	if !problemExists(problems, "family_placement_invalid", SeverityError) || !problemExists(problems, "family_record_missing", SeverityWarning) {
+		t.Fatalf("invalid family record satisfied a reference: %#v", problems)
+	}
+}
+
+func TestV1RecognizedFamilyShapeRemainsCompatibleUntilV2Migration(t *testing.T) {
+	metadata := metadataForTest("example.family.compatibility", KindFamily, "Legacy family compatibility")
+	record := Record{Path: "docs/repo/plans/family/readme.md", Metadata: &metadata, ExpectedKind: KindFamily, FamilyQualified: true}
+	if problemExists(ValidateRecords([]Record{record}, ModeCanonical, "example"), "family_placement_invalid", SeverityError) {
+		t.Fatal("v1-recognized family was invalidated before discovery-v2 activation")
+	}
+	if !problemExists(ValidateRecordsForDiscovery([]Record{record}, ModeCanonical, "example", DiscoveryV2), "family_placement_invalid", SeverityError) {
+		t.Fatal("prospective v2 validation did not require exact README.md family authority")
+	}
+}
+
 func TestMetadataValidationFailuresHaveStableCodes(t *testing.T) {
 	valid := string(mustFixture(t, "valid-discovery.md"))
 	tests := []struct {

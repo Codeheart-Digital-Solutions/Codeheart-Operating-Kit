@@ -1,4 +1,4 @@
-Last updated: 2026-08-06T21:41:02Z (UTC)
+Last updated: 2026-08-06T22:34:04Z (UTC)
 Created: 2026-08-06
 Status: active
 Execution log: ownership-aware-plan-catalog-discovery_execution_log.md
@@ -42,12 +42,16 @@ hard-unowned boundaries and explicit `excluded_roots` are the only ownership con
 implementation. There is no `owned_roots` setting, docs-root registry, automatic activation,
 forced mixed-mode transition, plan-register rewrite, or second cutover revision.
 
-The user activated this plan for goal-style implementation on 2026-08-06. Execution is authorized
-on `codex/operating-kit-multi-root-plan-catalog` after the bounded plan, execution-log, and nearest-
-index activation checkpoint validates and is normally pushed. This authority covers the producer
-implementation and planned review checkpoints. It does not authorize a pull request, merge,
-release, tag, consumer upgrade, Codeheart-HQ change, destructive Git action, history rewrite, or
-force push.
+The user activated this plan for goal-style implementation on 2026-08-06 and subsequently expanded
+completion authority through producer release publication and a validated Codeheart-HQ Kit
+installation. Execution is authorized on `codex/operating-kit-multi-root-plan-catalog` after the
+bounded activation checkpoint. It includes reviewed producer implementation checkpoints, the
+doctrine-selected version bump, release metadata and notes, required normal commits/pushes and
+protected PR/merge workflow, tag/assets/catalog/GitHub release publication, release-channel
+verification, and an isolated HQ upgrade branch/PR/merge plus installation validation. No second
+approval is required for those normal steps. Force operations, protection bypass, destructive
+cleanup, secret exposure, silent conflict resolution, the separate HQ semantic metadata migration,
+discovery-v2 activation, and portfolio-v2 canonical cutover remain unauthorized.
 
 Planning-checkpoint validation note: the current implementation-planning runbook requires the
 generic `# Document Header` top-level section with the canonical title beneath it, while the current
@@ -62,7 +66,8 @@ Essential context:
 | `ownership-aware-plan-catalog-discovery_discovery_doc.md` | Approved D-01 through D-11, exact discovery semantics, compatibility model, risks, acceptance criteria, and implementation capability scopes. |
 | `AGENTS.md` | Producer authority, public-core boundary, managed-resource rules, and repository safety constraints. |
 | `docs/repo/runbooks/change-operating-kit.md` | Required producer change route, consumer-impact classification, parity, validation, and release-note gates. |
-| `docs/repo/runbooks/release-operating-kit.md` | Later release-candidate, reproducibility, platform, and publication boundaries; publication is outside this plan's authority. |
+| `docs/repo/runbooks/release-operating-kit.md` | Required version, reproducibility, platform, signing-boundary, tag, asset, catalog, and publication route for EP-09. |
+| `components/agent-interface/managed/runbooks/maintain-operating-kit-installation.md` | Required verified cross-version `upgrade --dry-run` / `upgrade --yes` and post-check route for EP-10. |
 | `docs/repo/reference/placement-contract.md` | Managed, scaffold, consumer-owned, generated, and local-machine placement boundaries. |
 | `docs/repo/reference/consumer-impact-classification.md` | Required instruction, validator, migration, placement, and safety impact evidence. |
 | `components/planning-workflows/managed/reference/plan-catalog-format.md` | Current fixed-root catalog contract, metadata, modes, and derived-view behavior to revise. |
@@ -137,8 +142,11 @@ Completion is proven when:
   migration notes, and release-readiness evidence describe the implemented behavior exactly;
 - the full unit, integration, CLI, schema, fixture, remote, portfolio, packaging, routing,
   performance, macOS, Linux, and real-Windows matrix passes; and
-- no Codeheart-HQ file changes occur in this producer plan, while a release-bounded HQ validation
-  handoff is explicit and executable after an approved Kit release.
+- the validated producer commit is versioned, released, published, and verified through the normal
+  non-force release workflow; and
+- the published version is installed in Codeheart-HQ through the normal verified upgrade route,
+  committed and merged through its protected workflow, and proven not to activate discovery v2 or
+  alter HQ plan semantics.
 
 ## 1.2 Project And Problem Context
 
@@ -206,7 +214,8 @@ relabelled as v2-complete.
 - Producer source under `components/` and `templates/` is authoritative; matching
   `src/codeheart_operating_kit/resources/` files are parity mirrors only.
 - Codeheart-HQ owns its eventual inventory, semantic decisions, activation, remote refresh, and
-  canonical cutover after release.
+  canonical cutover after release. This plan is authorized only to install and validate the new Kit
+  version there while preserving discovery-v1 behavior and all consumer-owned plan bytes.
 
 # Section 2 - Strategy
 
@@ -290,9 +299,9 @@ docs/repo/plans/ownership-aware-plan-catalog-discovery/attachments/
 ```
 
 No file is deleted by the implementation strategy. The v1 schema copies preserve historical
-interpretation. The release-prep attachment supplies version-neutral input; `manifest.yaml`,
-`internal/version/version.go`, tags, packs, public release notes, and published artifacts remain
-owned by a separately authorized release task.
+interpretation. EP-08 freezes release evidence; EP-09 owns the doctrine-selected version bump,
+`manifest.yaml`, `internal/version/version.go`, public release notes, reproducible packs, tag, and
+published artifacts; EP-10 owns only the isolated HQ Kit installation checkpoint and validation.
 
 ## 2.2 Open Questions And Assumptions Requiring Clarification
 
@@ -329,8 +338,8 @@ owned by a separately authorized release task.
 - `A-05`: The current GitHub Actions macOS and Windows jobs remain authoritative supported-platform
   environments; this plan adds an Ubuntu semantic-validation job without adding a Linux release
   asset or Linux distribution support.
-- `A-06`: HQ remains paused and available only as a later consumer-owned validation target after an
-  approved release.
+- `A-06`: HQ semantic plan migration remains paused. After EP-09 publishes the approved release,
+  HQ is the authorized installation-validation target for EP-10.
 
 ## 2.3 Architectural Decisions With Reasoning
 
@@ -469,7 +478,9 @@ invalidate family authority. Relationships between records remain metadata-owned
 | EP-05 | Remote defaults and branch overlays use the shared classifier with version-honest completeness and cache preservation. | XL | EP-04 |
 | EP-06 | Managed doctrine, routing, templates, and packaged mirrors describe the implemented contract exactly. | L | EP-04, EP-05 |
 | EP-07 | The complete fixture, unit, CLI, remote, performance, packaging, and cross-platform matrix passes. | XL | EP-01 through EP-06 |
-| EP-08 | Consumer-impact, migration, release-note, release-readiness, and HQ handoff evidence is complete without publishing. | M | EP-07 |
+| EP-08 | Consumer-impact, migration, release-note, reproducibility, and release-readiness evidence is complete. | M | EP-07 |
+| EP-09 | The doctrine-selected version is validated, merged, tagged, packaged, published, and verified on the normal release channel. | XL | EP-08 |
+| EP-10 | The published Kit is installed and validated in Codeheart-HQ without semantic catalog activation. | L | EP-09 |
 
 Planned implementation checkpoints after later plan activation:
 
@@ -483,6 +494,8 @@ Planned implementation checkpoints after later plan activation:
 | EP-06 | `docs: document plan catalog discovery v2` | Managed doctrine, routing, templates, resource parity |
 | EP-07 | `test: cover repository-wide plan discovery` | Full fixtures, integration, scale, platform evidence |
 | EP-08 | `docs: record plan catalog v2 release readiness` | Impact, migration, release-note, HQ handoff evidence |
+| EP-09 | doctrine-selected release commits | Version, notes, protected merge, tag, assets, catalog, release verification |
+| EP-10 | `chore: upgrade Codeheart Operating Kit` | HQ verified upgrade, inactive-v2 proof, protected merge |
 
 Each checkpoint must contain only its reviewed paths, pass its epic gate, and be normally pushed
 only under execution authority. Failed gates stop forward execution. Recovery uses the existing
@@ -639,20 +652,20 @@ work. Keep `internal/plancatalog` independent of `internal/portfolio`.
 
 ### F) Tasks Checklist
 
-- [ ] Implement neutral blob descriptor, content reader, policy compiler, and classification result APIs in `internal/plancatalog/classifier.go`.
-- [ ] Implement NUL-safe index-stage enumeration and batch blob metadata reads in `internal/plancatalog/git_index.go`.
-- [ ] Refactor `Enumerate`, `Discover`, and `FormalPathKind` in `internal/plancatalog/discover.go` to use version-selected v1 compatibility and v2 shared classification paths.
-- [ ] Add exact lowercase path-segment, extension, suffix, portable-collision, and normalization validation.
-- [ ] Add local hard-unowned checks for managed state, local state, user state, symlinks, nested `.git` file/directory boundaries below the outer repository root, gitlinks, escaping paths, and non-regular sources without following unsafe entries.
-- [ ] Add remote hard-unowned handling for mode `160000` gitlinks while treating only selected-tree modes `100644` and `100755` as authoritative outer-commit blobs.
-- [ ] Add conventional ambiguity classification for the frozen Section 2.2 segment set plus exclusions-only resolution using the EP-01 policy.
-- [ ] Extend marker scanning in `internal/plancatalog/metadata.go` for fenced code, indented code, structural placement, malformed markers, and metadata-only candidates.
-- [ ] Implement exact-`README.md`, metadata-kind, semantic-ID-kind, owned-path, and header family validation plus v1-family prospective migration evidence in `internal/plancatalog/family.go` without child-count and directory-shape validity checks.
-- [ ] Update `ValidateRecords` with stable metadata-missing, filename-missing, kind-mismatch, duplicate-ID, misplaced, overlap, unowned, excluded, case, portability, family, and unsafe-source behavior.
-- [ ] Create multi-root fixtures covering root docs, deeply nested docs, repeated docs segments, metadata-only paths, malformed metadata, exclusions, conventional blockers, and family routers.
-- [ ] Add local classifier parity, deterministic ordering, case, Unicode, symlink, gitlink, nested-repository, and hostile-content tests.
-- [ ] Run `go test ./internal/plancatalog`.
-- [ ] Run the local classifier fixture twice and compare byte-identical JSON output.
+- [x] Implement neutral blob descriptor, content reader, policy compiler, and classification result APIs in `internal/plancatalog/classifier.go`.
+- [x] Implement NUL-safe index-stage enumeration and batch blob metadata reads in `internal/plancatalog/git_index.go`.
+- [x] Refactor `Enumerate`, `Discover`, and `FormalPathKind` in `internal/plancatalog/discover.go` to use version-selected v1 compatibility and v2 shared classification paths.
+- [x] Add exact lowercase path-segment, extension, suffix, portable-collision, and normalization validation.
+- [x] Add local hard-unowned checks for managed state, local state, user state, symlinks, nested `.git` file/directory boundaries below the outer repository root, gitlinks, escaping paths, and non-regular sources without following unsafe entries.
+- [x] Add remote hard-unowned handling for mode `160000` gitlinks while treating only selected-tree modes `100644` and `100755` as authoritative outer-commit blobs.
+- [x] Add conventional ambiguity classification for the frozen Section 2.2 segment set plus exclusions-only resolution using the EP-01 policy.
+- [x] Extend marker scanning in `internal/plancatalog/metadata.go` for fenced code, indented code, structural placement, malformed markers, and metadata-only candidates.
+- [x] Implement exact-`README.md`, metadata-kind, semantic-ID-kind, owned-path, and header family validation plus v1-family prospective migration evidence in `internal/plancatalog/family.go` without child-count and directory-shape validity checks.
+- [x] Update `ValidateRecords` with stable metadata-missing, filename-missing, kind-mismatch, duplicate-ID, misplaced, overlap, unowned, excluded, case, portability, family, and unsafe-source behavior.
+- [x] Create dynamic multi-root test fixtures covering root docs, deeply nested docs, repeated docs segments, metadata-only paths, malformed metadata, exclusions, conventional blockers, and family routers.
+- [x] Add local classifier parity, deterministic ordering, case, Unicode, symlink, gitlink, nested-repository, and hostile-content tests.
+- [x] Run `go test ./internal/plancatalog`.
+- [x] Run the local classifier fixture twice and compare byte-identical JSON output.
 
 ### G) Implementation Notes
 
@@ -1113,8 +1126,7 @@ platform job.
 `EP-08 - Release Readiness And Consumer Handoff Evidence`
 
 Outcome: public-safe impact, migration, release-note, reproducibility, and consumer-validation
-evidence is ready for a separately authorized Kit release, while no tag, release, consumer upgrade,
-or HQ change occurs.
+evidence is complete and supplies the exact validated input to the already authorized EP-09 release.
 
 ### B) Scope
 
@@ -1123,10 +1135,10 @@ or HQ change occurs.
 - Create version-neutral migration and release-note input from implemented behavior.
 - Build release assets twice in isolated temporary directories and record byte/digest comparison as
   bounded readiness evidence.
-- Record the exact release stop boundary and remaining unsigned distribution risk from the release
-  runbook without publishing.
-- Create an HQ handoff sequence that starts only after an approved release and keeps all HQ writes
-  outside this producer plan.
+- Record release inputs, signing state, residual risk, and the exact validated source revision used
+  by EP-09.
+- Create the bounded HQ installation-validation sequence used by EP-10 while keeping semantic plan
+  migration and discovery-v2 activation paused.
 
 ### C) Files Touched
 
@@ -1147,15 +1159,15 @@ or HQ change occurs.
   without selecting a release version.
 - Two isolated release builds are byte-identical and catalog-to-binary verification passes on the
   implementation checkpoint.
-- Release evidence states that version selection, manifest/version changes, tag, push, release,
-  assets, and publication require separate authority.
-- HQ handoff keeps portfolio-v2 migration paused until release and requires prospective local plus
-  remote review before direct legacy-to-canonical activation.
+- Release evidence binds the validated commit, expected impact classification, versioning inputs,
+  reproducible assets, signing boundary, and publication commands required by EP-09.
+- HQ handoff keeps portfolio-v2 migration paused and proves the installation alone retains v1
+  catalog semantics.
 
 ### E) Dependencies And Critical-Path Notes
 
-Depends on EP-07. This epic ends implementation readiness and hands off to release review. It does
-not run the public release procedure beyond non-publishing reproducibility checks.
+Depends on EP-07. This epic freezes implementation readiness before EP-09 selects the version and
+runs the public release procedure.
 
 ### F) Tasks Checklist
 
@@ -1164,31 +1176,124 @@ not run the public release procedure beyond non-publishing reproducibility check
 - [ ] Create `attachments/release-note-input.md` with version-neutral included, compatibility, impact, security, validation, and rollout sections.
 - [ ] Build supported release assets twice in separate temporary directories with `scripts/build-release-assets.py`.
 - [ ] Compare release packs, manifests, catalogs, installers, checksums, and embedded discovery-v2 resources byte-for-byte.
-- [ ] Create `attachments/release-readiness-evidence.md` with source commit, commands, platform results, digests, residual risks, and explicit publication stop.
-- [ ] Record the Codeheart-HQ post-release validation sequence without editing HQ files and without resuming its paused migration.
+- [ ] Create `attachments/release-readiness-evidence.md` with source commit, commands, platform results, digests, signing state, residual risks, and EP-09 publication inputs.
+- [ ] Record the Codeheart-HQ post-release installation-validation sequence without resuming its paused semantic migration.
 - [ ] Run `go test ./...` and `python3 -m pytest` on the exact readiness commit.
 - [ ] Run every schema, Markdown, public-core, manifest, packaging, routing, and release-candidate validator required by `change-operating-kit.md`.
 - [ ] Verify Git status contains only reviewed producer implementation/evidence paths and no consumer repository changes.
-- [ ] Stop before version selection, manifest/version bump, tag, release publication, consumer upgrade, and HQ activation.
+- [ ] Hand the exact validated readiness commit to EP-09; do not mix version mutation into the reproducibility checkpoint.
 
 ### G) Implementation Notes
 
 Use temporary output directories and preserve non-secret digest summaries only. Do not commit build
-artifacts. Release-note input is intentionally version-neutral so OQ-01 and later release timing do
-not block implementation.
+artifacts. Release-note input is intentionally version-neutral until EP-09 selects the version from
+repository doctrine.
 
-HQ sequence after release: install without activation; run prospective v2 inventory with remote
-overlays; review every included/excluded/prospective-blocked/ambiguous candidate; migrate all formal
-records; prove canonical local and compatible remote evidence; activate discovery v2 and canonical
-directly when zero filename-only records remain; preserve the old register as historical evidence.
+HQ sequence after release: upgrade the Kit without config activation; verify version, check, lock,
+managed surfaces, unchanged plan bytes, and discovery-v1 catalog behavior. Prospective v2 inventory,
+metadata migration, activation, remote completeness, and direct canonical cutover remain a separate
+consumer workstream.
 
 Rollback boundary: readiness evidence can be regenerated from the exact implementation commit.
-Failed reproducibility, platform, digest, or completeness evidence blocks release handoff and does
-not authorize cache deletion, version changes, publication, or consumer work.
+Failed reproducibility, platform, digest, or completeness evidence blocks EP-09. The existing broad
+authority does not permit bypassing a failed gate, deleting evidence, or publishing a different
+commit.
 
 ### H) Open Questions
 
 - OQ-01 remains non-blocking and belongs to a later v1-removal release.
+
+## 3.9 EP-09 - Versioned Producer Release And Publication
+
+### A) Epic ID, Title, And Outcome
+
+`EP-09 - Versioned Producer Release And Publication`
+
+Outcome: the correct next Operating Kit version is selected from repository doctrine, the exact
+validated implementation is merged through the normal protected workflow, and reproducible release
+artifacts, tag, catalog, checksums, notes, and GitHub release are published and verified without
+force or protection bypass.
+
+### B) Scope
+
+- Re-read producer release/version doctrine and inspect current main, tags, release channel,
+  branches, transactions, Git identity, authentication, signing state, and concurrent ownership.
+- Select and apply the doctrine-correct version bump; update every required producer version,
+  manifest, compatibility, release-note, catalog, and release input surface.
+- Run the complete release validation and two-build reproducibility chain from EP-08.
+- Commit and normally push explicit release paths, create/update the required PR, require protected
+  checks, merge normally, and verify the release target equals the validated main commit.
+- Create and push the normal version tag, publish packs/catalog/installers/notes/checksums through
+  the documented workflow, and verify public URLs, hashes, binary versions, and release-channel
+  availability.
+
+### C) Acceptance Criteria And Checklist
+
+- [ ] Version choice and every changed release path are justified by current doctrine and recorded.
+- [ ] Git identity is Andreas Beer / andreas.beer@codeheart.ai; branch/worktree ownership is
+  unambiguous; no transaction or concurrent overlap exists.
+- [ ] Public-core, Markdown, schemas, content identity, Go, Python, installers, upgrade/rollback,
+  supported-platform, release-contract, and double-build reproducibility gates pass.
+- [ ] Protected PR/check/merge completes normally; the validated release commit is on main.
+- [ ] Tag and every public asset are published without force; external catalog and sidecar hashes
+  bind archive, pack manifest, payload checksums, content identity, binary digest, and version.
+- [ ] The published channel resolves the new version and supports the normal verified consumer
+  upgrade used by EP-10.
+
+### D) Recovery And Stop Boundary
+
+No second user approval is required for this epic. Stop only for a genuine blocker: changed source
+invalidating EP-08 evidence, ambiguous ownership, wrong identity, failed validation, unavailable
+authentication, policy rejection, unresolved signing/audience ambiguity, unsafe non-fast-forward,
+or release-channel failure. Never force, retag a conflicting version, bypass checks, publish a
+different commit, or treat local unsigned candidates as live assets.
+
+## 3.10 EP-10 - Codeheart-HQ Installation And Validation
+
+### A) Epic ID, Title, And Outcome
+
+`EP-10 - Codeheart-HQ Installation And Validation`
+
+Outcome: an isolated, correctly owned Codeheart-HQ branch based on current clean main installs the
+published Kit through the normal consumer lifecycle, proves backward-compatible inactive-v2
+behavior, merges through the protected workflow, and leaves current HQ main on the validated
+released version.
+
+### B) Scope
+
+- Read HQ `AGENTS.md`, local lifecycle/release coordination rules, branch/worktree state,
+  transactions, Git identity, and overlapping managed-path work before mutation.
+- Run `codeheart-operating-kit check`, then the documented verified
+  `upgrade --version <released-version> --dry-run` and `upgrade --version <released-version> --yes`.
+- Validate CLI version, lock/config/managed parity, plan-byte preservation, Git status, and the
+  smallest plan-catalog check proving discovery v2 was not activated and HQ semantics did not
+  change.
+- Stage explicit installation paths, commit and normally push the HQ checkpoint, complete the
+  required protected PR/check/merge workflow, synchronize current HQ main normally when required,
+  and repeat final installation evidence.
+
+### C) Acceptance Criteria And Checklist
+
+- [ ] HQ worktree/branch is isolated, based on current clean main, correctly owned, and free of
+  transaction or managed-path overlap.
+- [ ] `codeheart-operating-kit --version` reports the EP-09 published version and
+  `codeheart-operating-kit check <HQ>` succeeds.
+- [ ] Lock version/provenance, config bytes, managed resources, and installed CLI agree; existing HQ
+  config remains discovery v1 unless it was already explicitly otherwise.
+- [ ] No HQ plan metadata, catalog mode, cutover revision, discovery activation, portfolio cache,
+  or unrelated consumer file is changed by installation.
+- [ ] The smallest local plan validation confirms the recognized set/semantics remain v1 and
+  understood; status contains only reviewed Kit installation paths.
+- [ ] Explicit HQ commit/push and protected PR/merge complete normally; final HQ main contains and
+  validates the released Kit.
+
+### D) Recovery And Stop Boundary
+
+No second user approval is required for the HQ branch, upgrade, commit, push, PR, merge, or final
+main synchronization. Stop only for unavailable authentication, policy rejection, irreconcilable
+concurrent ownership, unsafe non-fast-forward, lifecycle verification/rollback failure, or an
+unexpected semantic/config mutation. Preserve transaction evidence and the prior installation;
+never hand-edit managed files, force history, or resume the separate HQ catalog migration.
 
 # Section 4 - Future Planning
 
@@ -1198,11 +1303,9 @@ not authorize cache deletion, version changes, publication, or consumer work.
   and separate approval resolve OQ-01.
 - An `owned_roots` inclusion override is deferred indefinitely; it requires a concrete genuine-plan
   placement that cannot be corrected and a separate discovery/review.
-- Release version selection, component/profile/manifest version bumps, public `release-notes.md`
-  integration, tag creation, asset publication, and post-publication verification are deferred to a
-  separately authorized release task using EP-08 evidence.
-- Codeheart-HQ installation, prospective scan, semantic migration, discovery-v2 activation,
-  canonical cutover, portfolio refresh, commit, and push remain consumer-owned work after release.
+- Discovery-v2 prospective inventory, semantic plan metadata migration, activation, canonical
+  cutover, and portfolio-v2 refresh in Codeheart-HQ remain consumer-owned work after the authorized
+  Kit installation validation.
 - Deletion tombstones and proactive portfolio services remain outside discovery v2.
 
 ## 4.2 Future Considerations
@@ -1240,3 +1343,8 @@ not authorize cache deletion, version changes, publication, or consumer work.
   `codex/operating-kit-multi-root-plan-catalog`; added the sibling execution log and retained the
   pull-request, merge, release, tag, consumer, HQ, destructive-Git, history-rewrite, and force-push
   stop boundaries.
+- 2026-08-06: The user explicitly expanded current completion authority through the normal
+  doctrine-selected version bump, protected producer PR/merge, tag/assets/catalog/release
+  publication, and isolated protected Codeheart-HQ Kit upgrade/validation workflow. EP-09 and EP-10
+  supersede the earlier release/HQ stop boundaries. Force operations, policy bypass, destructive
+  cleanup, and HQ semantic catalog migration/activation remain excluded.
