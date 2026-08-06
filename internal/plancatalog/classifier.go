@@ -85,7 +85,7 @@ func ClassifyGitBlobs(blobs []GitBlob, reader ContentReader, policy DiscoveryPol
 			hardBoundary, hardUnowned = modeBoundary(blob, boundary)
 		}
 
-		if blob.Stage != 0 || strings.Trim(blob.ObjectID, "0") == "" {
+		if !blob.Preview && (blob.Stage != 0 || strings.Trim(blob.ObjectID, "0") == "") {
 			hardUnowned = true
 			hardBoundary = "non-stage-zero-index-entry"
 			result.Complete = false
@@ -327,6 +327,63 @@ func portableCandidateProblems(candidates []Candidate) []Problem {
 		seen[key] = candidate.Path
 	}
 	return problems
+}
+
+// ValidatePreviewContext evaluates non-authoritative authoring candidates as
+// though they were added beside the tracked catalog while keeping every new
+// finding in the preview evidence channel. The authoritative discovery,
+// completeness, and candidate digest are never changed by this function.
+func ValidatePreviewContext(authoritativeRecords []Record, authoritativeCandidates []Candidate, preview Classification, mode CatalogMode, repositoryID string) []Problem {
+	previewPaths := map[string]bool{}
+	previewIDs := map[string]bool{}
+	for _, candidate := range preview.Candidates {
+		previewPaths[candidate.Path] = true
+	}
+	for _, record := range preview.Discovery.Records {
+		if record.Metadata != nil {
+			previewIDs[record.Metadata.ID] = true
+		}
+	}
+
+	problems := []Problem{}
+	for _, problem := range preview.Discovery.Problems {
+		// These catalog-context findings are recomputed against the combined
+		// tracked plus preview record set below.
+		if problem.Code == "duplicate_plan_id" || problem.Code == "family_record_missing" {
+			continue
+		}
+		problems = append(problems, problem)
+	}
+	combinedRecords := append([]Record{}, authoritativeRecords...)
+	combinedRecords = append(combinedRecords, preview.Discovery.Records...)
+	for _, problem := range ValidateRecordsForDiscovery(combinedRecords, mode, repositoryID, DiscoveryV2) {
+		if previewPaths[problem.Path] || (problem.Code == "duplicate_plan_id" && previewIDs[problem.PlanID]) {
+			problems = append(problems, problem)
+		}
+	}
+	combinedCandidates := append([]Candidate{}, authoritativeCandidates...)
+	combinedCandidates = append(combinedCandidates, preview.Candidates...)
+	for _, problem := range portableCandidateProblems(combinedCandidates) {
+		if previewPaths[problem.Path] {
+			problems = append(problems, problem)
+		}
+	}
+	return uniqueProblems(problems)
+}
+
+func uniqueProblems(problems []Problem) []Problem {
+	seen := map[string]bool{}
+	result := make([]Problem, 0, len(problems))
+	for _, problem := range problems {
+		key := string(problem.Severity) + "\x00" + problem.Code + "\x00" + problem.Path + "\x00" + problem.PlanID + "\x00" + problem.Message + "\x00" + problem.Remediation
+		if seen[key] {
+			continue
+		}
+		seen[key] = true
+		result = append(result, problem)
+	}
+	SortProblems(result)
+	return result
 }
 
 func hasExactDocsSegment(value string) bool {

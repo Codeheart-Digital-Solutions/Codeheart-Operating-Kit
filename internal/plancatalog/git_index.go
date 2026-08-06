@@ -41,6 +41,94 @@ func ListIndexBlobs(root string) ([]GitBlob, error) {
 	return blobs, nil
 }
 
+func ListUntrackedMarkdown(root string) ([]GitBlob, error) {
+	command := exec.Command("git", "-C", root, "ls-files", "--others", "--exclude-standard", "-z")
+	command.Env = append(command.Environ(), "GIT_TERMINAL_PROMPT=0", "GIT_LITERAL_PATHSPECS=1", "LC_ALL=C")
+	output, err := command.CombinedOutput()
+	if err != nil {
+		return nil, fmt.Errorf("git_untracked_unavailable: %w: %s", err, strings.TrimSpace(string(output)))
+	}
+	blobs := []GitBlob{}
+	for _, rawPath := range bytes.Split(output, []byte{0}) {
+		if len(rawPath) == 0 {
+			continue
+		}
+		candidatePath := string(rawPath)
+		if !strings.EqualFold(filepath.Ext(filepath.FromSlash(candidatePath)), ".md") {
+			continue
+		}
+		mode := GitMode("untracked-nonregular")
+		if validateGitPath(candidatePath) != nil {
+			blobs = append(blobs, GitBlob{Path: candidatePath, Mode: mode, Preview: true})
+			continue
+		}
+		info, statErr := os.Lstat(filepath.Join(root, filepath.FromSlash(candidatePath)))
+		if statErr == nil {
+			switch {
+			case info.Mode()&os.ModeSymlink != 0:
+				mode = GitModeSymlink
+			case info.Mode().IsRegular() && info.Mode().Perm()&0o111 != 0:
+				mode = GitModeExecutable
+			case info.Mode().IsRegular():
+				mode = GitModeRegular
+			}
+		}
+		blobs = append(blobs, GitBlob{Path: candidatePath, Mode: mode, Preview: true})
+	}
+	return blobs, nil
+}
+
+func ClassifyUntrackedPreview(root string, settings RepositorySettings, mode CatalogMode, repositoryID string) (Classification, error) {
+	blobs, err := ListUntrackedMarkdown(root)
+	if err != nil {
+		return Classification{}, err
+	}
+	return ClassifyGitBlobs(blobs, func(blob GitBlob) ([]byte, error) {
+		return readBoundedRegularSource(root, blob.Path)
+	}, settings.DiscoveryPolicy(true), mode, repositoryID, localWorktreeBoundary(root))
+}
+
+func WorktreeV2PlanSignal(root, candidatePath string) (bool, error) {
+	if !strings.EqualFold(filepath.Ext(filepath.FromSlash(candidatePath)), ".md") {
+		return false, nil
+	}
+	if problem := validateGitPath(candidatePath); problem != nil {
+		return false, fmt.Errorf("%s: %s", problem.Code, problem.Message)
+	}
+	info, err := os.Lstat(filepath.Join(root, filepath.FromSlash(candidatePath)))
+	if os.IsNotExist(err) {
+		return false, nil
+	}
+	if err != nil {
+		return false, err
+	}
+	mode := GitMode("untracked-nonregular")
+	switch {
+	case info.Mode()&os.ModeSymlink != 0:
+		mode = GitModeSymlink
+	case info.Mode().IsRegular() && info.Mode().Perm()&0o111 != 0:
+		mode = GitModeExecutable
+	case info.Mode().IsRegular():
+		mode = GitModeRegular
+	}
+	settings := defaultRepositorySettings()
+	settings.DiscoveryVersion = DiscoveryV2
+	settings.PolicyDigest = settings.DiscoveryPolicy(false).Digest()
+	classification, err := ClassifyGitBlobs([]GitBlob{{Path: candidatePath, Mode: mode, Preview: true}}, func(blob GitBlob) ([]byte, error) {
+		return readBoundedRegularSource(root, blob.Path)
+	}, settings.DiscoveryPolicy(true), ModeCanonical, "", localWorktreeBoundary(root))
+	if err != nil {
+		return false, err
+	}
+	if len(classification.Candidates) > 0 {
+		return true, nil
+	}
+	if !classification.Complete {
+		return false, fmt.Errorf("existing Markdown target could not be safely classified")
+	}
+	return false, nil
+}
+
 func ClassifyLocalIndex(root string, settings RepositorySettings, mode CatalogMode, repositoryID string) (Classification, error) {
 	blobs, err := ListIndexBlobs(root)
 	if err != nil {

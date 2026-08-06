@@ -22,13 +22,24 @@ import (
 )
 
 type plansValidationOutput struct {
-	SchemaVersion  int                     `json:"schema_version"`
-	Mode           plancatalog.CatalogMode `json:"mode"`
-	RepositoryID   string                  `json:"repository_id,omitempty"`
-	Valid          bool                    `json:"valid"`
-	RecordCount    int                     `json:"record_count"`
-	Problems       []plancatalog.Problem   `json:"problems"`
-	RemoteOverlays *portfolio.ScanResult   `json:"remote_overlays,omitempty"`
+	SchemaVersion              int                          `json:"schema_version"`
+	Mode                       plancatalog.CatalogMode      `json:"mode"`
+	RepositoryID               string                       `json:"repository_id,omitempty"`
+	Valid                      bool                         `json:"valid"`
+	RecordCount                int                          `json:"record_count"`
+	Problems                   []plancatalog.Problem        `json:"problems"`
+	RemoteOverlays             *portfolio.ScanResult        `json:"remote_overlays,omitempty"`
+	DiscoveryVersion           plancatalog.DiscoveryVersion `json:"discovery_version,omitempty"`
+	ConfiguredDiscoveryVersion plancatalog.DiscoveryVersion `json:"configured_discovery_version,omitempty"`
+	ConfiguredCatalogMode      plancatalog.CatalogMode      `json:"configured_catalog_mode,omitempty"`
+	TargetCatalogMode          plancatalog.CatalogMode      `json:"target_catalog_mode,omitempty"`
+	PolicyDigest               string                       `json:"policy_digest,omitempty"`
+	CandidateSetDigest         string                       `json:"candidate_set_digest,omitempty"`
+	Complete                   *bool                        `json:"complete,omitempty"`
+	Candidates                 []plancatalog.Candidate      `json:"candidates,omitempty"`
+	PreviewCandidates          []plancatalog.Candidate      `json:"preview_candidates,omitempty"`
+	PreviewProblems            []plancatalog.Problem        `json:"preview_problems,omitempty"`
+	PreviewValid               *bool                        `json:"preview_valid,omitempty"`
 }
 
 func RunPlans(args []string, stdout io.Writer, stderr io.Writer) int {
@@ -50,7 +61,7 @@ func RunPlans(args []string, stdout io.Writer, stderr io.Writer) int {
 }
 
 func runPlansValidate(args []string, stdout io.Writer, stderr io.Writer) int {
-	_, bools, positionals, err := parseValueArgs(args, map[string]bool{"--json": false, "--remote-overlays": false})
+	values, bools, positionals, err := parseValueArgs(args, map[string]bool{"--json": false, "--remote-overlays": false, "--target-discovery-version": true, "--target-catalog-mode": true, "--include-untracked": false})
 	if err != nil {
 		return writeArgError(stderr, "plans validate", err)
 	}
@@ -58,12 +69,40 @@ func runPlansValidate(args []string, stdout io.Writer, stderr io.Writer) int {
 	if err != nil {
 		return writeArgError(stderr, "plans validate", err)
 	}
-	snapshot, err := plancatalog.LoadRepositorySnapshot(root)
+	options, err := planReadSnapshotOptions(values, bools)
+	if err != nil {
+		return writeArgError(stderr, "plans validate", err)
+	}
+	if bools["--remote-overlays"] && options.TargetDiscoveryVersion == plancatalog.DiscoveryV2 {
+		return writeArgError(stderr, "plans validate", fmt.Errorf("--remote-overlays conflicts with prospective discovery v2 until remote discovery v2 is enabled"))
+	}
+	snapshot, err := plancatalog.LoadRepositorySnapshotWithOptions(root, options)
 	if err != nil {
 		fmt.Fprintf(stderr, "codeheart-operating-kit plans validate: error: %v\n", err)
 		return 1
 	}
-	output := plansValidationOutput{SchemaVersion: 1, Mode: snapshot.Settings.Mode, RepositoryID: snapshot.Settings.RepositoryID, Valid: !plancatalog.HasErrors(snapshot.Problems), RecordCount: len(snapshot.Records), Problems: snapshot.Problems}
+	if bools["--remote-overlays"] && snapshot.Settings.DiscoveryVersion == plancatalog.DiscoveryV2 {
+		return writeArgError(stderr, "plans validate", fmt.Errorf("--remote-overlays conflicts with discovery v2 until remote discovery v2 is enabled"))
+	}
+	output := plansValidationOutput{SchemaVersion: 1, Mode: snapshot.Settings.Mode, RepositoryID: snapshot.Settings.RepositoryID, Valid: snapshot.Complete && !plancatalog.HasErrors(snapshot.Problems), RecordCount: len(snapshot.Records), Problems: snapshot.Problems}
+	if snapshot.Settings.DiscoveryVersion == plancatalog.DiscoveryV2 || snapshot.Targeted {
+		complete := snapshot.Complete
+		output.SchemaVersion = 2
+		output.DiscoveryVersion = snapshot.Settings.DiscoveryVersion
+		output.ConfiguredDiscoveryVersion = snapshot.ConfiguredSettings.DiscoveryVersion
+		output.ConfiguredCatalogMode = snapshot.ConfiguredSettings.Mode
+		output.TargetCatalogMode = snapshot.Settings.Mode
+		output.PolicyDigest = snapshot.PolicyDigest
+		output.CandidateSetDigest = snapshot.CandidateSetDigest
+		output.Complete = &complete
+		output.Candidates = append([]plancatalog.Candidate{}, snapshot.Candidates...)
+		output.PreviewCandidates = append([]plancatalog.Candidate{}, snapshot.PreviewCandidates...)
+		output.PreviewProblems = append([]plancatalog.Problem{}, snapshot.PreviewProblems...)
+		if options.IncludeUntracked {
+			previewValid := !plancatalog.HasErrors(snapshot.PreviewProblems)
+			output.PreviewValid = &previewValid
+		}
+	}
 	if bools["--remote-overlays"] {
 		remote, scanErr := scanRemoteOverlays(root)
 		if scanErr != nil {
@@ -82,8 +121,22 @@ func runPlansValidate(args []string, stdout io.Writer, stderr io.Writer) int {
 		}
 	} else {
 		fmt.Fprintf(stdout, "Plan validation (%s mode): %d record(s); valid=%t.\n", output.Mode, output.RecordCount, output.Valid)
+		if output.SchemaVersion >= 2 {
+			owned, excluded, blocked, unowned := validationCandidateCounts(output.Candidates)
+			fmt.Fprintf(stdout, "Discovery v%d (configured v%d); target mode=%s; candidates included=%d excluded=%d blocked=%d unowned=%d preview=%d; complete=%t.\n", output.DiscoveryVersion, output.ConfiguredDiscoveryVersion, output.TargetCatalogMode, owned, excluded, blocked, unowned, len(output.PreviewCandidates), output.Complete != nil && *output.Complete)
+		}
+		if output.PreviewValid != nil {
+			fmt.Fprintf(stdout, "Preview valid=%t; preview evidence is non-authoritative.\n", *output.PreviewValid)
+		}
 		for _, problem := range output.Problems {
 			fmt.Fprintf(stdout, "- %s %s: %s", problem.Severity, problem.Code, problem.Message)
+			if problem.Path != "" {
+				fmt.Fprintf(stdout, " (%s)", problem.Path)
+			}
+			fmt.Fprintln(stdout)
+		}
+		for _, problem := range output.PreviewProblems {
+			fmt.Fprintf(stdout, "- preview %s %s: %s", problem.Severity, problem.Code, problem.Message)
 			if problem.Path != "" {
 				fmt.Fprintf(stdout, " (%s)", problem.Path)
 			}
@@ -93,14 +146,14 @@ func runPlansValidate(args []string, stdout io.Writer, stderr io.Writer) int {
 			fmt.Fprintf(stdout, "Remote overlays: complete=%t; %d pushed observation(s) across %d member(s). Local heads, worktree changes, and unpushed commits are omitted.\n", output.RemoteOverlays.Catalog.Complete, len(output.RemoteOverlays.Catalog.Observations), len(output.RemoteOverlays.Catalog.Members))
 		}
 	}
-	if output.Valid {
+	if output.Valid && (output.PreviewValid == nil || *output.PreviewValid) {
 		return 0
 	}
 	return 1
 }
 
 func runPlansList(args []string, stdout io.Writer, stderr io.Writer) int {
-	values, bools, positionals, err := parseValueArgs(args, map[string]bool{"--format": true, "--json": false})
+	values, bools, positionals, err := parseValueArgs(args, map[string]bool{"--format": true, "--json": false, "--target-discovery-version": true})
 	if err != nil {
 		return writeArgError(stderr, "plans list", err)
 	}
@@ -123,7 +176,11 @@ func runPlansList(args []string, stdout io.Writer, stderr io.Writer) int {
 	if err != nil {
 		return writeArgError(stderr, "plans list", err)
 	}
-	snapshot, err := plancatalog.LoadRepositorySnapshot(root)
+	options, err := planReadSnapshotOptions(values, bools)
+	if err != nil {
+		return writeArgError(stderr, "plans list", err)
+	}
+	snapshot, err := plancatalog.LoadRepositorySnapshotWithOptions(root, options)
 	if err != nil {
 		fmt.Fprintf(stderr, "codeheart-operating-kit plans list: error: %v\n", err)
 		return 1
@@ -144,7 +201,7 @@ func runPlansList(args []string, stdout io.Writer, stderr io.Writer) int {
 }
 
 func runPlansInventory(args []string, stdout io.Writer, stderr io.Writer) int {
-	values, bools, positionals, err := parseValueArgs(args, map[string]bool{"--output": true, "--json": false, "--remote-overlays": false})
+	values, bools, positionals, err := parseValueArgs(args, map[string]bool{"--output": true, "--json": false, "--remote-overlays": false, "--target-discovery-version": true, "--target-catalog-mode": true, "--include-untracked": false})
 	if err != nil {
 		return writeArgError(stderr, "plans inventory", err)
 	}
@@ -155,10 +212,20 @@ func runPlansInventory(args []string, stdout io.Writer, stderr io.Writer) int {
 	if err != nil {
 		return writeArgError(stderr, "plans inventory", err)
 	}
-	inventory, err := plancatalog.BuildInventory(root, time.Now())
+	options, err := planReadSnapshotOptions(values, bools)
+	if err != nil {
+		return writeArgError(stderr, "plans inventory", err)
+	}
+	if bools["--remote-overlays"] && options.TargetDiscoveryVersion == plancatalog.DiscoveryV2 {
+		return writeArgError(stderr, "plans inventory", fmt.Errorf("--remote-overlays conflicts with prospective discovery v2 until remote discovery v2 is enabled"))
+	}
+	inventory, err := plancatalog.BuildInventoryWithOptions(root, time.Now(), options)
 	if err != nil {
 		fmt.Fprintf(stderr, "codeheart-operating-kit plans inventory: error: %v\n", err)
 		return 1
+	}
+	if bools["--remote-overlays"] && inventory.DiscoveryVersion == plancatalog.DiscoveryV2 {
+		return writeArgError(stderr, "plans inventory", fmt.Errorf("--remote-overlays conflicts with discovery v2 until remote discovery v2 is enabled"))
 	}
 	if bools["--remote-overlays"] {
 		remote, scanErr := scanRemoteOverlays(root)
@@ -183,12 +250,48 @@ func runPlansInventory(args []string, stdout io.Writer, stderr io.Writer) int {
 		}
 	} else {
 		fmt.Fprintf(stdout, "Plan inventory: %d formal record(s), %d canonical, %d legacy, %d invalid, %d unreadable, %d unsafe, %d unpaired legacy; revision %s.\n", inventory.Coverage.FormalRecords, inventory.Coverage.CanonicalMetadata, inventory.Coverage.LegacyRecords, inventory.Coverage.InvalidRecords, inventory.Coverage.UnreadableRecords, inventory.Coverage.UnsafeRecords, inventory.Coverage.UnpairedLegacyEvidence, inventory.SourceRevision)
+		if inventory.SchemaVersion >= 2 {
+			fmt.Fprintf(stdout, "Discovery v%d (configured v%d); target mode=%s; candidates included=%d excluded=%d blocked=%d unowned=%d preview=%d.\n", inventory.DiscoveryVersion, inventory.ConfiguredDiscoveryVersion, inventory.TargetCatalogMode, inventory.Coverage.IncludedCandidates, inventory.Coverage.ExcludedCandidates, inventory.Coverage.BlockedCandidates, inventory.Coverage.UnownedCandidates, inventory.Coverage.PreviewCandidates)
+		}
 		fmt.Fprintf(stdout, "Wrote inventory: %s\n", values["--output"])
 	}
-	if plancatalog.HasErrors(inventory.Problems) {
+	if plancatalog.HasErrors(inventory.Problems) || plancatalog.HasErrors(inventory.PreviewProblems) {
 		return 1
 	}
 	return 0
+}
+
+func planReadSnapshotOptions(values map[string]string, bools map[string]bool) (plancatalog.SnapshotOptions, error) {
+	options := plancatalog.SnapshotOptions{IncludeUntracked: bools["--include-untracked"]}
+	if value := values["--target-discovery-version"]; value != "" {
+		if value != "2" {
+			return options, fmt.Errorf("invalid --target-discovery-version %q (only 2 is supported)", value)
+		}
+		options.TargetDiscoveryVersion = plancatalog.DiscoveryV2
+	}
+	if value := values["--target-catalog-mode"]; value != "" {
+		if value != string(plancatalog.ModeCanonical) {
+			return options, fmt.Errorf("invalid --target-catalog-mode %q (only canonical is supported)", value)
+		}
+		options.TargetCatalogMode = plancatalog.ModeCanonical
+	}
+	return options, nil
+}
+
+func validationCandidateCounts(candidates []plancatalog.Candidate) (owned, excluded, blocked, unowned int) {
+	for _, candidate := range candidates {
+		switch candidate.Ownership {
+		case plancatalog.OwnershipOwned:
+			owned++
+		case plancatalog.OwnershipExcluded:
+			excluded++
+		case plancatalog.OwnershipProspectiveBlocked:
+			blocked++
+		case plancatalog.OwnershipHardUnowned:
+			unowned++
+		}
+	}
+	return
 }
 
 func scanRemoteOverlays(root string) (portfolio.ScanResult, error) {
@@ -395,14 +498,27 @@ func writeInventoryArtifactWithHook(root, destination string, inventory plancata
 		if strings.EqualFold(repositoryPath, "docs/repo/plans/README.md") || strings.EqualFold(repositoryPath, plancatalog.LegacyRegisterPath) {
 			return fmt.Errorf("inventory_target_is_plan: output cannot create or overwrite planning authority %s", repositoryPath)
 		}
-		if _, formal := plancatalog.FormalPathKind(resolvedRoot, repositoryPath); formal {
+		_, formal := plancatalog.FormalPathKind(resolvedRoot, repositoryPath)
+		if inventory.DiscoveryVersion == plancatalog.DiscoveryV2 {
+			_, formal = plancatalog.ProspectiveV2PathKind(repositoryPath)
+			signal, signalErr := plancatalog.WorktreeV2PlanSignal(resolvedRoot, repositoryPath)
+			if signalErr != nil {
+				return fmt.Errorf("inventory_target_unsafe: classify existing target: %w", signalErr)
+			}
+			formal = formal || signal
+		}
+		if formal {
 			return fmt.Errorf("inventory_target_is_plan: output cannot create or overwrite formal plan path %s", repositoryPath)
 		}
 	}
 	protected := []string{"docs/repo/plans/README.md", "docs/repo/plans/plan-register.md"}
-	candidates, err := plancatalog.Enumerate(root)
-	if err != nil {
-		return fmt.Errorf("enumerate protected plan targets: %w", err)
+	candidates := append([]plancatalog.Candidate{}, inventory.Candidates...)
+	candidates = append(candidates, inventory.PreviewCandidates...)
+	if inventory.DiscoveryVersion != plancatalog.DiscoveryV2 {
+		candidates, err = plancatalog.Enumerate(root)
+		if err != nil {
+			return fmt.Errorf("enumerate protected plan targets: %w", err)
+		}
 	}
 	for _, candidate := range candidates {
 		protected = append(protected, candidate.Path)

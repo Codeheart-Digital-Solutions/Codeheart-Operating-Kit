@@ -9,6 +9,7 @@ import (
 	"sort"
 	"strings"
 	"testing"
+	"time"
 )
 
 func TestDiscoveryV2ClassifiesRepositoryWideTrackedDocsDeterministically(t *testing.T) {
@@ -434,4 +435,204 @@ func TestV1FilenameAndSourceSizeCompatibilityRemainUnchanged(t *testing.T) {
 	if _, err := readBoundedRegularSource(root, name); ErrorCode(err) != "source_too_large" {
 		t.Fatalf("v2 bounded read error=%v", err)
 	}
+}
+
+func TestProspectiveV2SnapshotAndUntrackedPreviewAreReadOnlyAndSeparated(t *testing.T) {
+	root := migrationRepository(t)
+	nested := "products/widget/docs/discovery/unconventional.md"
+	writeClassifierFile(t, root, nested, canonicalClassifierDocument("example.discovery.nested", KindDiscovery, "Nested"))
+	writeClassifierFile(t, root, ".gitignore", "ignored/\n")
+	runGitTest(t, root, "add", nested, ".gitignore")
+	runGitTest(t, root, "commit", "-m", "add nested plan and ignore rule")
+
+	active, err := LoadRepositorySnapshot(root)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, record := range active.Records {
+		if record.Path == nested {
+			t.Fatal("active discovery v1 unexpectedly expanded before activation")
+		}
+	}
+	options := SnapshotOptions{TargetDiscoveryVersion: DiscoveryV2}
+	prospective, err := LoadRepositorySnapshotWithOptions(root, options)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if prospective.Settings.DiscoveryVersion != DiscoveryV2 || prospective.ConfiguredSettings.DiscoveryVersion != DiscoveryV1 || !prospective.Targeted || prospective.CandidateSetDigest == "" || !recordPathExists(prospective.Records, nested) {
+		t.Fatalf("prospective snapshot=%#v", prospective)
+	}
+
+	previewPath := "products/widget/docs/authoring/new_discovery_doc.md"
+	ignoredPath := "ignored/docs/ignored_discovery_doc.md"
+	writeClassifierFile(t, root, previewPath, canonicalClassifierDocument("example.discovery.preview", KindDiscovery, "Preview"))
+	writeClassifierFile(t, root, ignoredPath, canonicalClassifierDocument("example.discovery.ignored", KindDiscovery, "Ignored"))
+	statusBefore := runGitTest(t, root, "status", "--porcelain=v1", "--untracked-files=all")
+	withPreview, err := LoadRepositorySnapshotWithOptions(root, SnapshotOptions{TargetDiscoveryVersion: DiscoveryV2, IncludeUntracked: true})
+	if err != nil {
+		t.Fatal(err)
+	}
+	statusAfter := runGitTest(t, root, "status", "--porcelain=v1", "--untracked-files=all")
+	if statusBefore != statusAfter {
+		t.Fatalf("prospective read changed repository state:\nbefore=%s\nafter=%s", statusBefore, statusAfter)
+	}
+	if prospective.CandidateSetDigest != withPreview.CandidateSetDigest || len(prospective.Records) != len(withPreview.Records) || len(withPreview.PreviewCandidates) != 1 || withPreview.PreviewCandidates[0].Path != previewPath || !withPreview.PreviewCandidates[0].Provenance.Source.Preview || !recordPathExists(withPreview.PreviewRecords, previewPath) {
+		t.Fatalf("preview contaminated authority or omitted evidence: before=%#v after=%#v", prospective, withPreview)
+	}
+	for _, candidate := range withPreview.PreviewCandidates {
+		if candidate.Path == ignoredPath {
+			t.Fatal("ignored untracked plan entered authoring preview")
+		}
+	}
+	migration, err := BuildMigrationPlan(root, migrationLedger(t, root))
+	if err != nil || len(migration.FilePlan.Actions) != 2 {
+		t.Fatalf("preview or prospective candidates entered active migration: plan=%#v err=%v", migration, err)
+	}
+}
+
+func TestV2ActiveBranchTouchesClassifyNestedMetadataPaths(t *testing.T) {
+	root := migrationRepository(t)
+	path := "products/widget/docs/discovery/unconventional.md"
+	runGitTest(t, root, "checkout", "-b", "feature/nested-plan")
+	writeClassifierFile(t, root, path, canonicalClassifierDocument("example.discovery.branch-nested", KindDiscovery, "Branch Nested"))
+	runGitTest(t, root, "add", path)
+	runGitTest(t, root, "commit", "-m", "add nested metadata plan")
+	runGitTest(t, root, "checkout", "main")
+	settings, problems := LoadRepositorySettings(root)
+	if HasErrors(problems) {
+		t.Fatalf("settings problems=%#v", problems)
+	}
+	settings.DiscoveryVersion = DiscoveryV2
+	settings.PolicyDigest = settings.DiscoveryPolicy(false).Digest()
+	touches, touchProblems := activeBranchTouchesWithSettings(root, settings)
+	if len(touchProblems) != 0 || strings.Join(touches[path], ",") != "refs/heads/feature/nested-plan" {
+		t.Fatalf("nested branch touches=%#v problems=%#v", touches, touchProblems)
+	}
+}
+
+func TestPreviewErrorsDoNotChangeAuthoritativeCompleteness(t *testing.T) {
+	root := t.TempDir()
+	runGitTest(t, root, "init")
+	runGitTest(t, root, "config", "user.email", "test@example.invalid")
+	runGitTest(t, root, "config", "user.name", "Plan Catalog Test")
+	tracked := "docs/tracked/tracked_discovery_doc.md"
+	preview := "docs/preview/preview_discovery_doc.md"
+	writeClassifierFile(t, root, tracked, canonicalClassifierDocument("example.discovery.tracked-preview-test", KindDiscovery, "Tracked"))
+	runGitTest(t, root, "add", tracked)
+	runGitTest(t, root, "commit", "-m", "add tracked plan")
+	writeClassifierFile(t, root, preview, strings.Replace(canonicalClassifierDocument("example.discovery.preview-invalid", KindDiscovery, "Invalid Preview"), "  schema_version: 1", "  schema_version: [", 1))
+	snapshot, err := LoadRepositorySnapshotWithOptions(root, SnapshotOptions{TargetDiscoveryVersion: DiscoveryV2, IncludeUntracked: true})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !snapshot.Complete || HasErrors(snapshot.Problems) || !HasErrors(snapshot.PreviewProblems) || len(snapshot.Records) != 1 || len(snapshot.PreviewCandidates) != 1 {
+		t.Fatalf("preview error contaminated authoritative completeness: %#v", snapshot)
+	}
+}
+
+func TestPreviewValidationUsesTrackedIdentityFamilyAndPortableContext(t *testing.T) {
+	root := t.TempDir()
+	runGitTest(t, root, "init")
+	runGitTest(t, root, "config", "user.email", "test@example.invalid")
+	runGitTest(t, root, "config", "user.name", "Plan Catalog Test")
+	familyID := "example.family.preview-context"
+	trackedID := "example.discovery.tracked-context"
+	writeClassifierFile(t, root, "docs/family/README.md", canonicalClassifierDocument(familyID, KindFamily, "Tracked Family"))
+	writeClassifierFile(t, root, "docs/tracked/tracked_discovery_doc.md", canonicalClassifierDocument(trackedID, KindDiscovery, "Tracked Plan"))
+	runGitTest(t, root, "add", ".")
+	runGitTest(t, root, "commit", "-m", "add tracked preview context")
+
+	child := strings.Replace(canonicalClassifierDocument("example.discovery.preview-child", KindDiscovery, "Preview Child"), "  purpose: Exercise repository-wide discovery.\n", "  purpose: Exercise repository-wide discovery.\n  family: "+familyID+"\n", 1)
+	writeClassifierFile(t, root, "docs/authoring/child_discovery_doc.md", child)
+	writeClassifierFile(t, root, "docs/authoring/duplicate_discovery_doc.md", canonicalClassifierDocument(trackedID, KindDiscovery, "Duplicate Preview"))
+	snapshot, err := LoadRepositorySnapshotWithOptions(root, SnapshotOptions{TargetDiscoveryVersion: DiscoveryV2, IncludeUntracked: true})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !problemCodeExists(snapshot.PreviewProblems, "duplicate_plan_id") {
+		t.Fatalf("preview duplicate did not see tracked identity: %#v", snapshot.PreviewProblems)
+	}
+	for _, problem := range snapshot.PreviewProblems {
+		if problem.Code == "family_record_missing" && problem.Path == "docs/authoring/child_discovery_doc.md" {
+			t.Fatalf("preview child did not see tracked family context: %#v", snapshot.PreviewProblems)
+		}
+	}
+	if HasErrors(snapshot.Problems) || !snapshot.Complete {
+		t.Fatalf("preview context contaminated authoritative result: complete=%t problems=%#v", snapshot.Complete, snapshot.Problems)
+	}
+
+	preview := Classification{
+		Candidates: []Candidate{{Path: "docs/PLAN_discovery_doc.md", Provenance: CandidateProvenance{Source: GitBlob{Preview: true}}}},
+		Discovery:  Discovery{Records: []Record{}, Problems: []Problem{}},
+	}
+	tracked := []Candidate{{Path: "docs/plan_discovery_doc.md"}}
+	portable := ValidatePreviewContext(nil, tracked, preview, ModeCanonical, "example")
+	if !problemCodeExists(portable, "plan_path_portable_collision") {
+		t.Fatalf("preview portable collision did not see tracked candidate: %#v", portable)
+	}
+}
+
+func TestCanonicalTargetModeImpliesProspectiveDiscoveryV2(t *testing.T) {
+	root := migrationRepository(t)
+	snapshot, err := LoadRepositorySnapshotWithOptions(root, SnapshotOptions{TargetCatalogMode: ModeCanonical})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if snapshot.Settings.DiscoveryVersion != DiscoveryV2 || snapshot.Settings.Mode != ModeCanonical || snapshot.CandidateSetDigest == "" || len(snapshot.Candidates) == 0 {
+		t.Fatalf("canonical target did not produce complete discovery-v2 evidence: %#v", snapshot)
+	}
+}
+
+func TestInventoryKindRemainsFilenameOwnedOnMetadataMismatch(t *testing.T) {
+	root := t.TempDir()
+	runGitTest(t, root, "init")
+	runGitTest(t, root, "config", "user.email", "test@example.invalid")
+	runGitTest(t, root, "config", "user.name", "Plan Catalog Test")
+	planPath := "docs/repo/plans/mismatch/mismatch_discovery_doc.md"
+	writeClassifierFile(t, root, planPath, canonicalClassifierDocument("example.implementation.mismatch", KindImplementation, "Mismatched Kind"))
+	runGitTest(t, root, "add", ".")
+	runGitTest(t, root, "commit", "-m", "add mismatched plan")
+	inventory, err := BuildInventory(root, time.Date(2026, 8, 6, 0, 0, 0, 0, time.UTC))
+	if err != nil {
+		t.Fatal(err)
+	}
+	record := inventoryRecordByPath(t, inventory, planPath)
+	if record.Kind != KindDiscovery || !problemCodeExists(inventory.Problems, "record_kind_path_mismatch") {
+		t.Fatalf("inventory kind was not filename-owned: record=%#v problems=%#v", record, inventory.Problems)
+	}
+}
+
+func TestV2ActiveBranchTouchesKeepBothEligibilityChangingRenamePaths(t *testing.T) {
+	root := migrationRepository(t)
+	oldPath := "holding/renamed_discovery_doc.md"
+	newPath := "products/widget/docs/discovery/renamed_discovery_doc.md"
+	writeClassifierFile(t, root, oldPath, canonicalClassifierDocument("example.discovery.renamed", KindDiscovery, "Renamed"))
+	runGitTest(t, root, "add", oldPath)
+	runGitTest(t, root, "commit", "-m", "add misplaced plan")
+	runGitTest(t, root, "checkout", "-b", "feature/rename-into-docs")
+	if err := os.MkdirAll(filepath.Dir(filepath.Join(root, filepath.FromSlash(newPath))), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	runGitTest(t, root, "mv", oldPath, newPath)
+	runGitTest(t, root, "commit", "-m", "move plan into docs")
+	runGitTest(t, root, "checkout", "main")
+	settings, problems := LoadRepositorySettings(root)
+	if HasErrors(problems) {
+		t.Fatalf("settings problems=%#v", problems)
+	}
+	settings.DiscoveryVersion = DiscoveryV2
+	settings.PolicyDigest = settings.DiscoveryPolicy(false).Digest()
+	touches, touchProblems := activeBranchTouchesWithSettings(root, settings)
+	if len(touchProblems) != 0 || strings.Join(touches[oldPath], ",") != "refs/heads/feature/rename-into-docs" || strings.Join(touches[newPath], ",") != "refs/heads/feature/rename-into-docs" {
+		t.Fatalf("rename touches=%#v problems=%#v", touches, touchProblems)
+	}
+}
+
+func recordPathExists(records []Record, expected string) bool {
+	for _, record := range records {
+		if record.Path == expected {
+			return true
+		}
+	}
+	return false
 }

@@ -1,4 +1,4 @@
-Last updated: 2026-08-06T22:34:04Z (UTC)
+Last updated: 2026-08-06T23:12:00Z (UTC)
 Created: 2026-08-06
 
 # Ownership-Aware Repository-Wide Plan Catalog Discovery Execution Log
@@ -33,7 +33,7 @@ force push, secret exposure, and silent conflict resolution.
 | --- | --- | --- | --- |
 | `EP-01` | completed | Discovery models, pure settings, exclusions, v1/v2 schemas, dispatch, and fresh defaults. | Accepted after two rounds |
 | `EP-02` | completed | Shared Git-backed candidate classifier, local index adapter, exact path and marker semantics, ownership boundaries, and family qualification. | Accepted after six rounds |
-| `EP-03` | pending | None recorded. | Required |
+| `EP-03` | completed | Versioned local views, prospective v2/canonical reads, preview evidence, repository-wide branch touches, and output protection. | Accepted after two rounds |
 | `EP-04` | pending | None recorded. | Required |
 | `EP-05` | pending | None recorded. | Required |
 | `EP-06` | pending | None recorded. | Required, including routing probe |
@@ -48,19 +48,21 @@ force push, secret exposure, and silent conflict resolution.
 - Review gate skipped: no.
 - Reviewer mode: fresh read-only subagent when the active environment permits it.
 - Reviewer model and reasoning mode: inherited from the implementing agent.
-- Review rounds: two for EP-01 and six for EP-02.
+- Review rounds: two for EP-01, six for EP-02, and two for EP-03.
 - Material findings: two EP-01 P1 findings plus EP-02 findings covering unsafe-source ordering,
   path portability, family authority, marker parsing, v1 compatibility, exact object provenance,
-  and deterministic candidate evidence; all fixed.
+  and deterministic candidate evidence; EP-03 findings covered preview context isolation,
+  incomplete target-canonical evidence, and filename-owned kind semantics; all fixed.
 - Files changed because of review: `schemas/kit-config.schema.json`, `internal/plancatalog/view.go`,
   `internal/plancatalog/plancatalog_test.go`, and `tests/test_json_schemas.py`.
-- Final accepted result: EP-01 and EP-02 accepted; EP-03 through EP-10 pending.
-- Approximate added time: about six minutes for EP-01 and about thirty-five minutes for EP-02
-  review and remediation.
+- Final accepted result: EP-01 through EP-03 accepted; EP-04 through EP-10 pending.
+- Approximate added time: about six minutes for EP-01, about thirty-five minutes for EP-02, and
+  about twelve minutes for EP-03 review and remediation.
 - Token usage: not exposed per review round.
 - Worth-it assessment: yes. EP-02 review prevented unsafe local fallback evidence from becoming
   authority, preserved v1 activation compatibility, and bound fallback reads to exact offline Git
-  objects despite replacement refs.
+  objects despite replacement refs. EP-03 review prevented preview conflicts from being reported
+  safe, ensured canonical readiness always carries v2 evidence, and preserved filename-owned kind.
 
 ## Activation Delta
 
@@ -138,9 +140,30 @@ Status: completed and accepted for checkpoint publication.
 
 ## EP-03 Delta - Local Views, Prospective Reads, And Authoring Preview
 
-Status: pending.
+Status: completed and accepted for checkpoint publication.
 
-No divergence, validation, or review evidence is recorded yet.
+- Added schema-v2 list, validate, and inventory evidence over the same authoritative classifier,
+  while keeping the exact schema-v1 list golden unchanged for active discovery v1.
+- Added read-only `--target-discovery-version 2` and canonical-readiness lenses. A canonical target
+  implies discovery v2 so it cannot emit an incomplete v1 candidate/provenance contract.
+- Added explicit non-ignored untracked preview for validate and inventory. Preview records remain
+  outside authoritative counts, records, digests, migration inputs, remote evidence, and
+  completeness, but are checked against tracked IDs, portable paths, and family context.
+- Replaced fixed-root branch ownership for v2 with NUL-safe repository-wide Git diff/tree
+  classification, including nested metadata-only additions and both sides of eligibility-changing
+  renames. Discovery v1 retains the historical branch-touch route.
+- Versioned inventory provenance and coverage, preserved filename/family-owned human kind, and
+  protected existing metadata-only plus prospective reserved output targets even when ignored or
+  omitted from preview.
+- Validation: focused `go test ./internal/plancatalog ./internal/commands ./internal/portfolio`
+  passed; remediation regressions repeated two times passed; focused `go vet` passed; active-v1
+  JSON golden remained byte-exact; deterministic prospective-v2 list reads matched; and `git diff
+  --check` passed. The repository-wide Go suite has only the expected managed content-graph digest
+  drift caused by producer changes, reserved for EP-06/EP-08 parity regeneration.
+- Review gate: round one found two P1 issues and one P2 issue—preview isolation from tracked
+  identity/path/family context, incomplete canonical-target evidence over discovery v1, and
+  metadata overriding filename-owned inventory kind. All received regression coverage; round two
+  accepted EP-03 with no remaining actionable findings.
 
 ## EP-04 Delta - Guarded Migration And Mode Compatibility
 

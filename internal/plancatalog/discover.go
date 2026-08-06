@@ -119,6 +119,16 @@ func kindForFilename(name string) (Kind, bool) {
 	}
 }
 
+// ProspectiveV2PathKind classifies a not-yet-tracked path using only the
+// canonical discovery-v2 path and reserved-filename contract. Family authority
+// still requires metadata and is therefore classified from content instead.
+func ProspectiveV2PathKind(candidatePath string) (Kind, bool) {
+	if validateGitPath(candidatePath) != nil || filepath.ToSlash(filepath.Clean(filepath.FromSlash(candidatePath))) != candidatePath || !hasExactDocsSegment(candidatePath) || filepath.Ext(filepath.FromSlash(candidatePath)) != ".md" {
+		return "", false
+	}
+	return kindForFilename(filepath.Base(filepath.FromSlash(candidatePath)))
+}
+
 func legacyKindForFilename(name string) (Kind, bool) {
 	switch {
 	case strings.HasSuffix(name, "_discovery_doc.md"):

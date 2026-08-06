@@ -713,11 +713,11 @@ can opt into clearly non-authoritative untracked authoring feedback.
 - `internal/plancatalog/view.go`
 - `internal/plancatalog/inventory.go`
 - `internal/plancatalog/discover.go`
-- `internal/plancatalog/legacy.go`
+- `internal/plancatalog/git_index.go`
+- `internal/plancatalog/classifier.go`
+- `internal/plancatalog/classifier_test.go`
 - `internal/commands/plans.go`
 - `internal/commands/commands_test.go`
-- `internal/commands/testdata/plans-list.json`
-- `internal/plancatalog/ep02_test.go`
 
 ### D) Acceptance Criteria And Size
 
@@ -736,18 +736,18 @@ Depends on EP-02. Freeze structured local outputs before migration ledger v2 is 
 
 ### F) Tasks Checklist
 
-- [ ] Extend `RepositorySnapshot`, `View`, `Inventory`, and coverage models with discovery and policy provenance.
-- [ ] Add target discovery-version parsing to list, validate, and inventory in `internal/commands/plans.go`.
-- [ ] Add target canonical-mode readiness parsing to validate and inventory without config writes.
-- [ ] Add non-authoritative non-ignored untracked preview collection to validate and inventory with explicit provenance.
-- [ ] Replace fixed-root `activeBranchTouches` with repository-wide change classification from the shared policy.
-- [ ] Bind inventory candidate digests to sorted path, signal, expected kind, ownership, Git mode/blob, and source hash.
-- [ ] Extend inventory-output protection to every classifier-visible present and prospective formal target.
-- [ ] Update text output, JSON output, and `internal/commands/testdata/plans-list.json` with versioned deterministic fields.
-- [ ] Add CLI rejection tests for unsupported target versions, unsafe exclusions, preview misuse, and conflicting flags.
-- [ ] Add no-write tests proving prospective and preview commands preserve config, plans, register, cache, and transaction paths.
-- [ ] Run `go test ./internal/plancatalog ./internal/commands`.
-- [ ] Run prospective v1 and v2 command goldens on the multi-root fixture.
+- [x] Extend `RepositorySnapshot`, `View`, `Inventory`, and coverage models with discovery and policy provenance.
+- [x] Add target discovery-version parsing to list, validate, and inventory in `internal/commands/plans.go`.
+- [x] Add target canonical-mode readiness parsing to validate and inventory without config writes.
+- [x] Add non-authoritative non-ignored untracked preview collection to validate and inventory with explicit provenance.
+- [x] Replace fixed-root `activeBranchTouches` with repository-wide change classification from the shared policy.
+- [x] Bind inventory candidate digests to sorted path, signal, expected kind, ownership, Git mode/blob, and source hash.
+- [x] Extend inventory-output protection to every classifier-visible present and prospective formal target.
+- [x] Preserve the exact v1 JSON golden and cover v2 text/JSON fields with deterministic temporary multi-root fixtures.
+- [x] Add CLI rejection tests for unsupported target versions, unsafe exclusions, preview misuse, and conflicting flags.
+- [x] Add no-write tests proving prospective and preview commands preserve config, plans, register, cache, and transaction paths.
+- [x] Run `go test ./internal/plancatalog ./internal/commands`.
+- [x] Run the active-v1 golden plus repeated prospective-v2 command assertions on the multi-root fixture.
 
 ### G) Implementation Notes
 
