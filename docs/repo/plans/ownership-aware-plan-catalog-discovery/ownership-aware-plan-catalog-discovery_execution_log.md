@@ -1,4 +1,4 @@
-Last updated: 2026-08-07T01:39:50Z (UTC)
+Last updated: 2026-08-07T01:57:28Z (UTC)
 Created: 2026-08-06
 
 # Ownership-Aware Repository-Wide Plan Catalog Discovery Execution Log
@@ -411,9 +411,43 @@ Status: completed and accepted for checkpoint publication.
 
 ## EP-09 Delta - Versioned Producer Release And Publication
 
-Status: pending.
+Status: in progress; validated release candidate is ready for explicit commit and platform gates.
 
-User authority is durable; execution waits for accepted EP-08 readiness evidence.
+- Live preflight found published `v0.1.24` as the latest release and confirmed `v0.1.25` is unused
+  locally and remotely. `origin/main` at `7ef63d4c6b8eb090c17691b2a67c3f6b699ca25b` is an ancestor of
+  the release branch, the branch has no existing PR, GitHub authentication is available, and Git
+  identity remains Andreas Beer / andreas.beer@codeheart.ai.
+- Selected `v0.1.25` as the next patch. Root Go/Python/package/bootstrap/installer/workflow/test
+  release surfaces are coherent at `0.1.25`; the changed planning-workflows component advances
+  independently to `0.1.23`, agent-interface to `0.1.25`, and the standard profile to `0.1.25`.
+  Source and packaged mirrors are byte-identical. Root and packaged content manifests use graph
+  digest `387d35c53c37559fa3204d385c4ae31629f3eabdacb6edd7cc6d6e60a726a90a`.
+- Release notes record arbitrary-depth exact-`docs` discovery, filename-or-metadata candidate
+  enumeration, filename-and-metadata canonical validity, hard-unowned/exclusions-only authority,
+  metadata-qualified families, explicit v1 compatibility, optional mixed adoption, and remote v2
+  completeness. The release retains the established unsigned HTTPS-plus-SHA-256 internal/prototype
+  boundary; no new signing claim is made.
+- Focused version, manifest, release, command, and CLI suites passed. Full `go vet
+  ./internal/... ./cmd/...`, `go test -race ./...`, and all 152 Python tests passed. JSON Schema,
+  Markdown, public-core, release-manifest, source/mirror parity, and diff validators passed.
+- The first final-build attempt stopped before artifact generation on one stale profile-hash test
+  fixture. Updating that release-coupled expectation to the computed `0.1.25` profile digest fixed
+  the gate without changing runtime semantics.
+- Two isolated final-URL builds are recursively byte-identical and each reports reproducible
+  macOS-universal and Windows-x64 repeat builds. Final candidate archive digests are
+  `a3585cee219306a878934f691d4b273af521efcf583338b5e396166d4e94c65d` for macOS and
+  `a659fa633329de04faffaef2b9a0988975faffe34a2297b0905d441e4084bed5` for Windows. The external
+  catalog digest is `9d86d00d1aef39be384a233b66b30b3b39eb12f4a8acdc4cdc95a05ea91b5df0`;
+  pack-manifest digests are `7e893a9075e856de1111aa215d408eaa05b00d2c52fd273087715c520220fc0d`
+  and `21005b29da9266bdf57cc51245fdfef287e057e7e886482b969ca04b4adbb23c`.
+- Both archives have deterministic timestamps and the exact required nine-entry shape with no
+  Python runtime payload. A locally stamped `0.1.24` CLI passed catalog-to-archive,
+  pack-to-binary, and staged-version validation against the final macOS archive; binary digest is
+  `f2092a1b9913091dc3062c92b8c98f0dc44111bc8b69e0a054eadbc213938e29` and content-manifest digest
+  is `975a14b7e05805b134c8da32a406fb6b4460bdd9f1e5ab38ddc88147f0d71796`.
+- Candidate assets remain isolated temporary evidence. No tag, release, merge, or consumer change
+  has occurred. The commit containing this delta becomes the exact candidate for the required
+  Ubuntu, macOS, and real-Windows branch validation before protected PR/merge and publication.
 
 ## EP-10 Delta - Codeheart-HQ Installation And Validation
 

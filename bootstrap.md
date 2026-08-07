@@ -1,4 +1,4 @@
-Last updated: 2026-08-01T06:31:15Z (UTC)
+Last updated: 2026-08-07T01:39:50Z (UTC)
 
 # Bootstrap Codeheart Operating Kit
 
@@ -8,19 +8,19 @@ preinstalled Codeheart skills.
 Pinned release:
 
 ```text
-Version: v0.1.24
-Release URL: https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/tag/v0.1.24
+Version: v0.1.25
+Release URL: https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/tag/v0.1.25
 ```
 
 ## Install The CLI
 
 macOS installs into a user-level Operating Kit folder. The installer verifies and installs the
 self-contained platform release pack named
-`codeheart-operating-kit-0.1.24-macos-universal.zip`; the pack contains
+`codeheart-operating-kit-0.1.25-macos-universal.zip`; the pack contains
 `bin/codeheart-operating-kit`.
 
 ```sh
-curl -fsSLO https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.24/install.sh
+curl -fsSLO https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.25/install.sh
 bash install.sh
 ```
 
@@ -32,11 +32,11 @@ $HOME/.codeheart/operating-kit/bin/codeheart-operating-kit
 
 Windows installs into the current user's local application data folder. The installer verifies and
 installs the self-contained platform release pack named
-`codeheart-operating-kit-0.1.24-windows-x64.zip`; the pack contains
+`codeheart-operating-kit-0.1.25-windows-x64.zip`; the pack contains
 `bin/codeheart-operating-kit.exe` and the installer writes the `.cmd` shim.
 
 ```powershell
-Invoke-WebRequest -Uri "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.24/install.ps1" -OutFile install.ps1
+Invoke-WebRequest -Uri "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.25/install.ps1" -OutFile install.ps1
 .\install.ps1
 ```
 
@@ -97,7 +97,7 @@ Follow this contract exactly during first-run setup:
 - Do not run or introduce `update-check` during onboarding unless the user separately requests a
   version check.
 
-For `v0.1.24`, `codeheart-operating-kit onboard` is an agent-guided script and setup-plan renderer.
+For `v0.1.25`, `codeheart-operating-kit onboard` is an agent-guided script and setup-plan renderer.
 It is not a terminal stdin prompt loop. Show rendered prompts in Codex chat, collect user decisions
 in chat, and rerun the command with explicit values only when applying setup.
 
