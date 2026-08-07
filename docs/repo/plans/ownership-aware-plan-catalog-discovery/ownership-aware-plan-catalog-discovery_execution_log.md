@@ -1,11 +1,11 @@
-Last updated: 2026-08-07T01:57:28Z (UTC)
+Last updated: 2026-08-07T03:10:13Z (UTC)
 Created: 2026-08-06
 
 # Ownership-Aware Repository-Wide Plan Catalog Discovery Execution Log
 
 Plan: `ownership-aware-plan-catalog-discovery_implementation_doc.md`
 Mode: goal-style implementation
-Status: active
+Status: completed
 Overall divergence: reviewed pre-activation defaults were incorporated before activation. EP-01
 also updates the shared Python YAML emitter so fresh empty exclusion arrays remain arrays, promotes
 the directly imported Unicode package in `go.mod`, and dispatches existing portfolio-v1 cache
@@ -39,8 +39,8 @@ force push, secret exposure, and silent conflict resolution.
 | `EP-06` | completed | Managed doctrine, migration/refresh routing, packaged-resource parity, and low-context nested-domain evidence. | Accepted after three rounds |
 | `EP-07` | completed | Persistent acceptance fixture, scale benchmark, Linux semantic CI, full local validation, content-graph parity, and real cross-platform agreement. | Accepted after Windows remediation and exact rerun |
 | `EP-08` | completed | Consumer impact, migration, release-note, reproducibility, signing-boundary, publication-input, and HQ installation handoff evidence. | Accepted for checkpoint publication |
-| `EP-09` | pending | Doctrine-selected producer release and publication. | Required, including release runbook gates |
-| `EP-10` | pending | Verified Codeheart-HQ Kit installation with inactive-v2 proof. | Required, including HQ lifecycle gates |
+| `EP-09` | completed | Doctrine-selected producer release and publication. | Accepted after protected merge and live release validation |
+| `EP-10` | completed | Verified Codeheart-HQ Kit installation with inactive-v2 proof. | Accepted after protected merge and final HQ-main validation |
 
 ## Review Gate Metrics
 
@@ -48,8 +48,9 @@ force push, secret exposure, and silent conflict resolution.
 - Review gate skipped: no.
 - Reviewer mode: fresh read-only subagent when the active environment permits it.
 - Reviewer model and reasoning mode: inherited from the implementing agent.
-- Review rounds: two for EP-01, six for EP-02, two for EP-03, four for EP-04, two for EP-05, and
-  three for EP-06.
+- Review rounds: two for EP-01, six for EP-02, two for EP-03, four for EP-04, two for EP-05, three
+  for EP-06, and two final EP-09/EP-10 completion-evidence rounds covering the finding and fresh
+  remediation acceptance.
 - Material findings: two EP-01 P1 findings plus EP-02 findings covering unsafe-source ordering,
   path portability, family authority, marker parsing, v1 compatibility, exact object provenance,
   and deterministic candidate evidence; EP-03 findings covered preview context isolation,
@@ -62,11 +63,17 @@ force push, secret exposure, and silent conflict resolution.
 - EP-06 findings covered unsupported mixed prospective-target wording, missing prospective CLI
   help, correct mixed-mode-before-migration sequencing while discovery remains v1, and complete
   inventory-help assertions; all fixed.
+- The final completion review verified the producer candidate/merge/tag relationship, 16-asset
+  release, five-job live validation, and exact nine-path HQ checkpoint. It found one P2 stale EP-07
+  status line that still described platform evidence as pending after the exact rerun; the status
+  was corrected before publication. A fresh remediation re-review accepted the completed plan and
+  log with no remaining P1/P2 finding.
 - Files changed because of review include `schemas/kit-config.schema.json`, the classifier, local
   view, migration, commit-tree, and reconcile transaction implementations, their focused tests,
   and JSON-schema coverage.
-- Final accepted result: EP-01 through EP-08 accepted; EP-09 release publication and EP-10 HQ
-  installation remain pending.
+- Final accepted result: EP-01 through EP-10 completed and validated. EP-09 release evidence and
+  EP-10 consumer-installation evidence received a final plan/log consistency review before the
+  completion checkpoint.
 - Approximate added time: about six minutes for EP-01, about thirty-five minutes for EP-02, and
   about twelve minutes for EP-03 review and remediation.
 - EP-04 review and remediation added about thirty-five minutes across four rounds.
@@ -85,6 +92,8 @@ force push, secret exposure, and silent conflict resolution.
 - EP-06 review prevented doctrine from advertising an unsupported mixed prospective CLI lens,
   exposed all implemented prospective/preview flags in help, and aligned optional mixed adoption
   with runtime's v1-discovery cutover proof before v2 activation.
+- The final review prevented a stale intermediate EP-07 status from contradicting the completed
+  epic index and final validation while confirming EP-09/EP-10 evidence had no other P1/P2 gap.
 
 ## Activation Delta
 
@@ -305,7 +314,7 @@ Status: completed and accepted for checkpoint publication.
 
 ## EP-07 Delta - Comprehensive Validation And Cross-Platform Proof
 
-Status: implementation and local validation complete; pushed Linux/macOS/Windows evidence pending.
+Status: completed and accepted after the exact Linux/macOS/Windows rerun.
 
 - Added one persistent public-safe repository fixture spanning root, business, product/package,
   deeply nested, and repeated `docs` segments. It covers both candidate signals; valid discovery,
@@ -411,7 +420,7 @@ Status: completed and accepted for checkpoint publication.
 
 ## EP-09 Delta - Versioned Producer Release And Publication
 
-Status: in progress; validated release candidate is ready for explicit commit and platform gates.
+Status: completed, published, and validated.
 
 - Live preflight found published `v0.1.24` as the latest release and confirmed `v0.1.25` is unused
   locally and remotely. `origin/main` at `7ef63d4c6b8eb090c17691b2a67c3f6b699ca25b` is an ancestor of
@@ -445,18 +454,66 @@ Status: in progress; validated release candidate is ready for explicit commit an
   pack-to-binary, and staged-version validation against the final macOS archive; binary digest is
   `f2092a1b9913091dc3062c92b8c98f0dc44111bc8b69e0a054eadbc213938e29` and content-manifest digest
   is `975a14b7e05805b134c8da32a406fb6b4460bdd9f1e5ab38ddc88147f0d71796`.
-- Candidate assets remain isolated temporary evidence. No tag, release, merge, or consumer change
-  has occurred. The commit containing this delta becomes the exact candidate for the required
-  Ubuntu, macOS, and real-Windows branch validation before protected PR/merge and publication.
+- Release-candidate commit `0054db29c703d20acc4792dc4d47c3feda4833a8` passed exact branch run
+  `31140156428` and pull-request run `31141212659`, including Ubuntu semantics, macOS staged
+  install/upgrade, and real-Windows staged install/upgrade. Producer PR `#7` merged normally as
+  `bc59f983a3f5177172dfe3605dc99f6065400a1f` without changing the validated release commit.
+- Annotated tag `v0.1.25` points to the validated candidate. The GitHub release published 16 assets:
+  both platform archives, the external catalog, bootstrap, both installers, embedded manifest,
+  release notes, and one verified SHA-256 sidecar per asset. Downloading the live assets back from
+  GitHub verified every sidecar; the release is the current non-prerelease channel.
+- The first workflow dispatch used `0.1.25` where the workflow input requires the public tag
+  `v0.1.25`; both public jobs correctly failed their nonexistent URL before install. The run was
+  preserved as `31142088920`, cancelled after diagnosis, and required no source or asset change.
+  Corrected run `31142180704` passed Ubuntu, macOS, real Windows, and both live public-installer
+  jobs. The GitHub Actions Node 20 deprecation notice is a non-blocking future workflow-maintenance
+  item and did not affect validation.
+- Release URL:
+  `https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/tag/v0.1.25`.
+  Assets remain unsigned/unnotarized within the reviewed HTTPS-plus-SHA-256 internal/prototype
+  boundary; no stronger publisher-attestation claim was made.
 
 ## EP-10 Delta - Codeheart-HQ Installation And Validation
 
-Status: pending.
+Status: completed and validated on Codeheart-HQ main.
 
-User authority is durable; execution waits for a verified EP-09 published release. HQ semantic
-catalog migration and discovery-v2 activation remain outside this epic.
+- Read HQ instructions and the lifecycle runbook completely. Primary HQ main and the isolated
+  upgrade branch began at clean `bdb799538f6600c918ec3b6f381f4f28cb206b4f`; Git identity was
+  Andreas Beer / andreas.beer@codeheart.ai, no lifecycle transaction existed, and concurrent
+  worktrees had no tracked overlap on managed Kit paths.
+- Pre-upgrade evidence reported CLI and lock `0.1.24`, `check` state `current`, byte-stable
+  repository config and tracked documentation, and a valid schema-v1 legacy catalog with seven
+  records. The reviewed dry-run resolved the public `v0.1.25` catalog and passed
+  catalog-to-archive, pack-to-binary, and staged-version verification without changing CLI, lock,
+  config, docs, Git status, or transaction state.
+- The normal `upgrade --version 0.1.25 --yes` lifecycle transaction succeeded with verified
+  archive, catalog, pack-manifest, content-manifest, and binary provenance. The resulting diff was
+  exactly the generated lock plus eight managed documentation paths, each byte-identical to its
+  producer source. `check` reported current state, no drift, no blockers, and no stale CLI.
+- Repository config hash and the Git-object inventory hash for all tracked `docs/` paths were
+  unchanged. Plan validation remained schema v1, discovery version absent, mode legacy, valid,
+  seven records, and the exact previous 111-warning distribution. No metadata, catalog mode,
+  cutover revision, discovery activation, portfolio cache, plan file, or unrelated consumer path
+  changed.
+- HQ checkpoint `079da7c2ad012d02dce9cb9ea6ac378b8dbb5e43` was committed with the correct
+  author/committer, normally pushed, and merged through HQ PR `#3` as
+  `8c8853a32f3212569d7314455e6f0169f431ca08`. HQ reported no configured PR checks; the PR was clean
+  and normally mergeable. The clean primary checkout was fast-forwarded to the merge and repeated
+  the full end-state evidence: CLI/lock `0.1.25`, verified catalog URL/digest, current state with
+  zero drift/blockers, unchanged config/docs hashes, and unchanged legacy-v1 catalog semantics.
+- HQ semantic catalog migration, discovery-v2 activation, portfolio-v2 cutover, and unrelated
+  Foundry work remain paused and outside this completed producer-to-installation delivery.
 
 ## Final Validation
 
-Pending completion of EP-01 through EP-10. No release, publication, or consumer-installation
-evidence may be inferred before its owning epic records the exact validated result.
+EP-01 through EP-10 are complete. Full Go race and ordinary suites, Go vet, all 152 Python tests,
+JSON Schema, Markdown, public-core, release-manifest, source/mirror parity, deterministic dual
+platform builds, staged installation, upgrade/rollback handoff, branch/PR platform runs, live
+release-channel jobs, sidecar verification, and final HQ installation checks passed. Producer
+release `v0.1.25` and HQ main now contain the intended delivered state.
+
+The only open items are explicitly deferred and non-blocking: a future separately approved
+discovery-v1 removal release, evidence-based refinement of conventional ambiguity segments, and
+HQ's separate semantic discovery-v2 migration/activation/canonical cutover. No destructive Git,
+force operation, protection bypass, secret exposure, plan-register rewrite, second cutover
+revision, or automatic consumer activation occurred.
