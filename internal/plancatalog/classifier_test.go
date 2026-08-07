@@ -2,6 +2,7 @@ package plancatalog
 
 import (
 	"encoding/json"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -11,6 +12,91 @@ import (
 	"testing"
 	"time"
 )
+
+func TestMultiRootRepositoryFixtureCoversDiscoveryV2AcceptanceMatrix(t *testing.T) {
+	root := copyPlanFixture(t, "multi-root-repository")
+	runGitTest(t, root, "init")
+	runGitTest(t, root, "checkout", "-b", "main")
+	runGitTest(t, root, "config", "user.email", "test@example.invalid")
+	runGitTest(t, root, "config", "user.name", "Plan Catalog Test")
+	writeClassifierFile(t, root, ".gitignore", "ignored/\n")
+	runGitTest(t, root, "add", ".")
+	// Some developer machines globally ignore uppercase Markdown extensions;
+	// force this intentionally tracked portability fixture into the index.
+	runGitTest(t, root, "add", "-f", "docs/case/case_discovery_doc.MD")
+	runGitTest(t, root, "commit", "-m", "multi-root acceptance fixture")
+	if err := os.MkdirAll(filepath.Join(root, "embedded", ".git"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+
+	settings, configProblems := LoadRepositorySettings(root)
+	if HasErrors(configProblems) || settings.Mode != ModeCanonical || settings.RepositoryID != "multi-root" || settings.DiscoveryVersion != DiscoveryV2 || !reflect.DeepEqual(settings.ExcludedRoots, []string{"external/"}) {
+		t.Fatalf("fixture settings=%#v problems=%#v", settings, configProblems)
+	}
+	first, err := ClassifyLocalIndex(root, settings, settings.Mode, settings.RepositoryID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	second, err := ClassifyLocalIndex(root, settings, settings.Mode, settings.RepositoryID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	firstJSON, _ := json.Marshal(first)
+	secondJSON, _ := json.Marshal(second)
+	if string(firstJSON) != string(secondJSON) || first.CandidateSetDigest != second.CandidateSetDigest {
+		t.Fatal("persistent multi-root fixture classification was not deterministic")
+	}
+
+	byPath := map[string]Candidate{}
+	for _, candidate := range first.Candidates {
+		byPath[candidate.Path] = candidate
+	}
+	for _, expected := range []string{
+		"docs/root/root_discovery_doc.md",
+		"docs/business/procurement/procurement_implementation_doc.md",
+		"products/payments/packages/settlement/docs/initiatives/settlement_discovery_doc.md",
+		"areas/docs/repeated/docs/rollout/rollout_implementation_doc.md",
+		"products/payments/docs/plans/README.md",
+	} {
+		if byPath[expected].Ownership != OwnershipOwned {
+			t.Fatalf("expected owned multi-root candidate %s: %#v", expected, byPath[expected])
+		}
+	}
+	if _, exists := byPath["docs/router/README.md"]; exists {
+		t.Fatal("ordinary router README became a family candidate")
+	}
+	if byPath["docs/metadata-only/misnamed.md"].Signal != SignalMetadata || byPath["docs/filename-only/legacy_discovery_doc.md"].Signal != SignalFilename {
+		t.Fatalf("candidate signal matrix missing: %#v", byPath)
+	}
+	if byPath["external/docs/copied/excluded_discovery_doc.md"].Ownership != OwnershipExcluded || byPath["vendor/docs/copied/ambiguous_discovery_doc.md"].Ownership != OwnershipProspectiveBlocked || byPath["notes/misplaced.md"].Ownership != OwnershipHardUnowned || byPath["embedded/docs/nested/nested_discovery_doc.md"].Ownership != OwnershipHardUnowned {
+		t.Fatalf("ownership matrix missing: %#v", byPath)
+	}
+	for _, code := range []string{
+		"metadata_missing", "canonical_filename_missing", "metadata_yaml_invalid",
+		"record_kind_path_mismatch", "duplicate_plan_id", "plan_candidate_excluded",
+		"plan_documentation_root_ambiguous", "plan_metadata_misplaced", "plan_path_case_mismatch",
+		"plan_source_unsafe",
+	} {
+		if !problemCodeExists(first.Discovery.Problems, code) {
+			t.Fatalf("acceptance fixture missing problem %s: %#v", code, first.Discovery.Problems)
+		}
+	}
+	if countRecordPath(first.Discovery.Records, "areas/docs/repeated/docs/rollout/rollout_implementation_doc.md") != 1 {
+		t.Fatal("repeated docs segments produced duplicate records")
+	}
+
+	previewPath := "products/payments/docs/authoring/preview_discovery_doc.md"
+	ignoredPath := "ignored/docs/ignored_discovery_doc.md"
+	writeClassifierFile(t, root, previewPath, canonicalClassifierDocument("multi-root.discovery.preview", KindDiscovery, "Preview"))
+	writeClassifierFile(t, root, ignoredPath, canonicalClassifierDocument("multi-root.discovery.ignored", KindDiscovery, "Ignored"))
+	preview, err := ClassifyUntrackedPreview(root, settings, settings.Mode, settings.RepositoryID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(preview.Candidates) != 1 || preview.Candidates[0].Path != previewPath || !preview.Candidates[0].Provenance.Source.Preview {
+		t.Fatalf("untracked preview matrix=%#v", preview.Candidates)
+	}
+}
 
 func TestDiscoveryV2ClassifiesRepositoryWideTrackedDocsDeterministically(t *testing.T) {
 	root := t.TempDir()
@@ -635,4 +721,31 @@ func recordPathExists(records []Record, expected string) bool {
 		}
 	}
 	return false
+}
+
+func copyPlanFixture(t *testing.T, name string) string {
+	t.Helper()
+	source := filepath.Join("..", "..", "tests", "fixtures", "plans", name)
+	root := t.TempDir()
+	if err := filepath.WalkDir(source, func(sourcePath string, entry fs.DirEntry, walkErr error) error {
+		if walkErr != nil {
+			return walkErr
+		}
+		relative, err := filepath.Rel(source, sourcePath)
+		if err != nil || relative == "." {
+			return err
+		}
+		target := filepath.Join(root, relative)
+		if entry.IsDir() {
+			return os.MkdirAll(target, 0o755)
+		}
+		data, err := os.ReadFile(sourcePath)
+		if err != nil {
+			return err
+		}
+		return os.WriteFile(target, data, 0o644)
+	}); err != nil {
+		t.Fatal(err)
+	}
+	return root
 }

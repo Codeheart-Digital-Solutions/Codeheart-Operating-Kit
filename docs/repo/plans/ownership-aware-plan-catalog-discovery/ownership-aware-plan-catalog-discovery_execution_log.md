@@ -1,4 +1,4 @@
-Last updated: 2026-08-07T00:42:51Z (UTC)
+Last updated: 2026-08-07T01:02:48Z (UTC)
 Created: 2026-08-06
 
 # Ownership-Aware Repository-Wide Plan Catalog Discovery Execution Log
@@ -37,7 +37,7 @@ force push, secret exposure, and silent conflict resolution.
 | `EP-04` | completed | Guarded schema-v2 migration, direct canonical readiness, optional exact mixed proof, atomic renames, and transaction-time authority binding. | Accepted after four rounds |
 | `EP-05` | completed | Shared remote tree classification, default-policy branch overlays, canonical-readiness completeness, structured candidate evidence, and v2-only cache replacement. | Accepted after two rounds |
 | `EP-06` | completed | Managed doctrine, migration/refresh routing, packaged-resource parity, and low-context nested-domain evidence. | Accepted after three rounds |
-| `EP-07` | pending | None recorded. | Required, including cross-platform evidence |
+| `EP-07` | in progress | Persistent acceptance fixture, scale benchmark, Linux semantic CI, full local validation, and content-graph parity. | Local gates passed; cross-platform Actions pending |
 | `EP-08` | pending | None recorded. | Required, including release-readiness source binding |
 | `EP-09` | pending | Doctrine-selected producer release and publication. | Required, including release runbook gates |
 | `EP-10` | pending | Verified Codeheart-HQ Kit installation with inactive-v2 proof. | Required, including HQ lifecycle gates |
@@ -65,7 +65,8 @@ force push, secret exposure, and silent conflict resolution.
 - Files changed because of review include `schemas/kit-config.schema.json`, the classifier, local
   view, migration, commit-tree, and reconcile transaction implementations, their focused tests,
   and JSON-schema coverage.
-- Final accepted result: EP-01 through EP-06 accepted; EP-07 through EP-10 pending.
+- Final accepted result: EP-01 through EP-06 accepted; EP-07 is locally complete with its
+  cross-platform checkpoint gate pending; EP-08 through EP-10 remain pending.
 - Approximate added time: about six minutes for EP-01, about thirty-five minutes for EP-02, and
   about twelve minutes for EP-03 review and remediation.
 - EP-04 review and remediation added about thirty-five minutes across four rounds.
@@ -304,9 +305,72 @@ Status: completed and accepted for checkpoint publication.
 
 ## EP-07 Delta - Comprehensive Validation And Cross-Platform Proof
 
-Status: pending.
+Status: implementation and local validation complete; pushed Linux/macOS/Windows evidence pending.
 
-No divergence, validation, platform, or review evidence is recorded yet.
+- Added one persistent public-safe repository fixture spanning root, business, product/package,
+  deeply nested, and repeated `docs` segments. It covers both candidate signals; valid discovery,
+  implementation, and metadata-qualified family records; ordinary README routing; every stable
+  canonical/ownership error; a hard-unowned nested repository; explicit exclusion; conventional
+  ambiguity; ignored input; and opt-in untracked preview.
+- Added `BenchmarkDiscoveryV2Classifier100kPaths10kMarkdown`. Two one-iteration runs each classified
+  100,000 paths and read exactly 10,000 Markdown blobs with zero Git subprocesses inside the pure
+  classifier, retained about 23.5 MiB, and produced the identical candidate-set digest
+  `9814e02f18dacd93af2a24b24fba31442fb9f9f6415eeea4dbab9e09f05cc231`.
+- Added `ubuntu-semantic-validation` alongside the retained macOS and Windows jobs. It runs the full
+  and focused Go suites, the scale benchmark twice, Python schema/routing/resource/sync tests, and
+  JSON-schema/Markdown/public-core/release-manifest validators. An automated workflow assertion
+  proves that the Ubuntu job does not invoke release-asset generation.
+- Refreshed the standard profile content-graph digest in `manifest.yaml` and its exact packaged
+  mirror from `76221705af8a6fb2c44272b525b4a019279dcc059cf6fea710b5952601024f5f` to
+  `b6f9fb12d6c2e64f7ceb38b0f1084195c3e93bd5ce0c8a002b000f385236d053`. This is computed managed
+  content identity required for the EP-07 full-suite gate, not a version selection or release.
+
+### Named Acceptance And Test-Matrix Mapping
+
+| Discovery matrix area | Named automated evidence |
+| --- | --- |
+| Path depth | `TestMultiRootRepositoryFixtureCoversDiscoveryV2AcceptanceMatrix`; `TestDiscoveryV2ClassifiesRepositoryWideTrackedDocsDeterministically`; `TestRemoteClassifierMatchesLocalCommitTreeAcrossNestedDocsAndOwnership` |
+| Filename | `TestMultiRootRepositoryFixtureCoversDiscoveryV2AcceptanceMatrix`; `TestV1FilenameAndSourceSizeCompatibilityRemainUnchanged`; `TestInventoryKindRemainsFilenameOwnedOnMetadataMismatch` |
+| Metadata detection | `TestParseRejectsMissingMisplacedMultipleAndUnknownMetadata`; `TestMetadataMarkersRemainInertBehindNonClosingFenceText`; `TestBacktickInFenceInfoDoesNotOpenFence`; `TestQuotedMetadataMarkersDoNotBecomeCanonicalMetadata` |
+| Modes | `TestV1FilenameAndSourceSizeCompatibilityRemainUnchanged`; `TestV2MigrationDirectLegacyToCanonicalIsBoundReadinessOnlyAndIdempotent`; `TestV2MigrationSupportsOptionalMixedGrandfatheringWithExactCutoverBytes`; `TestMixedModeRequiresPreCutoverPlanAndFrozenRegisterEvidence` |
+| Identity | `TestDuplicateIDIncludesCandidateWithInvalidHeader`; `TestDiscoverPreservesDuplicateIDsAndCatalogModes`; `TestBranchOverlayKeepsEligibilityAndKindChangingRenamesVisible` |
+| Families | `TestFamilyREADMEQualificationAndDerivedMembership`; `TestV1RecognizedFamilyShapeRemainsCompatibleUntilV2Migration`; `TestHeaderInvalidFamilyREADMEKeepsIdentityWithoutFamilyAuthority`; `TestBranchOverlayUsesDefaultPolicyAndDoesNotInferFamilyAuthority` |
+| Ownership config | `TestRepositorySettingsDiscoveryDefaultsAndExclusionSafety`; `TestMultiRootRepositoryFixtureCoversDiscoveryV2AcceptanceMatrix`; `TestSharedClassifierHardBoundariesNeverReadUnsafeContent` |
+| Git modes | `TestFormalPathKindV2RequiresAuthoritativeIndexCandidate`; `TestLocalIndexKeepsFilenameCandidateWhenWorktreeFileIsMissing`; `TestLocalIndexKeepsMetadataCandidateFromIndexWhenWorktreeFileIsSymlink`; `TestRemoteGitlinkPlanSignalIsHardUnowned`; `TestV2MigrationRevalidatesAuthorityInsideTransaction` |
+| Inventory | `TestInventoryCapturesRevisionCoverageUnpairedEvidenceBranchTouchesAndDirtyOverlap`; `TestV2MigrationBlocksTargetCollisionStaleCoverageAndDirtySourceWithoutWrites`; `TestPlansProspectiveV2AndPreviewCommandsPreserveAuthority` |
+| Migration | `TestV2MigrationDirectLegacyToCanonicalIsBoundReadinessOnlyAndIdempotent`; `TestV2MigrationRenamesMetadataOnlyCandidateAtomically`; `TestV2MigrationBlocksTargetCollisionStaleCoverageAndDirtySourceWithoutWrites`; `TestMigrationActiveBranchSkipAndTransactionalRollback` |
+| Remote baseline | `TestRemoteClassifierMatchesLocalCommitTreeAcrossNestedDocsAndOwnership`; `TestV1RequiredMemberAndHistoricalV1CacheRemainIncompleteEvidence`; `TestRemoteGitlinkPlanSignalIsHardUnowned` |
+| Branch overlay | `TestBranchOverlaySuppressesPureRenameAndRetainsChangedRename`; `TestBranchOverlayUsesDefaultPolicyAndDoesNotInferFamilyAuthority`; `TestBranchOverlayKeepsEligibilityAndKindChangingRenamesVisible`; `TestV2ActiveBranchTouchesKeepBothEligibilityChangingRenamePaths` |
+| Cache | `TestV1RequiredMemberAndHistoricalV1CacheRemainIncompleteEvidence`; `TestMalformedMembershipAndFailedHomeSelfMembershipPreserveCompleteCache`; `TestConcurrentCacheReadersSeeOnlyOldOrNewCompleteBytes`; `TestCachePublicationRejectsParentSubstitutionAndSymlinkReads` |
+| Portability | `TestClassifierPortableCollisionsAndLocalNestedRepositoryBoundary`; `TestPlansInventoryRejectsCaseVariantExistingPlanIdentity`; `TestGitModeMatchingUsesExecutableClassAcrossPlatforms`; `TestMigrationAcceptsCleanCheckoutLineEndingConversion` |
+| Scale/security | `BenchmarkDiscoveryV2Classifier100kPaths10kMarkdown`; `TestGitHubSourcePaginatesRetriesRedactsAndHonorsCancellation`; `TestScannerTreatsAdversarialBranchContentAsInertData`; `TestIndexFallbackIgnoresReplacementObjects` |
+
+Cross-cutting acceptance is bound by `TestRemoteClassifierMatchesLocalCommitTreeAcrossNestedDocsAndOwnership`
+for shared local/remote classification, `TestProspectiveV2SnapshotAndUntrackedPreviewAreReadOnlyAndSeparated`
+and `TestRepositorySettingsDiscoveryDefaultsAndExclusionSafety` for inactive-v1/fresh-v2 activation,
+`TestNewSchemasCompileAndPortfolioV2RequiresHomeRepositoryIdentity` plus
+`test_changed_source_and_packaged_resources_match` for versioned machine/resource parity, and
+`test_ubuntu_validation_is_semantic_only` plus the three platform jobs for platform agreement.
+The release/migration-note acceptance criterion maps to the named Markdown, public-core,
+release-manifest, and release-asset validators executed again over the EP-08 attachments.
+
+### Local Validation
+
+- `go test ./...` passed, including the refreshed embedded content graph.
+- `go test ./internal/plancatalog -count=1` passed.
+- Full Python validation passed: 152 tests.
+- `validate-json-schemas.py`, `validate-markdown-headers.py`, `validate-public-core.py`, and
+  `validate-release-manifest.py` passed; `git diff --check` passed.
+- Active discovery-v1 `plans validate --json .` remained `valid=true` with 35 records and only the
+  pre-existing compatibility/register warnings; EP-07 did not activate discovery v2.
+- The focused benchmark passed twice with the identical digest and bounded-memory/process evidence
+  recorded above.
+- Remaining gate: commit and normally push this checkpoint, then require the Ubuntu, macOS, and
+  real-Windows GitHub jobs to pass on that same revision before accepting EP-07 and starting EP-08.
+
+No feature semantics were weakened to satisfy the fixture or scale gates. The only scope deviation
+is the required content-graph parity refresh, which closes the EP-06 managed-resource drift at the
+first plan-mandated full-suite checkpoint.
 
 ## EP-08 Delta - Release Readiness And Consumer Handoff Evidence
 

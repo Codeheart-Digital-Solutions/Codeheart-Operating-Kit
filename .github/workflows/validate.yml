@@ -119,6 +119,30 @@ jobs:
           CODEHEART_OPERATING_KIT_CLI=1 "$OLD_HOME/bin/codeheart-operating-kit" check \
             "$RUNNER_TEMP/upgrade-consumer" --json
 
+  ubuntu-semantic-validation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: python -m pip install --upgrade pip setuptools pytest
+      - run: python -m pip install -e .
+      - run: go test ./...
+      - name: Validate plan catalog, migration, portfolio overlays, and grouped CLI behavior
+        run: go test ./internal/plancatalog ./internal/portfolio ./internal/commands ./internal/cli
+      - name: Validate the repository-scale discovery classifier twice
+        run: go test ./internal/plancatalog -run '^$' -bench BenchmarkDiscoveryV2Classifier100kPaths10kMarkdown -benchtime=1x -count=2
+      - name: Validate installed plan routes, schemas, packaged resources, and sync parity
+        run: python -m pytest tests/test_json_schemas.py tests/test_routing.py tests/test_packaging_resources.py tests/test_sync_check.py -q
+      - run: python scripts/validate-json-schemas.py
+      - run: python scripts/validate-markdown-headers.py
+      - run: python scripts/validate-public-core.py
+      - run: python scripts/validate-release-manifest.py
+
   windows-validation:
     runs-on: windows-latest
     steps:

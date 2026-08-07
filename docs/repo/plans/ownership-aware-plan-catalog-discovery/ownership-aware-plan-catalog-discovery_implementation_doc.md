@@ -1,4 +1,4 @@
-Last updated: 2026-08-06T22:34:04Z (UTC)
+Last updated: 2026-08-07T01:02:48Z (UTC)
 Created: 2026-08-06
 Status: active
 Execution log: ownership-aware-plan-catalog-discovery_execution_log.md
@@ -1100,19 +1100,19 @@ to the owning epic and require its checkpoint to be corrected before EP-08.
 
 ### F) Tasks Checklist
 
-- [ ] Map each discovery acceptance criterion to named Go, Python, schema, routing, packaging, benchmark, macOS, Linux, and Windows tests.
-- [ ] Add filename-only, metadata-only, malformed, mismatch, duplicate, misplaced, excluded, prospective-blocked, unowned, unsafe, and preview fixtures.
-- [ ] Add root docs, deeply nested docs, repeated docs segments, case variants, Unicode collisions, symlinks, gitlinks, nested repositories, and escape fixtures.
-- [ ] Add metadata-qualified zero-child, one-child, many-child, router README, wrong-filename family, malformed family, v1-family migration, and unchanged-README branch fixtures.
-- [ ] Add direct legacy-to-canonical, optional mixed, frozen-register, original-cutover, source-hash, candidate-digest, dirty, branch-owned, rollback, and recovery tests.
-- [ ] Add remote v2 member, v1 member, inaccessible member, branch policy, rename, cache preservation, inert content, and redaction tests.
-- [ ] Implement the 100,000-path and 10,000-Markdown benchmark in `classifier_benchmark_test.go` with deterministic process and memory assertions.
-- [ ] Add an `ubuntu-latest` semantic-validation job to `.github/workflows/validate.yml` that runs `go test ./...`, the focused plan-catalog/portfolio/command suites, Python schema/routing/resource tests, and JSON-schema/Markdown/public-core validators without Linux release-asset generation and distribution advertising.
-- [ ] Run `go test ./...`.
-- [ ] Run `go test ./internal/plancatalog ./internal/portfolio ./internal/commands ./internal/cli`.
-- [ ] Run `python3 -m pytest`.
-- [ ] Run `python3 scripts/validate-json-schemas.py`, `python3 scripts/validate-markdown-headers.py`, and `python3 scripts/validate-public-core.py`.
-- [ ] Run the focused benchmark twice and compare deterministic candidate/result digests.
+- [x] Map each discovery acceptance criterion to named Go, Python, schema, routing, packaging, benchmark, macOS, Linux, and Windows tests.
+- [x] Add filename-only, metadata-only, malformed, mismatch, duplicate, misplaced, excluded, prospective-blocked, unowned, unsafe, and preview fixtures.
+- [x] Add root docs, deeply nested docs, repeated docs segments, case variants, Unicode collisions, symlinks, gitlinks, nested repositories, and escape fixtures.
+- [x] Add metadata-qualified zero-child, one-child, many-child, router README, wrong-filename family, malformed family, v1-family migration, and unchanged-README branch fixtures.
+- [x] Add direct legacy-to-canonical, optional mixed, frozen-register, original-cutover, source-hash, candidate-digest, dirty, branch-owned, rollback, and recovery tests.
+- [x] Add remote v2 member, v1 member, inaccessible member, branch policy, rename, cache preservation, inert content, and redaction tests.
+- [x] Implement the 100,000-path and 10,000-Markdown benchmark in `classifier_benchmark_test.go` with deterministic process and memory assertions.
+- [x] Add an `ubuntu-latest` semantic-validation job to `.github/workflows/validate.yml` that runs `go test ./...`, the focused plan-catalog/portfolio/command suites, Python schema/routing/resource tests, and JSON-schema/Markdown/public-core validators without Linux release-asset generation and distribution advertising.
+- [x] Run `go test ./...`.
+- [x] Run `go test ./internal/plancatalog ./internal/portfolio ./internal/commands ./internal/cli`.
+- [x] Run `python3 -m pytest`.
+- [x] Run `python3 scripts/validate-json-schemas.py`, `python3 scripts/validate-markdown-headers.py`, and `python3 scripts/validate-public-core.py`.
+- [x] Run the focused benchmark twice and compare deterministic candidate/result digests.
 - [ ] Require the Linux, macOS, and real-Windows GitHub validation jobs to pass on the same checkpoint.
 
 ### G) Implementation Notes
