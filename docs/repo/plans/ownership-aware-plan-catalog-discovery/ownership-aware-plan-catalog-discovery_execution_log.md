@@ -1,4 +1,4 @@
-Last updated: 2026-08-07T01:16:54Z (UTC)
+Last updated: 2026-08-07T01:39:50Z (UTC)
 Created: 2026-08-06
 
 # Ownership-Aware Repository-Wide Plan Catalog Discovery Execution Log
@@ -37,8 +37,8 @@ force push, secret exposure, and silent conflict resolution.
 | `EP-04` | completed | Guarded schema-v2 migration, direct canonical readiness, optional exact mixed proof, atomic renames, and transaction-time authority binding. | Accepted after four rounds |
 | `EP-05` | completed | Shared remote tree classification, default-policy branch overlays, canonical-readiness completeness, structured candidate evidence, and v2-only cache replacement. | Accepted after two rounds |
 | `EP-06` | completed | Managed doctrine, migration/refresh routing, packaged-resource parity, and low-context nested-domain evidence. | Accepted after three rounds |
-| `EP-07` | in progress | Persistent acceptance fixture, scale benchmark, Linux semantic CI, full local validation, and content-graph parity. | Local gates passed; cross-platform Actions pending |
-| `EP-08` | pending | None recorded. | Required, including release-readiness source binding |
+| `EP-07` | completed | Persistent acceptance fixture, scale benchmark, Linux semantic CI, full local validation, content-graph parity, and real cross-platform agreement. | Accepted after Windows remediation and exact rerun |
+| `EP-08` | completed | Consumer impact, migration, release-note, reproducibility, signing-boundary, publication-input, and HQ installation handoff evidence. | Accepted for checkpoint publication |
 | `EP-09` | pending | Doctrine-selected producer release and publication. | Required, including release runbook gates |
 | `EP-10` | pending | Verified Codeheart-HQ Kit installation with inactive-v2 proof. | Required, including HQ lifecycle gates |
 
@@ -65,8 +65,8 @@ force push, secret exposure, and silent conflict resolution.
 - Files changed because of review include `schemas/kit-config.schema.json`, the classifier, local
   view, migration, commit-tree, and reconcile transaction implementations, their focused tests,
   and JSON-schema coverage.
-- Final accepted result: EP-01 through EP-06 accepted; EP-07 is locally complete with its
-  cross-platform checkpoint gate pending; EP-08 through EP-10 remain pending.
+- Final accepted result: EP-01 through EP-08 accepted; EP-09 release publication and EP-10 HQ
+  installation remain pending.
 - Approximate added time: about six minutes for EP-01, about thirty-five minutes for EP-02, and
   about twelve minutes for EP-03 review and remediation.
 - EP-04 review and remediation added about thirty-five minutes across four rounds.
@@ -365,12 +365,12 @@ release-manifest, and release-asset validators executed again over the EP-08 att
   pre-existing compatibility/register warnings; EP-07 did not activate discovery v2.
 - The focused benchmark passed twice with the identical digest and bounded-memory/process evidence
   recorded above.
-- Remaining gate: commit and normally push this checkpoint, then require the Ubuntu, macOS, and
-  real-Windows GitHub jobs to pass on that same revision before accepting EP-07 and starting EP-08.
 - First pushed run `31137100740` passed Ubuntu and macOS but exposed one Windows-only test-harness
   defect: the replacement-object fixture captured Git's `core.autocrlf` warning together with the
   object ID. The remediation pins `core.autocrlf=false` only for that exact `hash-object` fixture
-  command, preserving tested runtime behavior. A new exact-revision platform run is required.
+  command, preserving tested runtime behavior.
+- Exact rerun `31137575877` passed Ubuntu, macOS, and real Windows on
+  `f9d915256cb3dec1143c78a2d4dc79eb002c0ae2`. EP-07 is accepted.
 
 No feature semantics were weakened to satisfy the fixture or scale gates. The only scope deviation
 is the required content-graph parity refresh, which closes the EP-06 managed-resource drift at the
@@ -378,9 +378,36 @@ first plan-mandated full-suite checkpoint.
 
 ## EP-08 Delta - Release Readiness And Consumer Handoff Evidence
 
-Status: pending.
+Status: completed and accepted for checkpoint publication.
 
-No divergence, readiness, handoff, or review evidence is recorded yet.
+- Added public-safe impact, version-neutral migration, release-note, and release-readiness
+  attachments. The impact record classifies managed instruction, validator, migration, and safety
+  effects while recording that no placement path moves and existing repositories retain v1.
+- The migration sequence keeps upgrade and adoption separate, proves exact arbitrary-depth `docs`
+  eligibility, supports a direct complete legacy-v1-to-canonical-v2 route, and limits mixed mode to
+  intentionally deferred filename-only records with original cutover proof.
+- Two isolated `scripts/build-release-assets.py` runs were recursively byte-identical. Readiness
+  archive SHA-256 values are `363657ef4809e94de2ffce00fe7da88b833b4fbf57b84f2a903dfbf93dedd608`
+  for macOS and `f3d3d7825af3d2862f8dec7e59c9de0c32816bfbc36fb8b7f57dd15e5e03c844`
+  for Windows; the external catalog digest is
+  `a1a8bb459b9807d4972cd19323e0476429f3df1443d6123115000dd164ce9f1d`.
+- Pack shapes contain the required binary/docs/installers/manifests/checksums only, with no Python
+  runtime payload. A prior-version macOS CLI passed catalog-to-archive, pack-to-binary, and staged
+  version verification through the generated catalog; successful Actions supply same-source
+  isolated macOS and real-Windows platform evidence.
+- Readiness candidates still identify current source version `0.1.24` and remain local unsigned
+  evidence only. EP-09 must select the doctrine-correct next version, reconfirm the documented
+  unsigned internal/prototype boundary or stronger signing, rebuild twice, and publish only the
+  final validated assets.
+- `go test ./...` passed. Full Python validation passed with 152 tests through the approved
+  ephemeral pytest runtime. Markdown and public-core validators passed on the attachments; the
+  remaining schema/release-manifest and catalog validation are repeated immediately before the
+  explicit checkpoint commit.
+- The HQ handoff requires a released-channel upgrade, version/check/config/lock/managed parity,
+  plan-byte preservation, and unchanged v1 semantics. HQ metadata migration, discovery-v2
+  activation, and portfolio-v2 cutover remain excluded.
+- EP-09 receives the exact pushed commit containing this evidence. No version mutation is included
+  in EP-08.
 
 ## EP-09 Delta - Versioned Producer Release And Publication
 

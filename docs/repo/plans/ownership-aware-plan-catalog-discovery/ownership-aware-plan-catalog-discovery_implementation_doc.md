@@ -1,4 +1,4 @@
-Last updated: 2026-08-07T01:02:48Z (UTC)
+Last updated: 2026-08-07T01:39:50Z (UTC)
 Created: 2026-08-06
 Status: active
 Execution log: ownership-aware-plan-catalog-discovery_execution_log.md
@@ -1113,7 +1113,7 @@ to the owning epic and require its checkpoint to be corrected before EP-08.
 - [x] Run `python3 -m pytest`.
 - [x] Run `python3 scripts/validate-json-schemas.py`, `python3 scripts/validate-markdown-headers.py`, and `python3 scripts/validate-public-core.py`.
 - [x] Run the focused benchmark twice and compare deterministic candidate/result digests.
-- [ ] Require the Linux, macOS, and real-Windows GitHub validation jobs to pass on the same checkpoint.
+- [x] Require the Linux, macOS, and real-Windows GitHub validation jobs to pass on the same checkpoint.
 
 ### G) Implementation Notes
 
@@ -1156,7 +1156,8 @@ evidence is complete and supplies the exact validated input to the already autho
 - `docs/repo/plans/ownership-aware-plan-catalog-discovery/attachments/discovery-v2-consumer-migration.md` (new)
 - `docs/repo/plans/ownership-aware-plan-catalog-discovery/attachments/release-note-input.md` (new)
 - `docs/repo/plans/ownership-aware-plan-catalog-discovery/attachments/release-readiness-evidence.md` (new)
-- sibling execution log created only after later activation
+- `docs/repo/plans/ownership-aware-plan-catalog-discovery/ownership-aware-plan-catalog-discovery_implementation_doc.md`
+- `docs/repo/plans/ownership-aware-plan-catalog-discovery/ownership-aware-plan-catalog-discovery_execution_log.md`
 
 ### D) Acceptance Criteria And Size
 
@@ -1181,17 +1182,17 @@ runs the public release procedure.
 
 ### F) Tasks Checklist
 
-- [ ] Create `attachments/consumer-impact-record.md` with impact classes, affected paths, validation, release-note need, migration need, and consumer action.
-- [ ] Create `attachments/discovery-v2-consumer-migration.md` with v1 hold, prospective inventory, exclusions review, semantic migration, direct canonical route, optional mixed route, activation, remote completeness, and recovery.
-- [ ] Create `attachments/release-note-input.md` with version-neutral included, compatibility, impact, security, validation, and rollout sections.
-- [ ] Build supported release assets twice in separate temporary directories with `scripts/build-release-assets.py`.
-- [ ] Compare release packs, manifests, catalogs, installers, checksums, and embedded discovery-v2 resources byte-for-byte.
-- [ ] Create `attachments/release-readiness-evidence.md` with source commit, commands, platform results, digests, signing state, residual risks, and EP-09 publication inputs.
-- [ ] Record the Codeheart-HQ post-release installation-validation sequence without resuming its paused semantic migration.
-- [ ] Run `go test ./...` and `python3 -m pytest` on the exact readiness commit.
-- [ ] Run every schema, Markdown, public-core, manifest, packaging, routing, and release-candidate validator required by `change-operating-kit.md`.
-- [ ] Verify Git status contains only reviewed producer implementation/evidence paths and no consumer repository changes.
-- [ ] Hand the exact validated readiness commit to EP-09; do not mix version mutation into the reproducibility checkpoint.
+- [x] Create `attachments/consumer-impact-record.md` with impact classes, affected paths, validation, release-note need, migration need, and consumer action.
+- [x] Create `attachments/discovery-v2-consumer-migration.md` with v1 hold, prospective inventory, exclusions review, semantic migration, direct canonical route, optional mixed route, activation, remote completeness, and recovery.
+- [x] Create `attachments/release-note-input.md` with version-neutral included, compatibility, impact, security, validation, and rollout sections.
+- [x] Build supported release assets twice in separate temporary directories with `scripts/build-release-assets.py`.
+- [x] Compare release packs, manifests, catalogs, installers, checksums, and embedded discovery-v2 resources byte-for-byte.
+- [x] Create `attachments/release-readiness-evidence.md` with source commit, commands, platform results, digests, signing state, residual risks, and EP-09 publication inputs.
+- [x] Record the Codeheart-HQ post-release installation-validation sequence without resuming its paused semantic migration.
+- [x] Run `go test ./...` and `python3 -m pytest` on the exact readiness content.
+- [x] Run every schema, Markdown, public-core, manifest, packaging, routing, and release-candidate validator required by `change-operating-kit.md`.
+- [x] Verify Git status contains only reviewed producer implementation/evidence paths and no consumer repository changes.
+- [x] Hand the exact validated readiness checkpoint to EP-09; do not mix version mutation into the reproducibility checkpoint.
 
 ### G) Implementation Notes
 
