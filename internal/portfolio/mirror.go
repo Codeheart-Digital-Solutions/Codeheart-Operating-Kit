@@ -12,7 +12,10 @@ import (
 	"path/filepath"
 	"regexp"
 	"sort"
+	"strconv"
 	"strings"
+
+	"github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/internal/plancatalog"
 )
 
 var mirrorNamePattern = regexp.MustCompile(`[^a-z0-9-]+`)
@@ -39,8 +42,20 @@ type GitRepository struct {
 }
 
 type GitTreeFile struct {
-	Path string
-	Mode string
+	Path     string
+	Mode     string
+	ObjectID string
+	Revision string
+}
+
+type GitTreeChange struct {
+	Status      string
+	OldPath     string
+	NewPath     string
+	OldMode     string
+	NewMode     string
+	OldObjectID string
+	NewObjectID string
 }
 
 func (manager MirrorManager) Refresh(ctx context.Context, source RepositorySource) (returnedRepository *GitRepository, returnedError error) {
@@ -754,8 +769,8 @@ func (repository *GitRepository) RemoteRefs(ctx context.Context) ([]string, erro
 	return refs, nil
 }
 
-func (repository *GitRepository) ListFiles(ctx context.Context, ref, prefix string) ([]GitTreeFile, error) {
-	result, err := repository.git(ctx, "ls-tree", "-r", "-z", ref, "--", prefix)
+func (repository *GitRepository) ListFiles(ctx context.Context, ref string) ([]GitTreeFile, error) {
+	result, err := repository.git(ctx, "ls-tree", "-r", "-z", "--full-tree", ref)
 	if err != nil {
 		return nil, err
 	}
@@ -766,32 +781,64 @@ func (repository *GitRepository) ListFiles(ctx context.Context, ref, prefix stri
 		}
 		metadata, path, found := strings.Cut(entry, "\t")
 		fields := strings.Fields(metadata)
-		if !found || len(fields) < 2 || fields[1] != "blob" || (fields[0] != "100644" && fields[0] != "100755") {
-			continue
+		if !found || len(fields) != 3 {
+			return nil, fmt.Errorf("git_tree_invalid: malformed ls-tree record")
 		}
-		files = append(files, GitTreeFile{Path: filepath.ToSlash(path), Mode: fields[0]})
+		files = append(files, GitTreeFile{Path: path, Mode: fields[0], ObjectID: fields[2], Revision: ref})
 	}
 	sort.SliceStable(files, func(i, j int) bool { return files[i].Path < files[j].Path })
 	return files, nil
 }
 
 func (repository *GitRepository) ReadFile(ctx context.Context, ref, path string) ([]byte, error) {
-	files, err := repository.ListFiles(ctx, ref, path)
+	result, err := repository.git(ctx, "ls-tree", "-z", ref, "--", path)
 	if err != nil {
 		return nil, err
 	}
-	found := false
-	for _, file := range files {
-		if file.Path == filepath.ToSlash(path) {
-			found = true
-			break
+	var selected *GitTreeFile
+	for _, entry := range strings.Split(string(result.Stdout), "\x00") {
+		if entry == "" {
+			continue
+		}
+		metadata, candidatePath, found := strings.Cut(entry, "\t")
+		fields := strings.Fields(metadata)
+		if !found || len(fields) != 3 {
+			return nil, fmt.Errorf("git_tree_invalid: malformed ls-tree record")
+		}
+		if candidatePath == path {
+			file := GitTreeFile{Path: candidatePath, Mode: fields[0], ObjectID: fields[2], Revision: ref}
+			selected = &file
 		}
 	}
-	if !found {
+	if selected == nil || (selected.Mode != string(plancatalog.GitModeRegular) && selected.Mode != string(plancatalog.GitModeExecutable)) {
 		return nil, os.ErrNotExist
 	}
-	result, err := repository.git(ctx, "show", ref+":"+filepath.ToSlash(path))
-	return result.Stdout, err
+	return repository.ReadBlob(ctx, *selected)
+}
+
+func (repository *GitRepository) ReadBlob(ctx context.Context, file GitTreeFile) ([]byte, error) {
+	if file.Mode != string(plancatalog.GitModeRegular) && file.Mode != string(plancatalog.GitModeExecutable) {
+		return nil, fmt.Errorf("remote_blob_mode_unreadable: %s has mode %s", file.Path, file.Mode)
+	}
+	sizeResult, err := repository.git(ctx, "cat-file", "-s", file.ObjectID)
+	if err != nil {
+		return nil, err
+	}
+	size, err := strconv.ParseInt(strings.TrimSpace(string(sizeResult.Stdout)), 10, 64)
+	if err != nil || size < 0 {
+		return nil, fmt.Errorf("remote_blob_invalid_size: %s", file.Path)
+	}
+	if size > plancatalog.MaxPlanSourceBytes {
+		return nil, &plancatalog.CodedError{Code: "source_too_large", Err: fmt.Errorf("remote source exceeds %d-byte plan-catalog limit: %s", plancatalog.MaxPlanSourceBytes, file.Path)}
+	}
+	result, err := repository.git(ctx, "cat-file", "blob", file.ObjectID)
+	if err != nil {
+		return nil, err
+	}
+	if int64(len(result.Stdout)) != size {
+		return nil, fmt.Errorf("remote_blob_size_changed: %s", file.Path)
+	}
+	return result.Stdout, nil
 }
 
 func (repository *GitRepository) MergeBase(ctx context.Context, ref string) (string, error) {
@@ -821,34 +868,33 @@ func (repository *GitRepository) IsMerged(ctx context.Context, ref, mergeBase st
 	return false, nil
 }
 
-func (repository *GitRepository) ChangedPaths(ctx context.Context, mergeBase, ref string) ([]string, error) {
-	result, err := repository.git(ctx, "diff", "--name-status", "-z", "--find-renames", "--diff-filter=AMR", mergeBase+".."+ref, "--", "docs/repo/plans")
+func (repository *GitRepository) ChangedPaths(ctx context.Context, mergeBase, ref string) ([]GitTreeChange, error) {
+	result, err := repository.git(ctx, "diff", "--raw", "-z", "--find-renames", "--diff-filter=AMR", mergeBase+".."+ref, "--")
 	if err != nil {
 		return nil, err
 	}
-	paths := []string{}
+	changes := []GitTreeChange{}
 	fields := strings.Split(string(result.Stdout), "\x00")
 	for index := 0; index < len(fields); {
-		status := strings.TrimSpace(fields[index])
+		header := fields[index]
 		index++
-		if status == "" {
+		if header == "" {
 			continue
 		}
+		metadata := strings.Fields(strings.TrimPrefix(header, ":"))
+		if len(metadata) != 5 {
+			return nil, fmt.Errorf("branch_change_invalid: malformed raw change header")
+		}
+		status := metadata[4]
+		change := GitTreeChange{Status: status, OldMode: metadata[0], NewMode: metadata[1], OldObjectID: metadata[2], NewObjectID: metadata[3]}
 		if strings.HasPrefix(status, "R") {
 			if index+1 >= len(fields) {
 				return nil, fmt.Errorf("branch_change_invalid: rename evidence is truncated")
 			}
-			oldPath := filepath.ToSlash(fields[index])
-			newPath := filepath.ToSlash(fields[index+1])
+			change.OldPath = fields[index]
+			change.NewPath = fields[index+1]
 			index += 2
-			oldBytes, oldErr := repository.ReadFile(ctx, mergeBase, oldPath)
-			newBytes, newErr := repository.ReadFile(ctx, ref, newPath)
-			if oldErr != nil || newErr != nil {
-				return nil, fmt.Errorf("branch_change_incomplete: renamed plan bytes could not be compared")
-			}
-			if !bytes.Equal(oldBytes, newBytes) {
-				paths = append(paths, newPath)
-			}
+			changes = append(changes, change)
 			continue
 		}
 		if status != "A" && status != "M" {
@@ -857,27 +903,23 @@ func (repository *GitRepository) ChangedPaths(ctx context.Context, mergeBase, re
 		if index >= len(fields) {
 			return nil, fmt.Errorf("branch_change_invalid: changed path evidence is truncated")
 		}
-		path := filepath.ToSlash(fields[index])
+		change.NewPath = fields[index]
+		if status == "M" {
+			change.OldPath = change.NewPath
+		}
 		index++
-		if strings.TrimSpace(path) == "" {
+		if change.NewPath == "" {
 			continue
 		}
-		if status == "M" {
-			oldBytes, oldErr := repository.ReadFile(ctx, mergeBase, path)
-			newBytes, newErr := repository.ReadFile(ctx, ref, path)
-			if oldErr != nil || newErr != nil {
-				return nil, fmt.Errorf("branch_change_incomplete: modified plan bytes could not be compared")
-			}
-			if bytes.Equal(oldBytes, newBytes) {
-				continue
-			}
-		}
-		if strings.TrimSpace(path) != "" {
-			paths = append(paths, path)
-		}
+		changes = append(changes, change)
 	}
-	sort.Strings(paths)
-	return paths, nil
+	sort.SliceStable(changes, func(i, j int) bool {
+		if changes[i].NewPath != changes[j].NewPath {
+			return changes[i].NewPath < changes[j].NewPath
+		}
+		return changes[i].OldPath < changes[j].OldPath
+	})
+	return changes, nil
 }
 
 func (repository *GitRepository) CommitTime(ctx context.Context, ref string) (string, error) {

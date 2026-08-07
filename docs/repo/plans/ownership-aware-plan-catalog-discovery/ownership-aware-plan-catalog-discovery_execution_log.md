@@ -35,7 +35,7 @@ force push, secret exposure, and silent conflict resolution.
 | `EP-02` | completed | Shared Git-backed candidate classifier, local index adapter, exact path and marker semantics, ownership boundaries, and family qualification. | Accepted after six rounds |
 | `EP-03` | completed | Versioned local views, prospective v2/canonical reads, preview evidence, repository-wide branch touches, and output protection. | Accepted after two rounds |
 | `EP-04` | completed | Guarded schema-v2 migration, direct canonical readiness, optional exact mixed proof, atomic renames, and transaction-time authority binding. | Accepted after four rounds |
-| `EP-05` | pending | None recorded. | Required |
+| `EP-05` | completed | Shared remote tree classification, default-policy branch overlays, canonical-readiness completeness, structured candidate evidence, and v2-only cache replacement. | Accepted after two rounds |
 | `EP-06` | pending | None recorded. | Required, including routing probe |
 | `EP-07` | pending | None recorded. | Required, including cross-platform evidence |
 | `EP-08` | pending | None recorded. | Required, including release-readiness source binding |
@@ -48,7 +48,7 @@ force push, secret exposure, and silent conflict resolution.
 - Review gate skipped: no.
 - Reviewer mode: fresh read-only subagent when the active environment permits it.
 - Reviewer model and reasoning mode: inherited from the implementing agent.
-- Review rounds: two for EP-01, six for EP-02, two for EP-03, and four for EP-04.
+- Review rounds: two for EP-01, six for EP-02, two for EP-03, four for EP-04, and two for EP-05.
 - Material findings: two EP-01 P1 findings plus EP-02 findings covering unsafe-source ordering,
   path portability, family authority, marker parsing, v1 compatibility, exact object provenance,
   and deterministic candidate evidence; EP-03 findings covered preview context isolation,
@@ -56,13 +56,16 @@ force push, secret exposure, and silent conflict resolution.
 - EP-04 findings covered v1/v2 authority separation, pre-commit evidence drift, protected register
   handling, unstaged rename reapplication, executable-mode preservation, deterministic final-state
   rebinding, and cross-platform Git mode semantics; all fixed.
+- EP-05 findings covered ownership-changing branch candidate visibility and canonical-readiness
+  completeness for discovery-v2 members retaining filename-only legacy records; both fixed.
 - Files changed because of review include `schemas/kit-config.schema.json`, the classifier, local
   view, migration, commit-tree, and reconcile transaction implementations, their focused tests,
   and JSON-schema coverage.
-- Final accepted result: EP-01 through EP-04 accepted; EP-05 through EP-10 pending.
+- Final accepted result: EP-01 through EP-05 accepted; EP-06 through EP-10 pending.
 - Approximate added time: about six minutes for EP-01, about thirty-five minutes for EP-02, and
   about twelve minutes for EP-03 review and remediation.
 - EP-04 review and remediation added about thirty-five minutes across four rounds.
+- EP-05 review and remediation added about twenty minutes across two rounds.
 - Token usage: not exposed per review round.
 - Worth-it assessment: yes. EP-02 review prevented unsafe local fallback evidence from becoming
   authority, preserved v1 activation compatibility, and bound fallback reads to exact offline Git
@@ -71,6 +74,8 @@ force push, secret exposure, and silent conflict resolution.
 - EP-04 review prevented historical v1 evidence from mutating v2 authority, bound policy and
   candidate evidence inside the reconcile transaction, made protected paths unconditional, and
   prevented false final-state readiness after source/body/mode drift.
+- EP-05 review prevented an excluded ownership-changing branch rename from disappearing and
+  prevented filename-only legacy records from being omitted by a falsely complete v2 portfolio.
 
 ## Activation Delta
 
@@ -213,9 +218,43 @@ Status: completed and accepted for checkpoint publication.
 
 ## EP-05 Delta - Remote Discovery, Branch Overlays, And Cache Completeness
 
-Status: pending.
+Status: completed and accepted for checkpoint publication.
 
-No divergence, validation, or review evidence is recorded yet.
+- Replaced the fixed `docs/repo/plans` remote scan and duplicated family heuristics with one
+  repository-wide selected-tree adapter to the shared classifier. Exact root and arbitrarily deep
+  lowercase `docs` segments, filename-or-metadata candidates, exclusions, ambiguity boundaries,
+  family metadata, path portability, and canonical errors now match local commit-tree evidence.
+- Added NUL-safe repository-wide raw Git change evidence with old/new paths, modes, and object IDs.
+  Same-byte renames are suppressed only when candidate eligibility, ownership, signal, and kind
+  semantics match; eligibility-, ownership-, and kind-changing renames remain visible.
+- Parsed discovery version and exclusions once from default-branch config and applied that immutable
+  policy to every branch. Branch config cannot broaden ownership. Discovery-v1 required members are
+  retained as explicit incomplete evidence; discovery-v2 members are evaluated through a canonical
+  readiness lens even while their local catalog mode remains legacy or mixed.
+- Added bounded retained-directory `git cat-file --batch` reads with a shared 8 MiB source limit,
+  sanitized inert Git environment, exact object evidence, safe fallback for injected runners, and
+  post-stream mirror-authority verification. Symlinks and mode `160000` gitlinks never contribute
+  content authority.
+- Added schema-v2 plan-candidate observations carrying repository, ref, commit, path, signal,
+  ownership, filename kind, Git mode/object, content and policy hashes, exclusion/boundary evidence,
+  visibility, and verification. This preserves excluded and otherwise non-record candidate evidence
+  without granting stable-ID plan authority or making a reviewed exclusion incomplete.
+- Portfolio catalogs now publish discovery-v2 member policy/candidate digests and member completeness.
+  Only complete schema-v2/discovery-v2 evidence can replace the cache. Incomplete attempts label and
+  preserve the last complete v2 cache; historical v1 cache bytes remain historical and cannot supply
+  a current `last_complete_scan_at`.
+- Removed the temporary CLI conflict between remote overlays and prospective/active discovery v2.
+  Added parity, nested docs, metadata-only, family, default-policy, excluded rename, eligibility/kind
+  rename, filename-only legacy, v1 member, gitlink, hostile/oversized content, cache, inert transport,
+  deterministic sorting, and public-evidence tests.
+- Validation: `go test ./internal/portfolio ./internal/commands ./internal/plancatalog` passed;
+  `go test -race ./internal/portfolio` passed; JSON-schema tests passed 40 cases; focused `go vet`
+  passed; Windows amd64 portfolio and plan-catalog test binaries compiled; `git diff --check` passed.
+  The full Go suite has only the expected managed content-graph digest drift reserved for
+  EP-06/EP-08 parity regeneration.
+- Review gate: accepted after two rounds. The two blocking findings added structured evidence for
+  ownership-changing excluded renames and required canonical-valid evidence before a discovery-v2
+  portfolio member/cache can be complete. No P1/P2 findings remain.
 
 ## EP-06 Delta - Managed Doctrine, Routing, And Resource Parity
 

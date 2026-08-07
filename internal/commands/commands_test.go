@@ -464,7 +464,6 @@ func TestPlansProspectiveFlagValidationAndNestedOutputProtection(t *testing.T) {
 		{args: []string{"list", "--target-discovery-version", "3", root}, want: "invalid --target-discovery-version"},
 		{args: []string{"validate", "--target-catalog-mode", "mixed", root}, want: "invalid --target-catalog-mode"},
 		{args: []string{"list", "--include-untracked", root}, want: "unknown option"},
-		{args: []string{"validate", "--target-discovery-version", "2", "--remote-overlays", root}, want: "conflicts"},
 	}
 	for _, test := range tests {
 		var stderr bytes.Buffer
@@ -1007,7 +1006,7 @@ func TestPlansRemoteOverlayValidationAndInventoryUsePushedRefsOnly(t *testing.T)
 	runGitCommandTest(t, root, "init", "-b", "main")
 	runGitCommandTest(t, root, "config", "user.email", "test@example.invalid")
 	runGitCommandTest(t, root, "config", "user.name", "Remote Overlay Test")
-	config := []byte("schema_version: 1\nselected_profile: standard\nproject_display_name: Remote Overlay\nselected_setup_folder: .\nlocal_consumer_layer:\n  repo_docs_path: docs/repo/\n  agent_memory_path: docs/agent-memory/\n  user_layer_path: .codeheart/user/\n  local_machine_layer_path: .codeheart/local/\ncomponent_settings:\n  planning-workflows:\n    plan_catalog_mode: canonical\nportfolio:\n  schema_version: 2\n  role: member\n  member_repository_id: remote-example\n  coordination_home_id: example-home\n")
+	config := []byte("schema_version: 1\nselected_profile: standard\nproject_display_name: Remote Overlay\nselected_setup_folder: .\nlocal_consumer_layer:\n  repo_docs_path: docs/repo/\n  agent_memory_path: docs/agent-memory/\n  user_layer_path: .codeheart/user/\n  local_machine_layer_path: .codeheart/local/\ncomponent_settings:\n  planning-workflows:\n    plan_catalog_mode: canonical\n    plan_catalog_discovery_version: 2\nportfolio:\n  schema_version: 2\n  role: member\n  member_repository_id: remote-example\n  coordination_home_id: example-home\n")
 	lock := []byte("schema_version: 1\nkit_version: 0.1.23\nselected_profile: standard\nselected_components: []\nrelease:\n  asset_url: local-test\n  checksum_sha256: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\nmanaged_paths: []\ngenerated_surfaces: []\ncli_repair:\n  installed_cli_path: codeheart-operating-kit\n  repair_source_url: local-test\nupdate_check:\n  last_update_check_at: \"2026-07-01T00:00:00Z\"\n  next_update_check_due: \"2026-08-01T00:00:00Z\"\n  latest_seen_version: 0.1.23\n  update_status: current\nnative_capabilities: {}\n")
 	writeCommandFixtureFile(t, root, state.ConfigPath, config)
 	writeCommandFixtureFile(t, root, state.LockPath, lock)

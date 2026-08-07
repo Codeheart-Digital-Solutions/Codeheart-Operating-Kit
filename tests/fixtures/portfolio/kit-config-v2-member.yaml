@@ -11,6 +11,7 @@ component_settings:
   planning-workflows:
     plan_catalog_mode: mixed
     plan_catalog_cutover_revision: 0123456789abcdef0123456789abcdef01234567
+    plan_catalog_discovery_version: 2
 portfolio:
   schema_version: 2
   role: member

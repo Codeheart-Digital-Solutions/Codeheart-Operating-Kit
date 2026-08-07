@@ -422,14 +422,14 @@ func TestClassifierRejectsInvalidUTF8BeforeReadingOrHashing(t *testing.T) {
 func TestV1FilenameAndSourceSizeCompatibilityRemainUnchanged(t *testing.T) {
 	root := t.TempDir()
 	name := "docs/repo/plans/legacy/_discovery_doc.md"
-	content := strings.Repeat("x", maxPlanSourceBytes+1)
+	content := strings.Repeat("x", MaxPlanSourceBytes+1)
 	writeClassifierFile(t, root, name, content)
 	candidates, err := Enumerate(root)
 	if err != nil || len(candidates) != 1 || candidates[0].ExpectedKind != KindDiscovery {
 		t.Fatalf("v1 filename compatibility changed: candidates=%#v err=%v", candidates, err)
 	}
 	data, err := readRegularSource(root, name)
-	if err != nil || len(data) != maxPlanSourceBytes+1 {
+	if err != nil || len(data) != MaxPlanSourceBytes+1 {
 		t.Fatalf("v1 source-size compatibility changed: bytes=%d err=%v", len(data), err)
 	}
 	if _, err := readBoundedRegularSource(root, name); ErrorCode(err) != "source_too_large" {

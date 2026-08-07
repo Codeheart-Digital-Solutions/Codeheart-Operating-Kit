@@ -73,16 +73,10 @@ func runPlansValidate(args []string, stdout io.Writer, stderr io.Writer) int {
 	if err != nil {
 		return writeArgError(stderr, "plans validate", err)
 	}
-	if bools["--remote-overlays"] && options.TargetDiscoveryVersion == plancatalog.DiscoveryV2 {
-		return writeArgError(stderr, "plans validate", fmt.Errorf("--remote-overlays conflicts with prospective discovery v2 until remote discovery v2 is enabled"))
-	}
 	snapshot, err := plancatalog.LoadRepositorySnapshotWithOptions(root, options)
 	if err != nil {
 		fmt.Fprintf(stderr, "codeheart-operating-kit plans validate: error: %v\n", err)
 		return 1
-	}
-	if bools["--remote-overlays"] && snapshot.Settings.DiscoveryVersion == plancatalog.DiscoveryV2 {
-		return writeArgError(stderr, "plans validate", fmt.Errorf("--remote-overlays conflicts with discovery v2 until remote discovery v2 is enabled"))
 	}
 	output := plansValidationOutput{SchemaVersion: 1, Mode: snapshot.Settings.Mode, RepositoryID: snapshot.Settings.RepositoryID, Valid: snapshot.Complete && !plancatalog.HasErrors(snapshot.Problems), RecordCount: len(snapshot.Records), Problems: snapshot.Problems}
 	if snapshot.Settings.DiscoveryVersion == plancatalog.DiscoveryV2 || snapshot.Targeted {
@@ -216,16 +210,10 @@ func runPlansInventory(args []string, stdout io.Writer, stderr io.Writer) int {
 	if err != nil {
 		return writeArgError(stderr, "plans inventory", err)
 	}
-	if bools["--remote-overlays"] && options.TargetDiscoveryVersion == plancatalog.DiscoveryV2 {
-		return writeArgError(stderr, "plans inventory", fmt.Errorf("--remote-overlays conflicts with prospective discovery v2 until remote discovery v2 is enabled"))
-	}
 	inventory, err := plancatalog.BuildInventoryWithOptions(root, time.Now(), options)
 	if err != nil {
 		fmt.Fprintf(stderr, "codeheart-operating-kit plans inventory: error: %v\n", err)
 		return 1
-	}
-	if bools["--remote-overlays"] && inventory.DiscoveryVersion == plancatalog.DiscoveryV2 {
-		return writeArgError(stderr, "plans inventory", fmt.Errorf("--remote-overlays conflicts with discovery v2 until remote discovery v2 is enabled"))
 	}
 	if bools["--remote-overlays"] {
 		remote, scanErr := scanRemoteOverlays(root)

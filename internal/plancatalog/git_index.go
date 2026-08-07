@@ -274,11 +274,11 @@ func (reader *indexBatchReader) Read(blob GitBlob) ([]byte, error) {
 	if err != nil || size < 0 {
 		return nil, fmt.Errorf("git_index_blob_invalid_size: %s", strings.TrimSpace(header))
 	}
-	if size > maxPlanSourceBytes {
+	if size > MaxPlanSourceBytes {
 		if _, discardErr := io.CopyN(io.Discard, reader.stdout, size+1); discardErr != nil {
 			return nil, discardErr
 		}
-		return nil, &CodedError{Code: "source_too_large", Err: fmt.Errorf("indexed source exceeds %d-byte plan-catalog limit: %s", maxPlanSourceBytes, blob.Path)}
+		return nil, &CodedError{Code: "source_too_large", Err: fmt.Errorf("indexed source exceeds %d-byte plan-catalog limit: %s", MaxPlanSourceBytes, blob.Path)}
 	}
 	data := make([]byte, size)
 	if _, err := io.ReadFull(reader.stdout, data); err != nil {

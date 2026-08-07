@@ -3,6 +3,7 @@
 package portfolio
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"os"
@@ -55,4 +56,37 @@ func (ExecRunner) RunBound(ctx context.Context, directory *os.File, _ string, na
 	command.ExtraFiles = []*os.File{directory}
 	command.Env = append(sanitizedGitEnvironment(os.Environ()), boundGitHelperEnv+"=1")
 	return captureCommand(command)
+}
+
+func (ExecRunner) StartBound(ctx context.Context, directory *os.File, _ string, name string, args ...string) (*BoundCommandStream, error) {
+	if name != "git" {
+		return nil, fmt.Errorf("bound_command_forbidden: only Git may use retained directory authority")
+	}
+	executable, err := os.Executable()
+	if err != nil {
+		return nil, err
+	}
+	command := exec.CommandContext(ctx, executable, append([]string{boundGitHelperArgument}, args...)...)
+	command.ExtraFiles = []*os.File{directory}
+	command.Env = append(sanitizedGitEnvironment(os.Environ()), boundGitHelperEnv+"=1")
+	stdin, err := command.StdinPipe()
+	if err != nil {
+		return nil, err
+	}
+	stdout, err := command.StdoutPipe()
+	if err != nil {
+		_ = stdin.Close()
+		return nil, err
+	}
+	var stderr bytes.Buffer
+	command.Stderr = &stderr
+	if err := command.Start(); err != nil {
+		_ = stdin.Close()
+		_ = stdout.Close()
+		return nil, err
+	}
+	return &BoundCommandStream{Stdin: stdin, Stdout: stdout, Wait: func() (CommandResult, error) {
+		err := command.Wait()
+		return CommandResult{Stderr: stderr.Bytes()}, err
+	}}, nil
 }

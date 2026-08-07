@@ -874,6 +874,10 @@ v2 evidence replaces the last complete cache.
 ### C) Files Touched
 
 - `internal/portfolio/mirror.go`
+- `internal/portfolio/batch.go`
+- `internal/portfolio/boundrunner_unix.go`
+- `internal/portfolio/boundrunner_windows.go`
+- `internal/portfolio/localgit.go`
 - `internal/portfolio/scanner.go`
 - `internal/portfolio/membership.go`
 - `internal/portfolio/config.go`
@@ -881,12 +885,16 @@ v2 evidence replaces the last complete cache.
 - `internal/portfolio/store.go`
 - `internal/portfolio/portfolio_test.go`
 - `internal/plancatalog/model.go`
+- `internal/plancatalog/discover.go`
+- `internal/plancatalog/git_index.go`
+- `internal/plancatalog/classifier_test.go`
 - `schemas/plan-catalog.schema.json`
 - `tests/fixtures/portfolio/kit-config-v2-member.yaml`
 - `tests/fixtures/portfolio/kit-config-v2-home.yaml`
 - `tests/fixtures/portfolio/kit-config-v1-member.yaml`
 - `internal/commands/plans.go`
 - `internal/commands/commands_test.go`
+- `tests/test_json_schemas.py`
 
 ### D) Acceptance Criteria And Size
 
@@ -898,8 +906,9 @@ v2 evidence replaces the last complete cache.
 - Remote mode `160000` gitlinks are hard-unowned; regular selected-tree blobs are outer-commit
   authority, and remote evidence never claims detection of unrepresented worktree-only `.git`
   boundaries.
-- Added and materially changed branch candidates produce observations with repository, ref,
-  commit, path, content hash, verification, visibility, and source-change evidence.
+- Added and materially changed branch candidates produce plan or plan-candidate observations with
+  repository, ref, commit, path, content hash, verification, visibility, and source-change
+  evidence as applicable to their validity and ownership.
 - Same-byte rename suppression occurs only when old/new eligibility, ownership, and kind match.
 - Rename into docs, kind-changing rename, ownership-changing rename, and metadata changes remain
   visible.
@@ -915,20 +924,20 @@ migration behavior is complete; execution remains linear before EP-06.
 
 ### F) Tasks Checklist
 
-- [ ] Change `GitRepository.ListFiles` to enumerate one selected tree and return regular-blob mode evidence without a plans prefix.
-- [ ] Change `GitRepository.ChangedPaths` to emit NUL-safe old/new path, status, and mode evidence across the repository.
-- [ ] Parse default-branch discovery version and exclusions through the pure EP-01 settings decoder in membership evaluation.
-- [ ] Adapt remote tree descriptors and bounded blob readers to the shared `internal/plancatalog` classifier.
-- [ ] Remove `remoteFormalKind` and `remoteFamilyQualified` from `internal/portfolio/scanner.go`.
-- [ ] Apply default-branch policy to every unmerged branch observation and ignore branch attempts to broaden authority.
-- [ ] Preserve eligibility-changing and kind-changing rename observations with exact ref, commit, path, and hash evidence.
-- [ ] Add discovery version and policy digest to catalog member and completeness structures.
-- [ ] Mark v1, inaccessible, truncated, unsafe, and incompatible required-member evidence incomplete with stable scan codes.
-- [ ] Dispatch historical v1 cache validation and prevent it from satisfying current v2 completeness.
-- [ ] Preserve the prior complete cache on every incomplete attempt and atomically store only a complete validated v2 catalog.
-- [ ] Add remote multi-root, exclusion, metadata-only, family, rename, hostile-content, incompatible-member, and cache-preservation tests.
-- [ ] Run `go test ./internal/portfolio ./internal/commands`.
-- [ ] Run remote default/branch fixture parity against the local committed-tree classifier.
+- [x] Change `GitRepository.ListFiles` to enumerate one selected tree and return regular-blob mode evidence without a plans prefix.
+- [x] Change `GitRepository.ChangedPaths` to emit NUL-safe old/new path, status, and mode evidence across the repository.
+- [x] Parse default-branch discovery version and exclusions through the pure EP-01 settings decoder in membership evaluation.
+- [x] Adapt remote tree descriptors and bounded blob readers to the shared `internal/plancatalog` classifier.
+- [x] Remove `remoteFormalKind` and `remoteFamilyQualified` from `internal/portfolio/scanner.go`.
+- [x] Apply default-branch policy to every unmerged branch observation and ignore branch attempts to broaden authority.
+- [x] Preserve eligibility-changing, kind-changing, and ownership-changing rename evidence with exact ref, commit, path, and hash evidence.
+- [x] Add discovery version and policy digest to catalog member and completeness structures.
+- [x] Mark v1, inaccessible, truncated, unsafe, canonically incomplete, and incompatible required-member evidence incomplete with stable scan codes.
+- [x] Dispatch historical v1 cache validation and prevent it from satisfying current v2 completeness.
+- [x] Preserve the prior complete cache on every incomplete attempt and atomically store only a complete validated v2 catalog.
+- [x] Add remote multi-root, exclusion, metadata-only, family, rename, hostile-content, incompatible-member, and cache-preservation tests.
+- [x] Run `go test ./internal/portfolio ./internal/commands`.
+- [x] Run remote default/branch fixture parity against the local committed-tree classifier.
 
 ### G) Implementation Notes
 

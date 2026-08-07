@@ -341,6 +341,23 @@ def test_every_new_durable_schema_accepts_a_positive_instance_and_rejects_a_nega
                 "complete": True,
                 "members": [],
                 "observations": [],
+                "plan_candidates": [
+                    {
+                        "repository_id": "example-member",
+                        "path": "products/widget/docs/plans/example_discovery_doc.md",
+                        "ref": "refs/remotes/origin/main",
+                        "commit": commit,
+                        "visibility": "default",
+                        "signal": "filename+metadata",
+                        "ownership": "owned",
+                        "expected_kind": "discovery",
+                        "git_mode": "100644",
+                        "object_id": commit,
+                        "content_sha256": digest,
+                        "policy_digest": digest,
+                        "verification": "verified",
+                    }
+                ],
                 "candidates": [],
                 "errors": [],
                 "metrics": {

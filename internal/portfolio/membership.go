@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/internal/plancatalog"
 	"github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/internal/state"
 )
 
@@ -22,6 +23,8 @@ type MembershipDecision struct {
 	RepositoryID string
 	Reason       string
 	Config       Config
+	PlanSettings plancatalog.RepositorySettings
+	PlanProblems []plancatalog.Problem
 }
 
 var errPortfolioBlockMissing = errors.New("portfolio block missing")
@@ -68,7 +71,8 @@ func EvaluateMembership(input MembershipInput) MembershipDecision {
 	if config.CoordinationHomeID != input.HomeID {
 		return MembershipDecision{RepositoryID: config.RepositoryID, Reason: "coordination_home_id_mismatch", Config: config}
 	}
-	return MembershipDecision{Member: true, RepositoryID: config.RepositoryID, Config: config}
+	settings, problems := plancatalog.DecodeRepositorySettings(input.ConfigData)
+	return MembershipDecision{Member: true, RepositoryID: config.RepositoryID, Config: config, PlanSettings: settings, PlanProblems: problems}
 }
 
 func decodeRemoteConfig(data []byte) (Config, error) {

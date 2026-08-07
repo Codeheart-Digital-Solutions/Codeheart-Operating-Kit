@@ -10,7 +10,7 @@ import (
 	"strings"
 )
 
-const maxPlanSourceBytes = 8 << 20
+const MaxPlanSourceBytes = 8 << 20
 
 func Enumerate(root string) ([]Candidate, error) {
 	plansRoot := filepath.Join(root, "docs", "repo", "plans")
@@ -198,7 +198,7 @@ func readRegularSourceWithHook(root, relative string, afterLstat func(string) er
 }
 
 func readBoundedRegularSource(root, relative string) ([]byte, error) {
-	return readRegularSourceWithLimit(root, relative, nil, maxPlanSourceBytes)
+	return readRegularSourceWithLimit(root, relative, nil, MaxPlanSourceBytes)
 }
 
 func readRegularSourceWithLimit(root, relative string, afterLstat func(string) error, limit int64) ([]byte, error) {

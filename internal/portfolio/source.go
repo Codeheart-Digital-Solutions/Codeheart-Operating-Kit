@@ -108,12 +108,33 @@ type Candidate struct {
 	Reason        string `json:"reason"`
 }
 
+type PlanCandidateObservation struct {
+	RepositoryID   string                      `json:"repository_id"`
+	Path           string                      `json:"path"`
+	Ref            string                      `json:"ref"`
+	Commit         string                      `json:"commit"`
+	Visibility     string                      `json:"visibility"`
+	Signal         plancatalog.CandidateSignal `json:"signal"`
+	Ownership      plancatalog.OwnershipClass  `json:"ownership"`
+	ExpectedKind   plancatalog.Kind            `json:"expected_kind,omitempty"`
+	GitMode        plancatalog.GitMode         `json:"git_mode"`
+	ObjectID       string                      `json:"object_id"`
+	ContentSHA256  string                      `json:"content_sha256,omitempty"`
+	PolicyDigest   string                      `json:"policy_digest"`
+	ExclusionRoot  string                      `json:"exclusion_root,omitempty"`
+	Boundary       string                      `json:"boundary,omitempty"`
+	AmbiguousUnder string                      `json:"ambiguous_under,omitempty"`
+	PullRequest    string                      `json:"pull_request,omitempty"`
+	Verification   string                      `json:"verification"`
+}
+
 type ScanError struct {
 	Code          string `json:"code"`
 	Message       string `json:"message"`
 	SourceLocator string `json:"source_locator,omitempty"`
 	RepositoryID  string `json:"repository_id,omitempty"`
 	Ref           string `json:"ref,omitempty"`
+	Path          string `json:"path,omitempty"`
 	Retryable     bool   `json:"retryable,omitempty"`
 }
 
@@ -140,6 +161,7 @@ type Catalog struct {
 	Complete           bool                            `json:"complete"`
 	Members            []plancatalog.CatalogMember     `json:"members"`
 	Observations       []plancatalog.SourceObservation `json:"observations"`
+	PlanCandidates     []PlanCandidateObservation      `json:"plan_candidates,omitempty"`
 	Candidates         []Candidate                     `json:"candidates"`
 	Errors             []ScanError                     `json:"errors"`
 	Metrics            Metrics                         `json:"metrics"`
@@ -169,6 +191,16 @@ func sortCatalog(catalog *Catalog) {
 		}
 		return left.CanonicalPath < right.CanonicalPath
 	})
+	sort.SliceStable(catalog.PlanCandidates, func(i, j int) bool {
+		left, right := catalog.PlanCandidates[i], catalog.PlanCandidates[j]
+		if left.RepositoryID != right.RepositoryID {
+			return left.RepositoryID < right.RepositoryID
+		}
+		if left.Ref != right.Ref {
+			return left.Ref < right.Ref
+		}
+		return left.Path < right.Path
+	})
 	sort.SliceStable(catalog.Candidates, func(i, j int) bool {
 		if catalog.Candidates[i].SourceLocator != catalog.Candidates[j].SourceLocator {
 			return catalog.Candidates[i].SourceLocator < catalog.Candidates[j].SourceLocator
@@ -182,6 +214,9 @@ func sortCatalog(catalog *Catalog) {
 		}
 		if left.Ref != right.Ref {
 			return left.Ref < right.Ref
+		}
+		if left.Path != right.Path {
+			return left.Path < right.Path
 		}
 		if left.Code != right.Code {
 			return left.Code < right.Code

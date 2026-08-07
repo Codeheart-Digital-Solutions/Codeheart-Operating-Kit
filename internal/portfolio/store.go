@@ -12,6 +12,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/internal/plancatalog"
 	"github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/internal/state"
 )
 
@@ -23,6 +24,10 @@ func storeCompleteCatalogWithHook(root string, catalog Catalog, hook func(string
 	if !catalog.Complete {
 		_, readErr := readRootRegular(root, CatalogPath)
 		return false, readErr == nil, nil
+	}
+	if catalog.SchemaVersion != 2 || catalog.DiscoveryVersion != plancatalog.DiscoveryV2 {
+		_, readErr := readRootRegular(root, CatalogPath)
+		return false, readErr == nil, fmt.Errorf("portfolio_catalog_incompatible: only complete discovery-v2 evidence may replace the current cache")
 	}
 	schemaPath, err := state.SchemaForPlanCatalogVersion(catalog.SchemaVersion)
 	if err != nil {
