@@ -114,6 +114,36 @@ def test_low_context_planning_and_portfolio_routes_are_installed(tmp_path):
     assert "do not ask for a second push approval" in draft.lower()
 
 
+def test_nested_domain_plan_probe_routes_through_prospective_v2_before_writes():
+    router = (
+        ROOT
+        / "components/agent-interface/managed/reference/operation-routing-and-dispatch.md"
+    ).read_text(encoding="utf-8")
+    catalog = (
+        ROOT / "components/planning-workflows/managed/reference/plan-catalog-format.md"
+    ).read_text(encoding="utf-8")
+    migrate = (
+        ROOT / "components/planning-workflows/managed/runbooks/migrate-plan-catalog.md"
+    ).read_text(encoding="utf-8")
+    combined = "\n".join([router, catalog, migrate])
+
+    # Low-context request: "We found an old plan deep under a product package's docs;
+    # make the catalog see it." The route must resolve ownership and evidence first.
+    assert "planning.migrate-catalog" in router
+    assert "every owned tracked `docs`\n  tree" in router
+    assert "ownership/semantic ambiguity" in router
+    assert "reviewed ownership/exclusions" in router
+    assert "explicit approval for metadata/config writes" in router
+    assert "exact lowercase segment named\n`docs` at any depth" in catalog
+    assert "supported filename **or** one genuine" in catalog
+    assert "--target-discovery-version 2" in migrate
+    assert "--target-catalog-mode canonical" in migrate
+    assert "Migration itself never activates v2" in migrate
+    assert "separate reviewed config activation" in router
+    assert "no `owned_roots` setting" in catalog
+    assert "set shared config to `mixed`" not in combined
+
+
 def test_activation_route_grants_only_plan_checkpoint_normal_push():
     draft = (
         ROOT / "components/planning-workflows/managed/runbooks/draft-implementation-plan.md"

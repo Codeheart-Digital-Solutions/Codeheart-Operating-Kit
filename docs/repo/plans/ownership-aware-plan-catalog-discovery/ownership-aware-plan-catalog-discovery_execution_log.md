@@ -1,4 +1,4 @@
-Last updated: 2026-08-06T23:46:20Z (UTC)
+Last updated: 2026-08-07T00:42:51Z (UTC)
 Created: 2026-08-06
 
 # Ownership-Aware Repository-Wide Plan Catalog Discovery Execution Log
@@ -36,7 +36,7 @@ force push, secret exposure, and silent conflict resolution.
 | `EP-03` | completed | Versioned local views, prospective v2/canonical reads, preview evidence, repository-wide branch touches, and output protection. | Accepted after two rounds |
 | `EP-04` | completed | Guarded schema-v2 migration, direct canonical readiness, optional exact mixed proof, atomic renames, and transaction-time authority binding. | Accepted after four rounds |
 | `EP-05` | completed | Shared remote tree classification, default-policy branch overlays, canonical-readiness completeness, structured candidate evidence, and v2-only cache replacement. | Accepted after two rounds |
-| `EP-06` | pending | None recorded. | Required, including routing probe |
+| `EP-06` | completed | Managed doctrine, migration/refresh routing, packaged-resource parity, and low-context nested-domain evidence. | Accepted after three rounds |
 | `EP-07` | pending | None recorded. | Required, including cross-platform evidence |
 | `EP-08` | pending | None recorded. | Required, including release-readiness source binding |
 | `EP-09` | pending | Doctrine-selected producer release and publication. | Required, including release runbook gates |
@@ -48,7 +48,8 @@ force push, secret exposure, and silent conflict resolution.
 - Review gate skipped: no.
 - Reviewer mode: fresh read-only subagent when the active environment permits it.
 - Reviewer model and reasoning mode: inherited from the implementing agent.
-- Review rounds: two for EP-01, six for EP-02, two for EP-03, four for EP-04, and two for EP-05.
+- Review rounds: two for EP-01, six for EP-02, two for EP-03, four for EP-04, two for EP-05, and
+  three for EP-06.
 - Material findings: two EP-01 P1 findings plus EP-02 findings covering unsafe-source ordering,
   path portability, family authority, marker parsing, v1 compatibility, exact object provenance,
   and deterministic candidate evidence; EP-03 findings covered preview context isolation,
@@ -58,14 +59,18 @@ force push, secret exposure, and silent conflict resolution.
   rebinding, and cross-platform Git mode semantics; all fixed.
 - EP-05 findings covered ownership-changing branch candidate visibility and canonical-readiness
   completeness for discovery-v2 members retaining filename-only legacy records; both fixed.
+- EP-06 findings covered unsupported mixed prospective-target wording, missing prospective CLI
+  help, correct mixed-mode-before-migration sequencing while discovery remains v1, and complete
+  inventory-help assertions; all fixed.
 - Files changed because of review include `schemas/kit-config.schema.json`, the classifier, local
   view, migration, commit-tree, and reconcile transaction implementations, their focused tests,
   and JSON-schema coverage.
-- Final accepted result: EP-01 through EP-05 accepted; EP-06 through EP-10 pending.
+- Final accepted result: EP-01 through EP-06 accepted; EP-07 through EP-10 pending.
 - Approximate added time: about six minutes for EP-01, about thirty-five minutes for EP-02, and
   about twelve minutes for EP-03 review and remediation.
 - EP-04 review and remediation added about thirty-five minutes across four rounds.
 - EP-05 review and remediation added about twenty minutes across two rounds.
+- EP-06 review and remediation added about ten minutes across three rounds.
 - Token usage: not exposed per review round.
 - Worth-it assessment: yes. EP-02 review prevented unsafe local fallback evidence from becoming
   authority, preserved v1 activation compatibility, and bound fallback reads to exact offline Git
@@ -76,6 +81,9 @@ force push, secret exposure, and silent conflict resolution.
   prevented false final-state readiness after source/body/mode drift.
 - EP-05 review prevented an excluded ownership-changing branch rename from disappearing and
   prevented filename-only legacy records from being omitted by a falsely complete v2 portfolio.
+- EP-06 review prevented doctrine from advertising an unsupported mixed prospective CLI lens,
+  exposed all implemented prospective/preview flags in help, and aligned optional mixed adoption
+  with runtime's v1-discovery cutover proof before v2 activation.
 
 ## Activation Delta
 
@@ -258,9 +266,41 @@ Status: completed and accepted for checkpoint publication.
 
 ## EP-06 Delta - Managed Doctrine, Routing, And Resource Parity
 
-Status: pending.
+Status: completed and accepted for checkpoint publication.
 
-No divergence, validation, routing-probe, or review evidence is recorded yet.
+- Updated the plan-catalog, lifecycle, portfolio, register, migration, refresh, planning entry
+  point, consumer template, and dispatch route doctrine to describe the implemented discovery-v2
+  contract: exact lowercase `docs` segments at arbitrary depth, filename-or-metadata candidate
+  discovery, filename-and-metadata canonical validity, exclusions-only ownership, explicit family
+  metadata, explicit activation, optional mixed grandfathering, and v2-complete remote evidence.
+- Kept direct legacy-to-canonical migration as the normal route. Optional mixed adoption now sets
+  catalog mode and its exact cutover proof while discovery remains v1, migrates the reviewed
+  ledger, and activates discovery v2 separately. No second cutover or `owned_roots` registry is
+  introduced.
+- Copied all nine changed producer doctrine/template sources to byte-identical packaged resource
+  mirrors. Existing packaging assertions already enumerate every changed path; the focused suite
+  re-proved their parity. Added installed sync assertions for multi-root doctrine.
+- Added an automated nested-domain routing probe. A fresh low-context reviewer independently routed
+  a deeply nested package plan through `planning.migrate-catalog`, resolved ordinary tracked docs
+  ownership, selected prospective evidence before writes, routed current portfolio truth through
+  `portfolio.refresh-and-analyze`, and avoided all migration/config/member writes.
+- Review remediation also exposed `--target-discovery-version 2`,
+  `--target-catalog-mode canonical`, and `--include-untracked` in validate/list/inventory help with
+  command-help coverage.
+- Validation: focused Python packaging/routing/sync suite passed 28 tests through `uv`; `go test
+  ./internal/cli ./internal/commands ./internal/kitfs` passed; active discovery-v1 repository
+  validation remained `valid=true` with 35 records and warnings only; Markdown timestamps,
+  public-core hygiene, producer/resource byte parity, and `git diff --check` passed.
+- Full `go test ./...` has only the expected embedded content-graph mismatch
+  (`76221705af8a6fb2c44272b525b4a019279dcc059cf6fea710b5952601024f5f` observed versus
+  `b6f9fb12d6c2e64f7ceb38b0f1084195c3e93bd5ce0c8a002b000f385236d053` recorded), reserved for
+  the planned release-readiness parity regeneration.
+- Prospective producer v2 canonical validation intentionally reported tracked `tests/fixtures/`
+  plan samples as ambiguity blockers plus misplaced metadata fixtures. This is expected policy
+  evidence for a future reviewed producer exclusion, not active-v1 drift or release activation.
+- Review gate: round one found unsupported mixed prospective-target wording and missing CLI help;
+  round two found the required mixed-mode-before-migration sequencing and one missing help
+  assertion. All were remediated, and round three accepted EP-06 with no remaining P1/P2 finding.
 
 ## EP-07 Delta - Comprehensive Validation And Cross-Platform Proof
 

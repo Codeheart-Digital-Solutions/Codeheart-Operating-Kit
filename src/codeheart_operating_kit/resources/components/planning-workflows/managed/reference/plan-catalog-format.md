@@ -1,4 +1,4 @@
-Last updated: 2026-07-31T22:23:19Z (UTC)
+Last updated: 2026-08-07T00:26:02Z (UTC)
 
 # Plan Catalog Format
 
@@ -21,17 +21,51 @@ their Operating Kit version.
 Never copy source-derived cache content into a plan as authority. Never use an execution log as an
 independent plan record unless a later reviewed contract explicitly adds that kind.
 
-## Canonical Record Kinds And Paths
+## Discovery Versions And Path Authority
 
-Formal records are discovered under `docs/repo/plans/`:
+Discovery v1 is the compatibility contract that recognizes formal records only beneath
+`docs/repo/plans/`. Discovery v2 is the repository-wide contract. In v2, the authoritative local
+path universe is regular or executable Markdown blobs in the Git index. The authoritative remote
+universe is regular or executable Markdown blobs in the selected commit tree. A path is eligible
+when its slash-normalized repository-relative segments contain an exact lowercase segment named
+`docs` at any depth.
+
+Examples of eligible v2 paths include:
+
+```text
+docs/repo/plans/example/example_discovery_doc.md
+docs/business/procurement/vendor-review_implementation_doc.md
+products/example/packages/api/docs/plans/migration/migration_discovery_doc.md
+source/areas/payments/docs/initiatives/settlement/settlement_implementation_doc.md
+```
+
+`Docs/`, `mydocs/`, and `documentation/` are not `docs` segments. Classification is semantic
+path-segment matching, not `*/docs/**`, and therefore includes root `docs/**` and arbitrarily
+nested `**/docs/**` without depending on glob semantics.
+
+The supported filename kinds are exact, case-sensitive suffixes:
 
 - `*_discovery_doc.md` -> `discovery`
 - `*_implementation_doc.md` -> `implementation`
-- a qualifying nested family `README.md` -> `family`
+- exact `README.md` with valid `kind: family` metadata -> `family`
 
-The root `docs/repo/plans/README.md` is an index, not a family. A nested family README qualifies
-when its directory contains at least two child directories that contain formal discovery or
-implementation documents.
+Discovery and implementation candidates are selected by supported filename **or** one genuine
+Codeheart plan metadata block. Candidate selection is intentionally broader than validity so a
+misnamed or metadata-missing plan cannot disappear. Marker-like content inside Markdown fences,
+examples, or malformed marker layouts is not genuine metadata authority and is reported when it
+also has a filename signal.
+
+In discovery v2 canonical mode, discovery and implementation records are valid only when both the
+supported filename and valid matching metadata are present. Stable identity comes from metadata;
+the human-readable kind comes from the filename. A metadata-bearing discovery or implementation
+under an eligible `docs` tree but without the supported filename is a visible invalid candidate,
+not a record. Lifecycle continues to come only from the document header.
+
+A family record requires exact `README.md`, genuine valid family metadata, and meaningful child
+plan grouping. Directory shape alone never creates family authority and an ordinary domain README
+does not become a candidate merely because sibling plan directories appear. Existing v1 family
+records remain v1 compatibility evidence until prospective v2 migration gives the README explicit
+family metadata. Branch overlays must not infer new family authority from unchanged README bytes.
 
 Discovery and implementation are separate records even when they belong to the same feature or
 family. A family is a discoverability and relationship record; it is not an extra lifecycle role
@@ -158,6 +192,46 @@ or metadata-semantic change instead.
 Mechanical migration must also preserve `Created`. Later content edits update `Last updated` in
 the normal planning workflow.
 
+## Repository Ownership And Exclusions
+
+In discovery v2, every ordinary tracked Markdown path with an exact `docs` segment is repository-
+owned by default. There is no central docs-root allowlist and no `owned_roots` setting.
+
+Hard-unowned boundaries never provide consumer plan authority:
+
+- managed Kit content under `.codeheart/kit/` and local/user state under `.codeheart/local/` or
+  `.codeheart/user/`;
+- symlinks, gitlinks/submodules, and nested Git repositories;
+- paths outside the repository; and
+- ignored or untracked files as catalog authority.
+
+Conventional fixture, vendor, generated, dependency, example, build, output, or virtual-
+environment segments are ambiguous, not silently ignored. A plan signal beneath one becomes a
+visible `prospective-blocked` candidate until the document is moved to a truthful owned docs path
+or the misleading root is explicitly excluded. The implementation-defined ambiguity segment set
+is emitted in the discovery policy and may be refined only from evidence.
+
+Configure only reviewed repository-relative directory exclusions:
+
+```yaml
+component_settings:
+  planning-workflows:
+    plan_catalog_ownership:
+      excluded_roots:
+        - vendor/copied-product/docs/
+```
+
+Exclusions remain inventory evidence with their path, signal, disposition, and policy digest;
+they do not silently disappear. Roots must be slash-normalized, unique, non-overlapping, portable,
+and end in `/`. Globs, absolute paths, drive-qualified paths, `..`, case-fold collisions, and
+repository-wide exclusions are invalid. If a genuine plan sits beneath a misleading conventional
+boundary, move it normally; do not add `owned_roots` without a separate reviewed requirement.
+
+`plans validate` and `plans inventory` accept `--include-untracked` only with a prospective or
+active discovery-v2 read. This opt-in authoring preview is non-authoritative. It is excluded from
+candidate-set and policy hashes, canonical completeness, migration writes, and remote evidence;
+ignored files are not previewed.
+
 ## Repository Catalog Modes
 
 Mode is stored at:
@@ -189,8 +263,34 @@ baseline.
 : Every formal record requires valid metadata. The legacy register may remain as historical
   evidence but no longer fills canonical gaps.
 
-Do not enter mixed mode until the frozen legacy baseline is committed. Do not enter canonical
-mode until current default-branch and accessible remote-overlay validation is complete.
+Mixed mode is optional. When every prospective v2 candidate can receive valid metadata in one
+reviewed migration, the normal route is legacy -> migrate every candidate -> canonical. Use mixed
+only when proven pre-cutover filename-only records must be deferred. A frozen register and cutover
+revision are required only for that grandfathering route. Do not create a second cutover revision
+merely because discovery v2 expands the recognized plan set.
+
+## Discovery V2 Activation
+
+Existing repositories remain on discovery v1 until an explicit reviewed activation. Installing or
+upgrading the Kit must not expand their active candidate set or invalidate their current catalog.
+Freshly initialized repositories may default to v2.
+
+Activate v2 only after prospective inventory, exclusions/ambiguity review, guarded migration, and
+complete local plus required remote evidence. Store activation in shared config:
+
+```yaml
+component_settings:
+  planning-workflows:
+    plan_catalog_discovery_version: 2
+    plan_catalog_mode: canonical
+    plan_catalog_ownership:
+      excluded_roots: []
+```
+
+Metadata schema remains version 1 because identity semantics do not change. Structured views,
+inventories, migration ledgers, portfolio caches, and completeness evidence use version 2 where
+their discovery/provenance contract changes. Preserve v1 artifacts as labeled historical evidence;
+never report them as v2-complete.
 
 ## Derived Local Views
 
@@ -200,14 +300,20 @@ Use:
 codeheart-operating-kit plans validate .
 codeheart-operating-kit plans list --format text .
 codeheart-operating-kit plans list --format json .
+codeheart-operating-kit plans validate --target-discovery-version 2 \
+  --target-catalog-mode canonical --json .
+codeheart-operating-kit plans inventory --target-discovery-version 2 \
+  --target-catalog-mode canonical --output <inventory.json> .
 ```
 
 Text is for orientation. JSON is the stable structured view. A nonzero validation/list result
 means the reported problems must be resolved or disclosed; do not present the view as clean.
 
+The target flags perform prospective reads; they do not activate v2 or change repository config.
 `plans inventory --output <path> .` records Git-backed migration evidence. It is not an approved
 ledger and does not authorize plan writes. `plans migrate` accepts only a semantically reviewed
-ledger and requires exactly one of `--dry-run` or `--yes`.
+ledger and requires exactly one of `--dry-run` or `--yes`. Migration does not activate discovery
+v2; config activation is a separately reviewed write after the projected catalog is complete.
 
 ## Recipe Maturity, Evidence, And Blockers
 
@@ -245,9 +351,19 @@ A coordination catalog observation identifies at least:
 - verification, observed time, stale state, and conflict state; and
 - optional family, classifications, relations, aliases, source-change time, and pull-request fact.
 
-Default-branch records form the baseline. An accessible unmerged branch adds only canonical plan
-files whose bytes are added or materially changed from its merge base. Inherited plans are not
-duplicated. Pull-request facts enrich observations but never select them.
+Default-branch configuration controls discovery version and exclusions for remote scanning; a
+feature branch cannot broaden authority. Default-branch records form the baseline. An accessible
+unmerged branch adds only candidates whose semantic evidence is added or materially changed from
+its merge base. Pure same-byte renames and inherited plans are not duplicated, and unchanged
+family README bytes never gain authority from sibling-directory changes. Pull-request facts enrich
+observations but never select them.
+
+For a discovery-v2 member, remote readiness is always evaluated against canonical v2 validity,
+even when its local catalog mode temporarily remains legacy or mixed. Excluded, ambiguous,
+hard-unowned, malformed, and filename-only candidate observations remain structured evidence. A
+required member that is v1, inaccessible, invalid, or lacks canonical v2 candidate coverage makes
+the current portfolio attempt incomplete. Only a complete schema-v2/discovery-v2 scan may replace
+the current complete cache; older v1 caches remain historical and byte-preserved.
 
 Only pushed remote refs are portfolio facts. Worktree edits, local heads, and unpushed commits
 remain local evidence until normally pushed.
@@ -258,10 +374,16 @@ Legacy IDs and register rows are evidence to reconcile, not strings to convert m
 migration reviewer must inspect each plan's content, sibling records, relations, lifecycle, Git
 ownership, and ambiguity. Preserve unclear optional classifications as omissions.
 
-Validation blocks malformed metadata, kind/ID disagreement, duplicate IDs, unsafe or unreadable
-sources, missing required identity, broken mixed baselines, incomplete canonical coverage, and
-other stable problem codes. Never repair these by inventing metadata or weakening the configured
-mode.
+Validation blocks malformed or misplaced metadata (`metadata_*`), missing metadata
+(`metadata_missing`), missing canonical filenames (`canonical_filename_missing`), path/metadata
+kind disagreement (`record_kind_path_mismatch` or `plan_kind_mismatch`), duplicate IDs
+(`duplicate_plan_id`), invalid family placement, portable path collisions, ambiguous conventional
+roots (`plan_documentation_root_ambiguous`), unsafe sources (`plan_source_unsafe`), paths outside
+owned docs (`plan_path_unowned` or `plan_metadata_misplaced`), invalid/overlapping
+exclusions, broken mixed baselines, and incomplete canonical coverage.
+Excluded candidates are retained as `plan_candidate_excluded` evidence rather than counted as
+owned records. Never repair a problem by inventing metadata, weakening mode, silently extending an
+exclusion, or treating preview content as authority.
 
 Use `../runbooks/migrate-plan-catalog.md` for adoption and
 `../runbooks/maintain-plan-register.md` for legacy and generated-view behavior.

@@ -37,6 +37,23 @@ def test_python_init_writes_discovery_v2_without_upgrading_existing_config(tmp_p
     main(["sync", str(tmp_path)])
     assert config_path.read_bytes() == original
 
+    catalog = (
+        tmp_path
+        / ".codeheart/kit/docs/planning-workflows/reference/plan-catalog-format.md"
+    ).read_text(encoding="utf-8")
+    migrate = (
+        tmp_path
+        / ".codeheart/kit/docs/planning-workflows/runbooks/migrate-plan-catalog.md"
+    ).read_text(encoding="utf-8")
+    router = (
+        tmp_path
+        / ".codeheart/kit/docs/agent-interface/reference/operation-routing-and-dispatch.md"
+    ).read_text(encoding="utf-8")
+    assert "`docs` at any depth" in catalog
+    assert "supported filename **or** one genuine" in catalog
+    assert "--target-discovery-version 2" in migrate
+    assert "planning.migrate-catalog" in router
+
 
 def test_sync_refreshes_v011_lock_to_installed_cli_metadata(tmp_path, monkeypatch):
     monkeypatch.setenv("CODEHEART_OPERATING_KIT_CLI", "1")

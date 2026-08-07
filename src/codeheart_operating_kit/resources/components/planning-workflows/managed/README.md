@@ -1,4 +1,4 @@
-Last updated: 2026-07-31T22:23:19Z (UTC)
+Last updated: 2026-08-07T00:26:02Z (UTC)
 
 # Planning Workflows
 
@@ -30,7 +30,8 @@ and the stable plan-register entry point.
   plan bundles, subplans, plan families, program folders, attachments, archives, and index
   maintenance.
 - Use `reference/plan-catalog-format.md` for canonical metadata, semantic IDs, families, modes,
-  derived views, source observations, and compatibility.
+  repository-wide discovery, ownership/exclusions, derived views, source observations, and
+  compatibility activation.
 - Use `reference/portfolio-coordination-format.md` for roles, configuration, exact membership,
   discovery sources, cache completeness, and strategic overlays.
 - Use `reference/plan-register-format.md` for the stable entry point, legacy evidence, frozen
@@ -41,6 +42,12 @@ and the stable plan-register entry point.
 Reusable planning doctrine belongs in this managed component. Consumer repositories own their local
 plans, local execution logs, product-specific guidance, release evidence, migration state, and
 business-specific planning records.
+
+Under plan-catalog discovery v2, those consumer-owned plans may live in any Git-tracked Markdown
+documentation tree with an exact lowercase `docs` segment at arbitrary depth. Do not move an
+otherwise truthful product, package, source-area, business, or domain plan into `docs/repo/plans/`
+merely to make it catalog-visible. Existing repositories activate v2 only after prospective review;
+a Kit upgrade alone preserves their current discovery contract.
 
 Do not copy consumer-private details into managed planning docs. Use generic placeholder paths and
 public-safe examples only.

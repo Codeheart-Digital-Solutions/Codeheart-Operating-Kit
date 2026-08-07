@@ -1016,19 +1016,19 @@ Depends on EP-04 and EP-05 behavior freeze. Doctrine must not lead runtime seman
 
 ### F) Tasks Checklist
 
-- [ ] Update `plan-catalog-format.md` with discovery-v2 configuration, exact path segments, signals, validity, errors, versions, and exclusions-only authority.
-- [ ] Update `planning-document-lifecycle.md` with exact README plus valid metadata family authority and v1-family migration.
-- [ ] Update `portfolio-coordination-format.md` with default-policy branch overlays, compatible-member completeness, and historical cache labels.
-- [ ] Update `maintain-plan-register.md` with historical register scope, optional mixed grandfathering, and no second cutover revision.
-- [ ] Rewrite `migrate-plan-catalog.md` for prospective v2 inventory, reviewed ledger v2, direct complete migration, guarded activation, and recovery.
-- [ ] Update `refresh-portfolio-catalog.md` with discovery-version checks, exclusions, inaccessible-member blockers, and prior-cache disclosure.
-- [ ] Update the planning-workflows README and consumer repo template with v2 authoring and activation routes.
-- [ ] Update `operation-routing-and-dispatch.md` route cards for multi-root migration and version-complete refresh.
-- [ ] Copy each changed producer source to its exact `src/codeheart_operating_kit/resources/` mirror.
-- [ ] Add source/mirror parity assertions to `tests/test_packaging_resources.py` for every changed path.
-- [ ] Add a low-context nested-domain route probe to `tests/test_routing.py` with owner, route, ambiguity, approval, and stop assertions.
-- [ ] Run `python3 -m pytest tests/test_packaging_resources.py tests/test_routing.py tests/test_sync_check.py`.
-- [ ] Run `python3 scripts/validate-markdown-headers.py` and `python3 scripts/validate-public-core.py`.
+- [x] Update `plan-catalog-format.md` with discovery-v2 configuration, exact path segments, signals, validity, errors, versions, and exclusions-only authority.
+- [x] Update `planning-document-lifecycle.md` with exact README plus valid metadata family authority and v1-family migration.
+- [x] Update `portfolio-coordination-format.md` with default-policy branch overlays, compatible-member completeness, and historical cache labels.
+- [x] Update `maintain-plan-register.md` with historical register scope, optional mixed grandfathering, and no second cutover revision.
+- [x] Rewrite `migrate-plan-catalog.md` for prospective v2 inventory, reviewed ledger v2, direct complete migration, guarded activation, and recovery.
+- [x] Update `refresh-portfolio-catalog.md` with discovery-version checks, exclusions, inaccessible-member blockers, and prior-cache disclosure.
+- [x] Update the planning-workflows README and consumer repo template with v2 authoring and activation routes.
+- [x] Update `operation-routing-and-dispatch.md` route cards for multi-root migration and version-complete refresh.
+- [x] Copy each changed producer source to its exact `src/codeheart_operating_kit/resources/` mirror.
+- [x] Add source/mirror parity assertions to `tests/test_packaging_resources.py` for every changed path.
+- [x] Add a low-context nested-domain route probe to `tests/test_routing.py` with owner, route, ambiguity, approval, and stop assertions.
+- [x] Run `python3 -m pytest tests/test_packaging_resources.py tests/test_routing.py tests/test_sync_check.py`.
+- [x] Run `python3 scripts/validate-markdown-headers.py` and `python3 scripts/validate-public-core.py`.
 
 ### G) Implementation Notes
 

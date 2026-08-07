@@ -1,4 +1,4 @@
-Last updated: 2026-07-31T22:23:19Z (UTC)
+Last updated: 2026-08-07T00:26:02Z (UTC)
 
 # Operation Routing And Dispatch
 
@@ -36,14 +36,17 @@ manual register edit.
 - Intent patterns: discover, draft a discovery, write or revise an implementation plan, relate
   plans.
 - Domain/lifecycle: planning workflows; author or maintain.
-- Scope/action: one owning repository and its canonical plan; local write.
+- Scope/action: one owning repository and its canonical plan in any tracked owned Markdown tree
+  containing an exact lowercase `docs` segment; local write.
 - Authority source: user request plus repository mode and planning runbook.
 - State/live truth: canonical plan, `.codeheart/kit.config.yaml`, and current Git worktree.
 - Default surface: discovery or implementation-planning runbook plus `plans validate/list`.
-- Preconditions: owning repository and plan kind resolved; mixed/canonical metadata available.
+- Preconditions: owning repository, docs-tree ownership, plan kind, discovery version, and
+  catalog mode resolved; supported filename and required metadata available.
 - Approval class: requested local planning write. Drafting alone does not authorize push.
 - Stop: ambiguous owner/plan, blocked discovery handoff, invalid mode, dirty overlap.
-- Evidence: canonical path/ID, validation, mode, changed planning paths.
+- Evidence: canonical path/ID, filename/metadata signals, ownership, discovery version, mode,
+  validation, and changed planning paths.
 
 ### `portfolio.configure`
 
@@ -67,27 +70,37 @@ manual register edit.
 - Scope/action: configured coordination home and authorized sources; authenticated read plus
   rebuildable local cache.
 - Authority source: user request for current facts and committed source scope.
-- State/live truth: provider remotes and current scan result; older cache is historical only.
+- State/live truth: provider remotes and current scan result; older cache is historical only, and a
+  v1 cache is never v2-complete.
 - Default surface: `refresh-portfolio-catalog.md` and `portfolio scan --format json`.
-- Preconditions: coordination-home role, tools/auth/access, exact membership evidence.
+- Preconditions: coordination-home role, tools/auth/access, exact membership evidence, required
+  default-branch discovery-v2 activation, and canonical candidate coverage.
 - Approval class: configured read-only scopes; no member write.
-- Stop: incomplete scan, failed preflight, missing required source, freshness ambiguity.
-- Evidence: attempt times, completeness, last-complete time, metrics, errors, local-only omission.
+- Stop: incomplete scan, incompatible-v1 or inaccessible required member, non-canonical candidate,
+  failed preflight, missing required source, freshness ambiguity.
+- Evidence: schema/discovery versions, attempt times, completeness, candidate observations,
+  last-complete time, metrics, errors, local-only omission.
 
 ### `planning.migrate-catalog`
 
-- Intent patterns: migrate old plans, add semantic metadata, switch mixed/canonical, inventory
-  legacy plans.
-- Domain/lifecycle: planning workflows; migrate.
-- Scope/action: one repository's formal plans and migration evidence; guarded local write.
-- Authority source: reviewed semantic ledger and user approval.
-- State/live truth: current plan bytes, Git revisions/branches, frozen legacy baseline.
-- Default surface: `migrate-plan-catalog.md`, `plans inventory`, and `plans migrate`.
-- Preconditions: compatible CLI, exact baseline, source hashes, branch ownership, dry-run.
+- Intent patterns: migrate old plans, discover nested docs plans, add semantic metadata, activate
+  discovery v2, switch mixed/canonical, inventory legacy plans.
+- Domain/lifecycle: planning workflows; prospect, migrate, and activate.
+- Scope/action: one repository's filename-or-metadata candidates across every owned tracked `docs`
+  tree plus migration evidence; guarded local writes.
+- Authority source: reviewed ownership/exclusions, schema-v2 semantic ledger, and user approval.
+- State/live truth: Git index plan bytes, discovery policy/candidate set, revisions/branches, config,
+  and frozen legacy baseline only when mixed grandfathering applies.
+- Default surface: `migrate-plan-catalog.md`, prospective `plans inventory`/`plans validate`,
+  `plans migrate`, then a separate reviewed config activation.
+- Preconditions: discovery-v2-compatible CLI, exact policy/candidate/revision/source hashes, target
+  preconditions, branch ownership, dry-run, complete projected coverage.
 - Approval class: inventory read/evidence; explicit approval for metadata/config writes.
-- Stop: ambiguity, dirty/changed/branch-owned target, invalid ledger, incomplete coverage or scan,
-  recovery-required state.
-- Evidence: inventory, reviewed ledger, hashes, skips/blockers, chronology, idempotency.
+- Stop: ownership/semantic ambiguity, excluded or unowned target, dirty/changed/branch-owned target,
+  invalid/stale ledger, incomplete coverage or required scan, recovery-required state.
+- Evidence: discovery/policy versions, candidate and policy digests, inventory, reviewed ledger,
+  source/target hashes, skips/blockers, projected coverage, activation commit, chronology,
+  idempotency.
 
 ### `planning.activate-and-publish-checkpoint`
 

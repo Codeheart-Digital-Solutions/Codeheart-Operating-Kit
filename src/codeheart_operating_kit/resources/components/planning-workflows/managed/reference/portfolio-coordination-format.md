@@ -1,4 +1,4 @@
-Last updated: 2026-07-31T22:23:19Z (UTC)
+Last updated: 2026-08-07T00:26:02Z (UTC)
 
 # Portfolio Coordination Format
 
@@ -99,7 +99,9 @@ default branch:
 5. `portfolio.role` is valid for membership;
 6. `member_repository_id` is stable and present;
 7. `coordination_home_id` exactly matches the scanning home; and
-8. required plan evidence can be read completely.
+8. required plan evidence can be read completely; and
+9. discovery-v2 completeness is claimed only when the default branch activates discovery v2 and
+   every selected-tree candidate has canonical v2 evidence.
 
 The coordination home's own default branch follows the same evidence boundary and is included
 once through self-membership. A feature branch cannot enroll a repository. A malformed declaration
@@ -126,15 +128,32 @@ Provider pagination or truncation gaps, exhausted bounded retries, rate-limit ex
 permission failure, missing comparison evidence, mirror failure, or a required-member read failure
 make the attempt incomplete.
 
+## Plan Discovery Authority
+
+The scanner uses the same discovery-v2 classifier and candidate contract as local `plans list`,
+`validate`, `inventory`, and `migrate`. Its authoritative universe is regular or executable
+Markdown blobs in the selected commit tree. Eligible paths contain an exact lowercase `docs`
+directory segment at arbitrary depth; supported filename or genuine metadata discovers a
+candidate; canonical remote validity requires both supported filename and valid matching metadata
+for discovery/implementation records. Exact `README.md` requires explicit valid family metadata.
+
+Default-branch `.codeheart/kit.config.yaml` controls discovery version and `excluded_roots` for the
+repository and all branch observations. A feature branch cannot activate discovery v2, broaden
+ownership, or relax exclusions. Excluded, conventionally ambiguous, hard-unowned, malformed, and
+filename-only candidates remain structured observations so completeness failures are visible.
+
 ## Default Baselines And Branch Overlays
 
-Each member default branch contributes a complete canonical baseline. Every accessible unmerged
-remote branch is evaluated independently of branch name, age, and pull-request state.
+Each discovery-v2 member default branch contributes a complete canonical baseline. Every
+accessible unmerged remote branch is evaluated independently of branch name, age, and pull-request
+state.
 
-An overlay contains only added or materially changed canonical plan bytes from the merge base.
-Pure renames or mode-only changes with identical bytes do not add observations. Deletions do not
-create plan tombstones in v1. Same-ID observations coexist with repository, ref, commit, path, and
-content hash so conflicts remain visible.
+An overlay contains only candidates whose plan evidence is added or materially changed from the
+merge base. Semantic same-byte renames and mode-only changes do not add observations. Unchanged
+README bytes do not become family authority when a sibling directory appears. Deletions do not
+create plan tombstones in v2. Same-ID records and invalid candidate observations coexist with
+repository, ref, commit, path, source mode, candidate signal, ownership disposition, and content
+hash so conflicts and omissions remain visible.
 
 Optional pull-request facts enrich a selected same-repository ref. They never select or suppress a
 branch. Merged or deleted refs disappear after the next complete scan. Accessible observations
@@ -142,18 +161,21 @@ unchanged for more than 30 days are marked stale but retained.
 
 ## Cache Contract And Completeness
 
-The rebuildable factual cache is:
+The discovery-v2 rebuildable factual cache uses schema version 2 and is:
 
 ```text
 .codeheart/local/portfolio/catalog.json
 ```
 
-It contains scan times, completeness, enrolled members, observations, candidates, errors, and
-metrics including duration, source/member/candidate/observation/stale/API-call counts and maximum
-concurrency.
+It contains scan times, discovery policy/provenance, completeness, enrolled members, valid plan
+observations, candidate observations, errors, and metrics including duration, source/member/
+candidate/observation/stale/API-call counts and maximum concurrency.
 
-Only a complete scan atomically replaces the last complete cache. An incomplete attempt reports
-its current errors and preserves the previous complete cache byte-for-byte. Therefore:
+Only a complete schema-v2/discovery-v2 scan atomically replaces the current complete cache. A v1,
+inaccessible, invalid, or incomplete required member makes the current v2 attempt incomplete. An
+incomplete attempt reports its current errors and preserves the previous complete v2 cache byte-
+for-byte. Historical schema-v1 caches remain preserved and labeled but are never reported as
+v2-complete. Therefore:
 
 - a command's current result describes the current attempt;
 - the cache is only the last complete result; and
@@ -210,11 +232,13 @@ codeheart-operating-kit portfolio scan --format json .
 `--json` is a compatibility alias for JSON. A member cannot run a portfolio scan. A nonzero result
 or `complete: false` means current completeness must not be claimed.
 
-Remote-aware plan validation and inventory use the same scanner:
+Remote-aware plan validation and prospective discovery-v2 inventory use the same scanner:
 
 ```sh
-codeheart-operating-kit plans validate --remote-overlays .
-codeheart-operating-kit plans inventory --remote-overlays --output <artifact> .
+codeheart-operating-kit plans validate --target-discovery-version 2 \
+  --target-catalog-mode canonical --remote-overlays .
+codeheart-operating-kit plans inventory --target-discovery-version 2 \
+  --target-catalog-mode canonical --remote-overlays --output <artifact> .
 ```
 
 These commands may refresh scanner-owned local mirrors and cache only. They do not modify member

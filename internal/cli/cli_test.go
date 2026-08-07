@@ -39,7 +39,7 @@ func TestPortfolioGroupedHelpAndInvalidSubcommand(t *testing.T) {
 		t.Fatalf("portfolio invalid code=%d stdout=%s stderr=%s", code, stdout, stderr)
 	}
 	code, stdout, stderr = runForTest("plans", "validate", "--help")
-	if code != 0 || stderr != "" || !strings.Contains(stdout, "--remote-overlays") {
+	if code != 0 || stderr != "" || !strings.Contains(stdout, "--target-discovery-version 2") || !strings.Contains(stdout, "--target-catalog-mode canonical") || !strings.Contains(stdout, "--include-untracked") || !strings.Contains(stdout, "--remote-overlays") {
 		t.Fatalf("plans remote help code=%d stdout=%s stderr=%s", code, stdout, stderr)
 	}
 }
@@ -59,11 +59,11 @@ func TestPlansGroupedHelpAndInvalidSubcommand(t *testing.T) {
 		t.Fatalf("plans migrate help code=%d stdout=%s stderr=%s", code, stdout, stderr)
 	}
 	code, stdout, stderr = runForTest("plans", "list", "--help")
-	if code != 0 || stderr != "" || !strings.Contains(stdout, "--format {text,json}") || !strings.Contains(stdout, "Backward-compatible alias") {
+	if code != 0 || stderr != "" || !strings.Contains(stdout, "--target-discovery-version 2") || !strings.Contains(stdout, "--format {text,json}") || !strings.Contains(stdout, "Backward-compatible alias") {
 		t.Fatalf("plans list help code=%d stdout=%s stderr=%s", code, stdout, stderr)
 	}
 	code, stdout, stderr = runForTest("plans", "inventory", "--help")
-	if code != 0 || stderr != "" || !strings.Contains(stdout, "--output OUTPUT") || !strings.Contains(stdout, "Required inventory artifact destination") {
+	if code != 0 || stderr != "" || !strings.Contains(stdout, "--output OUTPUT") || !strings.Contains(stdout, "--target-discovery-version 2") || !strings.Contains(stdout, "--target-catalog-mode canonical") || !strings.Contains(stdout, "--include-untracked") || !strings.Contains(stdout, "Required inventory artifact destination") {
 		t.Fatalf("plans inventory help code=%d stdout=%s stderr=%s", code, stdout, stderr)
 	}
 	code, stdout, stderr = runForTest("plans", "missing")
