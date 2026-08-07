@@ -81,6 +81,53 @@ func TestParseRejectsMissingMisplacedMultipleAndUnknownMetadata(t *testing.T) {
 	}
 }
 
+func TestMetadataMarkersRemainInertBehindNonClosingFenceText(t *testing.T) {
+	for _, fence := range []string{"```", "~~~"} {
+		data := strings.Join([]string{
+			fence + "md",
+			fence + "not-a-close",
+			MetadataBeginMarker,
+			fence,
+			"",
+		}, "\n")
+		if hasGenuineMetadataMarker([]byte(data)) {
+			t.Fatalf("%q trailing text incorrectly closed the fence", fence)
+		}
+	}
+}
+
+func TestBacktickInFenceInfoDoesNotOpenFence(t *testing.T) {
+	data := []byte("```lang`invalid\n" + MetadataBeginMarker + "\n")
+	if !hasGenuineMetadataMarker(data) {
+		t.Fatal("a CommonMark-invalid backtick fence opener hid a genuine metadata marker")
+	}
+}
+
+func TestInvalidFamilyRecordDoesNotSatisfyFamilyReference(t *testing.T) {
+	familyMetadata := metadataForTest("example.family.invalid", KindFamily, "Invalid family placement")
+	childMetadata := metadataForTest("example.discovery.child", KindDiscovery, "Child")
+	childMetadata.Family = familyMetadata.ID
+	records := []Record{
+		{Path: "docs/family/not-a-readme.md", Metadata: &familyMetadata},
+		{Path: "docs/family/child_discovery_doc.md", Metadata: &childMetadata, ExpectedKind: KindDiscovery},
+	}
+	problems := ValidateRecordsForDiscovery(records, ModeCanonical, "example", DiscoveryV2)
+	if !problemExists(problems, "family_placement_invalid", SeverityError) || !problemExists(problems, "family_record_missing", SeverityWarning) {
+		t.Fatalf("invalid family record satisfied a reference: %#v", problems)
+	}
+}
+
+func TestV1RecognizedFamilyShapeRemainsCompatibleUntilV2Migration(t *testing.T) {
+	metadata := metadataForTest("example.family.compatibility", KindFamily, "Legacy family compatibility")
+	record := Record{Path: "docs/repo/plans/family/readme.md", Metadata: &metadata, ExpectedKind: KindFamily, FamilyQualified: true}
+	if problemExists(ValidateRecords([]Record{record}, ModeCanonical, "example"), "family_placement_invalid", SeverityError) {
+		t.Fatal("v1-recognized family was invalidated before discovery-v2 activation")
+	}
+	if !problemExists(ValidateRecordsForDiscovery([]Record{record}, ModeCanonical, "example", DiscoveryV2), "family_placement_invalid", SeverityError) {
+		t.Fatal("prospective v2 validation did not require exact README.md family authority")
+	}
+}
+
 func TestMetadataValidationFailuresHaveStableCodes(t *testing.T) {
 	valid := string(mustFixture(t, "valid-discovery.md"))
 	tests := []struct {
@@ -251,6 +298,11 @@ func TestNewSchemasCompileAndPortfolioV2RequiresHomeRepositoryIdentity(t *testin
 	}
 	commit := strings.Repeat("b", 40)
 	self := CoordinationHomeSelfMember("example-home-repository", "refs/heads/main", commit)
+	self.DiscoveryVersion = DiscoveryV2
+	self.PolicyDigest = strings.Repeat("d", 64)
+	self.CandidateSetDigest = strings.Repeat("e", 64)
+	complete := true
+	self.Complete = &complete
 	if !self.SelfMember || self.RepositoryID != "example-home-repository" {
 		t.Fatalf("home self-member=%#v", self)
 	}
@@ -281,14 +333,51 @@ func TestNewSchemasCompileAndPortfolioV2RequiresHomeRepositoryIdentity(t *testin
 	}
 }
 
+func TestRepositorySettingsDiscoveryDefaultsAndExclusionSafety(t *testing.T) {
+	base := "schema_version: 1\nselected_profile: standard\nproject_display_name: Example\nselected_setup_folder: .\nlocal_consumer_layer:\n  repo_docs_path: docs/repo/\n  agent_memory_path: docs/agent-memory/\n  user_layer_path: .codeheart/user/\ncomponent_settings: {}\n"
+	settings, problems := DecodeRepositorySettings([]byte(base))
+	if HasErrors(problems) || settings.DiscoveryVersion != DiscoveryV1 || len(settings.ExcludedRoots) != 0 {
+		t.Fatalf("legacy defaults settings=%#v problems=%#v", settings, problems)
+	}
+	v2 := strings.Replace(base, "component_settings: {}", "component_settings:\n  planning-workflows:\n    plan_catalog_discovery_version: 2\n    plan_catalog_ownership:\n      excluded_roots:\n        - vendor/docs/\n        - generated/docs/", 1)
+	settings, problems = DecodeRepositorySettings([]byte(v2))
+	if HasErrors(problems) || settings.DiscoveryVersion != DiscoveryV2 || !reflect.DeepEqual(settings.ExcludedRoots, []string{"generated/docs/", "vendor/docs/"}) || len(settings.PolicyDigest) != 64 {
+		t.Fatalf("v2 settings=%#v problems=%#v", settings, problems)
+	}
+	if settings.DiscoveryPolicy(false).Digest() != settings.DiscoveryPolicy(true).Digest() {
+		t.Fatal("non-authoritative untracked preview changed the policy digest")
+	}
+	for name, roots := range map[string]string{
+		"owned roots": "      owned_roots: [docs/]",
+		"absolute":    "      excluded_roots: [/vendor/docs/]",
+		"drive":       "      excluded_roots: ['C:/vendor/docs/']",
+		"glob":        "      excluded_roots: ['vendor/*/']",
+		"escape":      "      excluded_roots: ['vendor/../docs/']",
+		"overlap":     "      excluded_roots: ['vendor/', 'vendor/docs/']",
+		"collision":   "      excluded_roots: ['Vendor/docs/', 'vendor/docs/']",
+	} {
+		t.Run(name, func(t *testing.T) {
+			config := strings.Replace(base, "component_settings: {}", "component_settings:\n  planning-workflows:\n    plan_catalog_discovery_version: 2\n    plan_catalog_ownership:\n"+roots, 1)
+			_, found := DecodeRepositorySettings([]byte(config))
+			if !HasErrors(found) {
+				t.Fatalf("unsafe config accepted: %s", config)
+			}
+		})
+	}
+	extension := strings.Replace(base, "component_settings: {}", "component_settings:\n  planning-workflows:\n    extension_setting: retained", 1)
+	if _, found := DecodeRepositorySettings([]byte(extension)); HasErrors(found) {
+		t.Fatalf("unrelated planning extension was rejected: %#v", found)
+	}
+}
+
 func minimalSchemaInstance(schema string) any {
 	switch schema {
 	case state.PlanMetadataSchema:
 		return map[string]any{"plan": map[string]any{"schema_version": 1, "id": "repo.discovery.slug", "kind": "discovery", "purpose": "purpose", "first_cataloged": "2026-07-31T10:00:00Z", "catalog_metadata_updated": "2026-07-31T10:00:00Z"}}
 	case state.PlanCatalogSchema:
-		return map[string]any{"schema_version": 1, "coordination_home_id": "home", "started_at": "2026-07-31T10:00:00Z", "completed_at": "2026-07-31T10:00:00Z", "complete": true, "members": []any{}, "observations": []any{}, "candidates": []any{}, "errors": []any{}, "metrics": map[string]any{"duration_ms": 0, "source_count": 0, "member_count": 0, "candidate_count": 0, "observation_count": 0, "stale_count": 0, "api_call_count": 0, "max_concurrency": 1}}
+		return map[string]any{"schema_version": 2, "discovery_version": 2, "policy_digest": strings.Repeat("d", 64), "candidate_set_digest": strings.Repeat("e", 64), "coordination_home_id": "home", "started_at": "2026-07-31T10:00:00Z", "completed_at": "2026-07-31T10:00:00Z", "complete": true, "members": []any{}, "observations": []any{}, "candidates": []any{}, "errors": []any{}, "metrics": map[string]any{"duration_ms": 0, "source_count": 0, "member_count": 0, "candidate_count": 0, "observation_count": 0, "stale_count": 0, "api_call_count": 0, "max_concurrency": 1}}
 	case state.PlanMigrationSchema:
-		return map[string]any{"schema_version": 1, "repository_id": "repo", "inventory_revision": strings.Repeat("a", 40), "reviewed_at": "2026-07-31T10:00:00Z", "records": []any{}}
+		return map[string]any{"schema_version": 2, "repository_id": "repo", "discovery_version": 2, "target_catalog_mode": "canonical", "policy_digest": strings.Repeat("d", 64), "candidate_set_digest": strings.Repeat("e", 64), "inventory_revision": strings.Repeat("a", 40), "reviewed_at": "2026-07-31T10:00:00Z", "records": []any{}}
 	case state.PortfolioSourcesSchema:
 		return map[string]any{"schema_version": 1, "sources": []any{}}
 	case state.PortfolioOverlaySchema:

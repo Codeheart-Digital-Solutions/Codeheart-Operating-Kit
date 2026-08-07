@@ -1,6 +1,75 @@
-Last updated: 2026-08-01T06:31:15Z (UTC)
+Last updated: 2026-08-07T01:57:28Z (UTC)
 
 # Codeheart Operating Kit Release Notes
+
+## v0.1.25 Release Notes
+
+`v0.1.25` adds opt-in repository-wide plan-catalog discovery across Git-tracked,
+repository-owned Markdown documentation trees at arbitrary depth.
+
+### Included
+
+- Discovery v2 recognizes any normalized tracked Markdown path containing an exact lowercase
+  `docs` directory segment, including root documentation, nested product/package/domain trees, and
+  repeated deeper documentation segments without fixed-depth glob behavior.
+- Supported filename or genuine plan metadata discovers a candidate. Canonical discovery and
+  implementation records require both a supported filename and valid metadata; metadata owns
+  stable identity, filename/family qualification owns human-readable kind, and the document header
+  owns lifecycle.
+- One Git index/commit-tree classifier now drives list, validate, inventory, migration,
+  changed-path ownership, remote baselines, branch overlays, and portfolio completeness.
+- Catalog authority is limited to tracked regular blobs. Managed/local/user state, symlinks,
+  gitlinks/submodules, nested repositories, external paths, ignored/untracked authority, and unsafe
+  objects remain hard-unowned. Conventional fixture/vendor/generated/dependency/build-like plan
+  signals stay visible blockers until moved or explicitly recorded in `excluded_roots`.
+- Exact `README.md` plus genuine valid family metadata is required for new family authority;
+  directory shape alone cannot promote a domain router.
+- Structured plan views, inventories, migration ledgers, and portfolio completeness carry
+  discovery-v2 provenance while plan metadata remains schema v1. An opt-in untracked authoring
+  preview stays outside authoritative hashes, migration, remote evidence, and completeness.
+
+### Compatibility And Adoption
+
+- Existing repositories remain on discovery v1 after upgrade when the discovery version is absent
+  or `1`. Upgrade does not expand their active candidate set, write metadata, change catalog mode,
+  rewrite a register, create a cutover revision, activate v2, or promote a cache.
+- Fresh repositories default to discovery v2. Existing repositories adopt it only after
+  prospective inventory, ownership/exclusion review, semantic migration, complete local and
+  required remote validation, and a separate reviewed config activation.
+- When every formal candidate receives a supported filename and valid metadata, the normal route
+  goes directly from legacy v1 to canonical v2. Mixed mode remains available for deliberately
+  deferred filename-only records with exact original cutover/register proof, but it is not a
+  mandatory middle phase and does not require a second cutover revision.
+- Default-branch policy controls remote discovery. A v2-complete portfolio result requires
+  compatible canonical evidence from every required member; v1, inaccessible, or incomplete
+  members preserve the last complete cache rather than publishing false completeness.
+
+### Consumer Impact
+
+- `instruction-only change`: managed planning, migration, register, review, routing, and portfolio
+  guidance documents discovery-v2 operation and recovery.
+- `validator-only change`: local and remote plan commands share versioned candidate, ownership,
+  provenance, and completeness validation.
+- `consumer migration required`: semantic adoption is a reviewed repository-owned workflow after
+  upgrade; it is never automatic.
+- `security or safety policy change`: authority comes only from exact Git blobs, hostile Markdown
+  remains inert, branch content cannot broaden default policy, and exclusions remain evidence.
+- No component, scaffold, managed target, or consumer-owned path moves. Explicit activation, not
+  installation, is the compatibility boundary.
+
+### Validation And Release Boundary
+
+- Persistent multi-root fixtures cover filename, metadata, mode, identity, family, ownership,
+  migration, remote, cache, and cross-platform edge cases. A 100,000-path/10,000-Markdown
+  benchmark proves deterministic output, bounded memory, and constant Git-process behavior.
+- Full Go/Python, schema, Markdown, public-core, content-identity, routing, packaging, migration,
+  release-contract, reproducibility, and catalog-to-binary gates precede publication. Ubuntu
+  semantic, macOS universal, and real Windows x64 validation must agree on the release commit.
+- Assets remain unsigned and unnotarized under the established HTTPS-plus-SHA-256
+  internal/prototype boundary. The residual risk remains the lack of publisher identity attestation
+  beyond GitHub transport, repository control, and the published digest chain.
+- This release enables discovery-v2 adoption but does not activate it in existing repositories or
+  perform Codeheart-HQ's separate plan metadata migration and canonical cutover.
 
 ## v0.1.24 Release Notes
 

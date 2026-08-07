@@ -1,4 +1,4 @@
-Last updated: 2026-07-31T22:23:19Z (UTC)
+Last updated: 2026-08-07T00:26:02Z (UTC)
 
 # Repository Documentation
 
@@ -25,4 +25,9 @@ content boundaries, placement changes, and index maintenance.
 
 Managed semantic plan and portfolio guidance lives under
 `.codeheart/kit/docs/planning-workflows/`. Current plan views are derived from canonical plan
-metadata; do not manually append numbered register entries after mixed or canonical cutover.
+metadata. With discovery v2 active, Git-tracked repository-owned Markdown beneath any exact
+lowercase `docs` directory segment is catalog-eligible at arbitrary depth; the filename-or-metadata
+candidate rule prevents nested domain plans from being silently omitted. A Kit upgrade does not
+activate v2 in an existing repository. Use prospective inventory, reviewed exclusions/migration,
+and explicit activation, and do not manually append numbered register entries after mixed or
+canonical cutover.

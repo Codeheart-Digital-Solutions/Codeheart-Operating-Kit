@@ -10,11 +10,7 @@ import (
 	"strings"
 )
 
-type Candidate struct {
-	Path            string
-	ExpectedKind    Kind
-	FamilyQualified bool
-}
+const MaxPlanSourceBytes = 8 << 20
 
 func Enumerate(root string) ([]Candidate, error) {
 	plansRoot := filepath.Join(root, "docs", "repo", "plans")
@@ -26,7 +22,7 @@ func Enumerate(root string) ([]Candidate, error) {
 		if entry.IsDir() {
 			return nil
 		}
-		kind, formal := kindForFilename(entry.Name())
+		kind, formal := legacyKindForFilename(entry.Name())
 		familyQualified := false
 		if !formal && strings.EqualFold(entry.Name(), "README.md") && !strings.EqualFold(filepath.Clean(path), filepath.Join(plansRoot, "README.md")) {
 			familyQualified = qualifiesAsFamily(filepath.Dir(path))
@@ -54,6 +50,23 @@ func Enumerate(root string) ([]Candidate, error) {
 	return candidates, nil
 }
 
+func EnumerateWithSettings(root string, settings RepositorySettings) ([]Candidate, error) {
+	if settings.DiscoveryVersion != DiscoveryV2 {
+		return Enumerate(root)
+	}
+	classification, err := ClassifyLocalIndex(root, settings, settings.Mode, settings.RepositoryID)
+	if err != nil {
+		return nil, err
+	}
+	candidates := []Candidate{}
+	for _, candidate := range classification.Candidates {
+		if candidate.Ownership == OwnershipOwned {
+			candidates = append(candidates, candidate)
+		}
+	}
+	return candidates, nil
+}
+
 func Discover(root string, mode CatalogMode, repositoryID string) (Discovery, error) {
 	candidates, err := Enumerate(root)
 	if err != nil {
@@ -72,42 +85,11 @@ func Discover(root string, mode CatalogMode, repositoryID string) (Discovery, er
 			result.Problems = append(result.Problems, Problem{Code: code, Message: readErr.Error(), Path: candidate.Path, Severity: SeverityError, Remediation: remediation})
 			continue
 		}
-		record, parseErr := ParseDocument(candidate.Path, data, candidate.ExpectedKind)
-		record.FamilyQualified = candidate.FamilyQualified
-		if parseErr != nil {
-			code := ErrorCode(parseErr)
-			lines := strings.Split(strings.ReplaceAll(string(data), "\r\n", "\n"), "\n")
-			if code == "header_invalid" && len(lineIndexesOutsideFences(lines, MetadataBeginMarker)) == 0 && len(lineIndexesOutsideFences(lines, MetadataEndMarker)) == 0 {
-				legacyHeader, rawStatus, legacyErr := parseLegacyHeader(data)
-				if legacyErr == nil {
-					record = Record{Path: candidate.Path, Header: legacyHeader, Legacy: true, ContentSHA256: sha256Text(data), ExpectedKind: candidate.ExpectedKind, FamilyQualified: candidate.FamilyQualified}
-					result.Records = append(result.Records, record)
-					headerSeverity := SeverityWarning
-					metadataSeverity := SeverityWarning
-					if mode == ModeCanonical {
-						headerSeverity = SeverityError
-						metadataSeverity = SeverityError
-					}
-					result.Problems = append(result.Problems,
-						Problem{Code: "legacy_header_status", Message: fmt.Sprintf("legacy status %q is represented as lifecycle %q", rawStatus, legacyHeader.Lifecycle), Path: candidate.Path, Severity: headerSeverity, Remediation: "semantically review the lifecycle before canonical cutover"},
-						Problem{Code: "metadata_missing", Message: fmt.Sprintf("%s has no bounded Codeheart plan metadata block", candidate.Path), Path: candidate.Path, Severity: metadataSeverity, Remediation: "add reviewed canonical metadata through the migration workflow"},
-					)
-					continue
-				}
-			}
-			if code == "metadata_missing" {
-				severity := SeverityWarning
-				if mode == ModeCanonical {
-					severity = SeverityError
-				}
-				result.Records = append(result.Records, record)
-				result.Problems = append(result.Problems, Problem{Code: code, Message: parseErr.Error(), Path: candidate.Path, Severity: severity, Remediation: "add reviewed canonical metadata through the migration workflow"})
-				continue
-			}
-			result.Problems = append(result.Problems, Problem{Code: code, Message: parseErr.Error(), Path: candidate.Path, Severity: SeverityError})
-			continue
+		record, problems := parseCandidate(candidate, data, mode)
+		result.Problems = append(result.Problems, problems...)
+		if record.Path != "" {
+			result.Records = append(result.Records, record)
 		}
-		result.Records = append(result.Records, record)
 	}
 	result.Problems = append(result.Problems, ValidateRecords(result.Records, mode, repositoryID)...)
 	SortRecords(result.Records)
@@ -115,7 +97,39 @@ func Discover(root string, mode CatalogMode, repositoryID string) (Discovery, er
 	return result, nil
 }
 
+func DiscoverWithSettings(root string, settings RepositorySettings) (Discovery, error) {
+	if settings.DiscoveryVersion != DiscoveryV2 {
+		return Discover(root, settings.Mode, settings.RepositoryID)
+	}
+	classification, err := ClassifyLocalIndex(root, settings, settings.Mode, settings.RepositoryID)
+	if err != nil {
+		return Discovery{}, err
+	}
+	return classification.Discovery, nil
+}
+
 func kindForFilename(name string) (Kind, bool) {
+	switch {
+	case strings.HasSuffix(name, "_discovery_doc.md") && len(strings.TrimSuffix(name, "_discovery_doc.md")) > 0:
+		return KindDiscovery, true
+	case strings.HasSuffix(name, "_implementation_doc.md") && len(strings.TrimSuffix(name, "_implementation_doc.md")) > 0:
+		return KindImplementation, true
+	default:
+		return "", false
+	}
+}
+
+// ProspectiveV2PathKind classifies a not-yet-tracked path using only the
+// canonical discovery-v2 path and reserved-filename contract. Family authority
+// still requires metadata and is therefore classified from content instead.
+func ProspectiveV2PathKind(candidatePath string) (Kind, bool) {
+	if validateGitPath(candidatePath) != nil || filepath.ToSlash(filepath.Clean(filepath.FromSlash(candidatePath))) != candidatePath || !hasExactDocsSegment(candidatePath) || filepath.Ext(filepath.FromSlash(candidatePath)) != ".md" {
+		return "", false
+	}
+	return kindForFilename(filepath.Base(filepath.FromSlash(candidatePath)))
+}
+
+func legacyKindForFilename(name string) (Kind, bool) {
 	switch {
 	case strings.HasSuffix(name, "_discovery_doc.md"):
 		return KindDiscovery, true
@@ -126,6 +140,38 @@ func kindForFilename(name string) (Kind, bool) {
 	}
 }
 
+func FormalPathKindWithSettings(root, candidatePath string, settings RepositorySettings) (Kind, bool) {
+	if settings.DiscoveryVersion != DiscoveryV2 {
+		return FormalPathKind(root, candidatePath)
+	}
+	blobs, err := ListIndexBlobs(root)
+	if err != nil {
+		return "", false
+	}
+	selected := []GitBlob{}
+	for _, blob := range blobs {
+		if blob.Path == candidatePath {
+			selected = append(selected, blob)
+		}
+	}
+	if len(selected) != 1 {
+		return "", false
+	}
+	classification, err := ClassifyGitBlobs(selected, func(blob GitBlob) ([]byte, error) {
+		return readBoundedRegularSource(root, blob.Path)
+	}, settings.DiscoveryPolicy(false), settings.Mode, settings.RepositoryID, localWorktreeBoundary(root))
+	if err != nil || len(classification.Candidates) != 1 || classification.Candidates[0].Ownership != OwnershipOwned {
+		return "", false
+	}
+	candidate := classification.Candidates[0]
+	return candidate.ExpectedKind, candidate.ExpectedKind != ""
+}
+
+func pathHardUnowned(value string) bool {
+	_, hard := pathHardBoundary(value)
+	return hard
+}
+
 // FormalPathKind classifies an existing or prospective repository-relative planning path.
 func FormalPathKind(root, path string) (Kind, bool) {
 	cleaned := filepath.Clean(filepath.FromSlash(path))
@@ -134,7 +180,7 @@ func FormalPathKind(root, path string) (Kind, bool) {
 	if filepath.IsAbs(cleaned) || cleaned == ".." || strings.HasPrefix(cleaned, ".."+string(filepath.Separator)) || !strings.HasPrefix(cleaned, prefix) {
 		return "", false
 	}
-	if kind, ok := kindForFilename(filepath.Base(cleaned)); ok {
+	if kind, ok := legacyKindForFilename(filepath.Base(cleaned)); ok {
 		return kind, true
 	}
 	if !strings.EqualFold(filepath.ToSlash(cleaned), filepath.ToSlash(filepath.Join(plansRoot, "README.md"))) && strings.EqualFold(filepath.Base(cleaned), "README.md") && qualifiesAsFamily(filepath.Join(root, filepath.Dir(cleaned))) {
@@ -144,10 +190,18 @@ func FormalPathKind(root, path string) (Kind, bool) {
 }
 
 func readRegularSource(root, relative string) ([]byte, error) {
-	return readRegularSourceWithHook(root, relative, nil)
+	return readRegularSourceWithLimit(root, relative, nil, 0)
 }
 
 func readRegularSourceWithHook(root, relative string, afterLstat func(string) error) ([]byte, error) {
+	return readRegularSourceWithLimit(root, relative, afterLstat, 0)
+}
+
+func readBoundedRegularSource(root, relative string) ([]byte, error) {
+	return readRegularSourceWithLimit(root, relative, nil, MaxPlanSourceBytes)
+}
+
+func readRegularSourceWithLimit(root, relative string, afterLstat func(string) error, limit int64) ([]byte, error) {
 	cleaned := filepath.Clean(filepath.FromSlash(relative))
 	if filepath.IsAbs(cleaned) || cleaned == "." || cleaned == ".." || strings.HasPrefix(cleaned, ".."+string(filepath.Separator)) {
 		return nil, &CodedError{Code: "source_unsafe", Err: fmt.Errorf("source escapes repository root: %s", relative)}
@@ -196,7 +250,18 @@ func readRegularSourceWithHook(root, relative string, afterLstat func(string) er
 	if !openInfo.Mode().IsRegular() || !os.SameFile(pathInfo, openInfo) {
 		return nil, &CodedError{Code: "source_unsafe", Err: fmt.Errorf("source identity changed while opening: %s", relative)}
 	}
-	return io.ReadAll(file)
+	reader := io.Reader(file)
+	if limit > 0 {
+		reader = io.LimitReader(file, limit+1)
+	}
+	data, err := io.ReadAll(reader)
+	if err != nil {
+		return nil, err
+	}
+	if limit > 0 && int64(len(data)) > limit {
+		return nil, &CodedError{Code: "source_too_large", Err: fmt.Errorf("source exceeds %d-byte plan-catalog limit: %s", limit, relative)}
+	}
+	return data, nil
 }
 
 func qualifiesAsFamily(directory string) bool {
@@ -217,7 +282,7 @@ func qualifiesAsFamily(directory string) bool {
 			if nested.IsDir() {
 				return nil
 			}
-			_, matched = kindForFilename(nested.Name())
+			_, matched = legacyKindForFilename(nested.Name())
 			return nil
 		})
 		if matched {

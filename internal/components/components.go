@@ -255,7 +255,14 @@ func WriteDefaultState(root string, projectName string, purpose string, selected
 			"user_layer_path":          ".codeheart/user/",
 			"local_machine_layer_path": ".codeheart/local/",
 		},
-		"component_settings": map[string]any{},
+		"component_settings": map[string]any{
+			"planning-workflows": map[string]any{
+				"plan_catalog_discovery_version": 2,
+				"plan_catalog_ownership": map[string]any{
+					"excluded_roots": []any{},
+				},
+			},
+		},
 	}
 	if purpose != "" {
 		config["setup_purpose"] = purpose

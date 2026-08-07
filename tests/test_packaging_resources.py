@@ -120,3 +120,26 @@ def test_repo_feedback_runbook_prefers_configured_destination():
 
     assert configured_index < fallback_index
     assert "repo_feedback.destination.repo" in text
+
+
+def test_ubuntu_validation_is_semantic_only():
+    workflow = (ROOT / ".github/workflows/validate.yml").read_text(encoding="utf-8")
+    ubuntu = workflow.split("  ubuntu-semantic-validation:\n", 1)[1].split(
+        "\n  windows-validation:", 1
+    )[0]
+
+    for required in [
+        "runs-on: ubuntu-latest",
+        "go test ./...",
+        "go test ./internal/plancatalog ./internal/portfolio ./internal/commands ./internal/cli",
+        "BenchmarkDiscoveryV2Classifier100kPaths10kMarkdown",
+        "tests/test_json_schemas.py",
+        "tests/test_routing.py",
+        "tests/test_packaging_resources.py",
+        "tests/test_sync_check.py",
+        "scripts/validate-json-schemas.py",
+        "scripts/validate-markdown-headers.py",
+        "scripts/validate-public-core.py",
+    ]:
+        assert required in ubuntu
+    assert "build-release-assets.py" not in ubuntu

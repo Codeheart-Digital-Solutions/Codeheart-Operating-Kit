@@ -1,9 +1,91 @@
 package plancatalog
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
+	"encoding/json"
 	"sort"
 	"strings"
 )
+
+type DiscoveryVersion int
+
+const (
+	DiscoveryV1 DiscoveryVersion = 1
+	DiscoveryV2 DiscoveryVersion = 2
+)
+
+type OwnershipClass string
+
+const (
+	OwnershipOwned              OwnershipClass = "owned"
+	OwnershipExcluded           OwnershipClass = "excluded"
+	OwnershipProspectiveBlocked OwnershipClass = "prospective-blocked"
+	OwnershipHardUnowned        OwnershipClass = "hard-unowned"
+)
+
+type CandidateSignal string
+
+const (
+	SignalFilename CandidateSignal = "filename"
+	SignalMetadata CandidateSignal = "metadata"
+	SignalBoth     CandidateSignal = "filename+metadata"
+)
+
+type GitMode string
+
+const (
+	GitModeRegular    GitMode = "100644"
+	GitModeExecutable GitMode = "100755"
+	GitModeSymlink    GitMode = "120000"
+	GitModeGitlink    GitMode = "160000"
+)
+
+var conventionalAmbiguitySegments = []string{
+	".generated", ".venv", "build", "dependencies", "deps", "dist", "examples", "external",
+	"fixtures", "generated", "node_modules", "out", "target", "testdata", "third-party",
+	"third_party", "vendor", "venv",
+}
+
+type DiscoveryPolicy struct {
+	Version               DiscoveryVersion `json:"discovery_version" yaml:"discovery_version"`
+	ExcludedRoots         []string         `json:"excluded_roots" yaml:"excluded_roots"`
+	AmbiguitySegments     []string         `json:"ambiguity_segments" yaml:"ambiguity_segments"`
+	IncludeUntracked      bool             `json:"include_untracked_preview,omitempty" yaml:"include_untracked_preview,omitempty"`
+	AuthoritativeUniverse string           `json:"authoritative_universe" yaml:"authoritative_universe"`
+}
+
+func (policy DiscoveryPolicy) Digest() string {
+	canonical := policy
+	canonical.IncludeUntracked = false
+	canonical.ExcludedRoots = append([]string{}, policy.ExcludedRoots...)
+	canonical.AmbiguitySegments = append([]string{}, policy.AmbiguitySegments...)
+	sort.Strings(canonical.ExcludedRoots)
+	sort.Strings(canonical.AmbiguitySegments)
+	data, _ := json.Marshal(canonical)
+	digest := sha256.Sum256(data)
+	return hex.EncodeToString(digest[:])
+}
+
+type GitBlob struct {
+	Path          string  `json:"path" yaml:"path"`
+	Mode          GitMode `json:"mode" yaml:"mode"`
+	ObjectID      string  `json:"object_id" yaml:"object_id"`
+	Revision      string  `json:"revision,omitempty" yaml:"revision,omitempty"`
+	ContentSHA256 string  `json:"content_sha256,omitempty" yaml:"content_sha256,omitempty"`
+	Stage         int     `json:"stage,omitempty" yaml:"stage,omitempty"`
+	Preview       bool    `json:"preview,omitempty" yaml:"preview,omitempty"`
+}
+
+type CandidateProvenance struct {
+	Signal         CandidateSignal `json:"signal" yaml:"signal"`
+	Ownership      OwnershipClass  `json:"ownership" yaml:"ownership"`
+	PolicyDigest   string          `json:"policy_digest" yaml:"policy_digest"`
+	Source         GitBlob         `json:"source" yaml:"source"`
+	ExclusionRoot  string          `json:"exclusion_root,omitempty" yaml:"exclusion_root,omitempty"`
+	Boundary       string          `json:"boundary,omitempty" yaml:"boundary,omitempty"`
+	AmbiguousUnder string          `json:"ambiguous_under,omitempty" yaml:"ambiguous_under,omitempty"`
+}
 
 type Kind string
 
@@ -124,12 +206,16 @@ type SourceObservation struct {
 }
 
 type CatalogMember struct {
-	RepositoryID   string `json:"repository_id"`
-	SourceKind     string `json:"source_kind"`
-	SourceLocator  string `json:"source_locator,omitempty"`
-	DefaultRef     string `json:"default_ref"`
-	SourceRevision string `json:"source_revision"`
-	SelfMember     bool   `json:"self_member"`
+	RepositoryID       string           `json:"repository_id"`
+	SourceKind         string           `json:"source_kind"`
+	SourceLocator      string           `json:"source_locator,omitempty"`
+	DefaultRef         string           `json:"default_ref"`
+	SourceRevision     string           `json:"source_revision"`
+	SelfMember         bool             `json:"self_member"`
+	DiscoveryVersion   DiscoveryVersion `json:"discovery_version,omitempty"`
+	PolicyDigest       string           `json:"policy_digest,omitempty"`
+	CandidateSetDigest string           `json:"candidate_set_digest,omitempty"`
+	Complete           *bool            `json:"complete,omitempty"`
 }
 
 func CoordinationHomeSelfMember(repositoryID, defaultRef, sourceRevision string) CatalogMember {
@@ -154,6 +240,17 @@ func ParseCatalogMode(value string) (CatalogMode, bool) {
 		return ModeCanonical, true
 	default:
 		return "", false
+	}
+}
+
+func ParseDiscoveryVersion(value int) (DiscoveryVersion, bool) {
+	switch DiscoveryVersion(value) {
+	case DiscoveryV1:
+		return DiscoveryV1, true
+	case DiscoveryV2:
+		return DiscoveryV2, true
+	default:
+		return 0, false
 	}
 }
 

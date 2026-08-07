@@ -45,7 +45,27 @@
             "plan_catalog_cutover_revision": {
               "type": "string",
               "pattern": "^[0-9a-f]{40}(?:[0-9a-f]{24})?$"
-            }
+            },
+            "plan_catalog_discovery_version": {
+              "type": "integer",
+              "enum": [1, 2]
+            },
+            "plan_catalog_ownership": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "excluded_roots": {
+                  "type": "array",
+                  "uniqueItems": true,
+                  "items": {
+                    "type": "string",
+                    "minLength": 2,
+                    "pattern": "^[^\\\\*?\\[\\]{}\\r\\n]+/$"
+                  }
+                }
+              }
+            },
+            "owned_roots": false
           },
           "additionalProperties": true
         }

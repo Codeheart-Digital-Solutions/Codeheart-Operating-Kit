@@ -2,6 +2,8 @@ package portfolio
 
 import (
 	"context"
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	stderrors "errors"
 	"fmt"
@@ -27,12 +29,13 @@ type ScanOptions struct {
 }
 
 type repositoryScan struct {
-	Source       RepositorySource
-	Member       *plancatalog.CatalogMember
-	Observations []plancatalog.SourceObservation
-	Candidate    *Candidate
-	Errors       []ScanError
-	APICalls     int
+	Source         RepositorySource
+	Member         *plancatalog.CatalogMember
+	Observations   []plancatalog.SourceObservation
+	PlanCandidates []PlanCandidateObservation
+	Candidate      *Candidate
+	Errors         []ScanError
+	APICalls       int
 }
 
 func Scan(ctx context.Context, options ScanOptions) (ScanResult, error) {
@@ -68,12 +71,14 @@ func Scan(ctx context.Context, options ScanOptions) (ScanResult, error) {
 	}
 	defer overlay.Close()
 	catalog := Catalog{
-		SchemaVersion:      1,
+		SchemaVersion:      2,
+		DiscoveryVersion:   plancatalog.DiscoveryV2,
 		CoordinationHomeID: options.Config.CoordinationHomeID,
 		StartedAt:          started.Format(time.RFC3339),
 		Complete:           true,
 		Members:            []plancatalog.CatalogMember{},
 		Observations:       []plancatalog.SourceObservation{},
+		PlanCandidates:     []PlanCandidateObservation{},
 		Candidates:         []Candidate{},
 		Errors:             []ScanError{},
 		Metrics:            Metrics{MaxConcurrency: options.MaxConcurrency},
@@ -144,9 +149,15 @@ func Scan(ctx context.Context, options ScanOptions) (ScanResult, error) {
 			continue
 		}
 		seenMembers[result.Member.RepositoryID] = true
+		if result.Member.Complete == nil || !*result.Member.Complete {
+			catalog.Complete = false
+		}
 		catalog.Members = append(catalog.Members, *result.Member)
 		catalog.Observations = append(catalog.Observations, result.Observations...)
+		catalog.PlanCandidates = append(catalog.PlanCandidates, result.PlanCandidates...)
 	}
+	catalog.PolicyDigest = aggregateMemberDigest(catalog.Members, func(member plancatalog.CatalogMember) string { return member.PolicyDigest })
+	catalog.CandidateSetDigest = aggregateMemberDigest(catalog.Members, func(member plancatalog.CatalogMember) string { return member.CandidateSetDigest })
 	markObservationConflicts(catalog.Observations)
 	completed := time.Now().UTC().Truncate(time.Second)
 	if !options.Now.IsZero() {
@@ -155,7 +166,7 @@ func Scan(ctx context.Context, options ScanOptions) (ScanResult, error) {
 	catalog.CompletedAt = completed.Format(time.RFC3339)
 	if catalog.Complete {
 		catalog.LastCompleteScanAt = catalog.CompletedAt
-	} else if previous, readErr := ReadCachedCatalog(options.Config.Root); readErr == nil && previous.Complete {
+	} else if previous, readErr := ReadCachedCatalog(options.Config.Root); readErr == nil && previous.SchemaVersion == 2 && previous.DiscoveryVersion == plancatalog.DiscoveryV2 && previous.Complete {
 		catalog.LastCompleteScanAt = previous.LastCompleteScanAt
 		if catalog.LastCompleteScanAt == "" {
 			catalog.LastCompleteScanAt = previous.CompletedAt
@@ -174,7 +185,11 @@ func Scan(ctx context.Context, options ScanOptions) (ScanResult, error) {
 		}
 	}
 	sortCatalog(&catalog)
-	if err := state.Validate(state.PlanCatalogSchema, catalog); err != nil {
+	schemaPath, err := state.SchemaForPlanCatalogVersion(catalog.SchemaVersion)
+	if err != nil {
+		return ScanResult{}, fmt.Errorf("portfolio_catalog_invalid: %w", err)
+	}
+	if err := state.Validate(schemaPath, catalog); err != nil {
 		return ScanResult{}, fmt.Errorf("portfolio_catalog_invalid: %w", err)
 	}
 	if err := overlay.VerifyUnchanged(); err != nil {
@@ -240,7 +255,7 @@ func deduplicateSources(sources []RepositorySource) []RepositorySource {
 }
 
 func scanRepository(ctx context.Context, manager MirrorManager, source RepositorySource, home Config, now time.Time) repositoryScan {
-	result := repositoryScan{Source: source, Observations: []plancatalog.SourceObservation{}, Errors: []ScanError{}}
+	result := repositoryScan{Source: source, Observations: []plancatalog.SourceObservation{}, PlanCandidates: []PlanCandidateObservation{}, Errors: []ScanError{}}
 	repository, err := manager.Refresh(ctx, source)
 	if err != nil {
 		result.Errors = append(result.Errors, ScanError{Code: "mirror_refresh_failed", Message: err.Error(), SourceLocator: source.Locator, Retryable: true})
@@ -279,13 +294,40 @@ func scanRepository(ctx context.Context, manager MirrorManager, source Repositor
 		result.Errors = append(result.Errors, ScanError{Code: "default_revision_unavailable", Message: "default branch revision could not be resolved", SourceLocator: source.Locator, RepositoryID: decision.RepositoryID})
 		return result
 	}
-	member := plancatalog.CatalogMember{RepositoryID: decision.RepositoryID, SourceKind: source.Kind, SourceLocator: source.Locator, DefaultRef: repository.DefaultRef, SourceRevision: revision, SelfMember: source.Self}
+	settings, settingProblems := decision.PlanSettings, decision.PlanProblems
+	memberComplete := false
+	member := plancatalog.CatalogMember{
+		RepositoryID: decision.RepositoryID, SourceKind: source.Kind, SourceLocator: source.Locator,
+		DefaultRef: repository.DefaultRef, SourceRevision: revision, SelfMember: source.Self,
+		DiscoveryVersion: settings.DiscoveryVersion, PolicyDigest: settings.PolicyDigest, Complete: &memberComplete,
+	}
 	result.Member = &member
-	baseline, errors := collectObservations(ctx, repository, decision.RepositoryID, repository.DefaultRef, nil, "default", "", now)
+	for _, problem := range settingProblems {
+		if problem.Severity == plancatalog.SeverityError {
+			result.Errors = append(result.Errors, scanProblem(repository, decision.RepositoryID, repository.DefaultRef, problem))
+		}
+	}
+	if plancatalog.HasErrors(settingProblems) {
+		return result
+	}
+	if settings.DiscoveryVersion != plancatalog.DiscoveryV2 {
+		result.Errors = append(result.Errors, ScanError{Code: "member_discovery_incompatible", Message: "required portfolio member has not activated plan-catalog discovery v2", SourceLocator: source.Locator, RepositoryID: decision.RepositoryID, Ref: repository.DefaultRef})
+		return result
+	}
+	baselineClassification, classifyErr := classifyRemoteTree(ctx, repository, decision.RepositoryID, repository.DefaultRef, settings)
+	if classifyErr != nil {
+		result.Errors = append(result.Errors, ScanError{Code: "plan_tree_unavailable", Message: classifyErr.Error(), SourceLocator: source.Locator, RepositoryID: decision.RepositoryID, Ref: repository.DefaultRef})
+		return result
+	}
+	member.CandidateSetDigest = baselineClassification.CandidateSetDigest
+	baseline, baselineCandidates, errors := collectObservations(ctx, repository, decision.RepositoryID, repository.DefaultRef, baselineClassification, nil, "default", "", now)
 	result.Observations = append(result.Observations, baseline...)
+	result.PlanCandidates = append(result.PlanCandidates, baselineCandidates...)
 	result.Errors = append(result.Errors, errors...)
+	memberComplete = baselineClassification.Complete && !plancatalog.HasErrors(baselineClassification.Discovery.Problems)
 	refs, err := repository.RemoteRefs(ctx)
 	if err != nil {
+		memberComplete = false
 		result.Errors = append(result.Errors, ScanError{Code: "branch_enumeration_failed", Message: "remote branch enumeration failed", SourceLocator: source.Locator, RepositoryID: decision.RepositoryID})
 		return result
 	}
@@ -298,25 +340,40 @@ func scanRepository(ctx context.Context, manager MirrorManager, source Repositor
 	for _, ref := range refs {
 		mergeBase, mergeErr := repository.MergeBase(ctx, ref)
 		if mergeErr != nil {
+			memberComplete = false
 			result.Errors = append(result.Errors, ScanError{Code: "branch_merge_base_unavailable", Message: "branch merge-base evidence is incomplete", SourceLocator: source.Locator, RepositoryID: decision.RepositoryID, Ref: ref})
 			continue
 		}
 		merged, mergedErr := repository.IsMerged(ctx, ref, mergeBase)
 		if mergedErr != nil {
+			memberComplete = false
 			result.Errors = append(result.Errors, ScanError{Code: "branch_merge_state_unavailable", Message: "branch merge state could not be resolved", SourceLocator: source.Locator, RepositoryID: decision.RepositoryID, Ref: ref})
 			continue
 		}
 		if merged {
 			continue
 		}
-		paths, changedErr := repository.ChangedPaths(ctx, mergeBase, ref)
+		changes, changedErr := repository.ChangedPaths(ctx, mergeBase, ref)
 		if changedErr != nil {
+			memberComplete = false
 			result.Errors = append(result.Errors, ScanError{Code: "branch_comparison_incomplete", Message: "changed plan paths could not be read", SourceLocator: source.Locator, RepositoryID: decision.RepositoryID, Ref: ref})
 			continue
 		}
-		observations, branchErrors := collectObservations(ctx, repository, decision.RepositoryID, ref, paths, "unmerged-branch", pullRequests[ref], now)
+		baseClassification, baseClassifyErr := classifyRemoteTree(ctx, repository, decision.RepositoryID, mergeBase, settings)
+		branchClassification, branchClassifyErr := classifyRemoteTree(ctx, repository, decision.RepositoryID, ref, settings)
+		if baseClassifyErr != nil || branchClassifyErr != nil {
+			result.Errors = append(result.Errors, ScanError{Code: "branch_plan_tree_unavailable", Message: "branch or merge-base plan tree could not be classified", SourceLocator: source.Locator, RepositoryID: decision.RepositoryID, Ref: ref})
+			memberComplete = false
+			continue
+		}
+		selected := selectBranchCandidates(changes, baseClassification, branchClassification)
+		observations, planCandidates, branchErrors := collectObservations(ctx, repository, decision.RepositoryID, ref, branchClassification, selected, "unmerged-branch", pullRequests[ref], now)
 		result.Observations = append(result.Observations, observations...)
+		result.PlanCandidates = append(result.PlanCandidates, planCandidates...)
 		result.Errors = append(result.Errors, branchErrors...)
+		if len(branchErrors) > 0 {
+			memberComplete = false
+		}
 	}
 	return result
 }
@@ -329,43 +386,59 @@ func readMembershipEvidence(ctx context.Context, repository *GitRepository, path
 	return data, err
 }
 
-func collectObservations(ctx context.Context, repository *GitRepository, repositoryID, ref string, selected []string, visibility, pullRequest string, now time.Time) ([]plancatalog.SourceObservation, []ScanError) {
-	files, err := repository.ListFiles(ctx, ref, "docs/repo/plans")
+func classifyRemoteTree(ctx context.Context, repository *GitRepository, repositoryID, ref string, settings plancatalog.RepositorySettings) (plancatalog.Classification, error) {
+	files, err := repository.ListFiles(ctx, ref)
 	if err != nil {
-		return nil, []ScanError{{Code: "plan_tree_unavailable", Message: "plan tree could not be read", SourceLocator: repository.Source.Locator, RepositoryID: repositoryID, Ref: ref}}
+		return plancatalog.Classification{}, err
 	}
-	selectedSet := map[string]bool{}
-	for _, path := range selected {
-		selectedSet[filepath.ToSlash(path)] = true
+	blobs := make([]plancatalog.GitBlob, 0, len(files))
+	byPath := make(map[string]GitTreeFile, len(files))
+	for _, file := range files {
+		blobs = append(blobs, plancatalog.GitBlob{Path: file.Path, Mode: plancatalog.GitMode(file.Mode), ObjectID: file.ObjectID, Revision: ref})
+		byPath[file.Path] = file
+	}
+	batch, err := newRemoteBatchReader(ctx, repository)
+	if err != nil {
+		return plancatalog.Classification{}, err
+	}
+	reader := func(blob plancatalog.GitBlob) ([]byte, error) {
+		file, found := byPath[blob.Path]
+		if !found || file.ObjectID != blob.ObjectID || file.Mode != string(blob.Mode) {
+			return nil, fmt.Errorf("remote_blob_evidence_changed: %s", blob.Path)
+		}
+		if batch != nil {
+			return batch.Read(blob)
+		}
+		return repository.ReadBlob(ctx, file)
+	}
+	classification, classifyErr := plancatalog.ClassifyGitBlobs(blobs, reader, settings.DiscoveryPolicy(false), plancatalog.ModeCanonical, repositoryID, nil)
+	if batch == nil {
+		return classification, classifyErr
+	}
+	closeErr := batch.Close()
+	if classifyErr != nil {
+		return plancatalog.Classification{}, classifyErr
+	}
+	if closeErr != nil {
+		return plancatalog.Classification{}, closeErr
+	}
+	return classification, nil
+}
+
+func collectObservations(ctx context.Context, repository *GitRepository, repositoryID, ref string, classification plancatalog.Classification, selected map[string]bool, visibility, pullRequest string, now time.Time) ([]plancatalog.SourceObservation, []PlanCandidateObservation, []ScanError) {
+	errors := classificationScanErrors(repository, repositoryID, ref, classification, selected)
+	invalidPaths := map[string]bool{}
+	for _, problem := range classification.Discovery.Problems {
+		if problem.Severity == plancatalog.SeverityError {
+			invalidPaths[problem.Path] = true
+		}
 	}
 	records := []plancatalog.Record{}
-	errors := []ScanError{}
-	for _, file := range files {
-		kind, formal := remoteFormalKind(file.Path, files)
-		if !formal || (selected != nil && !selectedSet[file.Path]) {
-			continue
-		}
-		data, readErr := repository.ReadFile(ctx, ref, file.Path)
-		if readErr != nil {
-			errors = append(errors, ScanError{Code: "plan_read_failed", Message: "canonical plan bytes could not be read", SourceLocator: repository.Source.Locator, RepositoryID: repositoryID, Ref: ref})
-			continue
-		}
-		record, parseErr := plancatalog.ParseDocument(file.Path, data, kind)
-		record.FamilyQualified = kind != plancatalog.KindFamily || remoteFamilyQualified(filepath.ToSlash(filepath.Dir(file.Path)), files)
-		if parseErr != nil || record.Metadata == nil {
-			code := "remote_plan_invalid"
-			if parseErr != nil {
-				code = plancatalog.ErrorCode(parseErr)
-			}
-			errors = append(errors, ScanError{Code: code, Message: "canonical remote plan metadata is invalid", SourceLocator: repository.Source.Locator, RepositoryID: repositoryID, Ref: ref})
+	for _, record := range classification.Discovery.Records {
+		if record.Metadata == nil || invalidPaths[record.Path] || (selected != nil && !selected[record.Path]) {
 			continue
 		}
 		records = append(records, record)
-	}
-	for _, problem := range plancatalog.ValidateRecords(records, plancatalog.ModeCanonical, repositoryID) {
-		if problem.Severity == plancatalog.SeverityError {
-			errors = append(errors, ScanError{Code: problem.Code, Message: problem.Message, SourceLocator: repository.Source.Locator, RepositoryID: repositoryID, Ref: ref})
-		}
 	}
 	legacyEntries := []plancatalog.LegacyEntry{}
 	if data, readErr := repository.ReadFile(ctx, ref, plancatalog.LegacyRegisterPath); readErr == nil {
@@ -376,7 +449,25 @@ func collectObservations(ctx context.Context, repository *GitRepository, reposit
 	legacyReconciliation := plancatalog.ReconcileLegacy(records, nil, legacyEntries)
 	commit, err := repository.Revision(ctx, ref)
 	if err != nil {
-		return nil, append(errors, ScanError{Code: "observation_revision_unavailable", Message: "observation commit could not be resolved", SourceLocator: repository.Source.Locator, RepositoryID: repositoryID, Ref: ref})
+		return nil, nil, append(errors, ScanError{Code: "observation_revision_unavailable", Message: "observation commit could not be resolved", SourceLocator: repository.Source.Locator, RepositoryID: repositoryID, Ref: ref})
+	}
+	planCandidates := []PlanCandidateObservation{}
+	for _, candidate := range classification.Candidates {
+		if selected != nil && !selected[candidate.Path] {
+			continue
+		}
+		verification := "verified"
+		if (candidate.Provenance.Source.Mode == plancatalog.GitModeRegular || candidate.Provenance.Source.Mode == plancatalog.GitModeExecutable) && candidate.Provenance.Source.ContentSHA256 == "" {
+			verification = "unverified"
+		}
+		planCandidates = append(planCandidates, PlanCandidateObservation{
+			RepositoryID: repositoryID, Path: candidate.Path, Ref: ref, Commit: commit, Visibility: visibility,
+			Signal: candidate.Signal, Ownership: candidate.Ownership, ExpectedKind: candidate.ExpectedKind,
+			GitMode: candidate.Provenance.Source.Mode, ObjectID: candidate.Provenance.Source.ObjectID,
+			ContentSHA256: candidate.Provenance.Source.ContentSHA256, PolicyDigest: candidate.Provenance.PolicyDigest,
+			ExclusionRoot: candidate.Provenance.ExclusionRoot, Boundary: candidate.Provenance.Boundary,
+			AmbiguousUnder: candidate.Provenance.AmbiguousUnder, PullRequest: pullRequest, Verification: verification,
+		})
 	}
 	changedAt := now
 	if value, timeErr := repository.CommitTime(ctx, ref); timeErr == nil {
@@ -408,41 +499,82 @@ func collectObservations(ctx context.Context, repository *GitRepository, reposit
 			Stale: visibility == "unmerged-branch" && now.Sub(recordChangedAt) > 30*24*time.Hour,
 		})
 	}
-	return observations, errors
+	return observations, planCandidates, errors
 }
 
-func remoteFormalKind(path string, files []GitTreeFile) (plancatalog.Kind, bool) {
-	name := filepath.Base(path)
-	switch {
-	case strings.HasSuffix(name, "_discovery_doc.md"):
-		return plancatalog.KindDiscovery, true
-	case strings.HasSuffix(name, "_implementation_doc.md"):
-		return plancatalog.KindImplementation, true
-	case strings.EqualFold(name, "README.md") && filepath.ToSlash(path) != "docs/repo/plans/README.md" && remoteFamilyQualified(filepath.ToSlash(filepath.Dir(path)), files):
-		return plancatalog.KindFamily, true
-	default:
-		return "", false
+func classificationScanErrors(repository *GitRepository, repositoryID, ref string, classification plancatalog.Classification, selected map[string]bool) []ScanError {
+	errors := []ScanError{}
+	for _, problem := range classification.Discovery.Problems {
+		if problem.Severity != plancatalog.SeverityError || (selected != nil && problem.Path != "" && !selected[problem.Path]) {
+			continue
+		}
+		errors = append(errors, scanProblem(repository, repositoryID, ref, problem))
 	}
+	return errors
 }
 
-func remoteFamilyQualified(directory string, files []GitTreeFile) bool {
-	children := map[string]bool{}
-	prefix := strings.TrimSuffix(directory, "/") + "/"
-	for _, file := range files {
-		if !strings.HasPrefix(file.Path, prefix) {
-			continue
-		}
-		remainder := strings.TrimPrefix(file.Path, prefix)
-		parts := strings.Split(remainder, "/")
-		if len(parts) < 2 {
-			continue
-		}
-		name := parts[len(parts)-1]
-		if strings.HasSuffix(name, "_discovery_doc.md") || strings.HasSuffix(name, "_implementation_doc.md") {
-			children[parts[0]] = true
+func scanProblem(repository *GitRepository, repositoryID, ref string, problem plancatalog.Problem) ScanError {
+	return ScanError{Code: problem.Code, Message: problem.Message, SourceLocator: repository.Source.Locator, RepositoryID: repositoryID, Ref: ref, Path: problem.Path}
+}
+
+func selectBranchCandidates(changes []GitTreeChange, base, branch plancatalog.Classification) map[string]bool {
+	baseCandidates := map[string]plancatalog.Candidate{}
+	branchCandidates := map[string]plancatalog.Candidate{}
+	for _, candidate := range base.Candidates {
+		baseCandidates[candidate.Path] = candidate
+	}
+	for _, candidate := range branch.Candidates {
+		branchCandidates[candidate.Path] = candidate
+	}
+	branchProblemPaths := map[string]bool{}
+	for _, problem := range branch.Discovery.Problems {
+		if problem.Severity == plancatalog.SeverityError && problem.Path != "" {
+			branchProblemPaths[problem.Path] = true
 		}
 	}
-	return len(children) >= 2
+	selected := map[string]bool{}
+	for _, change := range changes {
+		candidate, found := branchCandidates[change.NewPath]
+		if !found {
+			if branchProblemPaths[change.NewPath] {
+				selected[change.NewPath] = true
+			}
+			continue
+		}
+		if strings.HasPrefix(change.Status, "R") {
+			prior, priorFound := baseCandidates[change.OldPath]
+			if change.OldObjectID == change.NewObjectID && priorFound && sameCandidateSemantics(prior, candidate) {
+				continue
+			}
+		} else if change.Status == "M" && change.OldObjectID == change.NewObjectID {
+			prior, priorFound := baseCandidates[change.OldPath]
+			if priorFound && sameCandidateSemantics(prior, candidate) {
+				continue
+			}
+		}
+		selected[change.NewPath] = true
+	}
+	return selected
+}
+
+func sameCandidateSemantics(left, right plancatalog.Candidate) bool {
+	return left.ExpectedKind == right.ExpectedKind && left.FamilyQualified == right.FamilyQualified && left.Signal == right.Signal && left.Ownership == right.Ownership
+}
+
+func aggregateMemberDigest(members []plancatalog.CatalogMember, selectDigest func(plancatalog.CatalogMember) string) string {
+	type evidence struct {
+		RepositoryID     string                       `json:"repository_id"`
+		DiscoveryVersion plancatalog.DiscoveryVersion `json:"discovery_version"`
+		Digest           string                       `json:"digest"`
+	}
+	values := make([]evidence, 0, len(members))
+	for _, member := range members {
+		values = append(values, evidence{RepositoryID: member.RepositoryID, DiscoveryVersion: member.DiscoveryVersion, Digest: selectDigest(member)})
+	}
+	sort.SliceStable(values, func(i, j int) bool { return values[i].RepositoryID < values[j].RepositoryID })
+	data, _ := json.Marshal(values)
+	digest := sha256.Sum256(data)
+	return hex.EncodeToString(digest[:])
 }
 
 func markObservationConflicts(observations []plancatalog.SourceObservation) {
@@ -473,7 +605,11 @@ func ReadCachedCatalog(root string) (Catalog, error) {
 	if err := json.Unmarshal(data, &catalog); err != nil {
 		return Catalog{}, err
 	}
-	if err := state.Validate(state.PlanCatalogSchema, catalog); err != nil {
+	schemaPath, err := state.SchemaForPlanCatalogVersion(catalog.SchemaVersion)
+	if err != nil {
+		return Catalog{}, err
+	}
+	if err := state.Validate(schemaPath, catalog); err != nil {
 		return Catalog{}, err
 	}
 	return catalog, nil

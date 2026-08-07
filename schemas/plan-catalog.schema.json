@@ -1,11 +1,14 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/schemas/plan-catalog.schema.json",
-  "title": "Codeheart Source-Derived Plan Catalog",
+  "title": "Codeheart Source-Derived Plan Catalog v2",
   "type": "object",
   "additionalProperties": false,
   "required": [
     "schema_version",
+    "discovery_version",
+    "policy_digest",
+    "candidate_set_digest",
     "coordination_home_id",
     "started_at",
     "completed_at",
@@ -17,7 +20,10 @@
     "metrics"
   ],
   "properties": {
-    "schema_version": { "type": "integer", "const": 1 },
+    "schema_version": { "type": "integer", "const": 2 },
+    "discovery_version": { "type": "integer", "const": 2 },
+    "policy_digest": { "$ref": "#/$defs/digest" },
+    "candidate_set_digest": { "$ref": "#/$defs/digest" },
     "coordination_home_id": { "$ref": "#/$defs/identifier" },
     "started_at": { "$ref": "#/$defs/timestamp" },
     "completed_at": { "$ref": "#/$defs/timestamp" },
@@ -28,20 +34,42 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["repository_id", "source_kind", "default_ref", "source_revision", "self_member"],
+        "required": ["repository_id", "source_kind", "default_ref", "source_revision", "self_member", "discovery_version", "complete"],
         "properties": {
           "repository_id": { "$ref": "#/$defs/identifier" },
           "source_kind": { "type": "string", "enum": ["local-git", "github"] },
           "source_locator": { "type": "string", "minLength": 1 },
           "default_ref": { "type": "string", "minLength": 1 },
           "source_revision": { "$ref": "#/$defs/commit" },
-          "self_member": { "type": "boolean" }
-        }
+          "self_member": { "type": "boolean" },
+          "discovery_version": { "type": "integer", "enum": [1, 2] },
+          "policy_digest": { "$ref": "#/$defs/digest" },
+          "candidate_set_digest": { "$ref": "#/$defs/digest" },
+          "complete": { "type": "boolean" }
+        },
+        "allOf": [
+          {
+            "if": { "properties": { "discovery_version": { "const": 2 } }, "required": ["discovery_version"] },
+            "then": { "required": ["policy_digest", "candidate_set_digest"] }
+          },
+          {
+            "if": { "properties": { "discovery_version": { "const": 1 } }, "required": ["discovery_version"] },
+            "then": {
+              "properties": {
+                "complete": { "const": false }
+              }
+            }
+          }
+        ]
       }
     },
     "observations": {
       "type": "array",
       "items": { "$ref": "#/$defs/observation" }
+    },
+    "plan_candidates": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/planCandidateObservation" }
     },
     "candidates": {
       "type": "array",
@@ -88,6 +116,10 @@
     "commit": {
       "type": "string",
       "pattern": "^[0-9a-f]{40,64}$"
+    },
+    "digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
     },
     "timestamp": {
       "type": "string",
@@ -149,6 +181,30 @@
         "conflict": { "type": "boolean" }
       }
     },
+    "planCandidateObservation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["repository_id", "path", "ref", "commit", "visibility", "signal", "ownership", "git_mode", "object_id", "policy_digest", "verification"],
+      "properties": {
+        "repository_id": { "$ref": "#/$defs/identifier" },
+        "path": { "type": "string", "minLength": 1 },
+        "ref": { "type": "string", "minLength": 1 },
+        "commit": { "$ref": "#/$defs/commit" },
+        "visibility": { "type": "string", "enum": ["default", "unmerged-branch"] },
+        "signal": { "type": "string", "enum": ["filename", "metadata", "filename+metadata"] },
+        "ownership": { "type": "string", "enum": ["owned", "excluded", "prospective-blocked", "hard-unowned"] },
+        "expected_kind": { "type": "string", "enum": ["discovery", "implementation", "family"] },
+        "git_mode": { "type": "string", "enum": ["100644", "100755", "120000", "160000"] },
+        "object_id": { "type": "string", "pattern": "^(?:[0-9a-f]{40}|[0-9a-f]{64})$" },
+        "content_sha256": { "$ref": "#/$defs/digest" },
+        "policy_digest": { "$ref": "#/$defs/digest" },
+        "exclusion_root": { "type": "string", "minLength": 1 },
+        "boundary": { "type": "string", "minLength": 1 },
+        "ambiguous_under": { "type": "string", "minLength": 1 },
+        "pull_request": { "type": "string", "minLength": 1 },
+        "verification": { "type": "string", "enum": ["verified", "unverified"] }
+      }
+    },
     "error": {
       "type": "object",
       "additionalProperties": false,
@@ -159,6 +215,7 @@
         "source_locator": { "type": "string", "minLength": 1 },
         "repository_id": { "$ref": "#/$defs/identifier" },
         "ref": { "type": "string", "minLength": 1 },
+        "path": { "type": "string", "minLength": 1 },
         "retryable": { "type": "boolean" }
       }
     },

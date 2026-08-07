@@ -18,6 +18,7 @@ import (
 	"github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/internal/lockfile"
 	"github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/internal/plancatalog"
 	"github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/internal/portfolio"
+	"github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/internal/reconcile"
 	"github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/internal/state"
 	"github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/internal/yamlmini"
 )
@@ -249,7 +250,7 @@ func TestLifecycleStartingStatePreconditionMatrix(t *testing.T) {
 			if err != nil || syncResult.OK() != want.sync {
 				t.Fatalf("sync OK=%v want=%v err=%v result=%#v", syncResult.OK(), want.sync, err, syncResult)
 			}
-			_, updateResult, err := updateCheckOperation(root, "0.1.24", now.Format(time.RFC3339), "", true)
+			_, updateResult, err := updateCheckOperation(root, "0.1.25", now.Format(time.RFC3339), "", true)
 			if err != nil || updateResult.OK() != want.update {
 				t.Fatalf("update OK=%v want=%v err=%v result=%#v", updateResult.OK(), want.update, err, updateResult)
 			}
@@ -370,6 +371,151 @@ func TestPlansListFormatValidation(t *testing.T) {
 	if code := RunPlans([]string{"list", "--format", "text", "--json", root}, &bytes.Buffer{}, &stderr); code != 2 || !strings.Contains(stderr.String(), "conflicts") {
 		t.Fatalf("format conflict exit=%d stderr=%s", code, stderr.String())
 	}
+}
+
+func TestPlansProspectiveV2AndPreviewCommandsPreserveAuthority(t *testing.T) {
+	root := copyPlanCommandFixture(t)
+	nested := "products/widget/docs/discovery/nested_discovery_doc.md"
+	writeCommandFixtureFile(t, root, nested, prospectivePlanCommandDocument("example.discovery.nested", "Nested Plan"))
+	runGitCommandTest(t, root, "add", nested)
+	runGitCommandTest(t, root, "commit", "-m", "add nested plan")
+	preview := "products/widget/docs/authoring/preview_discovery_doc.md"
+	writeCommandFixtureFile(t, root, preview, prospectivePlanCommandDocument("example.discovery.preview", "Preview Plan"))
+	protected := []string{state.ConfigPath, plancatalog.LegacyRegisterPath, "docs/repo/plans/alpha/alpha_discovery_doc.md", "docs/repo/plans/beta/beta_implementation_doc.md", nested}
+	before := map[string][]byte{}
+	for _, relative := range protected {
+		before[relative] = mustRead(t, filepath.Join(root, filepath.FromSlash(relative)))
+	}
+	statusBefore := runGitCommandTest(t, root, "status", "--porcelain=v1", "--untracked-files=all")
+
+	var listJSON bytes.Buffer
+	var stderr bytes.Buffer
+	if code := RunPlans([]string{"list", "--target-discovery-version", "2", "--json", root}, &listJSON, &stderr); code != 0 {
+		t.Fatalf("prospective list exit=%d stderr=%s\n%s", code, stderr.String(), listJSON.String())
+	}
+	var listPayload map[string]any
+	if err := json.Unmarshal(listJSON.Bytes(), &listPayload); err != nil || listPayload["schema_version"] != float64(2) || listPayload["discovery_version"] != float64(2) || !bytes.Contains(listJSON.Bytes(), []byte(nested)) {
+		t.Fatalf("prospective list payload=%#v err=%v\n%s", listPayload, err, listJSON.String())
+	}
+	listDigest, _ := listPayload["candidate_set_digest"].(string)
+	listCandidates, _ := listPayload["candidates"].([]any)
+	if listDigest == "" || len(listCandidates) != 3 {
+		t.Fatalf("prospective list candidate evidence=%#v", listPayload)
+	}
+	var repeatedList bytes.Buffer
+	if code := RunPlans([]string{"list", "--target-discovery-version", "2", "--json", root}, &repeatedList, &stderr); code != 0 || repeatedList.String() != listJSON.String() {
+		t.Fatalf("prospective list was not byte-deterministic: exit=%d\nfirst=%s\nsecond=%s", code, listJSON.String(), repeatedList.String())
+	}
+
+	var validateJSON bytes.Buffer
+	stderr.Reset()
+	if code := RunPlans([]string{"validate", "--target-discovery-version", "2", "--include-untracked", "--json", root}, &validateJSON, &stderr); code != 0 {
+		t.Fatalf("prospective validate exit=%d stderr=%s\n%s", code, stderr.String(), validateJSON.String())
+	}
+	var validation plansValidationOutput
+	if err := json.Unmarshal(validateJSON.Bytes(), &validation); err != nil || validation.SchemaVersion != 2 || len(validation.PreviewCandidates) != 1 || validation.PreviewCandidates[0].Path != preview || !validation.Valid || validation.CandidateSetDigest != listDigest || len(validation.Candidates) != len(listCandidates) {
+		t.Fatalf("prospective validation=%#v err=%v\n%s", validation, err, validateJSON.String())
+	}
+	var canonicalJSON bytes.Buffer
+	stderr.Reset()
+	if code := RunPlans([]string{"validate", "--target-discovery-version", "2", "--target-catalog-mode", "canonical", "--json", root}, &canonicalJSON, &stderr); code != 1 {
+		t.Fatalf("canonical readiness exit=%d stderr=%s\n%s", code, stderr.String(), canonicalJSON.String())
+	}
+	var canonical plansValidationOutput
+	if err := json.Unmarshal(canonicalJSON.Bytes(), &canonical); err != nil || canonical.TargetCatalogMode != plancatalog.ModeCanonical || canonical.Valid {
+		t.Fatalf("canonical readiness=%#v err=%v\n%s", canonical, err, canonicalJSON.String())
+	}
+	var impliedV2JSON bytes.Buffer
+	stderr.Reset()
+	if code := RunPlans([]string{"validate", "--target-catalog-mode", "canonical", "--json", root}, &impliedV2JSON, &stderr); code != 1 {
+		t.Fatalf("implicit v2 canonical readiness exit=%d stderr=%s\n%s", code, stderr.String(), impliedV2JSON.String())
+	}
+	var impliedV2 plansValidationOutput
+	if err := json.Unmarshal(impliedV2JSON.Bytes(), &impliedV2); err != nil || impliedV2.DiscoveryVersion != plancatalog.DiscoveryV2 || impliedV2.CandidateSetDigest != listDigest || len(impliedV2.Candidates) != len(listCandidates) {
+		t.Fatalf("canonical target did not imply complete v2 evidence=%#v err=%v\n%s", impliedV2, err, impliedV2JSON.String())
+	}
+	if statusAfter := runGitCommandTest(t, root, "status", "--porcelain=v1", "--untracked-files=all"); statusAfter != statusBefore {
+		t.Fatalf("read-only commands changed status:\nbefore=%s\nafter=%s", statusBefore, statusAfter)
+	}
+	for relative, expected := range before {
+		if actual := mustRead(t, filepath.Join(root, filepath.FromSlash(relative))); !bytes.Equal(actual, expected) {
+			t.Fatalf("prospective commands changed %s", relative)
+		}
+	}
+
+	destination := filepath.Join(root, "prospective-inventory.json")
+	var inventoryJSON bytes.Buffer
+	stderr.Reset()
+	if code := RunPlans([]string{"inventory", "--target-discovery-version", "2", "--include-untracked", "--output", destination, "--json", root}, &inventoryJSON, &stderr); code != 0 {
+		t.Fatalf("prospective inventory exit=%d stderr=%s\n%s", code, stderr.String(), inventoryJSON.String())
+	}
+	var inventory plancatalog.Inventory
+	if err := json.Unmarshal(inventoryJSON.Bytes(), &inventory); err != nil || inventory.SchemaVersion != 2 || inventory.CandidateSetDigest != listDigest || len(inventory.Candidates) != len(listCandidates) || inventory.Coverage.PreviewCandidates != 1 || len(inventory.PreviewCandidates) != 1 {
+		t.Fatalf("prospective inventory=%#v err=%v\n%s", inventory, err, inventoryJSON.String())
+	}
+}
+
+func TestPlansProspectiveFlagValidationAndNestedOutputProtection(t *testing.T) {
+	root := copyPlanCommandFixture(t)
+	tests := []struct {
+		args []string
+		want string
+	}{
+		{args: []string{"list", "--target-discovery-version", "3", root}, want: "invalid --target-discovery-version"},
+		{args: []string{"validate", "--target-catalog-mode", "mixed", root}, want: "invalid --target-catalog-mode"},
+		{args: []string{"list", "--include-untracked", root}, want: "unknown option"},
+	}
+	for _, test := range tests {
+		var stderr bytes.Buffer
+		if code := RunPlans(test.args, &bytes.Buffer{}, &stderr); code != 2 || !strings.Contains(stderr.String(), test.want) {
+			t.Fatalf("args=%#v exit=%d stderr=%s", test.args, code, stderr.String())
+		}
+	}
+	var stderr bytes.Buffer
+	if code := RunPlans([]string{"validate", "--include-untracked", root}, &bytes.Buffer{}, &stderr); code != 1 || !strings.Contains(stderr.String(), "include_untracked_requires_discovery_v2") {
+		t.Fatalf("preview misuse exit=%d stderr=%s", code, stderr.String())
+	}
+
+	parent := filepath.Join(root, "products", "widget", "docs", "reports")
+	if err := os.MkdirAll(parent, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	destination := filepath.Join(parent, "catalog_discovery_doc.md")
+	stderr.Reset()
+	if code := RunPlans([]string{"inventory", "--target-discovery-version", "2", "--output", destination, root}, &bytes.Buffer{}, &stderr); code != 1 || !strings.Contains(stderr.String(), "inventory_target_is_plan") {
+		t.Fatalf("nested plan output protection exit=%d stderr=%s", code, stderr.String())
+	}
+	if _, err := os.Lstat(destination); !os.IsNotExist(err) {
+		t.Fatalf("protected nested output was created: %v", err)
+	}
+	metadataOnly := filepath.Join(parent, "unconventional.md")
+	metadataBytes := prospectivePlanCommandDocument("example.discovery.preview-output", "Preview Output")
+	if err := os.WriteFile(metadataOnly, metadataBytes, 0o644); err != nil {
+		t.Fatal(err)
+	}
+	stderr.Reset()
+	if code := RunPlans([]string{"inventory", "--target-discovery-version", "2", "--output", metadataOnly, root}, &bytes.Buffer{}, &stderr); code != 1 || !strings.Contains(stderr.String(), "inventory_target_is_plan") {
+		t.Fatalf("metadata-only output protection exit=%d stderr=%s", code, stderr.String())
+	}
+	if actual := mustRead(t, metadataOnly); !bytes.Equal(actual, metadataBytes) {
+		t.Fatal("metadata-only preview target was overwritten")
+	}
+
+	unsafeRoot := copyPlanCommandFixture(t)
+	configPath := filepath.Join(unsafeRoot, filepath.FromSlash(state.ConfigPath))
+	config := mustRead(t, configPath)
+	config = bytes.Replace(config, []byte("    plan_catalog_mode: mixed\n"), []byte("    plan_catalog_mode: mixed\n    plan_catalog_discovery_version: 2\n    plan_catalog_ownership:\n      excluded_roots:\n        - ../\n"), 1)
+	if err := os.WriteFile(configPath, config, 0o644); err != nil {
+		t.Fatal(err)
+	}
+	stderr.Reset()
+	if code := RunPlans([]string{"validate", unsafeRoot}, &bytes.Buffer{}, &stderr); code != 1 {
+		t.Fatalf("unsafe exclusion validation exit=%d stderr=%s", code, stderr.String())
+	}
+}
+
+func prospectivePlanCommandDocument(id, title string) []byte {
+	return []byte("Last updated: 2026-08-06T00:00:00Z (UTC)\nCreated: 2026-08-06\nStatus: draft\n\n# " + title + "\n\n<!-- BEGIN CODEHEART PLAN METADATA -->\n```yaml\nplan:\n  schema_version: 1\n  id: " + id + "\n  kind: discovery\n  purpose: Exercise prospective discovery.\n  first_cataloged: 2026-08-06T00:00:00Z\n  catalog_metadata_updated: 2026-08-06T00:00:00Z\n```\n<!-- END CODEHEART PLAN METADATA -->\n")
 }
 
 func TestPlansInventoryWritesOnlyTheExplicitArtifact(t *testing.T) {
@@ -860,7 +1006,7 @@ func TestPlansRemoteOverlayValidationAndInventoryUsePushedRefsOnly(t *testing.T)
 	runGitCommandTest(t, root, "init", "-b", "main")
 	runGitCommandTest(t, root, "config", "user.email", "test@example.invalid")
 	runGitCommandTest(t, root, "config", "user.name", "Remote Overlay Test")
-	config := []byte("schema_version: 1\nselected_profile: standard\nproject_display_name: Remote Overlay\nselected_setup_folder: .\nlocal_consumer_layer:\n  repo_docs_path: docs/repo/\n  agent_memory_path: docs/agent-memory/\n  user_layer_path: .codeheart/user/\n  local_machine_layer_path: .codeheart/local/\ncomponent_settings:\n  planning-workflows:\n    plan_catalog_mode: canonical\nportfolio:\n  schema_version: 2\n  role: member\n  member_repository_id: remote-example\n  coordination_home_id: example-home\n")
+	config := []byte("schema_version: 1\nselected_profile: standard\nproject_display_name: Remote Overlay\nselected_setup_folder: .\nlocal_consumer_layer:\n  repo_docs_path: docs/repo/\n  agent_memory_path: docs/agent-memory/\n  user_layer_path: .codeheart/user/\n  local_machine_layer_path: .codeheart/local/\ncomponent_settings:\n  planning-workflows:\n    plan_catalog_mode: canonical\n    plan_catalog_discovery_version: 2\nportfolio:\n  schema_version: 2\n  role: member\n  member_repository_id: remote-example\n  coordination_home_id: example-home\n")
 	lock := []byte("schema_version: 1\nkit_version: 0.1.23\nselected_profile: standard\nselected_components: []\nrelease:\n  asset_url: local-test\n  checksum_sha256: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\nmanaged_paths: []\ngenerated_surfaces: []\ncli_repair:\n  installed_cli_path: codeheart-operating-kit\n  repair_source_url: local-test\nupdate_check:\n  last_update_check_at: \"2026-07-01T00:00:00Z\"\n  next_update_check_due: \"2026-08-01T00:00:00Z\"\n  latest_seen_version: 0.1.23\n  update_status: current\nnative_capabilities: {}\n")
 	writeCommandFixtureFile(t, root, state.ConfigPath, config)
 	writeCommandFixtureFile(t, root, state.LockPath, lock)
@@ -994,6 +1140,60 @@ func TestPlansMigrateRequiresExplicitModeAndReviewedLedger(t *testing.T) {
 	}
 }
 
+func TestPlansMigrateV2ReportsProjectedReadinessWithoutActivation(t *testing.T) {
+	root := copyPlanCommandFixture(t)
+	inventory, err := plancatalog.BuildInventoryWithOptions(root, time.Date(2026, 8, 6, 10, 0, 0, 0, time.UTC), plancatalog.SnapshotOptions{TargetDiscoveryVersion: plancatalog.DiscoveryV2, TargetCatalogMode: plancatalog.ModeCanonical})
+	if err != nil {
+		t.Fatal(err)
+	}
+	decisions := map[string]plancatalog.MigrationDecision{
+		"docs/repo/plans/alpha/alpha_discovery_doc.md":    {ID: "example.discovery.alpha", Kind: plancatalog.KindDiscovery, Purpose: "Discover alpha", FirstCataloged: "2026-08-06T10:00:00Z", CatalogMetadataUpdated: "2026-08-06T10:00:00Z"},
+		"docs/repo/plans/beta/beta_implementation_doc.md": {ID: "example.implementation.beta", Kind: plancatalog.KindImplementation, Purpose: "Implement beta", FirstCataloged: "2026-08-06T10:00:00Z", CatalogMetadataUpdated: "2026-08-06T10:00:00Z"},
+	}
+	ledger := plancatalog.MigrationLedger{
+		SchemaVersion: 2, RepositoryID: "example", DiscoveryVersion: plancatalog.DiscoveryV2, TargetCatalogMode: plancatalog.ModeCanonical,
+		PolicyDigest: inventory.PolicyDigest, CandidateSetDigest: inventory.CandidateSetDigest, InventoryRevision: inventory.SourceRevision, ReviewedAt: "2026-08-06T10:00:00Z",
+	}
+	for _, candidate := range inventory.Candidates {
+		if candidate.Ownership != plancatalog.OwnershipOwned {
+			continue
+		}
+		ledger.Records = append(ledger.Records, plancatalog.MigrationRecord{
+			CurrentPath: candidate.Path, TargetPath: candidate.Path, SourceRevision: inventory.SourceRevision, SourceSHA256: candidate.Provenance.Source.ContentSHA256,
+			TargetState: &plancatalog.TargetPrecondition{State: "same-path"}, Ownership: plancatalog.OwnershipOwned, Decision: decisions[candidate.Path], Confidence: "high",
+			Ambiguity: []string{}, Evidence: []string{"reviewed CLI fixture"}, LegacyAliases: []string{}, Conflicts: []string{}, Deferred: false, BranchOwner: "none",
+		})
+	}
+	ledgerData, err := state.EncodeYAML(ledger)
+	if err != nil {
+		t.Fatal(err)
+	}
+	ledgerPath := filepath.Join(root, "reviewed-migration-v2.yaml")
+	if err := os.WriteFile(ledgerPath, ledgerData, 0o644); err != nil {
+		t.Fatal(err)
+	}
+	configBefore := mustRead(t, filepath.Join(root, filepath.FromSlash(state.ConfigPath)))
+	registerBefore := mustRead(t, filepath.Join(root, filepath.FromSlash(plancatalog.LegacyRegisterPath)))
+
+	var jsonOutput bytes.Buffer
+	var stderr bytes.Buffer
+	if code := RunPlans([]string{"migrate", "--ledger", ledgerPath, "--dry-run", "--json", root}, &jsonOutput, &stderr); code != 0 {
+		t.Fatalf("v2 migrate JSON exit=%d stderr=%s\n%s", code, stderr.String(), jsonOutput.String())
+	}
+	var outcome plancatalog.MigrationOutcome
+	if err := json.Unmarshal(jsonOutput.Bytes(), &outcome); err != nil || outcome.SchemaVersion != 2 || outcome.Projection == nil || !outcome.Projection.Ready || outcome.ActivationPerformed == nil || *outcome.ActivationPerformed || outcome.Result.Status != reconcile.StatusPlanned {
+		t.Fatalf("v2 migrate outcome=%#v err=%v\n%s", outcome, err, jsonOutput.String())
+	}
+	var textOutput bytes.Buffer
+	stderr.Reset()
+	if code := RunPlans([]string{"migrate", "--ledger", ledgerPath, "--dry-run", root}, &textOutput, &stderr); code != 0 || !strings.Contains(textOutput.String(), "activation performed=false") || !strings.Contains(textOutput.String(), "ready=true") {
+		t.Fatalf("v2 migrate text exit=%d stderr=%s\n%s", code, stderr.String(), textOutput.String())
+	}
+	if !bytes.Equal(configBefore, mustRead(t, filepath.Join(root, filepath.FromSlash(state.ConfigPath)))) || !bytes.Equal(registerBefore, mustRead(t, filepath.Join(root, filepath.FromSlash(plancatalog.LegacyRegisterPath)))) {
+		t.Fatal("v2 migration dry-run changed config or frozen register")
+	}
+}
+
 func copyPlanCommandFixture(t *testing.T) string {
 	t.Helper()
 	source := filepath.Join("..", "..", "tests", "fixtures", "plans", "migration-repository")
@@ -1078,6 +1278,14 @@ func TestInitWritesStandardSurfaces(t *testing.T) {
 	config := readYAMLFile(t, filepath.Join(root, ".codeheart", "kit.config.yaml"))
 	if config["setup_purpose"] != "company-automation" {
 		t.Fatalf("setup_purpose = %#v", config["setup_purpose"])
+	}
+	planning := state.Map(state.Map(config["component_settings"])["planning-workflows"])
+	if state.AsInt(planning["plan_catalog_discovery_version"]) != 2 {
+		t.Fatalf("fresh discovery version = %#v", planning["plan_catalog_discovery_version"])
+	}
+	ownership := state.Map(planning["plan_catalog_ownership"])
+	if roots, ok := ownership["excluded_roots"].([]any); !ok || len(roots) != 0 {
+		t.Fatalf("fresh excluded roots = %#v", ownership["excluded_roots"])
 	}
 	lock, err := lockfile.ReadLock(root)
 	if err != nil {
@@ -1316,7 +1524,7 @@ func TestUpdateCheckWritesCadenceAndFailurePreservesDueDate(t *testing.T) {
 		t.Fatalf("failed update state = %#v, previous due %v", update, beforeDue)
 	}
 	var text bytes.Buffer
-	code = RunUpdateCheck([]string{root, "--latest-version", "0.1.24"}, &text, &bytes.Buffer{})
+	code = RunUpdateCheck([]string{root, "--latest-version", "0.1.25"}, &text, &bytes.Buffer{})
 	if code != 0 {
 		t.Fatalf("RunUpdateCheck text exit = %d; stdout: %s", code, text.String())
 	}

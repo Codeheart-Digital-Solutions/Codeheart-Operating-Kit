@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"fmt"
+	"io"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -22,6 +23,16 @@ type CommandRunner interface {
 
 type BoundCommandRunner interface {
 	RunBound(context.Context, *os.File, string, string, ...string) (CommandResult, error)
+}
+
+type BoundCommandStream struct {
+	Stdin  io.WriteCloser
+	Stdout io.ReadCloser
+	Wait   func() (CommandResult, error)
+}
+
+type BoundStreamingRunner interface {
+	StartBound(context.Context, *os.File, string, string, ...string) (*BoundCommandStream, error)
 }
 
 type ExecRunner struct{}
@@ -47,12 +58,19 @@ func sanitizedGitEnvironment(environment []string) []string {
 	result := make([]string, 0, len(environment)+1)
 	for _, entry := range environment {
 		key, _, _ := strings.Cut(entry, "=")
-		if strings.HasPrefix(strings.ToUpper(key), "GIT_") {
+		upperKey := strings.ToUpper(key)
+		if strings.HasPrefix(upperKey, "GIT_") || upperKey == "LC_ALL" {
 			continue
 		}
 		result = append(result, entry)
 	}
-	result = append(result, "GIT_TERMINAL_PROMPT=0")
+	result = append(result,
+		"GIT_TERMINAL_PROMPT=0",
+		"GIT_LITERAL_PATHSPECS=1",
+		"GIT_NO_LAZY_FETCH=1",
+		"GIT_NO_REPLACE_OBJECTS=1",
+		"LC_ALL=C",
+	)
 	return result
 }
 

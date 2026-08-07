@@ -1,4 +1,4 @@
-Last updated: 2026-07-31T22:23:19Z (UTC)
+Last updated: 2026-08-07T00:26:02Z (UTC)
 
 # Maintain Plan Register
 
@@ -9,9 +9,9 @@ Use the stable register path correctly across legacy, mixed, and canonical repos
 reintroducing manual numbering conflicts or duplicating canonical plan authority.
 
 Success:
-Legacy repositories receive only authorized compatible maintenance; mixed/canonical repositories
-use derived views and keep their frozen register byte-identical; v1 coordination evidence remains
-preserved without creating new pending-sync work.
+Legacy repositories receive only authorized compatible maintenance; mixed repositories keep an
+actually used frozen register byte-identical; canonical repositories use the derived repository-
+wide view; v1 coordination evidence remains preserved without creating new pending-sync work.
 
 Agent judgment boundary:
 Inspect mode and route to the right behavior. Do not infer a mode change, allocate global numbers,
@@ -43,13 +43,15 @@ merges, releases, force-push, deletion, or destructive Git.
 
 ## Procedure
 
-1. Read config and run:
+1. Read catalog mode and discovery version from config, then run:
 
    ```sh
    codeheart-operating-kit plans validate <repository>
    ```
 
 2. Select behavior from the reported mode.
+3. If the task concerns discovery-v2 adoption, do not infer the expanded plan set from the active
+   v1 view. Route to `migrate-plan-catalog.md` for prospective inventory and explicit activation.
 
 ### Legacy Mode
 
@@ -60,14 +62,17 @@ merges, releases, force-push, deletion, or destructive Git.
    existing file already uses.
 3. Preserve unrelated dirty content and reject duplicate/ambiguous IDs or canonical paths. Do not
    renumber parallel entries during ordinary authoring.
-4. When preparing mixed adoption, add the frozen-authority notice while still in legacy mode,
-   validate, and commit the exact register/legacy-plan/config baseline before recording its commit.
-5. Route semantic adoption to `migrate-plan-catalog.md`.
+4. Only when filename-only records will be intentionally deferred through mixed mode, add the
+   frozen-authority notice while still in legacy mode, validate, and commit the exact register/
+   legacy-plan/config baseline before recording its commit.
+5. When all candidates can receive metadata, do not manufacture a mixed cutover. Route the direct
+   legacy-to-canonical migration to `migrate-plan-catalog.md`.
 
 ### Mixed Mode
 
 1. Do not edit `plan-register.md`; mixed validation requires it to equal the cutover revision.
-2. Author every new or materially rewritten formal plan with canonical metadata.
+2. Author every new or materially rewritten formal plan with its supported filename and canonical
+   metadata, wherever it lives beneath an owned tracked `docs` tree.
 3. Use `plans list` for the current view. Legacy rows may fill only proven pre-cutover compatibility
    gaps.
 4. If a legacy plan needs metadata, use the reviewed migration ledger; do not append a register row.
@@ -77,7 +82,9 @@ merges, releases, force-push, deletion, or destructive Git.
 ### Canonical Mode
 
 1. Do not manually append or regenerate register entries.
-2. Use `plans validate` and `plans list --format text|json`.
+2. Use `plans validate` and `plans list --format text|json`. With discovery v2 active, these views
+   cover every owned tracked Markdown documentation tree at arbitrary depth, not only
+   `docs/repo/plans/`.
 3. Update current facts only in the canonical document metadata/header/content under the relevant
    authoring or execution runbook.
 4. Retain the old register as historical evidence unless an explicit archival plan says otherwise.
@@ -106,8 +113,9 @@ Record mode, validation result, canonical path/ID, changed paths, baseline commi
 problems/blockers, and confirmation that unrelated/frozen files were preserved.
 
 Validation succeeds when legacy edits are unique and canonical-document-backed, mixed register
-bytes equal the baseline, canonical views contain every formal record, and no v2 coordination
-write or new pending-sync file was introduced.
+bytes equal the baseline when mixed is used, canonical discovery-v2 views contain every owned
+candidate and disclose excluded/ambiguous/unowned observations, and no portfolio member write or
+new pending-sync file was introduced.
 
 ## Recovery
 

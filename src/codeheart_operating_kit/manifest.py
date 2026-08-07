@@ -167,7 +167,11 @@ def dump_yaml(value: Any, indent: int = 0) -> str:
                 pad = " " * (level + 2)
                 level += 2
             for key, nested in item.items():
-                if isinstance(nested, (dict, list)):
+                if isinstance(nested, dict) and not nested:
+                    lines.append(f"{pad}{key}: {{}}")
+                elif isinstance(nested, list) and not nested:
+                    lines.append(f"{pad}{key}: []")
+                elif isinstance(nested, (dict, list)):
                     lines.append(f"{pad}{key}:")
                     emit(nested, level + 2)
                 else:

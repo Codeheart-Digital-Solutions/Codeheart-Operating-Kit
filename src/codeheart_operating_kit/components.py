@@ -184,7 +184,12 @@ def write_default_state(root: Path, project_name: str, purpose: str | None, sele
             "user_layer_path": ".codeheart/user/",
             "local_machine_layer_path": ".codeheart/local/",
         },
-        "component_settings": {},
+        "component_settings": {
+            "planning-workflows": {
+                "plan_catalog_discovery_version": 2,
+                "plan_catalog_ownership": {"excluded_roots": []},
+            }
+        },
     }
     if purpose:
         config["setup_purpose"] = purpose

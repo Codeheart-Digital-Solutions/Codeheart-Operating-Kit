@@ -131,11 +131,184 @@ func TestPortfolioScanUsesRemoteBaselinesAndIndependentChangedBranchObservations
 	if failure.Catalog.Complete || failure.CacheUpdated || !failure.PreviousPreserved {
 		t.Fatalf("incomplete scan result = %+v", failure)
 	}
+	if failure.Catalog.LastCompleteScanAt != retired.Catalog.CompletedAt {
+		t.Fatalf("incomplete scan did not label preserved v2 cache: last_complete=%q want=%q", failure.Catalog.LastCompleteScanAt, retired.Catalog.CompletedAt)
+	}
 	if cacheAfter := mustReadPortfolioFile(t, filepath.Join(fixture.home, filepath.FromSlash(CatalogPath))); !bytes.Equal(cacheAfter, cacheBefore) {
 		t.Fatal("incomplete scan replaced the prior complete cache")
 	}
 	if actual := mustReadPortfolioFile(t, overlayPath); !bytes.Equal(actual, overlayBefore) {
 		t.Fatal("failed scan changed strategic overlay bytes")
+	}
+}
+
+func TestRemoteClassifierMatchesLocalCommitTreeAcrossNestedDocsAndOwnership(t *testing.T) {
+	fixture := newPortfolioGitFixture(t)
+	configData := strings.Replace(portfolioConfig("member", "example-member", "example-coordination"), "    plan_catalog_discovery_version: 2\n", "    plan_catalog_discovery_version: 2\n    plan_catalog_ownership:\n      excluded_roots:\n        - third_party/\n", 1)
+	writePortfolioFile(t, fixture.member, ConfigPath, []byte(configData))
+	writePortfolioPlanAt(t, fixture.member, "docs/root/root_discovery_doc.md", "Root Docs", "example-member.discovery.root", plancatalog.KindDiscovery, "root docs candidate")
+	writePortfolioPlanAt(t, fixture.member, "products/widget/source/deep/docs/domain/plans/deep_implementation_doc.md", "Deep Docs", "example-member.implementation.deep", plancatalog.KindImplementation, "deep docs candidate")
+	writePortfolioPlanAt(t, fixture.member, "products/widget/docs/domain/unconventional.md", "Metadata Only", "example-member.discovery.metadata-only", plancatalog.KindDiscovery, "metadata-only candidate")
+	writePortfolioPlanAt(t, fixture.member, "products/widget/docs/domain/README.md", "Domain Family", "example-member.family.domain", plancatalog.KindFamily, "metadata-qualified family")
+	writePortfolioFile(t, fixture.member, "products/widget/docs/router/README.md", []byte("# Ordinary router\n\nNo plan metadata.\n"))
+	writePortfolioPlanAt(t, fixture.member, "third_party/copied/docs/plans/copied_discovery_doc.md", "Excluded Copy", "example-member.discovery.excluded", plancatalog.KindDiscovery, "excluded candidate")
+	runPortfolioGit(t, fixture.member, "add", ".")
+	runPortfolioGit(t, fixture.member, "commit", "-m", "Add repository-wide plan discovery fixture")
+	runPortfolioGit(t, fixture.member, "push", "origin", "main")
+
+	settings, problems := plancatalog.DecodeRepositorySettings([]byte(configData))
+	if plancatalog.HasErrors(problems) {
+		t.Fatalf("settings problems: %+v", problems)
+	}
+	local, err := plancatalog.ClassifyCommitTree(fixture.member, "main", settings, settings.Mode, settings.RepositoryID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	scanRoot := t.TempDir()
+	manager := MirrorManager{RepositoryRoot: scanRoot, Root: filepath.Join(scanRoot, filepath.FromSlash(MirrorRootPath)), Runner: ExecRunner{}}
+	repository, err := manager.Refresh(context.Background(), RepositorySource{Kind: "local-git", Locator: fixture.member, CloneURL: filepath.Join(fixture.parent, "member-remote.git"), DefaultBranch: "main", NameHint: "member"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer repository.Close()
+	remote, err := classifyRemoteTree(context.Background(), repository, settings.RepositoryID, repository.DefaultRef, settings)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if local.PolicyDigest != remote.PolicyDigest || local.CandidateSetDigest != remote.CandidateSetDigest {
+		t.Fatalf("classifier digests differ local=%s/%s remote=%s/%s", local.PolicyDigest, local.CandidateSetDigest, remote.PolicyDigest, remote.CandidateSetDigest)
+	}
+	for index := range local.Candidates {
+		local.Candidates[index].Provenance.Source.Revision = ""
+	}
+	for index := range remote.Candidates {
+		remote.Candidates[index].Provenance.Source.Revision = ""
+	}
+	localCandidates, _ := json.Marshal(local.Candidates)
+	remoteCandidates, _ := json.Marshal(remote.Candidates)
+	localDiscovery, _ := json.Marshal(local.Discovery)
+	remoteDiscovery, _ := json.Marshal(remote.Discovery)
+	if !bytes.Equal(localCandidates, remoteCandidates) || !bytes.Equal(localDiscovery, remoteDiscovery) {
+		t.Fatalf("remote classifier diverged from local commit tree\nlocal candidates=%s\nremote candidates=%s\nlocal discovery=%s\nremote discovery=%s", localCandidates, remoteCandidates, localDiscovery, remoteDiscovery)
+	}
+	paths := map[string]bool{}
+	for _, candidate := range remote.Candidates {
+		paths[candidate.Path] = true
+	}
+	for _, expected := range []string{"docs/root/root_discovery_doc.md", "products/widget/source/deep/docs/domain/plans/deep_implementation_doc.md", "products/widget/docs/domain/unconventional.md", "products/widget/docs/domain/README.md", "third_party/copied/docs/plans/copied_discovery_doc.md"} {
+		if !paths[expected] {
+			t.Fatalf("remote candidate missing: %s", expected)
+		}
+	}
+	if paths["products/widget/docs/router/README.md"] {
+		t.Fatal("ordinary README gained family authority")
+	}
+}
+
+func TestRemoteGitlinkPlanSignalIsHardUnowned(t *testing.T) {
+	fixture := newPortfolioGitFixture(t)
+	head := strings.TrimSpace(portfolioGitOutput(t, fixture.member, "rev-parse", "HEAD"))
+	gitlinkPath := "products/widget/docs/embedded/embedded_discovery_doc.md"
+	runPortfolioGit(t, fixture.member, "update-index", "--add", "--cacheinfo", "160000,"+head+","+gitlinkPath)
+	runPortfolioGit(t, fixture.member, "commit", "-m", "Add plan-like gitlink")
+	runPortfolioGit(t, fixture.member, "push", "origin", "main")
+
+	config := Config{SchemaVersion: 2, Role: RoleCoordinationHome, RepositoryID: "example-home", CoordinationHomeID: "example-coordination", Root: fixture.home}
+	result, err := Scan(context.Background(), ScanOptions{Root: fixture.home, Config: config, Sources: []Source{NewLocalGitSource(fixture.parent, ExecRunner{})}, Runner: ExecRunner{}, Now: time.Date(2026, 8, 6, 12, 0, 0, 0, time.UTC)})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if result.Catalog.Complete {
+		t.Fatal("plan-like gitlink was accepted as remote outer-commit authority")
+	}
+	found := false
+	for _, scanError := range result.Catalog.Errors {
+		if scanError.RepositoryID == "example-member" && scanError.Code == "plan_path_unowned" && strings.Contains(scanError.Message, "gitlink") {
+			found = true
+		}
+	}
+	if !found {
+		t.Fatalf("gitlink boundary evidence missing: %+v", result.Catalog.Errors)
+	}
+}
+
+func TestV1RequiredMemberAndHistoricalV1CacheRemainIncompleteEvidence(t *testing.T) {
+	fixture := newPortfolioGitFixture(t)
+	v1Config := strings.Replace(portfolioConfig("member", "example-member", "example-coordination"), "    plan_catalog_discovery_version: 2\n", "", 1)
+	writePortfolioFile(t, fixture.member, ConfigPath, []byte(v1Config))
+	commitAndPushPortfolioFile(t, fixture.member, ConfigPath, "Retain discovery v1")
+	historical := Catalog{
+		SchemaVersion: 1, CoordinationHomeID: "example-coordination", StartedAt: "2026-07-01T12:00:00Z", CompletedAt: "2026-07-01T12:00:00Z", LastCompleteScanAt: "2026-07-01T12:00:00Z", Complete: true,
+		Members: []plancatalog.CatalogMember{}, Observations: []plancatalog.SourceObservation{}, Candidates: []Candidate{}, Errors: []ScanError{}, Metrics: Metrics{MaxConcurrency: 1},
+	}
+	data, err := json.Marshal(historical)
+	if err != nil {
+		t.Fatal(err)
+	}
+	writePortfolioFile(t, fixture.home, CatalogPath, append(data, '\n'))
+	before := mustReadPortfolioFile(t, filepath.Join(fixture.home, filepath.FromSlash(CatalogPath)))
+	config := Config{SchemaVersion: 2, Role: RoleCoordinationHome, RepositoryID: "example-home", CoordinationHomeID: "example-coordination", Root: fixture.home}
+	result, err := Scan(context.Background(), ScanOptions{Root: fixture.home, Config: config, Sources: []Source{NewLocalGitSource(fixture.parent, ExecRunner{})}, Runner: ExecRunner{}, Now: time.Date(2026, 8, 6, 12, 0, 0, 0, time.UTC), WriteCache: true})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if result.Catalog.Complete || result.Catalog.LastCompleteScanAt != "" || result.CacheUpdated || !result.PreviousPreserved {
+		t.Fatalf("v1 evidence satisfied v2 completeness: %+v", result)
+	}
+	found := false
+	for _, member := range result.Catalog.Members {
+		if member.RepositoryID == "example-member" && member.DiscoveryVersion == plancatalog.DiscoveryV1 && member.Complete != nil && !*member.Complete {
+			found = true
+		}
+	}
+	if !found {
+		t.Fatalf("v1 member evidence missing: %+v", result.Catalog.Members)
+	}
+	if after := mustReadPortfolioFile(t, filepath.Join(fixture.home, filepath.FromSlash(CatalogPath))); !bytes.Equal(before, after) {
+		t.Fatal("incomplete v2 scan replaced historical v1 cache")
+	}
+}
+
+func TestDiscoveryV2LegacyModeStillRequiresCanonicalRemoteEvidence(t *testing.T) {
+	fixture := newPortfolioGitFixture(t)
+	legacyConfig := strings.Replace(portfolioConfig("member", "example-member", "example-coordination"), "    plan_catalog_mode: canonical\n", "    plan_catalog_mode: legacy\n", 1)
+	writePortfolioFile(t, fixture.member, ConfigPath, []byte(legacyConfig))
+	planPath := "docs/repo/plans/member-plan/member-plan_discovery_doc.md"
+	writePortfolioFile(t, fixture.member, planPath, []byte("Last updated: 2026-06-01T12:00:00Z (UTC)\nCreated: 2026-06-01\nStatus: active\n\n# Filename Only Legacy Record\n"))
+	runPortfolioGit(t, fixture.member, "add", ConfigPath, planPath)
+	runPortfolioGit(t, fixture.member, "commit", "-m", "Retain filename-only legacy record under discovery v2")
+	runPortfolioGit(t, fixture.member, "push", "origin", "main")
+
+	config := Config{SchemaVersion: 2, Role: RoleCoordinationHome, RepositoryID: "example-home", CoordinationHomeID: "example-coordination", Root: fixture.home}
+	result, err := Scan(context.Background(), ScanOptions{Root: fixture.home, Config: config, Sources: []Source{NewLocalGitSource(fixture.parent, ExecRunner{})}, Runner: ExecRunner{}, Now: time.Date(2026, 8, 6, 12, 0, 0, 0, time.UTC), WriteCache: true})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if result.Catalog.Complete || result.CacheUpdated {
+		t.Fatalf("filename-only v2 member was reported complete: %+v", result)
+	}
+	metadataMissing := false
+	for _, scanError := range result.Catalog.Errors {
+		if scanError.RepositoryID == "example-member" && scanError.Ref == "refs/remotes/origin/main" && scanError.Path == planPath && scanError.Code == "metadata_missing" {
+			metadataMissing = true
+		}
+	}
+	if !metadataMissing {
+		t.Fatalf("canonical remote coverage blocker missing: %+v", result.Catalog.Errors)
+	}
+	for _, observation := range result.Catalog.Observations {
+		if observation.RepositoryID == "example-member" && observation.Ref == "refs/remotes/origin/main" && observation.CanonicalPath == planPath {
+			t.Fatal("filename-only record gained a verified stable-ID observation")
+		}
+	}
+	candidateFound := false
+	for _, candidate := range result.Catalog.PlanCandidates {
+		if candidate.RepositoryID == "example-member" && candidate.Ref == "refs/remotes/origin/main" && candidate.Path == planPath && candidate.Signal == plancatalog.SignalFilename {
+			candidateFound = true
+		}
+	}
+	if !candidateFound {
+		t.Fatalf("filename-only candidate evidence missing: %+v", result.Catalog.PlanCandidates)
 	}
 }
 
@@ -201,7 +374,7 @@ func TestRemoteCatalogInventoryAndListShareReviewedCompatibilityTitle(t *testing
 func TestMembershipRequiresDefaultBranchKitLockV2IdentityAndMatchingHome(t *testing.T) {
 	validConfig := []byte(portfolioConfig("member", "example-member", "example-home"))
 	valid := MembershipInput{ConfigData: validConfig, LockData: []byte(testLockYAML), KitMarker: []byte("kit\n"), HomeID: "example-home"}
-	if decision := EvaluateMembership(valid); !decision.Member || decision.RepositoryID != "example-member" {
+	if decision := EvaluateMembership(valid); !decision.Member || decision.RepositoryID != "example-member" || decision.PlanSettings.DiscoveryVersion != plancatalog.DiscoveryV2 || plancatalog.HasErrors(decision.PlanProblems) {
 		t.Fatalf("valid membership = %+v", decision)
 	}
 	wrong := valid
@@ -1162,7 +1335,15 @@ func (runner membershipFailureRunner) RunBound(ctx context.Context, directory *o
 }
 
 func membershipFailure(name string, args []string) bool {
-	return name == "git" && len(args) >= 2 && args[len(args)-2] == "show" && strings.HasSuffix(args[len(args)-1], ":"+ConfigPath)
+	if name != "git" || len(args) == 0 || args[len(args)-1] != ConfigPath {
+		return false
+	}
+	for _, arg := range args {
+		if arg == "ls-tree" {
+			return true
+		}
+	}
+	return false
 }
 
 type freshnessFailureRunner struct{ delegate CommandRunner }
@@ -1355,7 +1536,7 @@ func createPortfolioRepository(t *testing.T, parent, name, role, repositoryID, h
 }
 
 func portfolioConfig(role, repositoryID, homeID string) string {
-	return fmt.Sprintf("schema_version: 1\nselected_profile: standard\nproject_display_name: %s\nselected_setup_folder: .\nlocal_consumer_layer:\n  repo_docs_path: docs/repo/\n  agent_memory_path: docs/agent-memory/\n  user_layer_path: .codeheart/user/\n  local_machine_layer_path: .codeheart/local/\ncomponent_settings:\n  planning-workflows:\n    plan_catalog_mode: canonical\nportfolio:\n  schema_version: 2\n  role: %s\n  member_repository_id: %s\n  coordination_home_id: %s\n", repositoryID, role, repositoryID, homeID)
+	return fmt.Sprintf("schema_version: 1\nselected_profile: standard\nproject_display_name: %s\nselected_setup_folder: .\nlocal_consumer_layer:\n  repo_docs_path: docs/repo/\n  agent_memory_path: docs/agent-memory/\n  user_layer_path: .codeheart/user/\n  local_machine_layer_path: .codeheart/local/\ncomponent_settings:\n  planning-workflows:\n    plan_catalog_mode: canonical\n    plan_catalog_discovery_version: 2\nportfolio:\n  schema_version: 2\n  role: %s\n  member_repository_id: %s\n  coordination_home_id: %s\n", repositoryID, role, repositoryID, homeID)
 }
 
 const testLockYAML = `schema_version: 1
@@ -1404,8 +1585,13 @@ consumer_impact: []
 
 func writePortfolioPlan(t *testing.T, root, relative, title, id, purpose string) {
 	t.Helper()
-	content := fmt.Sprintf("Last updated: 2026-06-01T12:00:00Z (UTC)\nCreated: 2026-06-01\nStatus: active\n\n# %s\n<!-- BEGIN CODEHEART PLAN METADATA -->\n```yaml\nplan:\n  schema_version: 1\n  id: %s\n  kind: discovery\n  purpose: %s\n  first_cataloged: 2026-06-01T12:00:00Z\n  catalog_metadata_updated: 2026-06-01T12:00:00Z\n```\n<!-- END CODEHEART PLAN METADATA -->\n\n## Scope\n\nTest plan.\n", title, id, purpose)
-	writePortfolioFile(t, root, filepath.ToSlash(filepath.Join("docs/repo/plans", relative)), []byte(content))
+	writePortfolioPlanAt(t, root, filepath.ToSlash(filepath.Join("docs/repo/plans", relative)), title, id, plancatalog.KindDiscovery, purpose)
+}
+
+func writePortfolioPlanAt(t *testing.T, root, relative, title, id string, kind plancatalog.Kind, purpose string) {
+	t.Helper()
+	content := fmt.Sprintf("Last updated: 2026-06-01T12:00:00Z (UTC)\nCreated: 2026-06-01\nStatus: active\n\n# %s\n<!-- BEGIN CODEHEART PLAN METADATA -->\n```yaml\nplan:\n  schema_version: 1\n  id: %s\n  kind: %s\n  purpose: %s\n  first_cataloged: 2026-06-01T12:00:00Z\n  catalog_metadata_updated: 2026-06-01T12:00:00Z\n```\n<!-- END CODEHEART PLAN METADATA -->\n\n## Scope\n\nTest plan.\n", title, id, kind, purpose)
+	writePortfolioFile(t, root, relative, []byte(content))
 }
 
 func writePortfolioFile(t *testing.T, root, relative string, data []byte) {
@@ -1482,8 +1668,9 @@ func commitAndPushPortfolioFile(t *testing.T, repository, relative, message stri
 }
 
 func portfolioCatalogFixture(completedAt string) Catalog {
+	emptyDigest := aggregateMemberDigest(nil, func(plancatalog.CatalogMember) string { return "" })
 	return Catalog{
-		SchemaVersion: 1, CoordinationHomeID: "example-home",
+		SchemaVersion: 2, DiscoveryVersion: plancatalog.DiscoveryV2, PolicyDigest: emptyDigest, CandidateSetDigest: emptyDigest, CoordinationHomeID: "example-home",
 		StartedAt: completedAt, CompletedAt: completedAt, LastCompleteScanAt: completedAt, Complete: true,
 		Members: []plancatalog.CatalogMember{}, Observations: []plancatalog.SourceObservation{}, Candidates: []Candidate{}, Errors: []ScanError{},
 		Metrics: Metrics{MaxConcurrency: 1},
@@ -1560,7 +1747,7 @@ func TestGitTransportPolicyRejectsRemoteHelpersAndPinsSupportedProtocols(t *test
 		"GIT_CONFIG_KEY_0=protocol.ext.allow", "GIT_CONFIG_VALUE_0=always", "GIT_CONFIG_PARAMETERS='protocol.ext.allow=always'", "GIT_EXEC_PATH=/unsafe", "GIT_SSH_COMMAND=unsafe-command",
 		"git_config_parameters='remote.origin.uploadpack=unsafe'", "Git_Exec_Path=/mixed-case-unsafe", "git_ssh_command=mixed-case-unsafe",
 	})
-	if strings.Join(environment, "\n") != "PATH=/usr/bin\nGIT_TERMINAL_PROMPT=0" {
+	if strings.Join(environment, "\n") != "PATH=/usr/bin\nGIT_TERMINAL_PROMPT=0\nGIT_LITERAL_PATHSPECS=1\nGIT_NO_LAZY_FETCH=1\nGIT_NO_REPLACE_OBJECTS=1\nLC_ALL=C" {
 		t.Fatalf("unsafe Git environment survived sanitization: %+v", environment)
 	}
 	if runtime.GOOS != "windows" {
@@ -1648,9 +1835,9 @@ func TestEveryScannerOwnedGitCommandUsesCentralSafetyPolicy(t *testing.T) {
 	if err != nil || !result.Catalog.Complete {
 		t.Fatalf("recorded policy scan complete=%v err=%v errors=%+v", result.Catalog.Complete, err, result.Catalog.Errors)
 	}
-	count, failures := runner.snapshot()
-	if count == 0 || len(failures) != 0 {
-		t.Fatalf("scanner Git policy count=%d failures=%+v", count, failures)
+	count, batches, failures := runner.snapshot()
+	if count == 0 || batches == 0 || len(failures) != 0 {
+		t.Fatalf("scanner Git policy count=%d batches=%d failures=%+v", count, batches, failures)
 	}
 }
 
@@ -1669,7 +1856,8 @@ func TestScannerTreatsAdversarialBranchContentAsInertData(t *testing.T) {
 		t.Fatal(err)
 	}
 	writePortfolioFile(t, fixture.member, "docs/repo/plans/adversarial/adversarial_discovery_doc.md", []byte("Last updated: 2026-07-31T12:00:00Z (UTC)\nCreated: 2026-07-31\nStatus: active\n\n# Adversarial\n<!-- BEGIN CODEHEART PLAN METADATA -->\n```yaml\nplan: [\n"))
-	writePortfolioFile(t, fixture.member, "docs/repo/plans/adversarial/oversized_implementation_doc.md", []byte("Last updated: 2026-07-31T12:00:00Z (UTC)\nCreated: 2026-07-31\nStatus: active\n\n# Oversized\n<!-- BEGIN CODEHEART PLAN METADATA -->\n"+strings.Repeat("x", 1_048_577)))
+	oversizedPath := "docs/repo/plans/adversarial/oversized_implementation_doc.md"
+	writePortfolioFile(t, fixture.member, oversizedPath, []byte(strings.Repeat("x", plancatalog.MaxPlanSourceBytes+1)))
 	writePortfolioFile(t, fixture.member, "docs/repo/plans/adversarial/secret-placeholder.txt", []byte("Authorization: Bearer EXAMPLE_TOKEN_PLACEHOLDER\n"))
 	runPortfolioGit(t, fixture.member, "add", "docs/repo/plans/adversarial", ".githooks/post-checkout")
 	runPortfolioGit(t, fixture.member, "commit", "-m", "Add adversarial inert branch content")
@@ -1696,6 +1884,15 @@ func TestScannerTreatsAdversarialBranchContentAsInertData(t *testing.T) {
 	}
 	if result.Catalog.Complete {
 		t.Fatal("malformed adversarial formal plans unexpectedly produced a complete scan")
+	}
+	oversizedBlocked := false
+	for _, scanError := range result.Catalog.Errors {
+		if scanError.Path == oversizedPath && scanError.Code == "plan_source_unsafe" {
+			oversizedBlocked = true
+		}
+	}
+	if !oversizedBlocked {
+		t.Fatalf("oversized remote blob did not produce bounded-read evidence: %+v", result.Catalog.Errors)
 	}
 }
 
@@ -1768,10 +1965,122 @@ func TestBranchOverlaySuppressesPureRenameAndRetainsChangedRename(t *testing.T) 
 	}
 }
 
+func TestBranchOverlayUsesDefaultPolicyAndDoesNotInferFamilyAuthority(t *testing.T) {
+	fixture := newPortfolioGitFixture(t)
+	defaultConfig := strings.Replace(portfolioConfig("member", "example-member", "example-coordination"), "    plan_catalog_discovery_version: 2\n", "    plan_catalog_discovery_version: 2\n    plan_catalog_ownership:\n      excluded_roots:\n        - vendor/\n", 1)
+	writePortfolioFile(t, fixture.member, ConfigPath, []byte(defaultConfig))
+	writePortfolioFile(t, fixture.member, "products/widget/docs/router/README.md", []byte("# Domain router\n\nNo plan metadata.\n"))
+	movable := "products/widget/docs/movable/movable_discovery_doc.md"
+	movedExcluded := "vendor/moved/docs/plans/movable_discovery_doc.md"
+	writePortfolioPlanAt(t, fixture.member, movable, "Movable", "example-member.discovery.movable", plancatalog.KindDiscovery, "ownership rename fixture")
+	runPortfolioGit(t, fixture.member, "add", ConfigPath, "products/widget/docs/router/README.md", movable)
+	runPortfolioGit(t, fixture.member, "commit", "-m", "Define default branch exclusions and router")
+	runPortfolioGit(t, fixture.member, "push", "origin", "main")
+
+	runPortfolioGit(t, fixture.member, "checkout", "-b", "feature/cannot-broaden-policy", "main")
+	branchConfig := strings.Replace(defaultConfig, "    plan_catalog_ownership:\n      excluded_roots:\n        - vendor/\n", "    plan_catalog_ownership:\n      excluded_roots: []\n", 1)
+	writePortfolioFile(t, fixture.member, ConfigPath, []byte(branchConfig))
+	writePortfolioPlanAt(t, fixture.member, "vendor/embedded/docs/plans/embedded_discovery_doc.md", "Embedded", "example-member.discovery.embedded", plancatalog.KindDiscovery, "must remain excluded")
+	writePortfolioPlanAt(t, fixture.member, "products/widget/docs/router/child/child_discovery_doc.md", "Router Child", "example-member.discovery.router-child", plancatalog.KindDiscovery, "ordinary child")
+	if err := os.MkdirAll(filepath.Join(fixture.member, filepath.Dir(movedExcluded)), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	runPortfolioGit(t, fixture.member, "mv", movable, movedExcluded)
+	runPortfolioGit(t, fixture.member, "add", ConfigPath, "vendor", "products/widget/docs/router/child")
+	runPortfolioGit(t, fixture.member, "commit", "-m", "Attempt branch policy broadening")
+	runPortfolioGit(t, fixture.member, "push", "origin", "feature/cannot-broaden-policy")
+	runPortfolioGit(t, fixture.member, "checkout", "main")
+
+	config := Config{SchemaVersion: 2, Role: RoleCoordinationHome, RepositoryID: "example-home", CoordinationHomeID: "example-coordination", Root: fixture.home}
+	result, err := Scan(context.Background(), ScanOptions{Root: fixture.home, Config: config, Sources: []Source{NewLocalGitSource(fixture.parent, ExecRunner{})}, Runner: ExecRunner{}, Now: time.Date(2026, 8, 6, 12, 0, 0, 0, time.UTC)})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !result.Catalog.Complete {
+		t.Fatalf("reviewed exclusion made scan incomplete: %+v", result.Catalog.Errors)
+	}
+	childFound := false
+	excludedRenameFound := false
+	for _, observation := range result.Catalog.Observations {
+		if observation.CanonicalPath == "vendor/embedded/docs/plans/embedded_discovery_doc.md" {
+			t.Fatal("feature branch broadened default-branch ownership authority")
+		}
+		if observation.CanonicalPath == "products/widget/docs/router/README.md" {
+			t.Fatal("unchanged ordinary README gained family authority from a new child")
+		}
+		if observation.CanonicalPath == "products/widget/docs/router/child/child_discovery_doc.md" && observation.Visibility == "unmerged-branch" {
+			childFound = true
+		}
+	}
+	for _, candidate := range result.Catalog.PlanCandidates {
+		if candidate.RepositoryID == "example-member" && candidate.Ref == "refs/remotes/origin/feature/cannot-broaden-policy" && candidate.Path == movedExcluded && candidate.Ownership == plancatalog.OwnershipExcluded && candidate.ExclusionRoot == "vendor/" && candidate.ContentSHA256 != "" && candidate.Commit != "" {
+			excludedRenameFound = true
+		}
+	}
+	if !childFound {
+		t.Fatalf("valid branch child observation missing: %+v", result.Catalog.Observations)
+	}
+	if !excludedRenameFound {
+		t.Fatalf("ownership-changing excluded rename evidence missing: %+v", result.Catalog.PlanCandidates)
+	}
+}
+
+func TestBranchOverlayKeepsEligibilityAndKindChangingRenamesVisible(t *testing.T) {
+	fixture := newPortfolioGitFixture(t)
+	original := "docs/repo/plans/member-plan/member-plan_discovery_doc.md"
+
+	runPortfolioGit(t, fixture.member, "checkout", "-b", "feature/kind-changing-rename", "main")
+	kindDestination := "docs/repo/plans/member-plan/member-plan_implementation_doc.md"
+	runPortfolioGit(t, fixture.member, "mv", original, kindDestination)
+	runPortfolioGit(t, fixture.member, "commit", "-m", "Rename plan across filename kinds")
+	runPortfolioGit(t, fixture.member, "push", "origin", "feature/kind-changing-rename")
+	runPortfolioGit(t, fixture.member, "checkout", "main")
+
+	outside := "archive/incoming_discovery_doc.md"
+	inside := "products/widget/source/deep/docs/plans/incoming_discovery_doc.md"
+	writePortfolioPlanAt(t, fixture.member, outside, "Incoming", "example-member.discovery.incoming", plancatalog.KindDiscovery, "outside before rename")
+	runPortfolioGit(t, fixture.member, "add", outside)
+	runPortfolioGit(t, fixture.member, "commit", "-m", "Add candidate outside docs on default branch")
+	runPortfolioGit(t, fixture.member, "push", "origin", "main")
+	runPortfolioGit(t, fixture.member, "checkout", "-b", "feature/rename-into-docs", "main")
+	if err := os.MkdirAll(filepath.Join(fixture.member, filepath.Dir(inside)), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	runPortfolioGit(t, fixture.member, "mv", outside, inside)
+	runPortfolioGit(t, fixture.member, "commit", "-m", "Move candidate into deep docs")
+	runPortfolioGit(t, fixture.member, "push", "origin", "feature/rename-into-docs")
+	runPortfolioGit(t, fixture.member, "checkout", "main")
+
+	config := Config{SchemaVersion: 2, Role: RoleCoordinationHome, RepositoryID: "example-home", CoordinationHomeID: "example-coordination", Root: fixture.home}
+	result, err := Scan(context.Background(), ScanOptions{Root: fixture.home, Config: config, Sources: []Source{NewLocalGitSource(fixture.parent, ExecRunner{})}, Runner: ExecRunner{}, Now: time.Date(2026, 8, 6, 12, 0, 0, 0, time.UTC)})
+	if err != nil {
+		t.Fatal(err)
+	}
+	kindMismatch := false
+	for _, scanError := range result.Catalog.Errors {
+		if scanError.Ref == "refs/remotes/origin/feature/kind-changing-rename" && scanError.Code == "record_kind_path_mismatch" {
+			kindMismatch = true
+		}
+	}
+	if !kindMismatch {
+		t.Fatalf("same-byte kind-changing rename was suppressed: %+v", result.Catalog.Errors)
+	}
+	insideFound := false
+	for _, observation := range result.Catalog.Observations {
+		if observation.Ref == "refs/remotes/origin/feature/rename-into-docs" && observation.CanonicalPath == inside {
+			insideFound = true
+		}
+	}
+	if !insideFound {
+		t.Fatalf("eligibility-changing rename was not observed: %+v", result.Catalog.Observations)
+	}
+}
+
 type policyRecordingRunner struct {
 	mu       sync.Mutex
 	delegate CommandRunner
 	count    int
+	batches  int
 	failures []string
 }
 
@@ -1817,6 +2126,11 @@ func (runner *policyRecordingRunner) RunBound(ctx context.Context, directory *os
 	return runner.delegate.(BoundCommandRunner).RunBound(ctx, directory, directoryPath, name, args...)
 }
 
+func (runner *policyRecordingRunner) StartBound(ctx context.Context, directory *os.File, directoryPath, name string, args ...string) (*BoundCommandStream, error) {
+	runner.record(name, args)
+	return runner.delegate.(BoundStreamingRunner).StartBound(ctx, directory, directoryPath, name, args...)
+}
+
 func (runner *policyRecordingRunner) record(name string, args []string) {
 	if name == "git" {
 		joined := strings.Join(args, "\x00")
@@ -1840,6 +2154,11 @@ func (runner *policyRecordingRunner) record(name string, args []string) {
 		}
 		runner.mu.Lock()
 		runner.count++
+		for index, argument := range args {
+			if argument == "cat-file" && index+1 < len(args) && args[index+1] == "--batch" {
+				runner.batches++
+			}
+		}
 		if len(missing) != 0 {
 			runner.failures = append(runner.failures, fmt.Sprintf("%v missing %v", args, missing))
 		}
@@ -1847,8 +2166,8 @@ func (runner *policyRecordingRunner) record(name string, args []string) {
 	}
 }
 
-func (runner *policyRecordingRunner) snapshot() (int, []string) {
+func (runner *policyRecordingRunner) snapshot() (int, int, []string) {
 	runner.mu.Lock()
 	defer runner.mu.Unlock()
-	return runner.count, append([]string{}, runner.failures...)
+	return runner.count, runner.batches, append([]string{}, runner.failures...)
 }

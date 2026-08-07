@@ -9,22 +9,43 @@ import (
 	"path/filepath"
 	"sort"
 	"strings"
+	"unicode"
 
 	"github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/internal/state"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/unicode/norm"
 )
 
 type RepositorySettings struct {
-	Mode            CatalogMode `json:"mode"`
-	RepositoryID    string      `json:"repository_id,omitempty"`
-	CutoverRevision string      `json:"cutover_revision,omitempty"`
+	Mode             CatalogMode      `json:"mode"`
+	RepositoryID     string           `json:"repository_id,omitempty"`
+	CutoverRevision  string           `json:"cutover_revision,omitempty"`
+	DiscoveryVersion DiscoveryVersion `json:"discovery_version"`
+	ExcludedRoots    []string         `json:"excluded_roots"`
+	PolicyDigest     string           `json:"policy_digest"`
 }
 
 type RepositorySnapshot struct {
-	Settings       RepositorySettings   `json:"settings"`
-	Records        []Record             `json:"records"`
-	LegacyEntries  []LegacyEntry        `json:"legacy_entries"`
-	Reconciliation LegacyReconciliation `json:"legacy_reconciliation"`
-	Problems       []Problem            `json:"problems"`
+	Settings           RepositorySettings   `json:"settings"`
+	ConfiguredSettings RepositorySettings   `json:"-"`
+	Targeted           bool                 `json:"-"`
+	Complete           bool                 `json:"-"`
+	Candidates         []Candidate          `json:"-"`
+	PreviewCandidates  []Candidate          `json:"-"`
+	PreviewRecords     []Record             `json:"-"`
+	PreviewProblems    []Problem            `json:"-"`
+	PolicyDigest       string               `json:"-"`
+	CandidateSetDigest string               `json:"-"`
+	Records            []Record             `json:"records"`
+	LegacyEntries      []LegacyEntry        `json:"legacy_entries"`
+	Reconciliation     LegacyReconciliation `json:"legacy_reconciliation"`
+	Problems           []Problem            `json:"problems"`
+}
+
+type SnapshotOptions struct {
+	TargetDiscoveryVersion DiscoveryVersion
+	TargetCatalogMode      CatalogMode
+	IncludeUntracked       bool
 }
 
 type ViewRow struct {
@@ -40,15 +61,25 @@ type ViewRow struct {
 }
 
 type View struct {
-	SchemaVersion int         `json:"schema_version"`
-	Mode          CatalogMode `json:"mode"`
-	RepositoryID  string      `json:"repository_id,omitempty"`
-	Rows          []ViewRow   `json:"rows"`
-	Problems      []Problem   `json:"problems"`
+	SchemaVersion              int              `json:"schema_version"`
+	Mode                       CatalogMode      `json:"mode"`
+	RepositoryID               string           `json:"repository_id,omitempty"`
+	DiscoveryVersion           DiscoveryVersion `json:"discovery_version,omitempty"`
+	ConfiguredDiscoveryVersion DiscoveryVersion `json:"configured_discovery_version,omitempty"`
+	ConfiguredCatalogMode      CatalogMode      `json:"configured_catalog_mode,omitempty"`
+	TargetCatalogMode          CatalogMode      `json:"target_catalog_mode,omitempty"`
+	PolicyDigest               string           `json:"policy_digest,omitempty"`
+	CandidateSetDigest         string           `json:"candidate_set_digest,omitempty"`
+	Complete                   *bool            `json:"complete,omitempty"`
+	Candidates                 []Candidate      `json:"candidates,omitempty"`
+	PreviewCandidates          []Candidate      `json:"preview_candidates,omitempty"`
+	PreviewProblems            []Problem        `json:"preview_problems,omitempty"`
+	Rows                       []ViewRow        `json:"rows"`
+	Problems                   []Problem        `json:"problems"`
 }
 
 func LoadRepositorySettings(root string) (RepositorySettings, []Problem) {
-	settings := RepositorySettings{Mode: ModeLegacy}
+	settings := defaultRepositorySettings()
 	configPath := filepath.Join(root, filepath.FromSlash(state.ConfigPath))
 	data, err := os.ReadFile(configPath)
 	if os.IsNotExist(err) {
@@ -57,6 +88,29 @@ func LoadRepositorySettings(root string) (RepositorySettings, []Problem) {
 	if err != nil {
 		return settings, []Problem{{Code: "catalog_config_unreadable", Message: err.Error(), Path: state.ConfigPath, Severity: SeverityError}}
 	}
+	return DecodeRepositorySettings(data)
+}
+
+func defaultRepositorySettings() RepositorySettings {
+	settings := RepositorySettings{Mode: ModeLegacy, DiscoveryVersion: DiscoveryV1, ExcludedRoots: []string{}}
+	settings.PolicyDigest = settings.DiscoveryPolicy(false).Digest()
+	return settings
+}
+
+func (settings RepositorySettings) DiscoveryPolicy(includeUntracked bool) DiscoveryPolicy {
+	return DiscoveryPolicy{
+		Version:               settings.DiscoveryVersion,
+		ExcludedRoots:         append([]string{}, settings.ExcludedRoots...),
+		AmbiguitySegments:     append([]string{}, conventionalAmbiguitySegments...),
+		IncludeUntracked:      includeUntracked,
+		AuthoritativeUniverse: "git-regular-blobs",
+	}
+}
+
+// DecodeRepositorySettings decodes config bytes without consulting a checkout. Remote
+// membership evaluation uses this exact decoder for default-branch policy authority.
+func DecodeRepositorySettings(data []byte) (RepositorySettings, []Problem) {
+	settings := defaultRepositorySettings()
 	config, err := state.DecodeYAMLMap(data)
 	legacyNullComponents := err == nil && config["component_settings"] == nil
 	if legacyNullComponents {
@@ -76,6 +130,15 @@ func LoadRepositorySettings(root string) (RepositorySettings, []Problem) {
 	}
 	settings.Mode = mode
 	settings.CutoverRevision = state.AsString(planning["plan_catalog_cutover_revision"])
+	if rawVersion := state.AsInt(planning["plan_catalog_discovery_version"]); rawVersion != 0 {
+		version, valid := ParseDiscoveryVersion(rawVersion)
+		if !valid {
+			return settings, []Problem{{Code: "catalog_discovery_version_invalid", Message: fmt.Sprintf("plan catalog discovery version %d is invalid", rawVersion), Path: state.ConfigPath, Severity: SeverityError}}
+		}
+		settings.DiscoveryVersion = version
+	}
+	ownership := state.Map(planning["plan_catalog_ownership"])
+	settings.ExcludedRoots = stringValues(ownership["excluded_roots"])
 	portfolio := state.Map(config["portfolio"])
 	settings.RepositoryID = state.AsString(portfolio["member_repository_id"])
 	problems := []Problem{}
@@ -88,18 +151,159 @@ func LoadRepositorySettings(root string) (RepositorySettings, []Problem) {
 	if settings.Mode == ModeMixed && settings.CutoverRevision == "" {
 		problems = append(problems, Problem{Code: "mixed_cutover_revision_missing", Message: "mixed catalog mode requires plan_catalog_cutover_revision", Path: state.ConfigPath, Severity: SeverityError, Remediation: "record the exact pre-cutover Git revision that contains the frozen register and grandfathered plans"})
 	}
+	problems = append(problems, validateExcludedRoots(settings.ExcludedRoots)...)
+	sort.Strings(settings.ExcludedRoots)
+	settings.PolicyDigest = settings.DiscoveryPolicy(false).Digest()
+	SortProblems(problems)
 	return settings, problems
 }
 
-func LoadRepositorySnapshot(root string) (RepositorySnapshot, error) {
-	settings, settingsProblems := LoadRepositorySettings(root)
-	discovery, err := Discover(root, settings.Mode, settings.RepositoryID)
-	if err != nil {
-		return RepositorySnapshot{}, err
+func stringValues(value any) []string {
+	items, ok := value.([]any)
+	if !ok {
+		return []string{}
 	}
-	candidates, err := Enumerate(root)
-	if err != nil {
-		return RepositorySnapshot{}, err
+	result := make([]string, 0, len(items))
+	for _, item := range items {
+		if text, ok := item.(string); ok {
+			result = append(result, text)
+		}
+	}
+	return result
+}
+
+func validateExcludedRoots(roots []string) []Problem {
+	problems := []Problem{}
+	portable := map[string]string{}
+	for _, root := range roots {
+		code, reason := validateExcludedRoot(root)
+		if code != "" {
+			problems = append(problems, Problem{Code: code, Message: reason, Path: state.ConfigPath, Severity: SeverityError, Remediation: "use a unique slash-normalized repository-relative directory ending in /"})
+			continue
+		}
+		key := cases.Fold().String(norm.NFC.String(root))
+		if prior, exists := portable[key]; exists {
+			problems = append(problems, Problem{Code: "excluded_root_portable_collision", Message: fmt.Sprintf("excluded roots %q and %q collide under portable path comparison", prior, root), Path: state.ConfigPath, Severity: SeverityError, Remediation: "keep one portable spelling"})
+			continue
+		}
+		portable[key] = root
+	}
+	keys := make([]string, 0, len(portable))
+	for key := range portable {
+		keys = append(keys, key)
+	}
+	sort.Strings(keys)
+	for i, left := range keys {
+		for _, right := range keys[i+1:] {
+			if strings.HasPrefix(right, left) {
+				problems = append(problems, Problem{Code: "excluded_roots_overlap", Message: fmt.Sprintf("excluded roots %q and %q overlap", portable[left], portable[right]), Path: state.ConfigPath, Severity: SeverityError, Remediation: "retain only the shallowest intended exclusion"})
+			}
+		}
+	}
+	return problems
+}
+
+func validateExcludedRoot(root string) (string, string) {
+	if root == "" || strings.TrimSpace(root) != root || !strings.HasSuffix(root, "/") {
+		return "excluded_root_invalid", fmt.Sprintf("excluded root %q must be non-empty, trimmed, and end in /", root)
+	}
+	if strings.HasPrefix(root, "/") || strings.Contains(root, "\\") || windowsDriveAbsolute(root) {
+		return "excluded_root_invalid", fmt.Sprintf("excluded root %q must be slash-normalized and repository-relative", root)
+	}
+	if strings.ContainsAny(root, "*?[]{}") {
+		return "excluded_root_glob", fmt.Sprintf("excluded root %q must not contain glob syntax", root)
+	}
+	segments := strings.Split(strings.TrimSuffix(root, "/"), "/")
+	for _, segment := range segments {
+		if segment == "" || segment == "." || segment == ".." {
+			return "excluded_root_escape", fmt.Sprintf("excluded root %q contains an empty or escaping segment", root)
+		}
+		for _, char := range segment {
+			if unicode.IsControl(char) {
+				return "excluded_root_invalid", fmt.Sprintf("excluded root %q contains control characters", root)
+			}
+		}
+	}
+	if norm.NFC.String(root) != root {
+		return "excluded_root_not_normalized", fmt.Sprintf("excluded root %q is not Unicode NFC-normalized", root)
+	}
+	return "", ""
+}
+
+func windowsDriveAbsolute(path string) bool {
+	return len(path) >= 3 && ((path[0] >= 'A' && path[0] <= 'Z') || (path[0] >= 'a' && path[0] <= 'z')) && path[1] == ':' && path[2] == '/'
+}
+
+func LoadRepositorySnapshot(root string) (RepositorySnapshot, error) {
+	return LoadRepositorySnapshotWithOptions(root, SnapshotOptions{})
+}
+
+func LoadRepositorySnapshotWithOptions(root string, options SnapshotOptions) (RepositorySnapshot, error) {
+	configuredSettings, settingsProblems := LoadRepositorySettings(root)
+	settings := configuredSettings
+	// Canonical readiness is defined by the discovery-v2 contract. Treat a
+	// target-mode-only request as the complete prospective v2 lens rather than
+	// emitting a schema-v2 wrapper around discovery-v1 evidence.
+	if options.TargetCatalogMode == ModeCanonical && options.TargetDiscoveryVersion == 0 {
+		options.TargetDiscoveryVersion = DiscoveryV2
+	}
+	if options.TargetDiscoveryVersion != 0 {
+		settings.DiscoveryVersion = options.TargetDiscoveryVersion
+		settings.PolicyDigest = settings.DiscoveryPolicy(false).Digest()
+	}
+	if options.TargetCatalogMode != "" {
+		settings.Mode = options.TargetCatalogMode
+	}
+	targeted := settings.DiscoveryVersion != configuredSettings.DiscoveryVersion || settings.Mode != configuredSettings.Mode
+	if settings.Mode != ModeLegacy && settings.RepositoryID == "" && !problemCodePresent(settingsProblems, "repository_identity_missing") {
+		settingsProblems = append(settingsProblems, Problem{Code: "repository_identity_missing", Message: "mixed and canonical catalog modes require portfolio.member_repository_id", Path: state.ConfigPath, Severity: SeverityError, Remediation: "configure the stable repository identity before adopting semantic plan IDs"})
+	}
+	if options.IncludeUntracked && settings.DiscoveryVersion != DiscoveryV2 {
+		return RepositorySnapshot{}, fmt.Errorf("include_untracked_requires_discovery_v2: use --target-discovery-version 2 or activate discovery v2")
+	}
+	var discovery Discovery
+	var candidates []Candidate
+	complete := true
+	policyDigest := settings.PolicyDigest
+	candidateSetDigest := ""
+	if settings.DiscoveryVersion == DiscoveryV2 {
+		classification, err := ClassifyLocalIndex(root, settings, settings.Mode, settings.RepositoryID)
+		if err != nil {
+			return RepositorySnapshot{}, err
+		}
+		discovery = classification.Discovery
+		candidates = append(candidates, classification.Candidates...)
+		complete = classification.Complete
+		policyDigest = classification.PolicyDigest
+		candidateSetDigest = classification.CandidateSetDigest
+	} else {
+		var err error
+		discovery, err = Discover(root, settings.Mode, settings.RepositoryID)
+		if err != nil {
+			return RepositorySnapshot{}, err
+		}
+		candidates, err = Enumerate(root)
+		if err != nil {
+			return RepositorySnapshot{}, err
+		}
+	}
+	authoritativeCandidates := make([]Candidate, 0, len(candidates))
+	for _, candidate := range candidates {
+		if settings.DiscoveryVersion != DiscoveryV2 || candidate.Ownership == OwnershipOwned {
+			authoritativeCandidates = append(authoritativeCandidates, candidate)
+		}
+	}
+	previewCandidates := []Candidate{}
+	previewRecords := []Record{}
+	previewProblems := []Problem{}
+	if options.IncludeUntracked {
+		preview, err := ClassifyUntrackedPreview(root, settings, settings.Mode, settings.RepositoryID)
+		if err != nil {
+			return RepositorySnapshot{}, err
+		}
+		previewCandidates = preview.Candidates
+		previewRecords = preview.Discovery.Records
+		previewProblems = ValidatePreviewContext(discovery.Records, candidates, preview, settings.Mode, settings.RepositoryID)
 	}
 	entries := []LegacyEntry{}
 	legacyProblems := []Problem{}
@@ -114,7 +318,7 @@ func LoadRepositorySnapshot(root string) (RepositorySnapshot, error) {
 		}
 		legacyProblems = append(legacyProblems, Problem{Code: code, Message: readErr.Error(), Path: LegacyRegisterPath, Severity: SeverityError, Remediation: remediation})
 	}
-	reconciliation := ReconcileLegacy(discovery.Records, candidates, entries)
+	reconciliation := ReconcileLegacy(discovery.Records, authoritativeCandidates, entries)
 	problems := append([]Problem{}, settingsProblems...)
 	problems = append(problems, discovery.Problems...)
 	problems = append(problems, legacyProblems...)
@@ -129,7 +333,16 @@ func LoadRepositorySnapshot(root string) (RepositorySnapshot, error) {
 			if record.Metadata != nil {
 				continue
 			}
-			if len(reconciliation.ByCanonicalPath[record.Path]) > 0 && baselinePaths[record.Path] {
+			if len(reconciliation.ByCanonicalPath[record.Path]) > 0 && baselinePaths[record.Path] != "" {
+				current, currentErr := readRegularSource(root, record.Path)
+				if currentErr == nil && sha256Text(current) == baselinePaths[record.Path] {
+					continue
+				}
+				message := "grandfathered filename-only plan bytes differ from the exact mixed-mode cutover blob"
+				if currentErr != nil {
+					message = currentErr.Error()
+				}
+				problems = append(problems, Problem{Code: "mixed_grandfathered_plan_modified", Message: message, Path: record.Path, Severity: SeverityError, Remediation: "restore the exact cutover bytes or add reviewed metadata through migration"})
 				continue
 			}
 			problems = append(problems, Problem{Code: "mixed_new_plan_metadata_missing", Message: "mixed mode requires metadata for a formal plan without grandfathered register evidence", Path: record.Path, Severity: SeverityError, Remediation: "author the new plan with canonical metadata or complete reviewed migration evidence"})
@@ -137,16 +350,34 @@ func LoadRepositorySnapshot(root string) (RepositorySnapshot, error) {
 	}
 	SortProblems(problems)
 	return RepositorySnapshot{
-		Settings:       settings,
-		Records:        discovery.Records,
-		LegacyEntries:  entries,
-		Reconciliation: reconciliation,
-		Problems:       problems,
+		Settings:           settings,
+		ConfiguredSettings: configuredSettings,
+		Targeted:           targeted,
+		Complete:           complete,
+		Candidates:         candidates,
+		PreviewCandidates:  previewCandidates,
+		PreviewRecords:     previewRecords,
+		PreviewProblems:    previewProblems,
+		PolicyDigest:       policyDigest,
+		CandidateSetDigest: candidateSetDigest,
+		Records:            discovery.Records,
+		LegacyEntries:      entries,
+		Reconciliation:     reconciliation,
+		Problems:           problems,
 	}, nil
 }
 
-func loadMixedBaseline(root, revision string) (map[string]bool, []Problem) {
-	paths := map[string]bool{}
+func problemCodePresent(problems []Problem, code string) bool {
+	for _, problem := range problems {
+		if problem.Code == code {
+			return true
+		}
+	}
+	return false
+}
+
+func loadMixedBaseline(root, revision string) (map[string]string, []Problem) {
+	paths := map[string]string{}
 	if revision == "" {
 		return paths, nil
 	}
@@ -196,7 +427,11 @@ func loadMixedBaseline(root, revision string) (map[string]bool, []Problem) {
 	for _, entry := range entries {
 		for _, path := range entry.CanonicalDocs {
 			if gitRevisionHasRegularFile(root, revision, path) {
-				paths[path] = true
+				data, readErr := gitBytes(root, "show", revision+":"+path)
+				if readErr != nil {
+					return paths, []Problem{{Code: "mixed_cutover_revision_unavailable", Message: readErr.Error(), Path: path, Severity: SeverityError, Remediation: "retain the exact cutover plan blob while mixed compatibility is active"}}
+				}
+				paths[path] = sha256Text(data)
 			}
 		}
 	}
@@ -248,7 +483,22 @@ func BuildView(snapshot RepositorySnapshot) View {
 		}
 		return rows[i].CanonicalPath < rows[j].CanonicalPath
 	})
-	return View{SchemaVersion: 1, Mode: snapshot.Settings.Mode, RepositoryID: snapshot.Settings.RepositoryID, Rows: rows, Problems: append([]Problem{}, snapshot.Problems...)}
+	view := View{SchemaVersion: 1, Mode: snapshot.Settings.Mode, RepositoryID: snapshot.Settings.RepositoryID, Rows: rows, Problems: append([]Problem{}, snapshot.Problems...)}
+	if snapshot.Settings.DiscoveryVersion == DiscoveryV2 || snapshot.Targeted {
+		complete := snapshot.Complete
+		view.SchemaVersion = 2
+		view.DiscoveryVersion = snapshot.Settings.DiscoveryVersion
+		view.ConfiguredDiscoveryVersion = snapshot.ConfiguredSettings.DiscoveryVersion
+		view.ConfiguredCatalogMode = snapshot.ConfiguredSettings.Mode
+		view.TargetCatalogMode = snapshot.Settings.Mode
+		view.PolicyDigest = snapshot.PolicyDigest
+		view.CandidateSetDigest = snapshot.CandidateSetDigest
+		view.Complete = &complete
+		view.Candidates = append([]Candidate{}, snapshot.Candidates...)
+		view.PreviewCandidates = append([]Candidate{}, snapshot.PreviewCandidates...)
+		view.PreviewProblems = append([]Problem{}, snapshot.PreviewProblems...)
+	}
+	return view
 }
 
 // DisplayTitle preserves historical document headings while giving every catalog
@@ -270,6 +520,10 @@ func WriteViewJSON(writer io.Writer, view View) error {
 
 func WriteViewText(writer io.Writer, view View) {
 	fmt.Fprintf(writer, "Plans (%s mode): %d\n", view.Mode, len(view.Rows))
+	if view.SchemaVersion >= 2 {
+		owned, excluded, blocked, hard := candidateOwnershipCounts(view.Candidates)
+		fmt.Fprintf(writer, "Discovery v%d (configured v%d); target mode=%s; complete=%t; candidates included=%d excluded=%d blocked=%d unowned=%d preview=%d.\n", view.DiscoveryVersion, view.ConfiguredDiscoveryVersion, view.TargetCatalogMode, view.Complete != nil && *view.Complete, owned, excluded, blocked, hard, len(view.PreviewCandidates))
+	}
 	for _, row := range view.Rows {
 		family := "-"
 		if row.Family != "" {
@@ -287,4 +541,20 @@ func WriteViewText(writer io.Writer, view View) {
 			fmt.Fprintf(writer, "- %s %s: %s%s\n", problem.Severity, problem.Code, problem.Message, location)
 		}
 	}
+}
+
+func candidateOwnershipCounts(candidates []Candidate) (owned, excluded, blocked, hard int) {
+	for _, candidate := range candidates {
+		switch candidate.Ownership {
+		case OwnershipOwned:
+			owned++
+		case OwnershipExcluded:
+			excluded++
+		case OwnershipProspectiveBlocked:
+			blocked++
+		case OwnershipHardUnowned:
+			hard++
+		}
+	}
+	return
 }
