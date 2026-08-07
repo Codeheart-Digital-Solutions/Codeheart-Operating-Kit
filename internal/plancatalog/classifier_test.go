@@ -365,7 +365,7 @@ func TestIndexFallbackIgnoresReplacementObjects(t *testing.T) {
 	if err := os.WriteFile(replacementPath, []byte("# Replacement without plan metadata\n"), 0o644); err != nil {
 		t.Fatal(err)
 	}
-	replacementOID := runGitTest(t, root, "hash-object", "-w", "--", replacementPath)
+	replacementOID := runGitTest(t, root, "-c", "core.autocrlf=false", "hash-object", "-w", "--", replacementPath)
 	runGitTest(t, root, "replace", originalOID, replacementOID)
 	if err := os.Remove(filepath.Join(root, filepath.FromSlash(name))); err != nil {
 		t.Fatal(err)

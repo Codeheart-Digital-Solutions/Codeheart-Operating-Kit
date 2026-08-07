@@ -1,4 +1,4 @@
-Last updated: 2026-08-07T01:02:48Z (UTC)
+Last updated: 2026-08-07T01:16:54Z (UTC)
 Created: 2026-08-06
 
 # Ownership-Aware Repository-Wide Plan Catalog Discovery Execution Log
@@ -367,6 +367,10 @@ release-manifest, and release-asset validators executed again over the EP-08 att
   recorded above.
 - Remaining gate: commit and normally push this checkpoint, then require the Ubuntu, macOS, and
   real-Windows GitHub jobs to pass on that same revision before accepting EP-07 and starting EP-08.
+- First pushed run `31137100740` passed Ubuntu and macOS but exposed one Windows-only test-harness
+  defect: the replacement-object fixture captured Git's `core.autocrlf` warning together with the
+  object ID. The remediation pins `core.autocrlf=false` only for that exact `hash-object` fixture
+  command, preserving tested runtime behavior. A new exact-revision platform run is required.
 
 No feature semantics were weakened to satisfy the fixture or scale gates. The only scope deviation
 is the required content-graph parity refresh, which closes the EP-06 managed-resource drift at the
