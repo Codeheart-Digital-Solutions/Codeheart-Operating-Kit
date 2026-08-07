@@ -1,6 +1,7 @@
-Last updated: 2026-08-07T01:39:50Z (UTC)
+Last updated: 2026-08-07T03:10:13Z (UTC)
 Created: 2026-08-06
-Status: active
+Status: completed
+Completed: 2026-08-07
 Execution log: ownership-aware-plan-catalog-discovery_execution_log.md
 
 # Document Header
@@ -1240,15 +1241,15 @@ force or protection bypass.
 
 ### C) Acceptance Criteria And Checklist
 
-- [ ] Version choice and every changed release path are justified by current doctrine and recorded.
-- [ ] Git identity is Andreas Beer / andreas.beer@codeheart.ai; branch/worktree ownership is
+- [x] Version choice and every changed release path are justified by current doctrine and recorded.
+- [x] Git identity is Andreas Beer / andreas.beer@codeheart.ai; branch/worktree ownership is
   unambiguous; no transaction or concurrent overlap exists.
-- [ ] Public-core, Markdown, schemas, content identity, Go, Python, installers, upgrade/rollback,
+- [x] Public-core, Markdown, schemas, content identity, Go, Python, installers, upgrade/rollback,
   supported-platform, release-contract, and double-build reproducibility gates pass.
-- [ ] Protected PR/check/merge completes normally; the validated release commit is on main.
-- [ ] Tag and every public asset are published without force; external catalog and sidecar hashes
+- [x] Protected PR/check/merge completes normally; the validated release commit is on main.
+- [x] Tag and every public asset are published without force; external catalog and sidecar hashes
   bind archive, pack manifest, payload checksums, content identity, binary digest, and version.
-- [ ] The published channel resolves the new version and supports the normal verified consumer
+- [x] The published channel resolves the new version and supports the normal verified consumer
   upgrade used by EP-10.
 
 ### D) Recovery And Stop Boundary
@@ -1285,17 +1286,17 @@ released version.
 
 ### C) Acceptance Criteria And Checklist
 
-- [ ] HQ worktree/branch is isolated, based on current clean main, correctly owned, and free of
+- [x] HQ worktree/branch is isolated, based on current clean main, correctly owned, and free of
   transaction or managed-path overlap.
-- [ ] `codeheart-operating-kit --version` reports the EP-09 published version and
+- [x] `codeheart-operating-kit --version` reports the EP-09 published version and
   `codeheart-operating-kit check <HQ>` succeeds.
-- [ ] Lock version/provenance, config bytes, managed resources, and installed CLI agree; existing HQ
+- [x] Lock version/provenance, config bytes, managed resources, and installed CLI agree; existing HQ
   config remains discovery v1 unless it was already explicitly otherwise.
-- [ ] No HQ plan metadata, catalog mode, cutover revision, discovery activation, portfolio cache,
+- [x] No HQ plan metadata, catalog mode, cutover revision, discovery activation, portfolio cache,
   or unrelated consumer file is changed by installation.
-- [ ] The smallest local plan validation confirms the recognized set/semantics remain v1 and
+- [x] The smallest local plan validation confirms the recognized set/semantics remain v1 and
   understood; status contains only reviewed Kit installation paths.
-- [ ] Explicit HQ commit/push and protected PR/merge complete normally; final HQ main contains and
+- [x] Explicit HQ commit/push and protected PR/merge complete normally; final HQ main contains and
   validates the released Kit.
 
 ### D) Recovery And Stop Boundary
@@ -1359,3 +1360,11 @@ never hand-edit managed files, force history, or resume the separate HQ catalog 
   publication, and isolated protected Codeheart-HQ Kit upgrade/validation workflow. EP-09 and EP-10
   supersede the earlier release/HQ stop boundaries. Force operations, policy bypass, destructive
   cleanup, and HQ semantic catalog migration/activation remain excluded.
+- 2026-08-07: Completed EP-01 through EP-10. Producer PR `#7` merged validated release candidate
+  `0054db29c703d20acc4792dc4d47c3feda4833a8`; tag and release `v0.1.25` published 16 verified
+  assets; corrected live release validation run `31142180704` passed all Ubuntu, macOS, Windows,
+  and public-installer jobs. Codeheart-HQ PR `#3` merged installation checkpoint
+  `079da7c2ad012d02dce9cb9ea6ac378b8dbb5e43`; HQ main at
+  `8c8853a32f3212569d7314455e6f0169f431ca08` reports Kit `0.1.25`, current installed state, and
+  unchanged discovery-v1 legacy catalog semantics. The separate HQ metadata migration,
+  discovery-v2 activation, and portfolio-v2 cutover remain deferred.
