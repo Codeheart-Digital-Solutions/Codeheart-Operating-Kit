@@ -53,6 +53,7 @@
         "catalog_sha256": { "type": "string", "pattern": "^[a-fA-F0-9]{64}$" },
         "archive_sha256": { "type": "string", "pattern": "^[a-fA-F0-9]{64}$" },
         "pack_manifest_sha256": { "type": "string", "pattern": "^[a-fA-F0-9]{64}$" },
+        "content_manifest_sha256": { "type": "string", "pattern": "^[a-fA-F0-9]{64}$" },
         "binary_sha256": { "type": "string", "pattern": "^[a-fA-F0-9]{64}$" },
         "verified_at": { "type": "string", "format": "date-time" }
       }

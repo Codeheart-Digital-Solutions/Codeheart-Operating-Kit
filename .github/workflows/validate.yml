@@ -15,6 +15,8 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-go@v5
         with:
           go-version-file: go.mod
@@ -33,6 +35,8 @@ jobs:
       - run: python -m pip install --upgrade pip setuptools pytest
       - run: python -m pip install -e .
       - run: go test ./...
+      - name: Validate guarded legacy lock-v1 upgrade transactions
+        run: go test ./internal/commands -run '^(TestLegacyV1Upgrade|TestCurrentLockV2)' -count=1
       - name: Validate plan catalog, migration, portfolio overlays, and grouped CLI behavior
         run: go test ./internal/plancatalog ./internal/portfolio ./internal/commands ./internal/cli
       - name: Validate installed plan routes, schemas, and packaged resources
@@ -92,12 +96,19 @@ jobs:
         run: |
           set -euo pipefail
           VERSION="${{ steps.package-version.outputs.version }}"
-          OLD_VERSION="0.1.24"
+          OLD_VERSION="0.1.25"
           OLD_HOME="$RUNNER_TEMP/codeheart-ok-old"
+          OLD_SOURCE="$RUNNER_TEMP/codeheart-ok-source-$OLD_VERSION"
+          OLD_ARCHIVE="$RUNNER_TEMP/codeheart-ok-source-$OLD_VERSION.tar"
           mkdir -p "$OLD_HOME/bin"
-          go build -trimpath -buildvcs=false \
-            -ldflags "-s -w -buildid= -X github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/internal/version.Version=$OLD_VERSION" \
-            -o "$OLD_HOME/bin/codeheart-operating-kit" ./cmd/codeheart-operating-kit
+          mkdir -p "$OLD_SOURCE"
+          git archive --format=tar --output="$OLD_ARCHIVE" "v$OLD_VERSION"
+          tar -xf "$OLD_ARCHIVE" -C "$OLD_SOURCE"
+          (
+            cd "$OLD_SOURCE"
+            go build -trimpath -buildvcs=false -ldflags "-s -w -buildid=" \
+              -o "$OLD_HOME/bin/codeheart-operating-kit" ./cmd/codeheart-operating-kit
+          )
           "$OLD_HOME/bin/codeheart-operating-kit" init "$RUNNER_TEMP/upgrade-consumer" \
             --project-name Upgrade-Smoke --json > "$RUNNER_TEMP/upgrade-init.json"
           shasum -a 256 "$OLD_HOME/bin/codeheart-operating-kit" \
@@ -132,6 +143,8 @@ jobs:
       - run: python -m pip install --upgrade pip setuptools pytest
       - run: python -m pip install -e .
       - run: go test ./...
+      - name: Validate guarded legacy lock-v1 upgrade transactions
+        run: go test ./internal/commands -run '^(TestLegacyV1Upgrade|TestCurrentLockV2)' -count=1
       - name: Validate plan catalog, migration, portfolio overlays, and grouped CLI behavior
         run: go test ./internal/plancatalog ./internal/portfolio ./internal/commands ./internal/cli
       - name: Validate the repository-scale discovery classifier twice
@@ -147,6 +160,8 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-go@v5
         with:
           go-version-file: go.mod
@@ -161,6 +176,8 @@ jobs:
       - run: python -m pip install --upgrade pip setuptools pytest
       - run: python -m pip install -e .
       - run: go test ./...
+      - name: Validate guarded legacy lock-v1 upgrade transactions
+        run: go test ./internal/commands -run '^(TestLegacyV1Upgrade|TestCurrentLockV2)' -count=1
       - name: Validate plan catalog, migration, local Git overlays, and grouped CLI behavior
         run: go test ./internal/plancatalog ./internal/portfolio ./internal/commands ./internal/cli
       - name: Validate installed plan routes, schemas, and packaged resources
@@ -241,12 +258,21 @@ jobs:
         shell: pwsh
         run: |
           $Version = "${{ steps.package-version.outputs.version }}"
-          $OldVersion = "0.1.24"
+          $OldVersion = "0.1.25"
           $OldHome = "$env:RUNNER_TEMP\codeheart-ok-old"
+          $OldSource = "$env:RUNNER_TEMP\codeheart-ok-source-$OldVersion"
+          $OldArchive = "$env:RUNNER_TEMP\codeheart-ok-source-$OldVersion.tar"
           New-Item -ItemType Directory -Force -Path "$OldHome\bin" | Out-Null
-          go build -trimpath -buildvcs=false `
-            -ldflags "-s -w -buildid= -X github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/internal/version.Version=$OldVersion" `
-            -o "$OldHome\bin\codeheart-operating-kit.exe" ./cmd/codeheart-operating-kit
+          New-Item -ItemType Directory -Force -Path $OldSource | Out-Null
+          git archive --format=tar --output=$OldArchive "v$OldVersion"
+          tar -xf $OldArchive -C $OldSource
+          Push-Location $OldSource
+          try {
+            go build -trimpath -buildvcs=false -ldflags "-s -w -buildid=" `
+              -o "$OldHome\bin\codeheart-operating-kit.exe" ./cmd/codeheart-operating-kit
+          } finally {
+            Pop-Location
+          }
           & "$OldHome\bin\codeheart-operating-kit.exe" init "$env:RUNNER_TEMP\upgrade-consumer" `
             --project-name Upgrade-Smoke --json | Out-File "$env:RUNNER_TEMP\upgrade-init.json"
           $BinaryBefore = (Get-FileHash -Algorithm SHA256 "$OldHome\bin\codeheart-operating-kit.exe").Hash

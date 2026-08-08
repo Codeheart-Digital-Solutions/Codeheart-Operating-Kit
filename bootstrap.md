@@ -1,4 +1,4 @@
-Last updated: 2026-08-07T01:39:50Z (UTC)
+Last updated: 2026-08-08T16:00:11Z (UTC)
 
 # Bootstrap Codeheart Operating Kit
 
@@ -8,19 +8,19 @@ preinstalled Codeheart skills.
 Pinned release:
 
 ```text
-Version: v0.1.25
-Release URL: https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/tag/v0.1.25
+Version: v0.1.26
+Release URL: https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/tag/v0.1.26
 ```
 
 ## Install The CLI
 
 macOS installs into a user-level Operating Kit folder. The installer verifies and installs the
 self-contained platform release pack named
-`codeheart-operating-kit-0.1.25-macos-universal.zip`; the pack contains
+`codeheart-operating-kit-0.1.26-macos-universal.zip`; the pack contains
 `bin/codeheart-operating-kit`.
 
 ```sh
-curl -fsSLO https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.25/install.sh
+curl -fsSLO https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.26/install.sh
 bash install.sh
 ```
 
@@ -32,11 +32,11 @@ $HOME/.codeheart/operating-kit/bin/codeheart-operating-kit
 
 Windows installs into the current user's local application data folder. The installer verifies and
 installs the self-contained platform release pack named
-`codeheart-operating-kit-0.1.25-windows-x64.zip`; the pack contains
+`codeheart-operating-kit-0.1.26-windows-x64.zip`; the pack contains
 `bin/codeheart-operating-kit.exe` and the installer writes the `.cmd` shim.
 
 ```powershell
-Invoke-WebRequest -Uri "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.25/install.ps1" -OutFile install.ps1
+Invoke-WebRequest -Uri "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.26/install.ps1" -OutFile install.ps1
 .\install.ps1
 ```
 
@@ -70,9 +70,13 @@ Only an explicit approved version change uses `--yes`:
 codeheart-operating-kit upgrade --version <Version> --yes <Project-Folder>
 ```
 
-The staged new binary revalidates the handoff, replaces the installed binary, reconciles repository
-state, and runs the complete check. A failed binary handoff or reconciliation restores the prior
-binary and preserves the prior repository state.
+For a valid legacy lock-v1 installation, dry-run also previews the lock schema migration and
+version change without writing either one. Apply accepts that path only when the config and lock
+are schema-valid, every lock-declared managed file is pristine and unambiguous, the target is a
+strictly newer verified release, and no transaction or recovery marker is active. The staged new
+binary binds the exact source lock, replaces the installed binary, and performs the schema
+migration, content reconciliation, lock-last commit, and post-check in the normal transaction. A
+failed handoff or reconciliation rolls back repository state and restores the prior binary.
 
 ## Agent Contract
 
@@ -97,7 +101,7 @@ Follow this contract exactly during first-run setup:
 - Do not run or introduce `update-check` during onboarding unless the user separately requests a
   version check.
 
-For `v0.1.25`, `codeheart-operating-kit onboard` is an agent-guided script and setup-plan renderer.
+For `v0.1.26`, `codeheart-operating-kit onboard` is an agent-guided script and setup-plan renderer.
 It is not a terminal stdin prompt loop. Show rendered prompts in Codex chat, collect user decisions
 in chat, and rerun the command with explicit values only when applying setup.
 

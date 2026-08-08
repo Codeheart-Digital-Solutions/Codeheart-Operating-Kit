@@ -42,7 +42,9 @@ def test_consumer_route_selects_repair_without_turning_sync_into_upgrade(tmp_pat
     ).read_text(encoding="utf-8")
     agents = (consumer / "AGENTS.md").read_text(encoding="utf-8")
 
-    assert "Compatible drift, partial installation, or lock-v1 migration" in runbook
+    assert "Compatible drift, partial installation, or same-version lock-v1 migration" in runbook
+    assert "may atomically migrate a pristine compatible lock v1 to v2" in runbook
+    assert "upgrade_requires_clean_legacy_v1_installation" in runbook
     assert "repair --dry-run" in runbook
     assert "sync" in runbook and "preserves the installed kit version" in runbook
     assert "Only command that may change kit version" in runbook

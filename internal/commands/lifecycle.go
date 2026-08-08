@@ -14,17 +14,19 @@ import (
 )
 
 type lifecycleRequest struct {
-	command       string
-	root          string
-	now           time.Time
-	dryRun        bool
-	observed      state.Observed
-	graph         state.Graph
-	desiredLock   map[string]any
-	desiredConfig map[string]any
-	extraFiles    map[string][]byte
-	ensureIgnore  bool
-	expectedAfter []state.Classification
+	command        string
+	root           string
+	now            time.Time
+	dryRun         bool
+	observed       state.Observed
+	graph          state.Graph
+	desiredLock    map[string]any
+	desiredConfig  map[string]any
+	extraFiles     map[string][]byte
+	ensureIgnore   bool
+	expectedAfter  []state.Classification
+	authorityCheck func() ([]reconcile.Blocker, error)
+	hook           reconcile.PhaseHook
 }
 
 func runLifecycle(request lifecycleRequest) (reconcile.Result, error) {
@@ -45,7 +47,7 @@ func runLifecycle(request lifecycleRequest) (reconcile.Result, error) {
 	if request.dryRun {
 		return reconcile.Preview(plan), nil
 	}
-	return reconcile.Apply(plan, reconcile.ApplyOptions{Now: request.now})
+	return reconcile.Apply(plan, reconcile.ApplyOptions{Now: request.now, AuthorityCheck: request.authorityCheck, Hook: request.hook})
 }
 
 func blockedLifecycle(command string, observed state.Observed, code, message, remediation, retry string) reconcile.Result {

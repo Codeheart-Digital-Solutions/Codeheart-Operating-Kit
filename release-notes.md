@@ -1,6 +1,59 @@
-Last updated: 2026-08-07T01:57:28Z (UTC)
+Last updated: 2026-08-08T16:00:11Z (UTC)
 
 # Codeheart Operating Kit Release Notes
+
+## v0.1.26 Release Notes
+
+`v0.1.26` repairs the legacy lifecycle handoff so a valid schema-v1 installation can reach a
+newer release through the documented upgrade command without manual lock editing.
+
+### Included
+
+- `upgrade --dry-run` accepts a compatible lock-v1 installation only after strict config and lock
+  validation, exact profile/component checks, and byte-for-byte verification of every
+  lock-declared managed file. It previews the lock 1-to-2 migration, target version, verified
+  release evidence, and complete reconciliation plan without changing repository or binary bytes.
+- `upgrade --yes` binds the handoff to the exact previous lock schema and SHA-256. The staged target
+  binary rechecks that authority and strict forward direction before using the normal staged,
+  lock-last lifecycle transaction to migrate the lock and reconcile content.
+- Successful migration records lock schema 2, the target Kit version, verified catalog/archive/
+  pack/content/binary provenance, generation 1 with previous generation 0, and the real upgrade
+  transaction ID. Existing config, repository guidance outside the managed block, plans, memory,
+  local-user state, and create-once surfaces remain unchanged.
+- Failed target reconciliation restores the previous binary and rolls repository changes back.
+  Incomplete rollback remains recovery-required evidence rather than a reported success.
+- Current lock-v2 forward upgrades keep their existing behavior, including the released v0.1.25
+  handoff wire on macOS and Windows. `repair` and `sync` still cannot authorize or perform a
+  version change.
+
+### Guarded Compatibility
+
+- The migration path applies only to a schema-valid compatible lock v1 with a valid schema-v1
+  consumer config, the supported profile/component identity, pristine regular lock-declared
+  managed files, an unambiguous generated-surface declaration, and exactly one managed AGENTS
+  section.
+- Malformed or future locks, invalid config, unsafe or duplicate declarations, missing/modified/
+  symlinked managed files, target-added managed-path overlaps, equal or backward targets, changed
+  handoff authority, active transactions, and recovery-required state fail closed before mutation.
+- No schema is relabeled in place and no preprocessing command is introduced. Manual lock editing
+  is neither required nor supported.
+
+### Consumer Impact And Release Boundary
+
+- `instruction-only change`: managed lifecycle and bootstrap guidance documents the guarded
+  lock-v1 preview, approval, transactional migration, and recovery route.
+- `consumer migration required`: legacy consumers explicitly preview and approve the normal
+  forward upgrade; the transaction performs the schema migration atomically.
+- `validator-only change` and `security or safety policy change`: both public and hidden reconcile
+  paths verify historical file authority, exact source-lock identity, forward version direction,
+  and the complete release chain.
+- Generic v0.1.19-style fixtures and direct command tests cover mutation-free preview, successful
+  apply, preservation, provenance/generation evidence, rejection, target preconditions, rollback,
+  current lock-v2 compatibility, and repair/sync non-bypass.
+- macOS universal and Windows x64 remain the supported release platforms. Assets remain unsigned
+  and unnotarized under the established HTTPS-plus-SHA-256 internal/prototype boundary; publisher
+  identity attestation does not extend beyond GitHub transport, repository control, and the
+  published digest chain.
 
 ## v0.1.25 Release Notes
 
