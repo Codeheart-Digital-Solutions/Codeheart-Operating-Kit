@@ -28,21 +28,28 @@ type packFixtureOptions struct {
 }
 
 func TestMain(m *testing.M) {
-	if os.Getenv("CODEHEART_RELEASE_TEST_RECONCILE_FAILURE") == "1" {
-		os.Exit(23)
+	if len(os.Args) > 1 && os.Args[1] == "__upgrade-reconcile" {
+		switch os.Getenv("CODEHEART_RELEASE_TEST_RECONCILE_FAILURE") {
+		case "1":
+			os.Exit(23)
+		case "recovery-required":
+			os.Exit(3)
+		default:
+			os.Exit(0)
+		}
 	}
 	os.Exit(m.Run())
 }
 
 func TestCatalogAndPackVerification(t *testing.T) {
 	root := t.TempDir()
-	archive, asset := writePackFixture(t, root, packFixtureOptions{version: "0.1.25", platform: "macos-universal", command: "codeheart-operating-kit", includeBinary: true, reconcileSucceeds: true})
+	archive, asset := writePackFixture(t, root, packFixtureOptions{version: "0.1.26", platform: "macos-universal", command: "codeheart-operating-kit", includeBinary: true, reconcileSucceeds: true})
 	catalogPath := writeCatalogFixture(t, root, asset)
 	catalog, err := LoadCatalog(catalogPath)
 	if err != nil {
 		t.Fatal(err)
 	}
-	selected, err := catalog.Select("0.1.25", "macos-universal")
+	selected, err := catalog.Select("0.1.26", "macos-universal")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -50,7 +57,7 @@ func TestCatalogAndPackVerification(t *testing.T) {
 	if err := FetchAsset(catalog, selected, fetched); err != nil {
 		t.Fatal(err)
 	}
-	verified, err := VerifyPack(fetched, filepath.Join(root, "extract"), selected, VerifyOptions{Version: "0.1.25", Platform: "macos-universal", Command: "codeheart-operating-kit"})
+	verified, err := VerifyPack(fetched, filepath.Join(root, "extract"), selected, VerifyOptions{Version: "0.1.26", Platform: "macos-universal", Command: "codeheart-operating-kit"})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -68,13 +75,13 @@ func TestPackVerificationRejectsInvalidEvidence(t *testing.T) {
 		command  string
 		contains string
 	}{
-		{name: "missing-binary", options: packFixtureOptions{version: "0.1.25", platform: "macos-universal", command: "codeheart-operating-kit"}, version: "0.1.25", platform: "macos-universal", command: "codeheart-operating-kit", contains: "binary checksum"},
-		{name: "payload-checksum", options: packFixtureOptions{version: "0.1.25", platform: "macos-universal", command: "codeheart-operating-kit", includeBinary: true, corruptPayload: true}, version: "0.1.25", platform: "macos-universal", command: "codeheart-operating-kit", contains: "payload checksum"},
-		{name: "wrong-version", options: packFixtureOptions{version: "9.9.9", platform: "macos-universal", command: "codeheart-operating-kit", includeBinary: true}, version: "0.1.25", platform: "macos-universal", command: "codeheart-operating-kit", contains: "pack version"},
-		{name: "wrong-platform", options: packFixtureOptions{version: "0.1.25", platform: "windows-x64", command: "codeheart-operating-kit", includeBinary: true}, version: "0.1.25", platform: "macos-universal", command: "codeheart-operating-kit", contains: "pack platform"},
-		{name: "wrong-command", options: packFixtureOptions{version: "0.1.25", platform: "macos-universal", command: "other", includeBinary: true}, version: "0.1.25", platform: "macos-universal", command: "codeheart-operating-kit", contains: "jsonschema validation"},
-		{name: "traversal", options: packFixtureOptions{version: "0.1.25", platform: "macos-universal", command: "codeheart-operating-kit", includeBinary: true, traversal: true}, version: "0.1.25", platform: "macos-universal", command: "codeheart-operating-kit", contains: "unsafe archive path"},
-		{name: "symlink", options: packFixtureOptions{version: "0.1.25", platform: "macos-universal", command: "codeheart-operating-kit", includeBinary: true, symlink: true}, version: "0.1.25", platform: "macos-universal", command: "codeheart-operating-kit", contains: "symbolic link"},
+		{name: "missing-binary", options: packFixtureOptions{version: "0.1.26", platform: "macos-universal", command: "codeheart-operating-kit"}, version: "0.1.26", platform: "macos-universal", command: "codeheart-operating-kit", contains: "binary checksum"},
+		{name: "payload-checksum", options: packFixtureOptions{version: "0.1.26", platform: "macos-universal", command: "codeheart-operating-kit", includeBinary: true, corruptPayload: true}, version: "0.1.26", platform: "macos-universal", command: "codeheart-operating-kit", contains: "payload checksum"},
+		{name: "wrong-version", options: packFixtureOptions{version: "9.9.9", platform: "macos-universal", command: "codeheart-operating-kit", includeBinary: true}, version: "0.1.26", platform: "macos-universal", command: "codeheart-operating-kit", contains: "pack version"},
+		{name: "wrong-platform", options: packFixtureOptions{version: "0.1.26", platform: "windows-x64", command: "codeheart-operating-kit", includeBinary: true}, version: "0.1.26", platform: "macos-universal", command: "codeheart-operating-kit", contains: "pack platform"},
+		{name: "wrong-command", options: packFixtureOptions{version: "0.1.26", platform: "macos-universal", command: "other", includeBinary: true}, version: "0.1.26", platform: "macos-universal", command: "codeheart-operating-kit", contains: "jsonschema validation"},
+		{name: "traversal", options: packFixtureOptions{version: "0.1.26", platform: "macos-universal", command: "codeheart-operating-kit", includeBinary: true, traversal: true}, version: "0.1.26", platform: "macos-universal", command: "codeheart-operating-kit", contains: "unsafe archive path"},
+		{name: "symlink", options: packFixtureOptions{version: "0.1.26", platform: "macos-universal", command: "codeheart-operating-kit", includeBinary: true, symlink: true}, version: "0.1.26", platform: "macos-universal", command: "codeheart-operating-kit", contains: "symbolic link"},
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
@@ -90,7 +97,7 @@ func TestPackVerificationRejectsInvalidEvidence(t *testing.T) {
 
 func TestCatalogRejectsChecksumMismatchDuplicateAndUnknownFields(t *testing.T) {
 	root := t.TempDir()
-	archive, asset := writePackFixture(t, root, packFixtureOptions{version: "0.1.25", platform: "macos-universal", command: "codeheart-operating-kit", includeBinary: true})
+	archive, asset := writePackFixture(t, root, packFixtureOptions{version: "0.1.26", platform: "macos-universal", command: "codeheart-operating-kit", includeBinary: true})
 	asset.ArchiveSHA256 = strings.Repeat("0", 64)
 	catalogPath := writeCatalogFixture(t, root, asset)
 	catalog, err := LoadCatalog(catalogPath)
@@ -110,12 +117,12 @@ func TestCatalogRejectsChecksumMismatchDuplicateAndUnknownFields(t *testing.T) {
 		t.Fatalf("mismatched catalog version accepted")
 	}
 	catalog.Catalog.Version = asset.Version
-	catalog.Catalog.Assets[0].Name = "../codeheart-operating-kit-0.1.25-macos-universal.zip"
+	catalog.Catalog.Assets[0].Name = "../codeheart-operating-kit-0.1.26-macos-universal.zip"
 	if _, err := catalog.Select(asset.Version, asset.Platform); err == nil {
 		t.Fatalf("unsafe catalog asset name accepted")
 	}
 	invalid := filepath.Join(root, "invalid.json")
-	if err := os.WriteFile(invalid, []byte(`{"schema_version":1,"version":"0.1.25","assets":[],"unexpected":true}`), 0o644); err != nil {
+	if err := os.WriteFile(invalid, []byte(`{"schema_version":1,"version":"0.1.26","assets":[],"unexpected":true}`), 0o644); err != nil {
 		t.Fatal(err)
 	}
 	if _, err := LoadCatalog(invalid); err == nil {
@@ -152,18 +159,27 @@ func TestHandoffTamperingAndFailedReconcileRestorePreviousBinary(t *testing.T) {
 	if err := os.WriteFile(target, []byte("previous binary\n"), 0o755); err != nil {
 		t.Fatal(err)
 	}
-	archive, asset := writePackFixture(t, root, packFixtureOptions{version: "0.1.25", platform: platform, command: "codeheart-operating-kit", includeBinary: true, nativeBinary: true})
-	pack, err := VerifyPack(archive, filepath.Join(root, "extract"), asset, VerifyOptions{Version: "0.1.25", Platform: platform, Command: "codeheart-operating-kit"})
+	archive, asset := writePackFixture(t, root, packFixtureOptions{version: "0.1.26", platform: platform, command: "codeheart-operating-kit", includeBinary: true, nativeBinary: true})
+	pack, err := VerifyPack(archive, filepath.Join(root, "extract"), asset, VerifyOptions{Version: "0.1.26", Platform: platform, Command: "codeheart-operating-kit"})
 	if err != nil {
 		t.Fatal(err)
 	}
 	prepared := PreparedUpgrade{Catalog: LoadedCatalog{Location: "catalog.json", DigestSHA256: strings.Repeat("a", 64)}, Asset: asset, Pack: pack}
-	handoff, err := NewHandoff(prepared, root, target, "0.1.24")
+	lockDir := filepath.Join(root, ".codeheart")
+	if err := os.MkdirAll(lockDir, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	lockPath := filepath.Join(lockDir, "kit.lock.yaml")
+	if err := os.WriteFile(lockPath, []byte("schema_version: 2\n"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	lockSHA := fileDigest(t, lockPath)
+	handoff, err := NewHandoff(prepared, root, target, "0.1.25", 2, lockSHA)
 	if err != nil {
 		t.Fatal(err)
 	}
-	t.Setenv("CODEHEART_RELEASE_TEST_RECONCILE_FAILURE", "1")
-	if err := ApplyHandoff(handoff); err == nil {
+	t.Setenv("CODEHEART_RELEASE_TEST_RECONCILE_FAILURE", "recovery-required")
+	if err := ApplyHandoff(handoff); err == nil || !IsHandoffRecoveryRequired(err) {
 		t.Fatalf("failed reconciliation unexpectedly succeeded")
 	}
 	if data, _ := os.ReadFile(target); string(data) != "previous binary\n" {
@@ -177,12 +193,72 @@ func TestHandoffTamperingAndFailedReconcileRestorePreviousBinary(t *testing.T) {
 	}
 }
 
-func TestVersionDirection(t *testing.T) {
-	if err := RequireForwardUpgrade("0.1.24", "0.1.25"); err != nil {
+func TestReadAndApplyLegacyV025DeferredHandoffWire(t *testing.T) {
+	root := t.TempDir()
+	platform := "macos-universal"
+	targetName := "installed"
+	if runtime.GOOS == "windows" {
+		platform = "windows-x64"
+		targetName += ".exe"
+	}
+	target := filepath.Join(root, targetName)
+	if err := os.WriteFile(target, []byte("previous binary\n"), 0o755); err != nil {
 		t.Fatal(err)
 	}
-	for _, target := range []string{"0.1.24", "0.1.20", "invalid"} {
-		if err := RequireForwardUpgrade("0.1.24", target); err == nil {
+	archive, asset := writePackFixture(t, root, packFixtureOptions{version: "0.1.26", platform: platform, command: "codeheart-operating-kit", includeBinary: true, nativeBinary: true})
+	pack, err := VerifyPack(archive, filepath.Join(root, "legacy-extract"), asset, VerifyOptions{Version: "0.1.26", Platform: platform, Command: "codeheart-operating-kit"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	prepared := PreparedUpgrade{Catalog: LoadedCatalog{Location: "catalog.json", DigestSHA256: strings.Repeat("a", 64)}, Asset: asset, Pack: pack}
+	handoff, err := NewHandoff(prepared, root, target, "0.1.25", 2, strings.Repeat("b", 64))
+	if err != nil {
+		t.Fatal(err)
+	}
+	handoff.PreviousLockSchema = 0
+	handoff.PreviousLockSHA256 = ""
+	stageDir := filepath.Join(root, ".upgrade-handoff-"+handoff.TransactionID)
+	if err := os.MkdirAll(stageDir, 0o700); err != nil {
+		t.Fatal(err)
+	}
+	staged := filepath.Join(stageDir, filepath.Base(target))
+	if err := copyFile(handoff.StagedBinary, staged, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	handoff.StagedBinary = staged
+	handoff.HandoffSHA256 = wireHandoffDigest(handoff)
+	wire := legacyV2Wire(handoff)
+	data, err := json.MarshalIndent(wire, "", "  ")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if strings.Contains(string(data), "previous_lock_schema") || strings.Contains(string(data), "previous_lock_sha256") {
+		t.Fatal("legacy wire unexpectedly contains bound-protocol fields")
+	}
+	handoffPath := filepath.Join(stageDir, "handoff.json")
+	if err := os.WriteFile(handoffPath, append(data, '\n'), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	parsed, err := ReadHandoff(handoffPath)
+	if err != nil || !isLegacyV2Handoff(parsed) || parsed.HandoffSHA256 != handoff.HandoffSHA256 {
+		t.Fatalf("read legacy handoff=%#v err=%v", parsed, err)
+	}
+	t.Setenv("CODEHEART_RELEASE_TEST_RECONCILE_FAILURE", "1")
+	applyErr := ApplyHandoff(parsed)
+	if applyErr == nil || IsHandoffRecoveryRequired(applyErr) {
+		t.Fatalf("legacy handoff reconcile error=%v", applyErr)
+	}
+	if data, _ := os.ReadFile(target); string(data) != "previous binary\n" {
+		t.Fatalf("legacy handoff did not restore previous binary: %q", data)
+	}
+}
+
+func TestVersionDirection(t *testing.T) {
+	if err := RequireForwardUpgrade("0.1.25", "0.1.26"); err != nil {
+		t.Fatal(err)
+	}
+	for _, target := range []string{"0.1.25", "0.1.20", "invalid"} {
+		if err := RequireForwardUpgrade("0.1.25", target); err == nil {
 			t.Fatalf("target %s accepted", target)
 		}
 	}

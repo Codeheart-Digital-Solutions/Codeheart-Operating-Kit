@@ -1,4 +1,4 @@
-Last updated: 2026-07-10T11:29:07Z (UTC)
+Last updated: 2026-08-08T16:00:11Z (UTC)
 
 # Maintain An Operating Kit Installation
 
@@ -12,10 +12,10 @@ prompt.
 | --- | --- | --- |
 | No installation; folder is absent or adoptable | `init --dry-run`, then `init` | Creates lock v2 and preserves existing consumer files. |
 | Diagnose any state | `check` | Read-only; returns one primary state and actionable blockers. |
-| Compatible drift, partial installation, or lock-v1 migration | `repair --dry-run`, then `repair` | Restores the running version; never authorizes a version change. |
+| Compatible drift, partial installation, or same-version lock-v1 migration | `repair --dry-run`, then `repair` | Restores the running version; never authorizes a version change. |
 | Refresh embedded files for the already installed version | `sync --dry-run`, then `sync` | Uses only the running binary and preserves the installed kit version. |
 | User explicitly asks whether a newer release exists | `update-check` | Optional manual lookup for a valid lock-v2 installation; due metadata never triggers it. |
-| User approved a newer release | `upgrade --version <version> --dry-run`, then `upgrade --version <version> --yes` | Only command that may change kit version; verifies catalog-to-binary provenance first. |
+| User approved a newer release | `upgrade --version <version> --dry-run`, then `upgrade --version <version> --yes` | Only command that may change kit version; verifies catalog-to-binary provenance first and may atomically migrate a pristine compatible lock v1 to v2. |
 | Active transaction | `check` and wait | Do not start concurrent lifecycle work. |
 | Dead verified pre-commit transaction | `repair --dry-run`, then `repair` | Stale takeover requires process-liveness and transaction-identity proof. |
 | Recovery required, schema-invalid, or unsupported future state | `check` | Stop; preserve evidence and follow the returned blocker. |
@@ -37,6 +37,7 @@ prompt.
 | --- | --- |
 | `managed_path_modified` | Preserve or move the modified retired file, then retry the named command. |
 | `version_change_requires_upgrade` | Preview the named upgrade; do not force repair or sync. |
+| `upgrade_requires_clean_legacy_v1_installation` | Preserve the reported state; resolve invalid, missing, modified, unsafe, or ambiguous legacy authority before retrying. Do not edit the lock manually. |
 | `transaction_in_progress` | Wait for the owning process and run `check`. |
 | `recovery_required` | Preserve `.codeheart/kit.transaction.json` and its recovery directory; diagnose before retry. |
 | `schema-invalid` or `unsupported-future-version` | Do not coerce or rewrite state; use a compatible CLI or repair path. |
@@ -45,9 +46,10 @@ prompt.
 ## Preservation And Stop Conditions
 
 Config, repository instructions outside the managed block, plans, memory, local-user state, and
-create-once scaffolds are consumer-owned and must remain unchanged. Stop before hand-editing
-managed kit files, deleting recovery evidence, forcing a version change, trusting an unverified
-catalog or pack, or publishing a release.
+create-once scaffolds are consumer-owned and must remain unchanged. A legacy forward upgrade binds
+the exact source lock and rechecks its declared managed-file checksums before target-side
+reconciliation. Stop before hand-editing the lock or managed kit files, deleting recovery evidence,
+forcing a version change, trusting an unverified catalog or pack, or publishing a release.
 
 Tooling readiness route:
 `.codeheart/kit/docs/agent-interface/runbooks/handle-tooling-readiness.md`.

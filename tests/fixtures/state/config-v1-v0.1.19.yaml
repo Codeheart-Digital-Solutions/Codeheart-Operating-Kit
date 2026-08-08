@@ -1,0 +1,10 @@
+schema_version: 1
+selected_profile: standard
+project_display_name: Legacy Upgrade Fixture
+selected_setup_folder: .
+local_consumer_layer:
+  repo_docs_path: docs/repo/
+  agent_memory_path: docs/agent-memory/
+  user_layer_path: .codeheart/user/
+  local_machine_layer_path: .codeheart/local/
+component_settings: {}

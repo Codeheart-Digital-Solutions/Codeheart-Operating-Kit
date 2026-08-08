@@ -8,6 +8,8 @@
   "binary_sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
   "version": "0.1.21",
   "previous_version": "0.1.20",
+  "previous_lock_schema": 2,
+  "previous_lock_sha256": "abababababababababababababababababababababababababababababababab",
   "asset_url": "fixture.zip",
   "catalog_location": "catalog.json",
   "catalog_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",

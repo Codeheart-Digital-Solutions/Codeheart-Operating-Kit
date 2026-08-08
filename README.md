@@ -1,4 +1,4 @@
-Last updated: 2026-07-09T23:30:00Z (UTC)
+Last updated: 2026-08-08T16:00:11Z (UTC)
 
 # Codeheart Operating Kit
 
@@ -39,7 +39,9 @@ Embedded `manifest.yaml` identifies content, compatibility, components, profiles
 without circular archive URLs or checksums. Deterministic release packs carry a pack manifest and
 payload checksums; an external catalog generated after the packs binds archive and pack-manifest
 digests. Install and upgrade verify that catalog-to-binary chain. Lock v1 has a bounded migration
-for the two released zero-checksum placeholders; unrelated invalid or future state fails closed.
+for the two released zero-checksum placeholders. A valid, pristine lock-v1 installation may migrate
+atomically during an explicitly approved forward upgrade; invalid, ambiguous, modified, recovery,
+or future state fails closed.
 
 Supported release platforms remain macOS universal and Windows x64. Catalog verification is
 currently HTTPS plus SHA-256 under the unsigned internal/prototype boundary.

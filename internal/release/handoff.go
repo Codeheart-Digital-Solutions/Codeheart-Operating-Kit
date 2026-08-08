@@ -4,6 +4,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -24,6 +25,8 @@ type Handoff struct {
 	BinarySHA256          string `json:"binary_sha256"`
 	Version               string `json:"version"`
 	PreviousVersion       string `json:"previous_version"`
+	PreviousLockSchema    int    `json:"previous_lock_schema"`
+	PreviousLockSHA256    string `json:"previous_lock_sha256"`
 	AssetURL              string `json:"asset_url"`
 	CatalogLocation       string `json:"catalog_location"`
 	CatalogSHA256         string `json:"catalog_sha256"`
@@ -33,7 +36,45 @@ type Handoff struct {
 	HandoffSHA256         string `json:"handoff_sha256"`
 }
 
-func NewHandoff(prepared PreparedUpgrade, repositoryRoot, targetBinary, previousVersion string) (Handoff, error) {
+// legacyV2HandoffWire is the schema-1 handoff emitted by released CLIs through v0.1.25.
+// It is accepted only as the transport for a target-side lock-v2 forward upgrade.
+type legacyV2HandoffWire struct {
+	SchemaVersion         int    `json:"schema_version"`
+	TransactionID         string `json:"transaction_id"`
+	ParentPID             int    `json:"parent_pid"`
+	RepositoryRoot        string `json:"repository_root"`
+	TargetBinary          string `json:"target_binary"`
+	StagedBinary          string `json:"staged_binary"`
+	BinarySHA256          string `json:"binary_sha256"`
+	Version               string `json:"version"`
+	PreviousVersion       string `json:"previous_version"`
+	AssetURL              string `json:"asset_url"`
+	CatalogLocation       string `json:"catalog_location"`
+	CatalogSHA256         string `json:"catalog_sha256"`
+	ArchiveSHA256         string `json:"archive_sha256"`
+	PackManifestSHA256    string `json:"pack_manifest_sha256"`
+	ContentManifestSHA256 string `json:"content_manifest_sha256"`
+	HandoffSHA256         string `json:"handoff_sha256"`
+}
+
+type HandoffReconcileError struct {
+	ExitStatus int
+	Cause      error
+	Output     string
+}
+
+func (err *HandoffReconcileError) Error() string {
+	return fmt.Sprintf("new binary reconciliation failed with exit %d: %v: %s", err.ExitStatus, err.Cause, err.Output)
+}
+
+func (err *HandoffReconcileError) Unwrap() error { return err.Cause }
+
+func IsHandoffRecoveryRequired(err error) bool {
+	var reconcileErr *HandoffReconcileError
+	return errors.As(err, &reconcileErr) && reconcileErr.ExitStatus == 3
+}
+
+func NewHandoff(prepared PreparedUpgrade, repositoryRoot, targetBinary, previousVersion string, previousLockSchema int, previousLockSHA256 string) (Handoff, error) {
 	root, err := filepath.Abs(repositoryRoot)
 	if err != nil {
 		return Handoff{}, err
@@ -51,18 +92,25 @@ func NewHandoff(prepared PreparedUpgrade, repositoryRoot, targetBinary, previous
 		SchemaVersion: 1, TransactionID: hex.EncodeToString(digest[:16]), ParentPID: os.Getpid(),
 		RepositoryRoot: root, TargetBinary: target, StagedBinary: prepared.Pack.BinaryPath,
 		BinarySHA256: prepared.Pack.Manifest.BinarySHA256, Version: prepared.Asset.Version,
-		PreviousVersion: previousVersion, AssetURL: assetURL, CatalogLocation: prepared.Catalog.Location,
+		PreviousVersion: previousVersion, PreviousLockSchema: previousLockSchema, PreviousLockSHA256: previousLockSHA256,
+		AssetURL: assetURL, CatalogLocation: prepared.Catalog.Location,
 		CatalogSHA256: prepared.Catalog.DigestSHA256, ArchiveSHA256: prepared.Pack.ArchiveSHA256,
 		PackManifestSHA256:    prepared.Pack.PackManifestSHA256,
 		ContentManifestSHA256: prepared.Pack.ContentManifestSHA256,
 	}
-	handoff.HandoffSHA256 = handoffDigest(handoff)
+	handoff.HandoffSHA256 = wireHandoffDigest(handoff)
 	return handoff, nil
 }
 
-func ApplyHandoff(handoff Handoff) error {
+func ApplyHandoff(handoff Handoff) (resultErr error) {
 	if err := validateHandoff(handoff); err != nil {
 		return err
+	}
+	legacyProtocol := isLegacyV2Handoff(handoff)
+	if !legacyProtocol {
+		if err := validateSourceLockIdentity(handoff); err != nil {
+			return err
+		}
 	}
 	stageDir := filepath.Join(filepath.Dir(handoff.TargetBinary), ".upgrade-"+handoff.TransactionID)
 	if err := os.MkdirAll(stageDir, 0o700); err != nil {
@@ -74,7 +122,7 @@ func ApplyHandoff(handoff Handoff) error {
 		return err
 	}
 	handoff.StagedBinary = stagedCopy
-	handoff.HandoffSHA256 = handoffDigest(handoff)
+	handoff.HandoffSHA256 = wireHandoffDigest(handoff)
 	if err := validateHandoff(handoff); err != nil {
 		return err
 	}
@@ -85,8 +133,14 @@ func ApplyHandoff(handoff Handoff) error {
 	restore := true
 	defer func() {
 		if restore {
-			_ = os.Remove(handoff.TargetBinary)
-			_ = os.Rename(backup, handoff.TargetBinary)
+			removeErr := os.Remove(handoff.TargetBinary)
+			if os.IsNotExist(removeErr) {
+				removeErr = nil
+			}
+			renameErr := os.Rename(backup, handoff.TargetBinary)
+			if removeErr != nil || renameErr != nil {
+				resultErr = fmt.Errorf("%v; restore previous binary failed: remove=%v rename=%v", resultErr, removeErr, renameErr)
+			}
 		}
 	}()
 	if err := copyFile(stagedCopy, handoff.TargetBinary, 0o755); err != nil {
@@ -103,10 +157,21 @@ func ApplyHandoff(handoff Handoff) error {
 		"--content-manifest-sha256", handoff.ContentManifestSHA256,
 		"--binary-sha256", handoff.BinarySHA256,
 	}
+	if !legacyProtocol {
+		arguments = append(arguments,
+			"--target-version", handoff.Version,
+			"--previous-lock-schema", fmt.Sprint(handoff.PreviousLockSchema),
+			"--previous-lock-sha256", handoff.PreviousLockSHA256,
+		)
+	}
 	command := exec.Command(handoff.TargetBinary, arguments...)
 	command.Env = append(os.Environ(), "CODEHEART_OPERATING_KIT_CLI=1")
 	if output, err := command.CombinedOutput(); err != nil {
-		return fmt.Errorf("new binary reconciliation failed: %w: %s", err, output)
+		exitStatus := -1
+		if exitErr, ok := err.(*exec.ExitError); ok {
+			exitStatus = exitErr.ExitCode()
+		}
+		return &HandoffReconcileError{ExitStatus: exitStatus, Cause: err, Output: strings.TrimSpace(string(output))}
 	}
 	restore = false
 	return nil
@@ -152,7 +217,7 @@ func StartDeferredHandoff(handoff Handoff) error {
 		return err
 	}
 	handoff.StagedBinary = staged
-	handoff.HandoffSHA256 = handoffDigest(handoff)
+	handoff.HandoffSHA256 = wireHandoffDigest(handoff)
 	file := filepath.Join(stageDir, "handoff.json")
 	if err := WriteHandoff(file, handoff); err != nil {
 		return err
@@ -226,10 +291,21 @@ func CleanupDeferredHandoff(path string, parentPID int) error {
 }
 
 func validateHandoff(handoff Handoff) error {
-	if handoff.SchemaVersion != 1 || handoff.TransactionID == "" || handoff.RepositoryRoot == "" || handoff.TargetBinary == "" || handoff.StagedBinary == "" || handoff.Version == "" || handoff.AssetURL == "" {
+	legacyProtocol := isLegacyV2Handoff(handoff)
+	newProtocol := (handoff.PreviousLockSchema == 1 || handoff.PreviousLockSchema == 2) && validDigest(handoff.PreviousLockSHA256)
+	if handoff.SchemaVersion != 1 || handoff.TransactionID == "" || handoff.RepositoryRoot == "" || handoff.TargetBinary == "" || handoff.StagedBinary == "" || handoff.Version == "" || handoff.PreviousVersion == "" || (!legacyProtocol && !newProtocol) || handoff.AssetURL == "" || handoff.CatalogLocation == "" || RequireForwardUpgrade(handoff.PreviousVersion, handoff.Version) != nil {
 		return fmt.Errorf("upgrade handoff identity is incomplete")
 	}
-	if handoff.HandoffSHA256 == "" || handoff.HandoffSHA256 != handoffDigest(handoff) {
+	digests := []string{handoff.BinarySHA256, handoff.CatalogSHA256, handoff.ArchiveSHA256, handoff.PackManifestSHA256, handoff.ContentManifestSHA256}
+	if !legacyProtocol {
+		digests = append(digests, handoff.PreviousLockSHA256)
+	}
+	for _, digest := range digests {
+		if !validDigest(digest) {
+			return fmt.Errorf("upgrade handoff digest identity is incomplete")
+		}
+	}
+	if handoff.HandoffSHA256 == "" || handoff.HandoffSHA256 != wireHandoffDigest(handoff) {
 		return fmt.Errorf("upgrade handoff metadata identity mismatch")
 	}
 	for label, path := range map[string]string{"target": handoff.TargetBinary, "staged": handoff.StagedBinary} {
@@ -245,11 +321,58 @@ func validateHandoff(handoff Handoff) error {
 	return nil
 }
 
+func validateSourceLockIdentity(handoff Handoff) error {
+	lockPath := filepath.Join(handoff.RepositoryRoot, ".codeheart", "kit.lock.yaml")
+	info, err := os.Lstat(lockPath)
+	if err != nil || !info.Mode().IsRegular() || info.Mode()&os.ModeSymlink != 0 {
+		return fmt.Errorf("upgrade source lock is not a regular file")
+	}
+	digest, err := fileSHA256(lockPath)
+	if err != nil || !strings.EqualFold(digest, handoff.PreviousLockSHA256) {
+		return fmt.Errorf("upgrade source lock identity changed before handoff")
+	}
+	return nil
+}
+
+func validDigest(value string) bool {
+	if len(value) != 64 {
+		return false
+	}
+	_, err := hex.DecodeString(value)
+	return err == nil
+}
+
 func handoffDigest(handoff Handoff) string {
 	handoff.HandoffSHA256 = ""
 	data, _ := json.Marshal(handoff)
 	digest := sha256.Sum256(data)
 	return hex.EncodeToString(digest[:])
+}
+
+func isLegacyV2Handoff(handoff Handoff) bool {
+	return handoff.PreviousLockSchema == 0 && handoff.PreviousLockSHA256 == ""
+}
+
+func wireHandoffDigest(handoff Handoff) string {
+	if !isLegacyV2Handoff(handoff) {
+		return handoffDigest(handoff)
+	}
+	legacy := legacyV2Wire(handoff)
+	legacy.HandoffSHA256 = ""
+	data, _ := json.Marshal(legacy)
+	digest := sha256.Sum256(data)
+	return hex.EncodeToString(digest[:])
+}
+
+func legacyV2Wire(handoff Handoff) legacyV2HandoffWire {
+	return legacyV2HandoffWire{
+		SchemaVersion: handoff.SchemaVersion, TransactionID: handoff.TransactionID, ParentPID: handoff.ParentPID,
+		RepositoryRoot: handoff.RepositoryRoot, TargetBinary: handoff.TargetBinary, StagedBinary: handoff.StagedBinary,
+		BinarySHA256: handoff.BinarySHA256, Version: handoff.Version, PreviousVersion: handoff.PreviousVersion,
+		AssetURL: handoff.AssetURL, CatalogLocation: handoff.CatalogLocation, CatalogSHA256: handoff.CatalogSHA256,
+		ArchiveSHA256: handoff.ArchiveSHA256, PackManifestSHA256: handoff.PackManifestSHA256,
+		ContentManifestSHA256: handoff.ContentManifestSHA256, HandoffSHA256: handoff.HandoffSHA256,
+	}
 }
 
 func copyFile(source, target string, mode os.FileMode) error {
