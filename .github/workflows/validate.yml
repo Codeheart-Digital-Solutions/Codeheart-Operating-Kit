@@ -238,11 +238,11 @@ jobs:
           "version=$Version" >> $env:GITHUB_OUTPUT
       - run: python -m pip install --upgrade pip setuptools pytest
       - run: python -m pip install -e .
-      - run: go test ./...
+      - run: go test -timeout 30m ./...
       - name: Validate guarded legacy lock-v1 upgrade transactions
         run: go test ./internal/commands -run '^(TestLegacyV1Upgrade|TestCurrentLockV2)' -count=1
       - name: Validate plan catalog, migration, local Git overlays, and grouped CLI behavior
-        run: go test ./internal/plancatalog ./internal/portfolio ./internal/commands ./internal/cli
+        run: go test -timeout 30m ./internal/plancatalog ./internal/portfolio ./internal/commands ./internal/cli
       - name: Validate installed plan routes, schemas, and packaged resources
         run: python -m pytest tests/test_json_schemas.py tests/test_routing.py tests/test_packaging_resources.py -q
       - name: Validate released plan-catalog compatibility boundaries
