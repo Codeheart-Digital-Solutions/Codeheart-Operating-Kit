@@ -178,7 +178,7 @@ func inspect(root string, ignoreTransaction bool) (Observed, error) {
 	if err != nil {
 		return result, err
 	}
-	config, err := DecodeAndValidateYAML(ConfigV1Schema, configBytes)
+	config, err := DecodeAndValidateConfigYAML(configBytes)
 	if err != nil {
 		result.Classification = StateSchemaInvalid
 		result.Errors = []string{err.Error()}

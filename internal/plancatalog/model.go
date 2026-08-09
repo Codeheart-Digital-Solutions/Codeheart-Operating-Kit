@@ -205,26 +205,56 @@ type SourceObservation struct {
 	Conflict        bool       `json:"conflict"`
 }
 
-type CatalogMember struct {
-	RepositoryID       string           `json:"repository_id"`
-	SourceKind         string           `json:"source_kind"`
-	SourceLocator      string           `json:"source_locator,omitempty"`
-	DefaultRef         string           `json:"default_ref"`
-	SourceRevision     string           `json:"source_revision"`
-	SelfMember         bool             `json:"self_member"`
-	DiscoveryVersion   DiscoveryVersion `json:"discovery_version,omitempty"`
-	PolicyDigest       string           `json:"policy_digest,omitempty"`
-	CandidateSetDigest string           `json:"candidate_set_digest,omitempty"`
-	Complete           *bool            `json:"complete,omitempty"`
+type CompatibilityObservation struct {
+	RepositoryID                 string                   `json:"repository_id"`
+	PlanID                       string                   `json:"plan_id"`
+	Title                        string                   `json:"title"`
+	Kind                         Kind                     `json:"kind"`
+	Purpose                      string                   `json:"purpose"`
+	Lifecycle                    Lifecycle                `json:"lifecycle"`
+	Family                       string                   `json:"family,omitempty"`
+	Products                     []string                 `json:"products,omitempty"`
+	Capabilities                 []string                 `json:"capabilities,omitempty"`
+	StrategicThemes              []string                 `json:"strategic_themes,omitempty"`
+	Relations                    []Relation               `json:"relations,omitempty"`
+	LegacyAliases                []string                 `json:"legacy_aliases,omitempty"`
+	CanonicalPath                string                   `json:"canonical_path"`
+	Ref                          string                   `json:"ref"`
+	Commit                       string                   `json:"commit"`
+	ContentSHA256                string                   `json:"content_sha256"`
+	CoverageDisposition          string                   `json:"coverage_disposition"`
+	IncrementalMigrationRequired bool                     `json:"incremental_migration_required"`
+	MigrationEvidence            MigrationEvidenceBinding `json:"migration_evidence"`
+	Verification                 string                   `json:"verification"`
+	ObservedAt                   string                   `json:"observed_at"`
+	Stale                        bool                     `json:"stale"`
+	Conflict                     bool                     `json:"conflict"`
 }
 
-func CoordinationHomeSelfMember(repositoryID, defaultRef, sourceRevision string) CatalogMember {
+type CatalogMember struct {
+	RepositoryID          string           `json:"repository_id"`
+	SourceKind            string           `json:"source_kind"`
+	SourceLocator         string           `json:"source_locator,omitempty"`
+	SourceIdentitySHA256  string           `json:"source_identity_sha256,omitempty"`
+	DefaultRef            string           `json:"default_ref"`
+	SourceRevision        string           `json:"source_revision"`
+	SelfMember            bool             `json:"self_member"`
+	DiscoveryVersion      DiscoveryVersion `json:"discovery_version,omitempty"`
+	PolicyDigest          string           `json:"policy_digest,omitempty"`
+	CandidateSetDigest    string           `json:"candidate_set_digest,omitempty"`
+	Complete              *bool            `json:"complete,omitempty"`
+	MixedCoverageComplete bool             `json:"mixed_coverage_complete"`
+	CanonicalReady        bool             `json:"canonical_ready"`
+}
+
+func CoordinationHomeSelfMember(repositoryID, sourceIdentitySHA256, defaultRef, sourceRevision string) CatalogMember {
 	return CatalogMember{
-		RepositoryID:   repositoryID,
-		SourceKind:     "local-git",
-		DefaultRef:     defaultRef,
-		SourceRevision: sourceRevision,
-		SelfMember:     true,
+		RepositoryID:         repositoryID,
+		SourceKind:           "local-git",
+		SourceIdentitySHA256: sourceIdentitySHA256,
+		DefaultRef:           defaultRef,
+		SourceRevision:       sourceRevision,
+		SelfMember:           true,
 	}
 }
 

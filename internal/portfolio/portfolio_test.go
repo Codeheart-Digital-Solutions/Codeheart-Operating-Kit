@@ -3,6 +3,7 @@ package portfolio
 import (
 	"bytes"
 	"context"
+	"crypto/sha256"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -16,6 +17,7 @@ import (
 	"time"
 
 	"github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/internal/plancatalog"
+	"github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/internal/state"
 )
 
 func TestPortfolioScanUsesRemoteBaselinesAndIndependentChangedBranchObservations(t *testing.T) {
@@ -132,7 +134,7 @@ func TestPortfolioScanUsesRemoteBaselinesAndIndependentChangedBranchObservations
 		t.Fatalf("incomplete scan result = %+v", failure)
 	}
 	if failure.Catalog.LastCompleteScanAt != retired.Catalog.CompletedAt {
-		t.Fatalf("incomplete scan did not label preserved v2 cache: last_complete=%q want=%q", failure.Catalog.LastCompleteScanAt, retired.Catalog.CompletedAt)
+		t.Fatalf("incomplete scan did not label preserved v3 cache: last_complete=%q want=%q", failure.Catalog.LastCompleteScanAt, retired.Catalog.CompletedAt)
 	}
 	if cacheAfter := mustReadPortfolioFile(t, filepath.Join(fixture.home, filepath.FromSlash(CatalogPath))); !bytes.Equal(cacheAfter, cacheBefore) {
 		t.Fatal("incomplete scan replaced the prior complete cache")
@@ -202,6 +204,506 @@ func TestRemoteClassifierMatchesLocalCommitTreeAcrossNestedDocsAndOwnership(t *t
 	}
 	if paths["products/widget/docs/router/README.md"] {
 		t.Fatal("ordinary README gained family authority")
+	}
+}
+
+func TestRemotePlanTargetAllowsUnrelatedDescendantAndRejectsBoundPathDrift(t *testing.T) {
+	root, repository, expectedTarget, activation := newRemotePlanTargetFixture(t)
+	ctx := context.Background()
+	configData, err := repository.ReadFile(ctx, activation, ConfigPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	settings, problems := plancatalog.DecodeRepositorySettings(configData)
+	if plancatalog.HasErrors(problems) {
+		t.Fatalf("activation settings invalid: %#v", problems)
+	}
+	target, err := remotePlanTargetFromBinding(ctx, repository, expectedTarget.RepositoryID, activation, settings)
+	if err != nil || target.ActivationBaseRevision != expectedTarget.ActivationBaseRevision || target.ActivationRevision != expectedTarget.ActivationRevision || target.MigrationActionDigest != expectedTarget.MigrationActionDigest {
+		t.Fatalf("persisted target reconstruction differs from E/L/A binding: target=%#v expected=%#v err=%v", target, expectedTarget, err)
+	}
+	if err := validateRemotePlanTarget(ctx, repository, activation, target); err != nil {
+		t.Fatalf("exact activation checkpoint was rejected: %v", err)
+	}
+
+	runPortfolioGit(t, root, "switch", "-c", "unrelated-descendant", activation)
+	writePortfolioFile(t, root, "docs/repo/notes.md", []byte("unrelated descendant\n"))
+	runPortfolioGit(t, root, "add", "docs/repo/notes.md")
+	runPortfolioGit(t, root, "commit", "-m", "add unrelated descendant")
+	unrelated := strings.TrimSpace(portfolioGitOutput(t, root, "rev-parse", "HEAD"))
+	if err := validateRemotePlanTarget(ctx, repository, unrelated, target); err != nil {
+		t.Fatalf("unrelated descendant was rejected: %v", err)
+	}
+
+	tests := []struct {
+		name   string
+		path   string
+		mutate func()
+	}{
+		{name: "config", path: ConfigPath, mutate: func() { appendPortfolioFile(t, root, ConfigPath, "\n# moved config\n") }},
+		{name: "register", path: plancatalog.LegacyRegisterPath, mutate: func() { appendPortfolioFile(t, root, plancatalog.LegacyRegisterPath, "\nMoved register.\n") }},
+		{name: "candidate", path: "docs/repo/plans/example/example_discovery_doc.md", mutate: func() {
+			appendPortfolioFile(t, root, "docs/repo/plans/example/example_discovery_doc.md", "\nMoved candidate.\n")
+		}},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			runPortfolioGit(t, root, "switch", "-c", "changed-"+test.name, activation)
+			test.mutate()
+			runPortfolioGit(t, root, "add", test.path)
+			runPortfolioGit(t, root, "commit", "-m", "change bound "+test.name)
+			revision := strings.TrimSpace(portfolioGitOutput(t, root, "rev-parse", "HEAD"))
+			if err := validateRemotePlanTarget(ctx, repository, revision, target); err == nil || !strings.Contains(err.Error(), "remote descendant changed") {
+				t.Fatalf("bound %s drift was accepted: %v", test.name, err)
+			}
+		})
+	}
+
+	t.Run("candidate-mode", func(t *testing.T) {
+		runPortfolioGit(t, root, "switch", "-c", "changed-candidate-mode", activation)
+		path := "docs/repo/plans/example/example_discovery_doc.md"
+		runPortfolioGit(t, root, "update-index", "--chmod=+x", path)
+		runPortfolioGit(t, root, "commit", "-m", "change bound candidate mode")
+		revision := strings.TrimSpace(portfolioGitOutput(t, root, "rev-parse", "HEAD"))
+		if err := validateRemotePlanTarget(ctx, repository, revision, target); err == nil || !strings.Contains(err.Error(), "remote descendant changed") {
+			t.Fatalf("mode-only bound candidate drift was accepted: %v", err)
+		}
+		if err := os.Chmod(filepath.Join(root, filepath.FromSlash(path)), 0o755); err != nil {
+			t.Fatal(err)
+		}
+	})
+
+	t.Run("new-candidate", func(t *testing.T) {
+		runPortfolioGit(t, root, "switch", "-c", "added-candidate", activation)
+		writePortfolioPlanAt(t, root, "docs/repo/plans/new/new_discovery_doc.md", "New candidate", "example-repository.discovery.new", plancatalog.KindDiscovery, "new candidate")
+		runPortfolioGit(t, root, "add", "docs/repo/plans/new/new_discovery_doc.md")
+		runPortfolioGit(t, root, "commit", "-m", "add new candidate after activation")
+		revision := strings.TrimSpace(portfolioGitOutput(t, root, "rev-parse", "HEAD"))
+		if err := validateRemotePlanTarget(ctx, repository, revision, target); err == nil || !strings.Contains(err.Error(), "changed the activated candidate set") {
+			t.Fatalf("new descendant candidate was accepted: %v", err)
+		}
+	})
+}
+
+func TestRemoteDeferredOwnerResolutionRequiresReviewedTipAncestry(t *testing.T) {
+	root := t.TempDir()
+	runPortfolioGit(t, "", "init", "-b", "main", root)
+	runPortfolioGit(t, root, "config", "user.email", "test@example.invalid")
+	runPortfolioGit(t, root, "config", "user.name", "Remote Deferral Test")
+	planPath := "docs/repo/plans/example/example_discovery_doc.md"
+	legacy := []byte("Last updated: 2026-06-01T12:00:00Z (UTC)\nCreated: 2026-06-01\nStatus: draft\n\n# Example\n\nLegacy plan.\n")
+	configV1 := "schema_version: 1\nselected_profile: standard\nproject_display_name: Remote Deferral\nselected_setup_folder: .\nlocal_consumer_layer:\n  repo_docs_path: docs/repo/\n  agent_memory_path: docs/agent-memory/\n  user_layer_path: .codeheart/user/\n  local_machine_layer_path: .codeheart/local/\ncomponent_settings:\n  planning-workflows:\n    plan_catalog_mode: legacy\n    plan_catalog_discovery_version: 2\nportfolio:\n  schema_version: 2\n  role: member\n  member_repository_id: example-repository\n  coordination_home_id: example-home\n"
+	register := []byte("Last updated: 2026-06-01T12:00:00Z (UTC)\n\n# Plan Register\n\n## Entries\n\n## PR-001 - Example\n\nType: discovery-plan\nPurpose: reviewed owner purpose\nStatus: draft\nOwner / repository: Example\nCanonical docs: " + planPath + "\nCreated: 2026-06-01\nLast updated: 2026-06-01T12:00:00Z (UTC)\n")
+	writePortfolioFile(t, root, planPath, legacy)
+	writePortfolioFile(t, root, ConfigPath, []byte(configV1))
+	writePortfolioFile(t, root, plancatalog.LegacyRegisterPath, register)
+	writePortfolioFile(t, root, LockPath, []byte(testLockYAML))
+	writePortfolioFile(t, root, KitMarkerPath, []byte("# Installed Kit\n"))
+	runPortfolioGit(t, root, "add", ".")
+	runPortfolioGit(t, root, "commit", "-m", "record evidence revision")
+	evidenceRevision := strings.TrimSpace(portfolioGitOutput(t, root, "rev-parse", "HEAD"))
+	evidenceSettings, evidenceProblems := plancatalog.DecodeRepositorySettings([]byte(configV1))
+	if plancatalog.HasErrors(evidenceProblems) {
+		t.Fatalf("evidence config is invalid: %#v", evidenceProblems)
+	}
+	evidenceClassification, err := plancatalog.ClassifyCommitTree(root, evidenceRevision, evidenceSettings, evidenceSettings.Mode, evidenceSettings.RepositoryID)
+	if err != nil || !evidenceClassification.Complete {
+		t.Fatalf("evidence classification is invalid: %#v %v", evidenceClassification.Discovery.Problems, err)
+	}
+	runPortfolioGit(t, root, "switch", "-c", "reviewed-owner")
+	writePortfolioPlanAt(t, root, planPath, "Example", "example-repository.discovery.example", plancatalog.KindDiscovery, "reviewed owner purpose")
+	runPortfolioGit(t, root, "add", planPath)
+	runPortfolioGit(t, root, "commit", "-m", "author reviewed owner")
+	ownerTip := strings.TrimSpace(portfolioGitOutput(t, root, "rev-parse", "HEAD"))
+	ownerData := mustReadPortfolioFile(t, filepath.Join(root, filepath.FromSlash(planPath)))
+	ownerState, ownerBlocker := plancatalog.ReadBranchPathState(root, ownerTip, planPath)
+	beforeState, beforeBlocker := plancatalog.ReadBranchPathState(root, evidenceRevision, planPath)
+	if ownerBlocker != nil || beforeBlocker != nil {
+		t.Fatalf("fixture states unavailable: owner=%#v before=%#v", ownerBlocker, beforeBlocker)
+	}
+	runPortfolioGit(t, root, "switch", "main")
+	legacyDigest := sha256.Sum256(legacy)
+	configDigest := sha256.Sum256([]byte(configV1))
+	ledger := plancatalog.MigrationLedger{
+		SchemaVersion: 3, RepositoryID: "example-repository", EvidenceRevision: evidenceRevision, TargetMode: plancatalog.ModeMixed,
+		InventoryRevision: evidenceRevision, PolicyDigest: evidenceClassification.PolicyDigest, CandidateSetDigest: evidenceClassification.CandidateSetDigest, TargetConfigPreconditionSHA256: fmt.Sprintf("%x", configDigest),
+		BranchEvidence: &plancatalog.BranchEvidenceSummary{Algorithm: plancatalog.BranchEvidenceAlgorithm, GitVersion: "2.46.0", EvidenceScope: "local", RemoteOverlayStatus: "not-requested", Digest: strings.Repeat("e", 64)},
+		Records: []plancatalog.MigrationRecord{{
+			CurrentPath: planPath, TargetPath: planPath, SourceRevision: evidenceRevision, SourceSHA256: fmt.Sprintf("%x", legacyDigest), TargetState: &plancatalog.TargetPrecondition{State: "same-path"}, Ownership: plancatalog.OwnershipOwned,
+			Decision:   plancatalog.MigrationDecision{ID: "example-repository.discovery.example", Kind: plancatalog.KindDiscovery, Purpose: "reviewed owner purpose", FirstCataloged: "2026-06-01T12:00:00Z", CatalogMetadataUpdated: "2026-06-01T12:00:00Z"},
+			Confidence: "high", Ambiguity: []string{}, Evidence: []string{"synthetic reviewed owner"}, LegacyAliases: []string{}, Conflicts: []string{}, Deferred: true, DeferralReason: "owner remains branch-owned",
+			BranchTouchReviews: []plancatalog.BranchTouchReview{{
+				Identity: plancatalog.BranchReviewIdentity{EvidenceScope: "local", RepositoryID: "example-repository", LogicalRef: "local:refs/heads/reviewed-owner", CandidatePath: planPath}, Disposition: plancatalog.BranchDispositionDeferredActiveOwner,
+				RefTip: ownerTip, MergeBase: evidenceRevision, PathTransitions: []plancatalog.BranchPathTransition{{Path: planPath, Before: beforeState, After: ownerState}},
+				OwnerTipCandidate:   &plancatalog.OwnerTipCandidate{Path: planPath, Mode: ownerState.Mode, ObjectID: ownerState.ObjectID, SHA256: ownerState.SHA256, Lifecycle: plancatalog.LifecycleActive},
+				IncrementalFollowUp: &plancatalog.IncrementalFollowUp{Action: "reinventory-and-incremental-migrate", Trigger: "owner-ref-integrated-or-target-path-changed", CutoverRevision: evidenceRevision, PlanPath: planPath, CutoverSourceSHA256: fmt.Sprintf("%x", legacyDigest), OwnerRef: "local:refs/heads/reviewed-owner", OwnerTip: ownerTip, OwnerPath: planPath, OwnerMode: ownerState.Mode, OwnerObjectID: ownerState.ObjectID, OwnerSHA256: ownerState.SHA256, State: "pending", SuccessConditions: []string{"owner-supplied-canonical-metadata-at-merge", "new-reviewed-ledger-applied-to-merged-target-bytes"}},
+			}},
+		}},
+	}
+	ledgerData, err := state.EncodeYAML(ledger)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := plancatalog.LoadMigrationLedger(ledgerData); err != nil {
+		t.Fatalf("fixture ledger invalid: %v\n%s", err, ledgerData)
+	}
+	ledgerPath := "docs/repo/plans/migrations/deferred-owner.yaml"
+	writePortfolioFile(t, root, ledgerPath, ledgerData)
+	runPortfolioGit(t, root, "add", ledgerPath)
+	runPortfolioGit(t, root, "commit", "-m", "record ledger checkpoint")
+	activationBase := strings.TrimSpace(portfolioGitOutput(t, root, "rev-parse", "HEAD"))
+	ledgerSHA := sha256.Sum256(ledgerData)
+	emptyActionDigest := sha256.Sum256([]byte("[]"))
+	actionDigest := fmt.Sprintf("%x", emptyActionDigest)
+	writePortfolioFile(t, root, ConfigPath, []byte(remoteActivatedConfig(evidenceRevision, activationBase, ledgerPath, fmt.Sprintf("%x", ledgerSHA), ledger.BranchEvidence.Digest, actionDigest)))
+	runPortfolioGit(t, root, "add", ConfigPath)
+	runPortfolioGit(t, root, "commit", "-m", "activate deferred migration checkpoint")
+	activationRevision := strings.TrimSpace(portfolioGitOutput(t, root, "rev-parse", "HEAD"))
+	computedActionDigest, _, actionErr := plancatalog.MigrationActionDigestForCheckpoint(root, activationBase, activationRevision)
+	if actionErr != nil || computedActionDigest != actionDigest {
+		t.Fatalf("config-only activation digest=%s err=%v, want %s", computedActionDigest, actionErr, actionDigest)
+	}
+	runPortfolioGit(t, root, "switch", "-c", "copied-owner", activationRevision)
+	writePortfolioFile(t, root, planPath, ownerData)
+	runPortfolioGit(t, root, "add", planPath)
+	runPortfolioGit(t, root, "commit", "-m", "copy owner bytes without integrating tip")
+	copiedRevision := strings.TrimSpace(portfolioGitOutput(t, root, "rev-parse", "HEAD"))
+	settings := plancatalog.RepositorySettings{ConfigSchemaVersion: 2, Mode: plancatalog.ModeMixed, CutoverRevision: evidenceRevision, RepositoryID: "example-repository", DiscoveryVersion: plancatalog.DiscoveryV2, MigrationEvidence: &plancatalog.MigrationEvidenceBinding{LedgerPath: ledgerPath, LedgerSHA256: fmt.Sprintf("%x", ledgerSHA), BranchEvidenceDigest: ledger.BranchEvidence.Digest, EvidenceRevision: evidenceRevision, ActivationBaseRevision: activationBase, MigrationActionDigest: actionDigest, EvidenceScope: "local"}}
+	classification, err := plancatalog.ClassifyCommitTree(root, copiedRevision, settings, settings.Mode, settings.RepositoryID)
+	if err != nil || !classification.Complete {
+		t.Fatalf("copied owner classification invalid: %#v %v", classification.Discovery.Problems, err)
+	}
+	directory, err := os.Open(root)
+	if err != nil {
+		t.Fatal(err)
+	}
+	repository := &GitRepository{Path: root, runner: ExecRunner{}, mirrorFile: directory}
+	t.Cleanup(repository.Close)
+	target := RemotePlanTarget{RepositoryID: "example-repository", EvidenceRevision: evidenceRevision, ActivationBaseRevision: activationBase, ActivationRevision: activationRevision, LedgerPath: ledgerPath, LedgerSHA256: fmt.Sprintf("%x", ledgerSHA), DiscoveryVersion: plancatalog.DiscoveryV2, TargetCatalogMode: plancatalog.ModeMixed, PolicyDigest: ledger.PolicyDigest, CandidateSetDigest: ledger.CandidateSetDigest, MigrationActionDigest: actionDigest, BranchEvidenceDigest: ledger.BranchEvidence.Digest, EvidenceScope: "local"}
+	if err := validateRemotePlanTarget(context.Background(), repository, copiedRevision, target); err == nil {
+		t.Fatal("copied owner bytes without reviewed-tip ancestry passed remote E/L/A validation")
+	}
+	_, copiedErrors := collectCompatibilityObservations(context.Background(), repository, settings.RepositoryID, copiedRevision, copiedRevision, settings, classification, time.Date(2026, 8, 9, 10, 0, 0, 0, time.UTC))
+	if !scanErrorCodePresent(copiedErrors, "deferred_owner_resolution_invalid") {
+		t.Fatalf("copied owner bytes without ancestry were accepted: %#v", copiedErrors)
+	}
+	runPortfolioGit(t, root, "switch", "main")
+	runPortfolioGit(t, root, "merge", "--no-ff", "reviewed-owner", "-m", "integrate reviewed owner tip")
+	mergedRevision := strings.TrimSpace(portfolioGitOutput(t, root, "rev-parse", "HEAD"))
+	classification, err = plancatalog.ClassifyCommitTree(root, mergedRevision, settings, settings.Mode, settings.RepositoryID)
+	if err != nil || !classification.Complete {
+		t.Fatalf("merged owner classification invalid: %#v %v", classification.Discovery.Problems, err)
+	}
+	observations, mergedErrors := collectCompatibilityObservations(context.Background(), repository, settings.RepositoryID, mergedRevision, mergedRevision, settings, classification, time.Date(2026, 8, 9, 10, 1, 0, 0, time.UTC))
+	if len(mergedErrors) != 0 || len(observations) != 0 {
+		t.Fatalf("exact integrated owner did not resolve remote deferral: observations=%#v errors=%#v", observations, mergedErrors)
+	}
+	if err := validateRemotePlanTarget(context.Background(), repository, mergedRevision, target); err != nil {
+		t.Fatalf("exact integrated owner failed remote E/L/A validation: %v", err)
+	}
+
+	parent := t.TempDir()
+	remote := filepath.Join(parent, "deferred-owner-remote.git")
+	runPortfolioGit(t, "", "init", "--bare", remote)
+	runPortfolioGit(t, root, "remote", "add", "origin", remote)
+	runPortfolioGit(t, root, "push", "-u", "origin", "main")
+	runPortfolioGit(t, remote, "symbolic-ref", "HEAD", "refs/heads/main")
+	scanRoot := t.TempDir()
+	manager := MirrorManager{RepositoryRoot: scanRoot, Root: filepath.Join(scanRoot, filepath.FromSlash(MirrorRootPath)), Runner: ExecRunner{}}
+	scan := scanRepository(context.Background(), manager, RepositorySource{Kind: "local-git", Locator: "deferred-owner", CloneURL: remote, DefaultBranch: "main", NameHint: "deferred-owner"}, Config{SchemaVersion: 2, Role: RoleCoordinationHome, RepositoryID: "example-home", CoordinationHomeID: "example-home", Root: scanRoot}, nil, time.Date(2026, 8, 9, 10, 2, 0, 0, time.UTC))
+	if scan.Member == nil || scan.Member.Complete == nil || !*scan.Member.Complete || !scan.Member.CanonicalReady || len(scan.CompatibilityObservations) != 0 || len(scan.Errors) != 0 {
+		t.Fatalf("ordinary remote scan did not resolve merged owner as canonical-ready: member=%#v compatibility=%#v errors=%#v", scan.Member, scan.CompatibilityObservations, scan.Errors)
+	}
+}
+
+func TestRemoteAwarePendingDeferralBindsSourceAndCurrentBranchOverlay(t *testing.T) {
+	root := t.TempDir()
+	runPortfolioGit(t, "", "init", "-b", "main", root)
+	runPortfolioGit(t, root, "config", "user.email", "test@example.invalid")
+	runPortfolioGit(t, root, "config", "user.name", "Remote Overlay Test")
+	planPath := "docs/repo/plans/example/example_discovery_doc.md"
+	legacy := []byte("Last updated: 2026-06-01T12:00:00Z (UTC)\nCreated: 2026-06-01\nStatus: draft\n\n# Example\n\nLegacy plan.\n")
+	configV1 := "schema_version: 1\nselected_profile: standard\nproject_display_name: Remote Overlay\nselected_setup_folder: .\nlocal_consumer_layer:\n  repo_docs_path: docs/repo/\n  agent_memory_path: docs/agent-memory/\n  user_layer_path: .codeheart/user/\n  local_machine_layer_path: .codeheart/local/\ncomponent_settings:\n  planning-workflows:\n    plan_catalog_mode: legacy\n    plan_catalog_discovery_version: 2\nportfolio:\n  schema_version: 2\n  role: member\n  member_repository_id: example-repository\n  coordination_home_id: example-home\n"
+	register := []byte("Last updated: 2026-06-01T12:00:00Z (UTC)\n\n# Plan Register\n\n## Entries\n\n## PR-001 - Example\n\nType: discovery-plan\nPurpose: reviewed owner purpose\nStatus: draft\nOwner / repository: Example\nCanonical docs: " + planPath + "\nCreated: 2026-06-01\nLast updated: 2026-06-01T12:00:00Z (UTC)\n")
+	writePortfolioFile(t, root, planPath, legacy)
+	writePortfolioFile(t, root, ConfigPath, []byte(configV1))
+	writePortfolioFile(t, root, plancatalog.LegacyRegisterPath, register)
+	writePortfolioFile(t, root, LockPath, []byte(testLockYAML))
+	writePortfolioFile(t, root, KitMarkerPath, []byte("# Installed Kit\n"))
+	runPortfolioGit(t, root, "add", ".")
+	runPortfolioGit(t, root, "commit", "-m", "record remote evidence revision")
+	evidenceRevision := strings.TrimSpace(portfolioGitOutput(t, root, "rev-parse", "HEAD"))
+	evidenceSettings, evidenceProblems := plancatalog.DecodeRepositorySettings([]byte(configV1))
+	if plancatalog.HasErrors(evidenceProblems) {
+		t.Fatalf("evidence config is invalid: %#v", evidenceProblems)
+	}
+	evidenceClassification, err := plancatalog.ClassifyCommitTree(root, evidenceRevision, evidenceSettings, evidenceSettings.Mode, evidenceSettings.RepositoryID)
+	if err != nil || !evidenceClassification.Complete {
+		t.Fatalf("evidence classification is invalid: %#v %v", evidenceClassification.Discovery.Problems, err)
+	}
+
+	runPortfolioGit(t, root, "switch", "-c", "reviewed-owner")
+	writePortfolioPlanAt(t, root, planPath, "Example", "example-repository.discovery.example", plancatalog.KindDiscovery, "reviewed owner purpose")
+	runPortfolioGit(t, root, "add", planPath)
+	runPortfolioGit(t, root, "commit", "-m", "author reviewed owner")
+	ownerTip := strings.TrimSpace(portfolioGitOutput(t, root, "rev-parse", "HEAD"))
+	runPortfolioGit(t, root, "switch", "main")
+	runPortfolioGit(t, root, "switch", "-c", "branch-only-plan")
+	writePortfolioPlanAt(t, root, "docs/repo/plans/branch-only/branch-only_discovery_doc.md", "Branch Only", "example-repository.discovery.branch-only", plancatalog.KindDiscovery, "branch-only observation")
+	runPortfolioGit(t, root, "add", "docs/repo/plans/branch-only/branch-only_discovery_doc.md")
+	runPortfolioGit(t, root, "commit", "-m", "add branch-only plan observation")
+	runPortfolioGit(t, root, "switch", "main")
+	remote := filepath.Join(t.TempDir(), "pending-owner.git")
+	runPortfolioGit(t, "", "init", "--bare", remote)
+	runPortfolioGit(t, root, "remote", "add", "origin", remote)
+	runPortfolioGit(t, root, "push", "-u", "origin", "main")
+	runPortfolioGit(t, root, "push", "origin", "reviewed-owner")
+	runPortfolioGit(t, root, "push", "origin", "branch-only-plan")
+	runPortfolioGit(t, remote, "symbolic-ref", "HEAD", "refs/heads/main")
+
+	home := Config{SchemaVersion: 2, Role: RoleCoordinationHome, RepositoryID: "example-home", CoordinationHomeID: "example-home"}
+	source := RepositorySource{Kind: "local-git", Locator: "pending-owner", CloneURL: remote, DefaultBranch: "main", NameHint: "pending-owner"}
+	prospectiveRoot := t.TempDir()
+	home.Root = prospectiveRoot
+	manager := MirrorManager{RepositoryRoot: prospectiveRoot, Root: filepath.Join(prospectiveRoot, filepath.FromSlash(MirrorRootPath)), Runner: ExecRunner{}}
+	target := &RemotePlanTarget{
+		RepositoryID: "example-repository", EvidenceRevision: evidenceRevision,
+		DiscoveryVersion: plancatalog.DiscoveryV2, TargetCatalogMode: plancatalog.ModeMixed,
+		PolicyDigest: evidenceClassification.PolicyDigest, CandidateSetDigest: evidenceClassification.CandidateSetDigest,
+	}
+	prospective := scanRepository(context.Background(), manager, source, home, target, time.Date(2026, 8, 9, 9, 0, 0, 0, time.UTC))
+	if prospective.Member == nil || prospective.Member.Complete == nil || !*prospective.Member.Complete || len(prospective.Errors) != 0 {
+		t.Fatalf("prospective remote overlay is incomplete: member=%#v errors=%#v", prospective.Member, prospective.Errors)
+	}
+	if len(prospective.RemoteBranchEvidence) != 1 || prospective.RemoteBranchEvidence[0].ProposedDisposition != plancatalog.BranchDispositionActiveOwner || prospective.RemoteBranchEvidence[0].RefTip != ownerTip || prospective.RemoteBranchEvidence[0].OwnerTipCandidate == nil {
+		t.Fatalf("prospective owner evidence differs from the exact pushed owner: %#v", prospective.RemoteBranchEvidence)
+	}
+	overlay := remoteOverlayForRepositoryScan(prospective, "example-repository", prospective.Member.SourceIdentitySHA256, evidenceRevision, true)
+	if overlay.Status != "complete" || overlay.Digest == "" || len(overlay.BranchTouchCandidates) != 1 || len(overlay.Refs) < 3 {
+		t.Fatalf("reviewed overlay is incomplete: %#v", overlay)
+	}
+	ownerEvidence := prospective.RemoteBranchEvidence[0]
+	ownerState := *ownerEvidence.OwnerTipCandidate
+	legacyDigest := sha256.Sum256(legacy)
+	configDigest := sha256.Sum256([]byte(configV1))
+	ledger := plancatalog.MigrationLedger{
+		SchemaVersion: 3, RepositoryID: "example-repository", EvidenceRevision: evidenceRevision, TargetMode: plancatalog.ModeMixed,
+		InventoryRevision: evidenceRevision, PolicyDigest: evidenceClassification.PolicyDigest, CandidateSetDigest: evidenceClassification.CandidateSetDigest, TargetConfigPreconditionSHA256: fmt.Sprintf("%x", configDigest),
+		BranchEvidence: &plancatalog.BranchEvidenceSummary{
+			Algorithm: plancatalog.BranchEvidenceAlgorithm, GitVersion: ownerEvidence.GitVersion, EvidenceScope: "remote-aware", RemoteOverlayStatus: "complete",
+			RemoteOverlayDigest: overlay.Digest, RemoteSourceIdentitySHA256: prospective.Member.SourceIdentitySHA256, Digest: strings.Repeat("e", 64),
+		},
+		Records: []plancatalog.MigrationRecord{{
+			CurrentPath: planPath, TargetPath: planPath, SourceRevision: evidenceRevision, SourceSHA256: fmt.Sprintf("%x", legacyDigest), TargetState: &plancatalog.TargetPrecondition{State: "same-path"}, Ownership: plancatalog.OwnershipOwned,
+			Decision:   plancatalog.MigrationDecision{ID: "example-repository.discovery.example", Kind: plancatalog.KindDiscovery, Purpose: "reviewed owner purpose", FirstCataloged: "2026-06-01T12:00:00Z", CatalogMetadataUpdated: "2026-06-01T12:00:00Z"},
+			Confidence: "high", Ambiguity: []string{}, Evidence: []string{"synthetic remote-aware owner"}, LegacyAliases: []string{}, Conflicts: []string{}, Deferred: true, DeferralReason: "owner remains branch-owned",
+			BranchTouchReviews: []plancatalog.BranchTouchReview{{
+				Identity: ownerEvidence.Identity, Disposition: plancatalog.BranchDispositionDeferredActiveOwner, RefTip: ownerEvidence.RefTip, MergeBase: ownerEvidence.MergeBase, PathTransitions: ownerEvidence.PathTransitions,
+				OwnerTipCandidate: &ownerState,
+				IncrementalFollowUp: &plancatalog.IncrementalFollowUp{
+					Action: "reinventory-and-incremental-migrate", Trigger: "owner-ref-integrated-or-target-path-changed", CutoverRevision: evidenceRevision,
+					PlanPath: planPath, CutoverSourceSHA256: fmt.Sprintf("%x", legacyDigest), OwnerRef: ownerEvidence.Identity.LogicalRef, OwnerTip: ownerTip,
+					OwnerPath: planPath, OwnerMode: ownerState.Mode, OwnerObjectID: ownerState.ObjectID, OwnerSHA256: ownerState.SHA256, State: "pending",
+					SuccessConditions: []string{"owner-supplied-canonical-metadata-at-merge", "new-reviewed-ledger-applied-to-merged-target-bytes"},
+				},
+			}},
+		}},
+	}
+	ledgerData, err := state.EncodeYAML(ledger)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := plancatalog.LoadMigrationLedger(ledgerData); err != nil {
+		t.Fatalf("remote-aware ledger fixture is invalid: %v\n%s", err, ledgerData)
+	}
+	ledgerPath := "docs/repo/plans/migrations/remote-aware-owner.yaml"
+	writePortfolioFile(t, root, ledgerPath, ledgerData)
+	runPortfolioGit(t, root, "add", ledgerPath)
+	runPortfolioGit(t, root, "commit", "-m", "record remote-aware ledger checkpoint")
+	activationBase := strings.TrimSpace(portfolioGitOutput(t, root, "rev-parse", "HEAD"))
+	ledgerSHA := sha256.Sum256(ledgerData)
+	actionDigest := fmt.Sprintf("%x", sha256.Sum256([]byte("[]")))
+	configV2 := strings.Replace(remoteActivatedConfig(evidenceRevision, activationBase, ledgerPath, fmt.Sprintf("%x", ledgerSHA), ledger.BranchEvidence.Digest, actionDigest), "evidence_scope: local", "evidence_scope: remote-aware", 1)
+	writePortfolioFile(t, root, ConfigPath, []byte(configV2))
+	runPortfolioGit(t, root, "add", ConfigPath)
+	runPortfolioGit(t, root, "commit", "-m", "activate remote-aware deferral")
+	activationRevision := strings.TrimSpace(portfolioGitOutput(t, root, "rev-parse", "HEAD"))
+	if computed, _, actionErr := plancatalog.MigrationActionDigestForCheckpoint(root, activationBase, activationRevision); actionErr != nil || computed != actionDigest {
+		t.Fatalf("activation action digest=%s err=%v, want %s", computed, actionErr, actionDigest)
+	}
+	runPortfolioGit(t, root, "push", "origin", "main")
+
+	scanRoot := t.TempDir()
+	home.Root = scanRoot
+	manager = MirrorManager{RepositoryRoot: scanRoot, Root: filepath.Join(scanRoot, filepath.FromSlash(MirrorRootPath)), Runner: ExecRunner{}}
+	pending := scanRepository(context.Background(), manager, source, home, nil, time.Date(2026, 8, 9, 9, 1, 0, 0, time.UTC))
+	if pending.Member == nil || pending.Member.Complete == nil || !*pending.Member.Complete || !pending.Member.MixedCoverageComplete || pending.Member.CanonicalReady || len(pending.CompatibilityObservations) != 1 || len(pending.Errors) != 0 {
+		t.Fatalf("ordinary scan did not retain exact pending deferral: member=%#v compatibility=%#v errors=%#v", pending.Member, pending.CompatibilityObservations, pending.Errors)
+	}
+
+	alternate := filepath.Join(t.TempDir(), "alternate-source.git")
+	runPortfolioGit(t, "", "clone", "--bare", remote, alternate)
+	runPortfolioGit(t, alternate, "symbolic-ref", "HEAD", "refs/heads/main")
+	alternateRoot := t.TempDir()
+	home.Root = alternateRoot
+	alternateScan := scanRepository(context.Background(), MirrorManager{RepositoryRoot: alternateRoot, Root: filepath.Join(alternateRoot, filepath.FromSlash(MirrorRootPath)), Runner: ExecRunner{}}, RepositorySource{Kind: source.Kind, Locator: "alternate-source", CloneURL: alternate, DefaultBranch: "main", NameHint: "alternate-source"}, home, nil, time.Date(2026, 8, 9, 9, 2, 0, 0, time.UTC))
+	if !scanErrorCodePresent(alternateScan.Errors, "remote_overlay_source_mismatch") || alternateScan.Member == nil || alternateScan.Member.Complete == nil || *alternateScan.Member.Complete || len(alternateScan.CompatibilityObservations) != 0 {
+		t.Fatalf("alternate source identity retained reviewed credit: member=%#v compatibility=%#v errors=%#v", alternateScan.Member, alternateScan.CompatibilityObservations, alternateScan.Errors)
+	}
+
+	runPortfolioGit(t, root, "switch", "main")
+	runPortfolioGit(t, root, "merge", "--no-ff", "reviewed-owner", "-m", "integrate exact reviewed owner")
+	runPortfolioGit(t, root, "push", "origin", "main")
+	retainedRoot := t.TempDir()
+	home.Root = retainedRoot
+	retainedManager := MirrorManager{RepositoryRoot: retainedRoot, Root: filepath.Join(retainedRoot, filepath.FromSlash(MirrorRootPath)), Runner: ExecRunner{}}
+	retained := scanRepository(context.Background(), retainedManager, source, home, nil, time.Date(2026, 8, 9, 9, 3, 0, 0, time.UTC))
+	if retained.Member == nil || retained.Member.Complete == nil || !*retained.Member.Complete || !retained.Member.MixedCoverageComplete || !retained.Member.CanonicalReady || len(retained.CompatibilityObservations) != 0 || len(retained.Errors) != 0 {
+		t.Fatalf("merged owner with retained ref did not resolve remote-aware deferral: member=%#v compatibility=%#v errors=%#v", retained.Member, retained.CompatibilityObservations, retained.Errors)
+	}
+	retainedRepository, refreshErr := retainedManager.Refresh(context.Background(), source)
+	if refreshErr != nil {
+		t.Fatal(refreshErr)
+	}
+	t.Cleanup(retainedRepository.Close)
+	settingsV2, settingsProblems := plancatalog.DecodeRepositorySettings([]byte(configV2))
+	if plancatalog.HasErrors(settingsProblems) {
+		t.Fatalf("activation config is invalid: %#v", settingsProblems)
+	}
+	resolvedRevision := strings.TrimSpace(portfolioGitOutput(t, root, "rev-parse", "main"))
+	persistedTarget, targetErr := remotePlanTargetFromBinding(context.Background(), retainedRepository, "example-repository", resolvedRevision, settingsV2)
+	if targetErr != nil {
+		t.Fatal(targetErr)
+	}
+	tamperedTarget := persistedTarget
+	tamperedTarget.RemoteOverlayDigest = strings.Repeat("f", 64)
+	retainedOverlay := remoteOverlayForRepositoryScan(retained, "example-repository", retained.Member.SourceIdentitySHA256, evidenceRevision, true)
+	if matched, matchErr := remoteOverlayMatchesReviewedOrResolved(context.Background(), retainedRepository, resolvedRevision, tamperedTarget, retainedOverlay); matchErr != nil || matched {
+		t.Fatalf("tampered reviewed overlay digest was accepted: matched=%t err=%v", matched, matchErr)
+	}
+
+	runPortfolioGit(t, root, "push", "origin", "--delete", "branch-only-plan")
+	missingObservationRoot := t.TempDir()
+	home.Root = missingObservationRoot
+	missingObservation := scanRepository(context.Background(), MirrorManager{RepositoryRoot: missingObservationRoot, Root: filepath.Join(missingObservationRoot, filepath.FromSlash(MirrorRootPath)), Runner: ExecRunner{}}, source, home, nil, time.Date(2026, 8, 9, 9, 4, 0, 0, time.UTC))
+	if !scanErrorCodePresent(missingObservation.Errors, "remote_overlay_binding_mismatch") || missingObservation.Member == nil || missingObservation.Member.Complete == nil || *missingObservation.Member.Complete {
+		t.Fatalf("deleted reviewed branch-only observation retained overlay credit: member=%#v errors=%#v", missingObservation.Member, missingObservation.Errors)
+	}
+	runPortfolioGit(t, root, "push", "origin", "branch-only-plan")
+
+	runPortfolioGit(t, root, "push", "origin", "--delete", "reviewed-owner")
+	deletedRoot := t.TempDir()
+	home.Root = deletedRoot
+	deleted := scanRepository(context.Background(), MirrorManager{RepositoryRoot: deletedRoot, Root: filepath.Join(deletedRoot, filepath.FromSlash(MirrorRootPath)), Runner: ExecRunner{}}, source, home, nil, time.Date(2026, 8, 9, 9, 5, 0, 0, time.UTC))
+	if deleted.Member == nil || deleted.Member.Complete == nil || !*deleted.Member.Complete || !deleted.Member.MixedCoverageComplete || !deleted.Member.CanonicalReady || len(deleted.CompatibilityObservations) != 0 || len(deleted.Errors) != 0 {
+		t.Fatalf("merged owner with retired ref did not resolve from immutable evidence: member=%#v compatibility=%#v errors=%#v", deleted.Member, deleted.CompatibilityObservations, deleted.Errors)
+	}
+
+	runPortfolioGit(t, root, "switch", "reviewed-owner")
+	appendPortfolioFile(t, root, planPath, "\nOwner branch moved after review.\n")
+	runPortfolioGit(t, root, "add", planPath)
+	runPortfolioGit(t, root, "commit", "-m", "move reviewed owner ref")
+	runPortfolioGit(t, root, "push", "origin", "reviewed-owner")
+	runPortfolioGit(t, root, "switch", "main")
+	movedRoot := t.TempDir()
+	home.Root = movedRoot
+	moved := scanRepository(context.Background(), MirrorManager{RepositoryRoot: movedRoot, Root: filepath.Join(movedRoot, filepath.FromSlash(MirrorRootPath)), Runner: ExecRunner{}}, source, home, nil, time.Date(2026, 8, 9, 9, 6, 0, 0, time.UTC))
+	if !scanErrorCodePresent(moved.Errors, "remote_overlay_binding_mismatch") || moved.Member == nil || moved.Member.Complete == nil || *moved.Member.Complete || len(moved.CompatibilityObservations) != 0 {
+		t.Fatalf("moved owner ref retained reviewed overlay credit: member=%#v compatibility=%#v errors=%#v", moved.Member, moved.CompatibilityObservations, moved.Errors)
+	}
+}
+
+func scanErrorCodePresent(errors []ScanError, code string) bool {
+	for _, scanErr := range errors {
+		if scanErr.Code == code {
+			return true
+		}
+	}
+	return false
+}
+
+func newRemotePlanTargetFixture(t *testing.T) (string, *GitRepository, RemotePlanTarget, string) {
+	t.Helper()
+	root := t.TempDir()
+	runPortfolioGit(t, "", "init", "-b", "main", root)
+	runPortfolioGit(t, root, "config", "user.email", "test@example.invalid")
+	runPortfolioGit(t, root, "config", "user.name", "Remote Target Test")
+	configV1 := "schema_version: 1\nselected_profile: standard\nproject_display_name: Remote Target\nselected_setup_folder: .\nlocal_consumer_layer:\n  repo_docs_path: docs/repo/\n  agent_memory_path: docs/agent-memory/\n  user_layer_path: .codeheart/user/\ncomponent_settings:\n  planning-workflows:\n    plan_catalog_mode: canonical\n    plan_catalog_discovery_version: 2\nportfolio:\n  schema_version: 2\n  role: member\n  member_repository_id: example-repository\n  coordination_home_id: example-home\n"
+	writePortfolioFile(t, root, ConfigPath, []byte(configV1))
+	writePortfolioFile(t, root, plancatalog.LegacyRegisterPath, []byte("# Plan Register\n"))
+	writePortfolioPlanAt(t, root, "docs/repo/plans/example/example_discovery_doc.md", "Example", "example-repository.discovery.example", plancatalog.KindDiscovery, "baseline purpose")
+	runPortfolioGit(t, root, "add", ConfigPath, plancatalog.LegacyRegisterPath, "docs/repo/plans/example/example_discovery_doc.md")
+	runPortfolioGit(t, root, "commit", "-m", "record evidence revision")
+	evidenceRevision := strings.TrimSpace(portfolioGitOutput(t, root, "rev-parse", "HEAD"))
+	settings, settingProblems := plancatalog.DecodeRepositorySettings([]byte(configV1))
+	if plancatalog.HasErrors(settingProblems) {
+		t.Fatalf("evidence settings are invalid: %#v", settingProblems)
+	}
+	classification, classifyErr := plancatalog.ClassifyCommitTree(root, evidenceRevision, settings, settings.Mode, settings.RepositoryID)
+	if classifyErr != nil || !classification.Complete {
+		t.Fatalf("evidence classification is invalid: %#v %v", classification.Discovery.Problems, classifyErr)
+	}
+	policyDigest := classification.PolicyDigest
+	candidateSetDigest := classification.CandidateSetDigest
+	configDigest := sha256.Sum256([]byte(configV1))
+	ledgerPath := "docs/repo/plans/migrations/reviewed-ledger.yaml"
+	branchDigest := strings.Repeat("e", 64)
+	ledger := fmt.Sprintf("schema_version: 3\nrepository_id: example-repository\nevidence_revision: %s\ntarget_mode: mixed\ninventory_revision: %s\npolicy_digest: %s\ncandidate_set_digest: %s\ntarget_config_precondition_sha256: %x\nbranch_evidence:\n  algorithm: git-candidate-proof-v1\n  git_version: 2.46.0\n  evidence_scope: local\n  remote_overlay_status: not-requested\n  digest: %s\nrecords: []\n", evidenceRevision, evidenceRevision, policyDigest, candidateSetDigest, configDigest, branchDigest)
+	writePortfolioFile(t, root, ledgerPath, []byte(ledger))
+	runPortfolioGit(t, root, "add", ledgerPath)
+	runPortfolioGit(t, root, "commit", "-m", "record ledger checkpoint")
+	activationBase := strings.TrimSpace(portfolioGitOutput(t, root, "rev-parse", "HEAD"))
+	ledgerDigest := sha256.Sum256([]byte(ledger))
+	planPath := "docs/repo/plans/example/example_discovery_doc.md"
+	writePortfolioPlanAt(t, root, planPath, "Example", "example-repository.discovery.example", plancatalog.KindDiscovery, "canonical purpose")
+	placeholder := strings.Repeat("0", 64)
+	writePortfolioFile(t, root, ConfigPath, []byte(remoteActivatedConfig(evidenceRevision, activationBase, ledgerPath, fmt.Sprintf("%x", ledgerDigest), branchDigest, placeholder)))
+	runPortfolioGit(t, root, "add", ConfigPath, planPath)
+	runPortfolioGit(t, root, "commit", "-m", "activate migration checkpoint")
+	provisional := strings.TrimSpace(portfolioGitOutput(t, root, "rev-parse", "HEAD"))
+	actionDigest, _, err := plancatalog.MigrationActionDigestForCheckpoint(root, activationBase, provisional)
+	if err != nil {
+		t.Fatal(err)
+	}
+	writePortfolioFile(t, root, ConfigPath, []byte(remoteActivatedConfig(evidenceRevision, activationBase, ledgerPath, fmt.Sprintf("%x", ledgerDigest), branchDigest, actionDigest)))
+	if settings, problems := plancatalog.DecodeRepositorySettings([]byte(remoteActivatedConfig(evidenceRevision, activationBase, ledgerPath, fmt.Sprintf("%x", ledgerDigest), branchDigest, actionDigest))); plancatalog.HasErrors(problems) || settings.ConfigSchemaVersion != 2 {
+		t.Fatalf("generated activation config is invalid: settings=%#v problems=%#v", settings, problems)
+	}
+	runPortfolioGit(t, root, "add", ConfigPath)
+	runPortfolioGit(t, root, "commit", "--amend", "--no-edit")
+	activation := strings.TrimSpace(portfolioGitOutput(t, root, "rev-parse", "HEAD"))
+	directory, openErr := os.Open(root)
+	if openErr != nil {
+		t.Fatal(openErr)
+	}
+	repository := &GitRepository{Path: root, runner: ExecRunner{}, mirrorFile: directory}
+	t.Cleanup(repository.Close)
+	target := RemotePlanTarget{
+		RepositoryID: "example-repository", EvidenceRevision: evidenceRevision, ActivationBaseRevision: activationBase, ActivationRevision: activation,
+		LedgerPath: ledgerPath, LedgerSHA256: fmt.Sprintf("%x", ledgerDigest), DiscoveryVersion: plancatalog.DiscoveryV2, TargetCatalogMode: plancatalog.ModeMixed,
+		PolicyDigest: policyDigest, CandidateSetDigest: candidateSetDigest, MigrationActionDigest: actionDigest,
+		BranchEvidenceDigest: branchDigest, EvidenceScope: "local",
+	}
+	return root, repository, target, activation
+}
+
+func remoteActivatedConfig(evidenceRevision, activationBase, ledgerPath, ledgerDigest, branchDigest, actionDigest string) string {
+	return fmt.Sprintf("schema_version: 2\nselected_profile: standard\nproject_display_name: Remote Target\nselected_setup_folder: .\nlocal_consumer_layer:\n  repo_docs_path: docs/repo/\n  agent_memory_path: docs/agent-memory/\n  user_layer_path: .codeheart/user/\ncomponent_settings:\n  planning-workflows:\n    plan_catalog_mode: mixed\n    plan_catalog_cutover_revision: %s\n    plan_catalog_discovery_version: 2\n    plan_catalog_migration_evidence:\n      ledger_path: %s\n      ledger_sha256: %s\n      branch_evidence_digest: %s\n      evidence_revision: %s\n      activation_base_revision: %s\n      migration_action_digest: %s\n      evidence_scope: local\nportfolio:\n  schema_version: 2\n  role: member\n  member_repository_id: example-repository\n  coordination_home_id: example-home\n", evidenceRevision, ledgerPath, ledgerDigest, branchDigest, evidenceRevision, activationBase, actionDigest)
+}
+
+func appendPortfolioFile(t *testing.T, root, relative, text string) {
+	t.Helper()
+	path := filepath.Join(root, filepath.FromSlash(relative))
+	file, err := os.OpenFile(path, os.O_APPEND|os.O_WRONLY, 0o644)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := file.WriteString(text); err != nil {
+		_ = file.Close()
+		t.Fatal(err)
+	}
+	if err := file.Close(); err != nil {
+		t.Fatal(err)
 	}
 }
 
@@ -287,14 +789,14 @@ func TestDiscoveryV2LegacyModeStillRequiresCanonicalRemoteEvidence(t *testing.T)
 	if result.Catalog.Complete || result.CacheUpdated {
 		t.Fatalf("filename-only v2 member was reported complete: %+v", result)
 	}
-	metadataMissing := false
+	bindingMissing := false
 	for _, scanError := range result.Catalog.Errors {
-		if scanError.RepositoryID == "example-member" && scanError.Ref == "refs/remotes/origin/main" && scanError.Path == planPath && scanError.Code == "metadata_missing" {
-			metadataMissing = true
+		if scanError.RepositoryID == "example-member" && scanError.Ref == "refs/remotes/origin/main" && scanError.Code == "migration_evidence_binding_missing" {
+			bindingMissing = true
 		}
 	}
-	if !metadataMissing {
-		t.Fatalf("canonical remote coverage blocker missing: %+v", result.Catalog.Errors)
+	if !bindingMissing {
+		t.Fatalf("reviewed migration-evidence blocker missing: %+v", result.Catalog.Errors)
 	}
 	for _, observation := range result.Catalog.Observations {
 		if observation.RepositoryID == "example-member" && observation.Ref == "refs/remotes/origin/main" && observation.CanonicalPath == planPath {
@@ -512,6 +1014,51 @@ func TestMalformedMembershipAndFailedHomeSelfMembershipPreserveCompleteCache(t *
 
 func TestLoadConfigNormalizesV1V2CommittedAndLocalSources(t *testing.T) {
 	fixtureRoot := filepath.Join("..", "..", "tests", "fixtures", "portfolio")
+	t.Run("root config v2 binding", func(t *testing.T) {
+		root := t.TempDir()
+		configData := fmt.Sprintf(`schema_version: 2
+selected_profile: standard
+project_display_name: Example Coordination Home
+selected_setup_folder: .
+local_consumer_layer:
+  repo_docs_path: docs/repo/
+  agent_memory_path: docs/agent-memory/
+  user_layer_path: .codeheart/user/
+  local_machine_layer_path: .codeheart/local/
+component_settings:
+  planning-workflows:
+    plan_catalog_mode: mixed
+    plan_catalog_discovery_version: 2
+    plan_catalog_cutover_revision: %s
+    plan_catalog_migration_evidence:
+      ledger_path: docs/repo/plans/example/attachments/ledger-v3.yaml
+      ledger_sha256: %s
+      branch_evidence_digest: %s
+      evidence_revision: %s
+      activation_base_revision: %s
+      migration_action_digest: %s
+      evidence_scope: local
+portfolio:
+  schema_version: 2
+  role: coordination-home
+  member_repository_id: example-home-repository
+  coordination_home_id: example-home
+  discovery:
+    sources: []
+`, strings.Repeat("a", 40), strings.Repeat("b", 64), strings.Repeat("c", 64), strings.Repeat("d", 40), strings.Repeat("e", 40), strings.Repeat("f", 64))
+		writePortfolioFile(t, root, ConfigPath, []byte(configData))
+		config, err := LoadConfig(root)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if config.SchemaVersion != 2 || config.Role != RoleCoordinationHome {
+			t.Fatalf("root config v2 = %+v", config)
+		}
+		writePortfolioFile(t, root, ConfigPath, []byte(strings.Replace(configData, "      evidence_scope: local", "      evidence_scope: local\n      reviewed: true", 1)))
+		if _, err := LoadConfig(root); err == nil || !strings.Contains(err.Error(), "portfolio_config_invalid") {
+			t.Fatalf("unknown v2 evidence field error = %v", err)
+		}
+	})
 	t.Run("v2 coordination home", func(t *testing.T) {
 		root := t.TempDir()
 		writePortfolioFile(t, root, ConfigPath, mustReadPortfolioFile(t, filepath.Join(fixtureRoot, "kit-config-v2-home.yaml")))
@@ -1670,9 +2217,10 @@ func commitAndPushPortfolioFile(t *testing.T, repository, relative, message stri
 func portfolioCatalogFixture(completedAt string) Catalog {
 	emptyDigest := aggregateMemberDigest(nil, func(plancatalog.CatalogMember) string { return "" })
 	return Catalog{
-		SchemaVersion: 2, DiscoveryVersion: plancatalog.DiscoveryV2, PolicyDigest: emptyDigest, CandidateSetDigest: emptyDigest, CoordinationHomeID: "example-home",
+		SchemaVersion: 3, DiscoveryVersion: plancatalog.DiscoveryV2, PolicyDigest: emptyDigest, CandidateSetDigest: emptyDigest, CoordinationHomeID: "example-home",
 		StartedAt: completedAt, CompletedAt: completedAt, LastCompleteScanAt: completedAt, Complete: true,
-		Members: []plancatalog.CatalogMember{}, Observations: []plancatalog.SourceObservation{}, Candidates: []Candidate{}, Errors: []ScanError{},
+		MixedCoverageComplete: true, CanonicalReady: true,
+		Members: []plancatalog.CatalogMember{}, Observations: []plancatalog.SourceObservation{}, CompatibilityObservations: []plancatalog.CompatibilityObservation{}, Candidates: []Candidate{}, Errors: []ScanError{},
 		Metrics: Metrics{MaxConcurrency: 1},
 	}
 }
@@ -1821,6 +2369,35 @@ func TestGitTransportPolicyRejectsRemoteHelpersAndPinsSupportedProtocols(t *test
 		if _, err := os.Stat(uploadPackSentinel); !os.IsNotExist(err) {
 			t.Fatalf("mixed-case Windows uploadpack injection executed helper: %v", err)
 		}
+	}
+}
+
+func TestRemoteBranchEvidenceProposesSameContentForIndependentHistory(t *testing.T) {
+	root := t.TempDir()
+	runPortfolioGit(t, root, "init", "-b", "main")
+	runPortfolioGit(t, root, "config", "user.email", "remote-proof@example.invalid")
+	runPortfolioGit(t, root, "config", "user.name", "Remote Proof Test")
+	planPath := "docs/repo/plans/example/example_implementation_doc.md"
+	writePortfolioFile(t, root, planPath, []byte("old bytes\n"))
+	runPortfolioGit(t, root, "add", planPath)
+	runPortfolioGit(t, root, "commit", "-m", "base")
+	base := strings.TrimSpace(portfolioGitOutput(t, root, "rev-parse", "HEAD"))
+	runPortfolioGit(t, root, "switch", "-c", "history")
+	writePortfolioFile(t, root, planPath, []byte("independently equal bytes\n"))
+	runPortfolioGit(t, root, "add", planPath)
+	runPortfolioGit(t, root, "commit", "-m", "history transition")
+	runPortfolioGit(t, root, "switch", "main")
+	writePortfolioFile(t, root, planPath, []byte("independently equal bytes\n"))
+	runPortfolioGit(t, root, "add", planPath)
+	runPortfolioGit(t, root, "commit", "-m", "target transition")
+	target := strings.TrimSpace(portfolioGitOutput(t, root, "rev-parse", "HEAD"))
+	classification := plancatalog.Classification{
+		PolicyDigest: strings.Repeat("a", 64), CandidateSetDigest: strings.Repeat("b", 64),
+		Candidates: []plancatalog.Candidate{{Path: planPath, ExpectedKind: plancatalog.KindImplementation, Ownership: plancatalog.OwnershipOwned}},
+	}
+	evidence := buildRemoteBranchEvidence(&GitRepository{Path: root}, "example-repository", target, "refs/heads/history", base, []GitTreeChange{{Status: "M", OldPath: planPath, NewPath: planPath}}, classification)
+	if len(evidence) != 1 || evidence[0].ProposedDisposition != plancatalog.BranchDispositionSameContentNonOwner || evidence[0].Proof == nil || evidence[0].Identity.LogicalRef != "remote:example-repository:refs/heads/history" {
+		t.Fatalf("remote same-content proof = %#v", evidence)
 	}
 }
 

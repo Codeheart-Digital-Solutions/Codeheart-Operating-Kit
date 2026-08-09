@@ -166,7 +166,10 @@ def verify_pack_shape(pack: Path, version: str, platform: str) -> None:
                 raise RuntimeError(f"{pack.name} has non-normalized metadata for {info.filename}")
             if ((info.external_attr >> 16) & 0xF000) != stat.S_IFREG:
                 raise RuntimeError(f"{pack.name} contains a non-regular entry: {info.filename}")
-        required = {"pack-manifest.json", "checksums.txt", "content-manifest.yaml"}
+        required = {
+            "bootstrap.md", "install.sh", "install.ps1", "release-notes.md", "INSTALL.md",
+            "pack-manifest.json", "checksums.txt", "content-manifest.yaml",
+        }
         suffixes = {name.removeprefix(expected_prefix) for name in names}
         if not required <= suffixes:
             raise RuntimeError(f"{pack.name} is missing required identity files")

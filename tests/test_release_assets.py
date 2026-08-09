@@ -142,6 +142,9 @@ def test_release_assets_contain_binaries_and_no_python_payload(tmp_path):
             names = archive.namelist()
             assert any(name.endswith(binary_suffix) for name in names)
             assert any(name.endswith("bootstrap.md") for name in names)
+            assert any(name.endswith("install.sh") for name in names)
+            assert any(name.endswith("install.ps1") for name in names)
+            assert any(name.endswith("release-notes.md") for name in names)
             assert any(name.endswith("INSTALL.md") for name in names)
             assert any(name.endswith("pack-manifest.json") for name in names)
             assert any(name.endswith("checksums.txt") for name in names)
@@ -179,6 +182,7 @@ def test_current_dist_assets_match_root_manifest_when_present():
     assert "assets" not in manifest
     assert "released_at" not in manifest
     assert set(manifest["compatibility"]["platforms"]) == {"macos-universal", "windows-x64"}
+    assert set(manifest["compatibility"]["config_schema_versions"]) == {1, 2}
 
 
 def test_release_manifest_component_impact_matches_component_manifests():

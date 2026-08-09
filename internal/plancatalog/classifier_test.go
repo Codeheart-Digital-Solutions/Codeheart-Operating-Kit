@@ -749,3 +749,129 @@ func copyPlanFixture(t *testing.T, name string) string {
 	}
 	return root
 }
+
+func TestAttachRemoteOverlayCoalescesMatchingTrackingEvidence(t *testing.T) {
+	root := t.TempDir()
+	runGitTest(t, root, "init")
+	runGitTest(t, root, "remote", "add", "upstream", "https://example.invalid/owner/repository.git")
+	sourceIdentity := remoteIdentitySHA256(root, "https://example.invalid/owner/repository.git")
+	path := "docs/repo/plans/example/example_discovery_doc.md"
+	tracking := branchOverlayEvidenceFixture("tracking:upstream:refs/heads/example", path)
+	inventory := Inventory{
+		Records:        []InventoryRecord{{Path: path, BranchTouchCandidates: []BranchCandidateEvidence{tracking}}},
+		Coverage:       InventoryCoverage{BranchTouchCandidates: 1},
+		BranchEvidence: &BranchEvidenceSummary{Algorithm: BranchEvidenceAlgorithm, EvidenceScope: "local", RemoteOverlayStatus: "not-requested"},
+	}
+	remote := tracking
+	remote.Identity.LogicalRef = "remote:example-repository:refs/heads/example"
+	remote.Identity.EvidenceScope = "remote-aware"
+	remote.Digest = CanonicalBranchEvidenceDigest(remote)
+	AttachRemoteOverlay(root, &inventory, RemoteOverlayEvidence{Remote: "example-repository", SourceIdentitySHA256: sourceIdentity, Status: "complete", Digest: strings.Repeat("9", 64), Refs: []RemoteOverlayRef{}, BranchTouchCandidates: []BranchCandidateEvidence{remote}})
+	got := inventory.Records[0].BranchTouchCandidates
+	if len(got) != 1 || got[0].Identity.LogicalRef != remote.Identity.LogicalRef || got[0].ProposedDisposition != BranchDispositionSameContentNonOwner || inventory.Coverage.BranchTouchCandidates != 1 || inventory.Coverage.BlockingBranchTouches != 0 {
+		t.Fatalf("matching tracking and mirror evidence did not coalesce: inventory=%#v", inventory)
+	}
+}
+
+func TestAttachRemoteOverlayBlocksTrackingMirrorMismatch(t *testing.T) {
+	root := t.TempDir()
+	runGitTest(t, root, "init")
+	runGitTest(t, root, "remote", "add", "upstream", "https://example.invalid/owner/repository.git")
+	sourceIdentity := remoteIdentitySHA256(root, "https://example.invalid/owner/repository.git")
+	path := "docs/repo/plans/example/example_discovery_doc.md"
+	tracking := branchOverlayEvidenceFixture("tracking:upstream:refs/heads/example", path)
+	inventory := Inventory{
+		Records:        []InventoryRecord{{Path: path, BranchTouchCandidates: []BranchCandidateEvidence{tracking}}},
+		Coverage:       InventoryCoverage{BranchTouchCandidates: 1},
+		BranchEvidence: &BranchEvidenceSummary{Algorithm: BranchEvidenceAlgorithm, EvidenceScope: "local", RemoteOverlayStatus: "not-requested"},
+	}
+	remote := tracking
+	remote.Identity.LogicalRef = "remote:example-repository:refs/heads/example"
+	remote.Identity.EvidenceScope = "remote-aware"
+	remote.RefTip = strings.Repeat("8", 40)
+	remote.Digest = CanonicalBranchEvidenceDigest(remote)
+	AttachRemoteOverlay(root, &inventory, RemoteOverlayEvidence{Remote: "example-repository", SourceIdentitySHA256: sourceIdentity, Status: "complete", Digest: strings.Repeat("9", 64), Refs: []RemoteOverlayRef{}, BranchTouchCandidates: []BranchCandidateEvidence{remote}})
+	got := inventory.Records[0].BranchTouchCandidates
+	if len(got) != 2 || inventory.Coverage.BranchTouchCandidates != 2 || inventory.Coverage.BlockingBranchTouches != 2 {
+		t.Fatalf("mismatched tracking and mirror evidence was not retained as two blockers: %#v", inventory)
+	}
+	for _, evidence := range got {
+		if evidence.ProposedDisposition != BranchDispositionBlocking || !branchBlockerCodePresent(evidence.Blockers, "branch_tracking_overlay_mismatch") {
+			t.Fatalf("mismatched evidence was not fail-closed: %#v", evidence)
+		}
+	}
+}
+
+func TestAttachRemoteOverlayKeepsAmbiguousSourceTrackingEvidenceSeparate(t *testing.T) {
+	root := t.TempDir()
+	runGitTest(t, root, "init")
+	remoteURL := "https://example.invalid/owner/repository.git"
+	runGitTest(t, root, "remote", "add", "first", remoteURL)
+	runGitTest(t, root, "remote", "add", "second", remoteURL)
+	path := "docs/repo/plans/example/example_discovery_doc.md"
+	tracking := branchOverlayEvidenceFixture("tracking:first:refs/heads/example", path)
+	inventory := Inventory{Records: []InventoryRecord{{Path: path, BranchTouchCandidates: []BranchCandidateEvidence{tracking}}}, Coverage: InventoryCoverage{BranchTouchCandidates: 1}, BranchEvidence: &BranchEvidenceSummary{Algorithm: BranchEvidenceAlgorithm, EvidenceScope: "local", RemoteOverlayStatus: "not-requested"}}
+	remote := tracking
+	remote.Identity.LogicalRef = "remote:example-repository:refs/heads/example"
+	remote.Identity.EvidenceScope = "remote-aware"
+	remote.Digest = CanonicalBranchEvidenceDigest(remote)
+	AttachRemoteOverlay(root, &inventory, RemoteOverlayEvidence{Remote: "example-repository", SourceIdentitySHA256: remoteIdentitySHA256(root, remoteURL), Status: "complete", Digest: strings.Repeat("9", 64), Refs: []RemoteOverlayRef{}, BranchTouchCandidates: []BranchCandidateEvidence{remote}})
+	if got := inventory.Records[0].BranchTouchCandidates; len(got) != 2 || got[0].Identity.LogicalRef != tracking.Identity.LogicalRef || got[1].Identity.LogicalRef != remote.Identity.LogicalRef {
+		t.Fatalf("ambiguous source mapping silently coalesced tracking authority: %#v", got)
+	}
+}
+
+func TestAttachRemoteOverlayRejectsMismatchedOrTamperedEvidenceIdentity(t *testing.T) {
+	path := "docs/repo/plans/example/example_discovery_doc.md"
+	for name, mutate := range map[string]func(*BranchCandidateEvidence){
+		"repository": func(evidence *BranchCandidateEvidence) { evidence.Identity.RepositoryID = "other-repository" },
+		"scope":      func(evidence *BranchCandidateEvidence) { evidence.Identity.EvidenceScope = "local" },
+		"logical ref": func(evidence *BranchCandidateEvidence) {
+			evidence.Identity.LogicalRef = "remote:other-repository:refs/heads/example"
+		},
+		"digest": func(evidence *BranchCandidateEvidence) { evidence.Digest = strings.Repeat("f", 64) },
+	} {
+		t.Run(name, func(t *testing.T) {
+			complete, mixedComplete, canonicalReady := true, true, true
+			inventory := Inventory{
+				Records:               []InventoryRecord{{Path: path, BranchTouchCandidates: []BranchCandidateEvidence{}}},
+				Complete:              &complete,
+				MixedCoverageComplete: &mixedComplete,
+				CanonicalReady:        &canonicalReady,
+				BranchEvidence:        &BranchEvidenceSummary{Algorithm: BranchEvidenceAlgorithm, EvidenceScope: "local", RemoteOverlayStatus: "not-requested"},
+			}
+			evidence := branchOverlayEvidenceFixture("remote:example-repository:refs/heads/example", path)
+			evidence.Identity.EvidenceScope = "remote-aware"
+			evidence.Digest = CanonicalBranchEvidenceDigest(evidence)
+			mutate(&evidence)
+			AttachRemoteOverlay(t.TempDir(), &inventory, RemoteOverlayEvidence{Remote: "example-repository", SourceIdentitySHA256: strings.Repeat("e", 64), Status: "complete", Digest: strings.Repeat("9", 64), Refs: []RemoteOverlayRef{}, BranchTouchCandidates: []BranchCandidateEvidence{evidence}})
+			got := inventory.Records[0].BranchTouchCandidates
+			if len(got) != 1 || got[0].ProposedDisposition != BranchDispositionBlocking || len(got[0].Blockers) == 0 || complete || mixedComplete || canonicalReady {
+				t.Fatalf("invalid remote evidence was credited: %#v", inventory)
+			}
+		})
+	}
+}
+
+func branchOverlayEvidenceFixture(logicalRef, candidatePath string) BranchCandidateEvidence {
+	state := BranchPathState{State: BranchPathPresent, Mode: GitModeRegular, ObjectID: strings.Repeat("1", 40), SHA256: strings.Repeat("2", 64)}
+	evidence := BranchCandidateEvidence{
+		Algorithm: BranchEvidenceAlgorithm, Identity: BranchReviewIdentity{EvidenceScope: "local", RepositoryID: "example-repository", LogicalRef: logicalRef, CandidatePath: candidatePath},
+		EvidenceRevision: strings.Repeat("3", 40), PolicyDigest: strings.Repeat("4", 64), CandidateSetDigest: strings.Repeat("5", 64),
+		RefTip: strings.Repeat("6", 40), MergeBase: strings.Repeat("7", 40),
+		PathTransitions:     []BranchPathTransition{{Path: candidatePath, Before: state, After: state}},
+		ProposedDisposition: BranchDispositionSameContentNonOwner,
+		Proof:               &BranchEvidenceProof{Kind: BranchProofSameContentV1, TargetPathState: &state, RefPathState: &state},
+	}
+	evidence.Digest = CanonicalBranchEvidenceDigest(evidence)
+	return evidence
+}
+
+func branchBlockerCodePresent(blockers []BranchEvidenceBlocker, code string) bool {
+	for _, blocker := range blockers {
+		if blocker.Code == code {
+			return true
+		}
+	}
+	return false
+}

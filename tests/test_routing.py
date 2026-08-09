@@ -110,13 +110,19 @@ def test_low_context_planning_and_portfolio_routes_are_installed(tmp_path):
     assert "incomplete scan" in router
     assert "older cache is historical only" in router
     assert "member_repository_id` is required for both roles" in configure
-    assert "previous complete cache was" in refresh and "historical" in refresh
-    assert "changed or are owned by active branches remain skipped" in migrate
-    assert "ask their branch owners" in migrate
+    assert "previous complete compatible cache" in refresh
+    assert "historical schema-v1/v2" in refresh
+    assert "mixed_coverage_complete" in refresh
+    assert "canonical_ready" in refresh
+    assert "mixed-grandfathered" in refresh
+    assert "E -> L -> migrate -> catalog-activate -> A -> validate" in migrate
+    assert "same-content-non-owner" in migrate
+    assert "deferred-active-owner" in migrate
+    assert "branch deletion is not a migration precondition" in migrate
     assert "do not ask for a second push approval" in draft.lower()
 
 
-def test_nested_domain_plan_probe_routes_through_prospective_v2_before_writes():
+def test_nested_domain_plan_probe_routes_through_reviewed_v3_before_writes():
     router = (
         ROOT
         / "components/agent-interface/managed/reference/operation-routing-and-dispatch.md"
@@ -135,15 +141,63 @@ def test_nested_domain_plan_probe_routes_through_prospective_v2_before_writes():
     assert "every owned tracked `docs`\n  tree" in router
     assert "ownership/semantic ambiguity" in router
     assert "reviewed ownership/exclusions" in router
-    assert "explicit approval for metadata/config writes" in router
+    assert "schema-v3 candidate-scoped ledger" in router
+    assert "A CLI\n  `--yes` is not Git authority" in router
     assert "exact lowercase segment named\n`docs` at any depth" in catalog
     assert "supported filename **or** one genuine" in catalog
     assert "--target-discovery-version 2" in migrate
     assert "--target-catalog-mode canonical" in migrate
-    assert "Migration itself never activates v2" in migrate
-    assert "separate reviewed config activation" in router
+    assert "plans catalog-activate" in migrate
+    assert "E -> L -> migrate -> catalog-activate -> A -> validate" in migrate
+    assert "route selection before Git/provider actions" in router
     assert "no `owned_roots` setting" in catalog
     assert "set shared config to `mixed`" not in combined
+
+
+def test_migration_route_preserves_branches_and_fails_closed_on_review_drift():
+    router = (
+        ROOT
+        / "components/agent-interface/managed/reference/operation-routing-and-dispatch.md"
+    ).read_text(encoding="utf-8")
+    migrate = (
+        ROOT / "components/planning-workflows/managed/runbooks/migrate-plan-catalog.md"
+    ).read_text(encoding="utf-8")
+    catalog = (
+        ROOT / "components/planning-workflows/managed/reference/plan-catalog-format.md"
+    ).read_text(encoding="utf-8")
+    register = (
+        ROOT / "components/planning-workflows/managed/runbooks/maintain-plan-register.md"
+    ).read_text(encoding="utf-8")
+    combined = "\n".join([router, migrate, catalog, register])
+
+    for disposition in [
+        "same-content-non-owner",
+        "incorporated-history-non-owner",
+        "deferred-active-owner",
+        "active-owner",
+        "blocking",
+    ]:
+        assert disposition in combined
+    for contract in [
+        "schema-v3",
+        "Git 2.43 or newer",
+        "handle-tooling-readiness.md",
+        "remote-aware",
+        "mixed-grandfathered",
+        "incremental_migration_required",
+        "mixed_coverage_complete",
+        "canonical_ready",
+        "direct canonical activation remains zero-gap",
+        "E -> L -> migrate -> catalog-activate -> A -> validate",
+        "structured blocker",
+    ]:
+        assert contract.lower() in combined.lower()
+
+    assert "Merged-pull-request state may corroborate" in catalog
+    assert "never supplies the sole\noffline proof" in catalog
+    assert "branch deletion is neither the primary remedy nor granted authority" in router
+    assert "Plan-catalog migration,\nclearance, deferral, and activation never authorize a register edit" in register
+    assert "--yes` is not Git authority" in router
 
 
 def test_activation_route_grants_only_plan_checkpoint_normal_push():

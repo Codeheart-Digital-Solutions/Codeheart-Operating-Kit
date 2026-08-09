@@ -33,22 +33,24 @@ type MigrationDecision struct {
 }
 
 type MigrationRecord struct {
-	Path           string              `json:"path,omitempty" yaml:"path,omitempty"`
-	CurrentPath    string              `json:"current_path,omitempty" yaml:"current_path,omitempty"`
-	TargetPath     string              `json:"target_path,omitempty" yaml:"target_path,omitempty"`
-	SourceRevision string              `json:"source_revision" yaml:"source_revision"`
-	SourceSHA256   string              `json:"source_sha256" yaml:"source_sha256"`
-	TargetState    *TargetPrecondition `json:"target_precondition,omitempty" yaml:"target_precondition,omitempty"`
-	Ownership      OwnershipClass      `json:"ownership_disposition,omitempty" yaml:"ownership_disposition,omitempty"`
-	Decision       MigrationDecision   `json:"decision" yaml:"decision"`
-	Confidence     string              `json:"confidence" yaml:"confidence"`
-	Ambiguity      []string            `json:"ambiguity" yaml:"ambiguity"`
-	Evidence       []string            `json:"evidence" yaml:"evidence"`
-	LegacyAliases  []string            `json:"legacy_aliases" yaml:"legacy_aliases"`
-	Conflicts      []string            `json:"conflicts" yaml:"conflicts"`
-	Deferred       bool                `json:"deferred" yaml:"deferred"`
-	DeferralReason string              `json:"deferral_reason,omitempty" yaml:"deferral_reason,omitempty"`
-	BranchOwner    string              `json:"branch_owner" yaml:"branch_owner"`
+	Path                     string              `json:"path,omitempty" yaml:"path,omitempty"`
+	CurrentPath              string              `json:"current_path,omitempty" yaml:"current_path,omitempty"`
+	TargetPath               string              `json:"target_path,omitempty" yaml:"target_path,omitempty"`
+	SourceRevision           string              `json:"source_revision" yaml:"source_revision"`
+	SourceSHA256             string              `json:"source_sha256" yaml:"source_sha256"`
+	TargetState              *TargetPrecondition `json:"target_precondition,omitempty" yaml:"target_precondition,omitempty"`
+	TargetPreconditionSHA256 string              `json:"target_precondition_sha256,omitempty" yaml:"target_precondition_sha256,omitempty"`
+	Ownership                OwnershipClass      `json:"ownership_disposition,omitempty" yaml:"ownership_disposition,omitempty"`
+	Decision                 MigrationDecision   `json:"decision" yaml:"decision"`
+	Confidence               string              `json:"confidence" yaml:"confidence"`
+	Ambiguity                []string            `json:"ambiguity" yaml:"ambiguity"`
+	Evidence                 []string            `json:"evidence" yaml:"evidence"`
+	LegacyAliases            []string            `json:"legacy_aliases" yaml:"legacy_aliases"`
+	Conflicts                []string            `json:"conflicts" yaml:"conflicts"`
+	Deferred                 bool                `json:"deferred" yaml:"deferred"`
+	DeferralReason           string              `json:"deferral_reason,omitempty" yaml:"deferral_reason,omitempty"`
+	BranchOwner              string              `json:"branch_owner,omitempty" yaml:"branch_owner,omitempty"`
+	BranchTouchReviews       []BranchTouchReview `json:"branch_touch_reviews,omitempty" yaml:"branch_touch_reviews"`
 }
 
 type TargetPrecondition struct {
@@ -56,16 +58,139 @@ type TargetPrecondition struct {
 	SHA256 string `json:"sha256,omitempty" yaml:"sha256,omitempty"`
 }
 
+func (target *TargetPrecondition) UnmarshalYAML(node *yaml.Node) error {
+	if node.Kind == yaml.ScalarNode {
+		target.State = node.Value
+		return nil
+	}
+	type alias TargetPrecondition
+	return node.Decode((*alias)(target))
+}
+
+type BranchEvidenceSummary struct {
+	Algorithm                  string `json:"algorithm" yaml:"algorithm"`
+	GitVersion                 string `json:"git_version" yaml:"git_version"`
+	EvidenceScope              string `json:"evidence_scope" yaml:"evidence_scope"`
+	RemoteOverlayStatus        string `json:"remote_overlay_status" yaml:"remote_overlay_status"`
+	RemoteOverlayDigest        string `json:"remote_overlay_digest,omitempty" yaml:"remote_overlay_digest,omitempty"`
+	RemoteSourceIdentitySHA256 string `json:"remote_source_identity_sha256,omitempty" yaml:"remote_source_identity_sha256,omitempty"`
+	Digest                     string `json:"digest" yaml:"digest"`
+}
+
+type BranchTouchReview struct {
+	Identity            BranchReviewIdentity   `json:"identity" yaml:"identity"`
+	Disposition         string                 `json:"disposition" yaml:"disposition"`
+	RefTip              string                 `json:"ref_tip" yaml:"ref_tip"`
+	MergeBase           string                 `json:"merge_base" yaml:"merge_base"`
+	PathTransitions     []BranchPathTransition `json:"path_transitions" yaml:"path_transitions"`
+	Proof               *BranchEvidenceProof   `json:"proof,omitempty" yaml:"proof,omitempty"`
+	OwnerTipCandidate   *OwnerTipCandidate     `json:"owner_tip_candidate,omitempty" yaml:"owner_tip_candidate,omitempty"`
+	IncrementalFollowUp *IncrementalFollowUp   `json:"incremental_follow_up,omitempty" yaml:"incremental_follow_up,omitempty"`
+	BlockingReasons     []string               `json:"blocking_reasons,omitempty" yaml:"blocking_reasons,omitempty"`
+}
+
+type OwnerTipCandidate struct {
+	Path      string    `json:"path" yaml:"path"`
+	Mode      GitMode   `json:"mode" yaml:"mode"`
+	ObjectID  string    `json:"object_id" yaml:"object_id"`
+	SHA256    string    `json:"sha256" yaml:"sha256"`
+	Lifecycle Lifecycle `json:"lifecycle" yaml:"lifecycle"`
+}
+
+type IncrementalFollowUp struct {
+	Action              string   `json:"action" yaml:"action"`
+	Trigger             string   `json:"trigger" yaml:"trigger"`
+	CutoverRevision     string   `json:"cutover_revision" yaml:"cutover_revision"`
+	PlanPath            string   `json:"plan_path" yaml:"plan_path"`
+	CutoverSourceSHA256 string   `json:"cutover_source_sha256" yaml:"cutover_source_sha256"`
+	OwnerRef            string   `json:"owner_ref" yaml:"owner_ref"`
+	OwnerTip            string   `json:"owner_tip" yaml:"owner_tip"`
+	OwnerPath           string   `json:"owner_path" yaml:"owner_path"`
+	OwnerMode           GitMode  `json:"owner_mode" yaml:"owner_mode"`
+	OwnerObjectID       string   `json:"owner_object_id" yaml:"owner_object_id"`
+	OwnerSHA256         string   `json:"owner_sha256" yaml:"owner_sha256"`
+	State               string   `json:"state" yaml:"state"`
+	SuccessConditions   []string `json:"success_conditions" yaml:"success_conditions"`
+}
+
 type MigrationLedger struct {
-	SchemaVersion      int               `json:"schema_version" yaml:"schema_version"`
-	RepositoryID       string            `json:"repository_id" yaml:"repository_id"`
-	DiscoveryVersion   DiscoveryVersion  `json:"discovery_version,omitempty" yaml:"discovery_version,omitempty"`
-	TargetCatalogMode  CatalogMode       `json:"target_catalog_mode,omitempty" yaml:"target_catalog_mode,omitempty"`
-	PolicyDigest       string            `json:"policy_digest,omitempty" yaml:"policy_digest,omitempty"`
-	CandidateSetDigest string            `json:"candidate_set_digest,omitempty" yaml:"candidate_set_digest,omitempty"`
-	InventoryRevision  string            `json:"inventory_revision" yaml:"inventory_revision"`
-	ReviewedAt         string            `json:"reviewed_at" yaml:"reviewed_at"`
-	Records            []MigrationRecord `json:"records" yaml:"records"`
+	SchemaVersion                  int                       `json:"schema_version" yaml:"schema_version"`
+	RepositoryID                   string                    `json:"repository_id" yaml:"repository_id"`
+	EvidenceRevision               string                    `json:"evidence_revision,omitempty" yaml:"evidence_revision,omitempty"`
+	DiscoveryVersion               DiscoveryVersion          `json:"discovery_version,omitempty" yaml:"discovery_version,omitempty"`
+	TargetCatalogMode              CatalogMode               `json:"target_catalog_mode,omitempty" yaml:"target_catalog_mode,omitempty"`
+	TargetMode                     CatalogMode               `json:"target_mode,omitempty" yaml:"target_mode,omitempty"`
+	PolicyDigest                   string                    `json:"policy_digest,omitempty" yaml:"policy_digest,omitempty"`
+	CandidateSetDigest             string                    `json:"candidate_set_digest,omitempty" yaml:"candidate_set_digest,omitempty"`
+	InventoryRevision              string                    `json:"inventory_revision" yaml:"inventory_revision"`
+	TargetConfigPreconditionSHA256 string                    `json:"target_config_precondition_sha256,omitempty" yaml:"target_config_precondition_sha256,omitempty"`
+	BranchEvidence                 *BranchEvidenceSummary    `json:"branch_evidence,omitempty" yaml:"branch_evidence,omitempty"`
+	ReviewedAt                     string                    `json:"reviewed_at,omitempty" yaml:"reviewed_at,omitempty"`
+	Records                        []MigrationRecord         `json:"records" yaml:"records"`
+	ArtifactPath                   string                    `json:"-" yaml:"-"`
+	ArtifactSHA256                 string                    `json:"-" yaml:"-"`
+	ObservedRemoteOverlayDigest    string                    `json:"-" yaml:"-"`
+	ObservedRemoteBranchEvidence   []BranchCandidateEvidence `json:"-" yaml:"-"`
+}
+
+type migrationLedgerAlias MigrationLedger
+
+func (ledger MigrationLedger) MarshalYAML() (any, error) {
+	if ledger.SchemaVersion != 3 {
+		return migrationLedgerAlias(ledger), nil
+	}
+	data, err := yaml.Marshal(migrationLedgerAlias(ledger))
+	if err != nil {
+		return nil, err
+	}
+	var value map[string]any
+	if err := yaml.Unmarshal(data, &value); err != nil {
+		return nil, err
+	}
+	normalizeV3LedgerWireMap(value)
+	return value, nil
+}
+
+func (ledger MigrationLedger) MarshalJSON() ([]byte, error) {
+	if ledger.SchemaVersion != 3 {
+		return json.Marshal(migrationLedgerAlias(ledger))
+	}
+	data, err := json.Marshal(migrationLedgerAlias(ledger))
+	if err != nil {
+		return nil, err
+	}
+	var value map[string]any
+	if err := json.Unmarshal(data, &value); err != nil {
+		return nil, err
+	}
+	normalizeV3LedgerWireMap(value)
+	return json.Marshal(value)
+}
+
+func normalizeV3LedgerWireMap(value map[string]any) {
+	delete(value, "discovery_version")
+	delete(value, "target_catalog_mode")
+	records, _ := value["records"].([]any)
+	for _, raw := range records {
+		record, _ := raw.(map[string]any)
+		precondition, _ := record["target_precondition"].(map[string]any)
+		state, _ := precondition["state"].(string)
+		sha, _ := precondition["sha256"].(string)
+		if sha == "" {
+			sha, _ = record["target_precondition_sha256"].(string)
+		}
+		if state != "" {
+			record["target_precondition"] = state
+		}
+		if state == "exact" && sha != "" {
+			record["target_precondition_sha256"] = sha
+		} else {
+			delete(record, "target_precondition_sha256")
+		}
+		if _, present := record["branch_touch_reviews"]; !present {
+			record["branch_touch_reviews"] = []any{}
+		}
+	}
 }
 
 type MigrationSkip struct {
@@ -76,36 +201,60 @@ type MigrationSkip struct {
 }
 
 type MigrationPlan struct {
-	Ledger          MigrationLedger
-	FilePlan        reconcile.Plan
-	Skips           []MigrationSkip
-	Problems        []Problem
-	Projection      MigrationProjection
-	AuthorityDigest string
+	Ledger                  MigrationLedger
+	FilePlan                reconcile.Plan
+	Skips                   []MigrationSkip
+	Problems                []Problem
+	Projection              MigrationProjection
+	AuthorityDigest         string
+	ExternalAuthorityDigest string
+	PreStateDigest          string
+	PostStateDigest         string
+	MigrationActionDigest   string
+	Checkpoint              ledgerCheckpoint
+	BranchReviews           []BranchReviewResult
+	FollowUps               []IncrementalFollowUp
+	RemoteOverlayDigest     string
+}
+
+type BranchReviewResult struct {
+	Identity    BranchReviewIdentity    `json:"identity"`
+	Disposition string                  `json:"disposition"`
+	Verified    bool                    `json:"verified"`
+	Blockers    []BranchEvidenceBlocker `json:"blockers"`
 }
 
 type MigrationProjection struct {
-	Candidates    int  `json:"candidates"`
-	Canonical     int  `json:"canonical"`
-	Grandfathered int  `json:"grandfathered"`
-	Gaps          int  `json:"gaps"`
-	Ready         bool `json:"ready"`
+	Candidates            int  `json:"candidates"`
+	Canonical             int  `json:"canonical"`
+	Grandfathered         int  `json:"grandfathered"`
+	Gaps                  int  `json:"gaps"`
+	Ready                 bool `json:"ready"`
+	MixedCoverageComplete bool `json:"mixed_coverage_complete"`
+	CanonicalReady        bool `json:"canonical_ready"`
 }
 
 type MigrationOutcome struct {
-	SchemaVersion       int                  `json:"schema_version"`
-	DiscoveryVersion    DiscoveryVersion     `json:"discovery_version,omitempty"`
-	TargetCatalogMode   CatalogMode          `json:"target_catalog_mode,omitempty"`
-	Projection          *MigrationProjection `json:"projected_coverage,omitempty"`
-	ActivationPerformed *bool                `json:"activation_performed,omitempty"`
-	Result              reconcile.Result     `json:"result"`
-	Skips               []MigrationSkip      `json:"skips"`
+	SchemaVersion          int                   `json:"schema_version"`
+	DiscoveryVersion       DiscoveryVersion      `json:"discovery_version,omitempty"`
+	TargetCatalogMode      CatalogMode           `json:"target_catalog_mode,omitempty"`
+	Projection             *MigrationProjection  `json:"projected_coverage,omitempty"`
+	ActivationPerformed    *bool                 `json:"activation_performed,omitempty"`
+	Result                 reconcile.Result      `json:"result"`
+	Skips                  []MigrationSkip       `json:"skips"`
+	BranchReviews          []BranchReviewResult  `json:"branch_reviews,omitempty"`
+	FollowUps              []IncrementalFollowUp `json:"incremental_follow_ups,omitempty"`
+	EvidenceRevision       string                `json:"evidence_revision,omitempty"`
+	ActivationBaseRevision string                `json:"activation_base_revision,omitempty"`
+	BranchEvidenceDigest   string                `json:"branch_evidence_digest,omitempty"`
+	MigrationActionDigest  string                `json:"migration_action_digest,omitempty"`
 }
 
 type MigrationApplyOptions struct {
-	DryRun bool
-	Now    time.Time
-	Hook   reconcile.PhaseHook
+	DryRun             bool
+	Now                time.Time
+	Hook               reconcile.PhaseHook
+	RemoteOverlayCheck func() (string, error)
 }
 
 func LoadMigrationLedger(data []byte) (MigrationLedger, error) {
@@ -133,15 +282,50 @@ func LoadMigrationLedger(data []byte) (MigrationLedger, error) {
 		if ledger.Records[index].TargetPath == "" {
 			ledger.Records[index].TargetPath = ledger.Records[index].CurrentPath
 		}
+		if ledger.SchemaVersion == 3 && ledger.Records[index].TargetState != nil && ledger.Records[index].TargetState.State == "exact" {
+			ledger.Records[index].TargetState.SHA256 = ledger.Records[index].TargetPreconditionSHA256
+		}
+	}
+	if ledger.SchemaVersion == 3 {
+		ledger.DiscoveryVersion = DiscoveryV2
+		ledger.TargetCatalogMode = ledger.TargetMode
 	}
 	return ledger, nil
 }
 
-func BuildMigrationPlan(root string, ledger MigrationLedger) (MigrationPlan, error) {
-	if ledger.SchemaVersion == 2 {
-		return buildV2MigrationPlan(root, ledger)
+func LoadMigrationLedgerArtifact(root, ledgerPath string) (MigrationLedger, error) {
+	resolvedLedgerPath := ledgerPath
+	if !filepath.IsAbs(resolvedLedgerPath) {
+		resolvedLedgerPath = filepath.Join(root, filepath.FromSlash(resolvedLedgerPath))
 	}
-	return buildV1MigrationPlan(root, ledger)
+	data, err := os.ReadFile(resolvedLedgerPath)
+	if err != nil {
+		return MigrationLedger{}, fmt.Errorf("invalid_ledger: %w", err)
+	}
+	ledger, err := LoadMigrationLedger(data)
+	if err != nil {
+		return MigrationLedger{}, err
+	}
+	relative, digest, err := bindLedgerArtifact(root, resolvedLedgerPath, data)
+	if err != nil {
+		return MigrationLedger{}, fmt.Errorf("invalid_ledger: %w", err)
+	}
+	ledger.ArtifactPath = relative
+	ledger.ArtifactSHA256 = digest
+	return ledger, nil
+}
+
+func BuildMigrationPlan(root string, ledger MigrationLedger) (MigrationPlan, error) {
+	switch ledger.SchemaVersion {
+	case 1:
+		return buildV1MigrationPlan(root, ledger)
+	case 2:
+		return buildV2MigrationPlan(root, ledger)
+	case 3:
+		return buildV3MigrationPlan(root, ledger)
+	default:
+		return MigrationPlan{}, fmt.Errorf("migration_ledger_version_unsupported: schema version %d", ledger.SchemaVersion)
+	}
 }
 
 func buildV1MigrationPlan(root string, ledger MigrationLedger) (MigrationPlan, error) {
@@ -356,11 +540,20 @@ func buildV1MigrationPlan(root string, ledger MigrationLedger) (MigrationPlan, e
 }
 
 func buildV2MigrationPlan(root string, ledger MigrationLedger) (MigrationPlan, error) {
-	configuredSnapshot, err := LoadRepositorySnapshot(root)
+	return buildReviewedMigrationPlan(root, ledger, false)
+}
+
+func buildV3MigrationPlan(root string, ledger MigrationLedger) (MigrationPlan, error) {
+	return buildReviewedMigrationPlan(root, ledger, true)
+}
+
+func buildReviewedMigrationPlan(root string, ledger MigrationLedger, reviewedV3 bool) (MigrationPlan, error) {
+	snapshotOptions := SnapshotOptions{ObservedRemoteOverlayDigest: ledger.ObservedRemoteOverlayDigest, ObservedRemoteBranchEvidence: ledger.ObservedRemoteBranchEvidence}
+	configuredSnapshot, err := LoadRepositorySnapshotWithOptions(root, snapshotOptions)
 	if err != nil {
 		return MigrationPlan{}, err
 	}
-	options := SnapshotOptions{TargetDiscoveryVersion: DiscoveryV2, TargetCatalogMode: ledger.TargetCatalogMode}
+	options := SnapshotOptions{TargetDiscoveryVersion: DiscoveryV2, TargetCatalogMode: ledger.TargetCatalogMode, ObservedRemoteOverlayDigest: ledger.ObservedRemoteOverlayDigest, ObservedRemoteBranchEvidence: ledger.ObservedRemoteBranchEvidence}
 	inventory, err := BuildInventoryWithOptions(root, time.Time{}, options)
 	if err != nil {
 		return MigrationPlan{}, err
@@ -373,6 +566,10 @@ func buildV2MigrationPlan(root string, ledger MigrationLedger) (MigrationPlan, e
 	skips := []MigrationSkip{}
 	actions := []reconcile.Action{}
 	projection := MigrationProjection{}
+	checkpoint := ledgerCheckpoint{}
+	branchReviews := []BranchReviewResult{}
+	branchEvidence := []BranchCandidateEvidence{}
+	followUps := []IncrementalFollowUp{}
 	for _, problem := range configuredSnapshot.Problems {
 		if problem.Severity == SeverityError && mixedCutoverInvariantProblem(problem.Code) {
 			problems = append(problems, problem)
@@ -388,11 +585,34 @@ func buildV2MigrationPlan(root string, ledger MigrationLedger) (MigrationPlan, e
 	if ledger.RepositoryID != inventory.RepositoryID {
 		problems = append(problems, Problem{Code: "repository_identity_mismatch", Message: fmt.Sprintf("ledger repository %q does not match configured repository %q", ledger.RepositoryID, inventory.RepositoryID), Severity: SeverityError})
 	}
-	if _, parseErr := time.Parse(time.RFC3339, ledger.ReviewedAt); parseErr != nil || !strings.HasSuffix(ledger.ReviewedAt, "Z") {
-		problems = append(problems, Problem{Code: "ledger_review_timestamp_invalid", Message: "reviewed_at must be a UTC RFC3339 timestamp ending in Z", Severity: SeverityError})
+	if !reviewedV3 {
+		if _, parseErr := time.Parse(time.RFC3339, ledger.ReviewedAt); parseErr != nil || !strings.HasSuffix(ledger.ReviewedAt, "Z") {
+			problems = append(problems, Problem{Code: "ledger_review_timestamp_invalid", Message: "reviewed_at must be a UTC RFC3339 timestamp ending in Z", Severity: SeverityError})
+		}
 	}
 	if ledger.PolicyDigest != inventory.PolicyDigest {
 		problems = append(problems, Problem{Code: "migration_policy_mismatch", Message: "reviewed policy digest does not match the prospective discovery-v2 policy", Path: state.ConfigPath, Severity: SeverityError, Remediation: "regenerate inventory and review the current exclusions and ownership policy"})
+	}
+	if reviewedV3 {
+		if ledger.BranchEvidence == nil || ledger.BranchEvidence.Algorithm != BranchEvidenceAlgorithm {
+			problems = append(problems, Problem{Code: "branch_evidence_algorithm_unsupported", Message: "schema-v3 ledger requires git-candidate-proof-v1 evidence", Severity: SeverityError})
+		} else if ledger.BranchEvidence.EvidenceScope == "remote-aware" && (ledger.ObservedRemoteOverlayDigest == "" || ledger.ObservedRemoteOverlayDigest != ledger.BranchEvidence.RemoteOverlayDigest) {
+			problems = append(problems, Problem{Code: "remote_overlay_missing", Message: "remote-aware ledger application requires a matching complete current remote overlay", Severity: SeverityError, Remediation: "rerun with --remote-overlays after refreshing the configured member source"})
+		}
+		if digest, digestErr := configPrecondition(root); digestErr != nil || digest != ledger.TargetConfigPreconditionSHA256 {
+			message := "current config bytes do not match the reviewed v3 precondition"
+			if digestErr != nil {
+				message = digestErr.Error()
+			}
+			problems = append(problems, Problem{Code: "target_config_precondition_mismatch", Message: message, Path: state.ConfigPath, Severity: SeverityError})
+		}
+		if clean, cleanErr := gitWorktreeClean(root); cleanErr != nil || !clean {
+			message := "schema-v3 migration requires a clean ledger-checkpoint worktree"
+			if cleanErr != nil {
+				message = cleanErr.Error()
+			}
+			problems = append(problems, Problem{Code: "migration_worktree_dirty", Message: message, Severity: SeverityError, Remediation: "preserve unrelated work and rerun from the clean ledger checkpoint"})
+		}
 	}
 	authorityDigest, authorityErr := migrationAuthorityDigest(root, configuredSnapshot, inventory)
 	if authorityErr != nil {
@@ -406,7 +626,7 @@ func buildV2MigrationPlan(root string, ledger MigrationLedger) (MigrationPlan, e
 		}
 	}
 	projection.Candidates = len(ownedCandidates)
-	finalApplied := v2LedgerAlreadyApplied(root, ledger, inventory, ownedCandidates)
+	finalApplied := !reviewedV3 && v2LedgerAlreadyApplied(root, ledger, inventory, ownedCandidates)
 	if !finalApplied {
 		for _, problem := range inventory.Problems {
 			if problem.Severity == SeverityError && !v2MigrationRemediableProblem(problem.Code) {
@@ -435,7 +655,21 @@ func buildV2MigrationPlan(root string, ledger MigrationLedger) (MigrationPlan, e
 		return MigrationPlan{Ledger: ledger, FilePlan: filePlan, Skips: skips, Problems: problems, Projection: projection, AuthorityDigest: authorityDigest}, nil
 	}
 
-	if ledger.InventoryRevision != inventory.SourceRevision {
+	if reviewedV3 {
+		if ledger.EvidenceRevision == "" || ledger.InventoryRevision != ledger.EvidenceRevision {
+			problems = append(problems, Problem{Code: "inventory_revision_mismatch", Message: "schema-v3 inventory revision must equal the evidence revision", Severity: SeverityError, Remediation: "regenerate one coherent inventory and reviewed ledger"})
+		}
+		if ledger.ArtifactPath == "" || ledger.ArtifactSHA256 == "" {
+			problems = append(problems, Problem{Code: "ledger_checkpoint_missing", Message: "schema-v3 migration requires a repository-bound ledger artifact", Severity: SeverityError, Remediation: "pass the tracked reviewed ledger path to plans migrate"})
+		} else {
+			var checkpointProblems []Problem
+			checkpoint, checkpointProblems = verifyLedgerCheckpoint(root, ledger.EvidenceRevision, ledger.ArtifactPath, ledger.ArtifactSHA256)
+			problems = append(problems, checkpointProblems...)
+			if checkpoint.ActivationBaseRevision != "" && inventory.SourceRevision != checkpoint.ActivationBaseRevision {
+				problems = append(problems, Problem{Code: "ledger_checkpoint_revision_mismatch", Message: "prospective inventory is not based on the exact ledger checkpoint", Severity: SeverityError})
+			}
+		}
+	} else if ledger.InventoryRevision != inventory.SourceRevision {
 		problems = append(problems, Problem{Code: "inventory_revision_mismatch", Message: "ledger inventory revision does not match the current repository revision", Severity: SeverityError, Remediation: "regenerate one coherent inventory and semantic ledger"})
 	}
 	if ledger.CandidateSetDigest != inventory.CandidateSetDigest {
@@ -497,7 +731,7 @@ func buildV2MigrationPlan(root string, ledger MigrationLedger) (MigrationPlan, e
 			problems = append(problems, Problem{Code: "inventory_revision_mismatch", Message: "record source revision does not match the reviewed inventory revision", Path: currentPath, Severity: SeverityError})
 			continue
 		}
-		if item.BranchOwner != "none" {
+		if !reviewedV3 && item.BranchOwner != "none" {
 			problems = append(problems, Problem{Code: "active_branch_ownership", Message: "reviewed ledger assigns the plan to branch owner " + item.BranchOwner, Path: currentPath, Severity: SeverityError})
 			continue
 		}
@@ -548,9 +782,25 @@ func buildV2MigrationPlan(root string, ledger MigrationLedger) (MigrationPlan, e
 			problems = append(problems, Problem{Code: "dirty_plan_overlap", Message: "candidate has uncommitted changes", Path: currentPath, Severity: SeverityError})
 			continue
 		}
-		if len(inventoryRecord.ActiveBranchTouch) > 0 {
+		if !reviewedV3 && len(inventoryRecord.ActiveBranchTouch) > 0 {
 			problems = append(problems, Problem{Code: "active_branch_ownership", Message: "candidate is changed on unmerged refs: " + strings.Join(inventoryRecord.ActiveBranchTouch, ", "), Path: currentPath, Severity: SeverityError})
 			continue
+		}
+		if reviewedV3 {
+			verification := verifyV3BranchReviews(root, ledger, item, inventoryRecord, candidate, configuredSnapshot.Settings)
+			branchReviews = append(branchReviews, verification.Results...)
+			branchEvidence = append(branchEvidence, verification.Evidence...)
+			problems = append(problems, verification.Problems...)
+			if verification.FollowUp != nil {
+				followUps = append(followUps, *verification.FollowUp)
+			}
+			if HasErrors(verification.Problems) {
+				continue
+			}
+			if verification.Deferred != item.Deferred {
+				problems = append(problems, Problem{Code: "migration_deferral_mismatch", Message: "record deferred flag does not match its exact branch disposition", Path: currentPath, Severity: SeverityError})
+				continue
+			}
 		}
 
 		if item.Deferred {
@@ -573,9 +823,11 @@ func buildV2MigrationPlan(root string, ledger MigrationLedger) (MigrationPlan, e
 			continue
 		}
 
-		if skip := semanticReviewSkip(item); skip != nil {
-			problems = append(problems, Problem{Code: skip.Code, Message: skip.Message, Path: currentPath, Severity: SeverityError, Remediation: skip.Remediation})
-			continue
+		if !reviewedV3 {
+			if skip := semanticReviewSkip(item); skip != nil {
+				problems = append(problems, Problem{Code: skip.Code, Message: skip.Message, Path: currentPath, Severity: SeverityError, Remediation: skip.Remediation})
+				continue
+			}
 		}
 		if preconditionProblem := validateMigrationTargetPrecondition(root, item, currentSHA); preconditionProblem != nil {
 			problems = append(problems, *preconditionProblem)
@@ -653,6 +905,27 @@ func buildV2MigrationPlan(root string, ledger MigrationLedger) (MigrationPlan, e
 		problems = append(problems, Problem{Code: "incomplete_coverage", Message: fmt.Sprintf("projected migration leaves %d authoritative candidate(s) without canonical metadata or reviewed mixed grandfathering", projection.Gaps), Severity: SeverityError})
 	}
 	projection.Ready = !HasErrors(problems) && projection.Gaps == 0
+	projection.MixedCoverageComplete = projection.Gaps == 0 && !HasErrors(problems)
+	projection.CanonicalReady = projection.MixedCoverageComplete && projection.Grandfathered == 0
+	if reviewedV3 && ledger.BranchEvidence != nil {
+		computedBranchDigest := branchEvidenceSetDigest(branchEvidence, ledger.BranchEvidence.RemoteOverlayDigest)
+		if computedBranchDigest != ledger.BranchEvidence.Digest {
+			problems = append(problems, Problem{Code: "branch_evidence_digest_mismatch", Message: "recomputed branch evidence does not match the reviewed aggregate digest", Severity: SeverityError, Remediation: "regenerate inventory and review the complete current evidence set"})
+			projection.Ready = false
+			projection.MixedCoverageComplete = false
+			projection.CanonicalReady = false
+		}
+	}
+	externalAuthorityDigest := authorityDigest
+	if reviewedV3 {
+		var externalProblems []Problem
+		externalAuthorityDigest, externalProblems, err = currentV3ExternalAuthorityDigest(root, ledger)
+		if err != nil {
+			return MigrationPlan{}, err
+		}
+		problems = append(problems, externalProblems...)
+		SortProblems(problems)
+	}
 
 	filePlan, err := reconcile.BuildFilePlan("plans migrate", root, string(observed.Classification), []state.Classification{observed.Classification}, actions)
 	if err != nil {
@@ -661,7 +934,8 @@ func buildV2MigrationPlan(root string, ledger MigrationLedger) (MigrationPlan, e
 	appendMigrationBlockers(&filePlan, problems, skips)
 	SortProblems(problems)
 	sortMigrationSkips(skips)
-	return MigrationPlan{Ledger: ledger, FilePlan: filePlan, Skips: skips, Problems: problems, Projection: projection, AuthorityDigest: authorityDigest}, nil
+	actionDigest := migrationActionDigest(actions)
+	return MigrationPlan{Ledger: ledger, FilePlan: filePlan, Skips: skips, Problems: problems, Projection: projection, AuthorityDigest: authorityDigest, ExternalAuthorityDigest: externalAuthorityDigest, PreStateDigest: authorityDigest, PostStateDigest: actionDigest, MigrationActionDigest: actionDigest, Checkpoint: checkpoint, BranchReviews: branchReviews, FollowUps: followUps, RemoteOverlayDigest: ledger.ObservedRemoteOverlayDigest}, nil
 }
 
 func v2MigrationRemediableProblem(code string) bool {
@@ -969,7 +1243,29 @@ func sortMigrationSkips(skips []MigrationSkip) {
 func ExecuteMigration(plan MigrationPlan, options MigrationApplyOptions) (MigrationOutcome, error) {
 	var result reconcile.Result
 	var err error
-	authorityCheck := func() ([]reconcile.Blocker, error) {
+	preWriteAuthorityCheck := func() ([]reconcile.Blocker, error) {
+		if plan.Ledger.SchemaVersion == 3 {
+			if plan.Ledger.BranchEvidence != nil && plan.Ledger.BranchEvidence.EvidenceScope == "remote-aware" {
+				if options.RemoteOverlayCheck == nil {
+					return []reconcile.Blocker{{Code: "remote_overlay_missing", Message: "remote-aware migration requires --remote-overlays on every dry-run and apply check"}}, nil
+				}
+				observed, overlayErr := options.RemoteOverlayCheck()
+				if overlayErr != nil {
+					return nil, overlayErr
+				}
+				if observed != plan.RemoteOverlayDigest || observed != plan.Ledger.BranchEvidence.RemoteOverlayDigest {
+					return []reconcile.Blocker{{Code: "remote_overlay_stale", Message: "fresh remote overlay digest differs from reviewed evidence"}}, nil
+				}
+			}
+			current, problems, digestErr := currentV3ExternalAuthorityDigest(plan.FilePlan.Root, plan.Ledger)
+			if digestErr != nil {
+				return nil, digestErr
+			}
+			if HasErrors(problems) || current != plan.ExternalAuthorityDigest {
+				return []reconcile.Blocker{{Code: "migration_authority_drift", Message: "reviewed ledger checkpoint, policy, candidate, ref, proof, config, overlay, or frozen-register authority changed after migration planning", Remediation: "rebuild and review the migration plan from a fresh schema-v3 inventory", RetryCommand: "plans migrate --dry-run"}}, nil
+			}
+			return nil, nil
+		}
 		if plan.Ledger.SchemaVersion != 2 {
 			return nil, nil
 		}
@@ -982,19 +1278,34 @@ func ExecuteMigration(plan MigrationPlan, options MigrationApplyOptions) (Migrat
 		}
 		return nil, nil
 	}
+	postWriteAuthorityCheck := func() ([]reconcile.Blocker, error) {
+		blockers, checkErr := preWriteAuthorityCheck()
+		if checkErr != nil || len(blockers) > 0 || plan.Ledger.SchemaVersion != 3 {
+			return blockers, checkErr
+		}
+		problems := verifyMigrationWorktree(plan.FilePlan.Root, plan.FilePlan.Actions)
+		if HasErrors(problems) || migrationActionDigest(plan.FilePlan.Actions) != plan.MigrationActionDigest {
+			return []reconcile.Blocker{{Code: "post_write_authority_drift", Message: "post-write plan outputs no longer match the reviewed action set", Remediation: "preserve transaction evidence and rerun from a fresh reviewed ledger", RetryCommand: "plans migrate --dry-run"}}, nil
+		}
+		return nil, nil
+	}
 	if options.DryRun {
 		filePlan := plan.FilePlan
-		blockers, checkErr := authorityCheck()
+		blockers, checkErr := preWriteAuthorityCheck()
 		if checkErr != nil {
 			return MigrationOutcome{}, checkErr
 		}
 		filePlan.Blockers = append(filePlan.Blockers, blockers...)
 		result = reconcile.Preview(filePlan)
 	} else {
-		result, err = reconcile.Apply(plan.FilePlan, reconcile.ApplyOptions{Now: options.Now, Hook: options.Hook, AuthorityCheck: authorityCheck})
+		applyOptions := reconcile.ApplyOptions{Now: options.Now, Hook: options.Hook, PreWriteAuthorityCheck: preWriteAuthorityCheck}
+		if plan.Ledger.SchemaVersion == 3 {
+			applyOptions.PostWriteAuthorityCheck = postWriteAuthorityCheck
+		}
+		result, err = reconcile.Apply(plan.FilePlan, applyOptions)
 	}
 	outcome := MigrationOutcome{SchemaVersion: 1, Result: result, Skips: append([]MigrationSkip{}, plan.Skips...)}
-	if plan.Ledger.SchemaVersion == 2 {
+	if plan.Ledger.SchemaVersion == 2 || plan.Ledger.SchemaVersion == 3 {
 		activated := false
 		projection := plan.Projection
 		outcome.SchemaVersion = 2
@@ -1002,6 +1313,17 @@ func ExecuteMigration(plan MigrationPlan, options MigrationApplyOptions) (Migrat
 		outcome.TargetCatalogMode = plan.Ledger.TargetCatalogMode
 		outcome.Projection = &projection
 		outcome.ActivationPerformed = &activated
+	}
+	if plan.Ledger.SchemaVersion == 3 {
+		outcome.SchemaVersion = 3
+		outcome.BranchReviews = append([]BranchReviewResult{}, plan.BranchReviews...)
+		outcome.FollowUps = append([]IncrementalFollowUp{}, plan.FollowUps...)
+		outcome.EvidenceRevision = plan.Ledger.EvidenceRevision
+		outcome.ActivationBaseRevision = plan.Checkpoint.ActivationBaseRevision
+		if plan.Ledger.BranchEvidence != nil {
+			outcome.BranchEvidenceDigest = plan.Ledger.BranchEvidence.Digest
+		}
+		outcome.MigrationActionDigest = plan.MigrationActionDigest
 	}
 	return outcome, err
 }

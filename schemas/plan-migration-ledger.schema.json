@@ -1,119 +1,63 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/schemas/plan-migration-ledger.schema.json",
-  "title": "Codeheart Plan Metadata Migration Ledger v2",
+  "title": "Codeheart Plan Metadata Migration Ledger v3",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "repository_id", "discovery_version", "target_catalog_mode", "policy_digest", "candidate_set_digest", "inventory_revision", "reviewed_at", "records"],
+  "required": [
+    "schema_version",
+    "repository_id",
+    "evidence_revision",
+    "target_mode",
+    "inventory_revision",
+    "policy_digest",
+    "candidate_set_digest",
+    "target_config_precondition_sha256",
+    "branch_evidence",
+    "records"
+  ],
   "properties": {
-    "schema_version": { "type": "integer", "const": 2 },
+    "schema_version": { "type": "integer", "const": 3 },
     "repository_id": { "$ref": "#/$defs/identifier" },
-    "discovery_version": { "type": "integer", "const": 2 },
-    "target_catalog_mode": { "type": "string", "enum": ["mixed", "canonical"] },
+    "evidence_revision": { "$ref": "#/$defs/commit" },
+    "target_mode": { "type": "string", "enum": ["mixed", "canonical"] },
+    "inventory_revision": { "$ref": "#/$defs/commit" },
     "policy_digest": { "$ref": "#/$defs/digest" },
     "candidate_set_digest": { "$ref": "#/$defs/digest" },
-    "inventory_revision": { "$ref": "#/$defs/commit" },
-    "reviewed_at": { "$ref": "#/$defs/timestamp" },
+    "target_config_precondition_sha256": { "$ref": "#/$defs/digest" },
+    "branch_evidence": { "$ref": "#/$defs/branchEvidence" },
     "records": {
       "type": "array",
-      "items": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "current_path",
-          "target_path",
-          "source_revision",
-          "source_sha256",
-          "target_precondition",
-          "ownership_disposition",
-          "decision",
-          "confidence",
-          "ambiguity",
-          "evidence",
-          "legacy_aliases",
-          "conflicts",
-          "deferred",
-          "branch_owner"
-        ],
+      "items": { "$ref": "#/$defs/record" }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": { "target_mode": { "const": "canonical" } },
+        "required": ["target_mode"]
+      },
+      "then": {
         "properties": {
-          "current_path": { "$ref": "#/$defs/path" },
-          "target_path": { "$ref": "#/$defs/path" },
-          "source_revision": { "$ref": "#/$defs/commit" },
-          "source_sha256": { "$ref": "#/$defs/digest" },
-          "target_precondition": {
-            "type": "object",
-            "additionalProperties": false,
-            "required": ["state"],
-            "properties": {
-              "state": { "type": "string", "enum": ["same-path", "absent", "exact"] },
-              "sha256": { "$ref": "#/$defs/digest" }
-            },
-            "allOf": [
-              {
-                "if": { "properties": { "state": { "const": "exact" } }, "required": ["state"] },
-                "then": { "required": ["sha256"] }
-              }
-            ]
-          },
-          "ownership_disposition": { "type": "string", "const": "owned" },
-          "decision": {
-            "type": "object",
-            "additionalProperties": false,
-            "required": ["id", "kind", "purpose", "first_cataloged", "catalog_metadata_updated"],
-            "properties": {
-              "id": { "$ref": "#/$defs/planId" },
-              "kind": { "type": "string", "enum": ["discovery", "implementation", "family"] },
-              "purpose": { "type": "string", "minLength": 1, "pattern": "^[^\\r\\n]+$" },
-              "first_cataloged": { "$ref": "#/$defs/timestamp" },
-              "catalog_metadata_updated": { "$ref": "#/$defs/timestamp" },
-              "family": { "$ref": "#/$defs/planId" },
-              "products": { "$ref": "#/$defs/identifiers" },
-              "capabilities": { "$ref": "#/$defs/identifiers" },
-              "strategic_themes": { "$ref": "#/$defs/identifiers" },
-              "relations": {
-                "type": "array",
-                "uniqueItems": true,
-                "items": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "required": ["kind", "target"],
-                  "properties": {
-                    "kind": { "type": "string", "enum": ["parent", "child", "supersedes", "superseded-by", "depends-on", "blocks", "related"] },
-                    "target": { "$ref": "#/$defs/planId" }
+          "records": {
+            "items": {
+              "properties": {
+                "deferred": { "const": false },
+                "branch_touch_reviews": {
+                  "items": {
+                    "not": {
+                      "properties": { "disposition": { "const": "deferred-active-owner" } },
+                      "required": ["disposition"]
+                    }
                   }
                 }
               }
             }
-          },
-          "confidence": { "type": "string", "enum": ["high", "medium", "low"] },
-          "ambiguity": { "type": "array", "items": { "type": "string", "minLength": 1 } },
-          "evidence": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } },
-          "legacy_aliases": {
-            "type": "array",
-            "uniqueItems": true,
-            "items": {
-              "type": "string",
-              "minLength": 1,
-              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
-            }
-          },
-          "conflicts": { "type": "array", "items": { "type": "string", "minLength": 1 } },
-          "deferred": { "type": "boolean" },
-          "deferral_reason": { "type": "string", "minLength": 1 },
-          "branch_owner": { "type": "string", "minLength": 1 }
-        },
-        "allOf": [
-          {
-            "if": {
-              "properties": { "deferred": { "const": true } },
-              "required": ["deferred"]
-            },
-            "then": { "required": ["deferral_reason"] }
           }
-        ]
+        }
       }
     }
-  },
+  ],
   "$defs": {
     "identifier": {
       "type": "string",
@@ -132,8 +76,465 @@
       "pattern": "^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.(?:discovery|implementation|family)\\.[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$"
     },
     "commit": { "type": "string", "pattern": "^[0-9a-f]{40,64}$" },
+    "objectId": { "type": "string", "pattern": "^(?:[0-9a-f]{40}|[0-9a-f]{64})$" },
+    "patchId": { "type": "string", "pattern": "^(?:[0-9a-f]{40}|[0-9a-f]{64})$" },
     "digest": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
     "path": { "type": "string", "minLength": 1, "pattern": "^[^\\\\\\r\\n]+$" },
-    "timestamp": { "type": "string", "format": "date-time", "pattern": "Z$" }
+    "timestamp": { "type": "string", "format": "date-time", "pattern": "Z$" },
+    "gitMode": { "type": "string", "enum": ["100644", "100755", "120000", "160000"] },
+    "candidateGitMode": { "type": "string", "enum": ["100644", "100755"] },
+    "evidenceScope": { "type": "string", "enum": ["local", "remote-aware"] },
+    "logicalRef": {
+      "type": "string",
+      "pattern": "^(?:local:refs/heads/|tracking:[a-z0-9](?:[a-z0-9._-]*[a-z0-9])?:refs/heads/|remote:[a-z0-9](?:[a-z0-9._-]*[a-z0-9])?:refs/heads/)[^\\r\\n]+$"
+    },
+    "branchEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["algorithm", "git_version", "evidence_scope", "remote_overlay_status", "digest"],
+      "properties": {
+        "algorithm": { "type": "string", "const": "git-candidate-proof-v1" },
+        "git_version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+(?:\\.[0-9]+)?$" },
+        "evidence_scope": { "$ref": "#/$defs/evidenceScope" },
+        "remote_overlay_status": { "type": "string", "enum": ["not-requested", "complete"] },
+        "remote_overlay_digest": { "$ref": "#/$defs/digest" },
+        "remote_source_identity_sha256": { "$ref": "#/$defs/digest" },
+        "digest": { "$ref": "#/$defs/digest" }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "evidence_scope": { "const": "local" } },
+            "required": ["evidence_scope"]
+          },
+          "then": {
+            "properties": { "remote_overlay_status": { "const": "not-requested" } },
+            "not": { "anyOf": [{ "required": ["remote_overlay_digest"] }, { "required": ["remote_source_identity_sha256"] }] }
+          }
+        },
+        {
+          "if": {
+            "properties": { "evidence_scope": { "const": "remote-aware" } },
+            "required": ["evidence_scope"]
+          },
+          "then": {
+            "required": ["remote_overlay_digest", "remote_source_identity_sha256"],
+            "properties": { "remote_overlay_status": { "const": "complete" } }
+          }
+        }
+      ]
+    },
+    "record": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "current_path",
+        "target_path",
+        "source_revision",
+        "source_sha256",
+        "target_precondition",
+        "ownership_disposition",
+        "decision",
+        "confidence",
+        "ambiguity",
+        "evidence",
+        "legacy_aliases",
+        "conflicts",
+        "deferred",
+        "branch_touch_reviews"
+      ],
+      "properties": {
+        "current_path": { "$ref": "#/$defs/path" },
+        "target_path": { "$ref": "#/$defs/path" },
+        "source_revision": { "$ref": "#/$defs/commit" },
+        "source_sha256": { "$ref": "#/$defs/digest" },
+        "target_precondition": {
+          "type": "string",
+          "enum": ["same-path", "absent", "exact"]
+        },
+        "target_precondition_sha256": { "$ref": "#/$defs/digest" },
+        "ownership_disposition": { "type": "string", "const": "owned" },
+        "decision": { "$ref": "#/$defs/decision" },
+        "confidence": { "type": "string", "enum": ["high", "medium", "low"] },
+        "ambiguity": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "evidence": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } },
+        "legacy_aliases": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+          }
+        },
+        "conflicts": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "deferred": { "type": "boolean" },
+        "deferral_reason": { "type": "string", "minLength": 1 },
+        "branch_touch_reviews": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/branchTouchReview" }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "target_precondition": { "const": "exact" } },
+            "required": ["target_precondition"]
+          },
+          "then": { "required": ["target_precondition_sha256"] },
+          "else": { "not": { "required": ["target_precondition_sha256"] } }
+        },
+        {
+          "if": {
+            "properties": { "deferred": { "const": true } },
+            "required": ["deferred"]
+          },
+          "then": {
+            "required": ["deferral_reason"],
+            "properties": {
+              "branch_touch_reviews": {
+                "items": {
+                  "properties": {
+                    "disposition": {
+                      "enum": [
+                        "same-content-non-owner",
+                        "incorporated-history-non-owner",
+                        "deferred-active-owner"
+                      ]
+                    }
+                  }
+                },
+                "contains": {
+                  "properties": { "disposition": { "const": "deferred-active-owner" } },
+                  "required": ["disposition"]
+                },
+                "minContains": 1,
+                "maxContains": 1
+              }
+            }
+          },
+          "else": {
+            "not": { "required": ["deferral_reason"] },
+            "properties": {
+              "branch_touch_reviews": {
+                "not": {
+                  "contains": {
+                    "properties": { "disposition": { "const": "deferred-active-owner" } },
+                    "required": ["disposition"]
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "kind", "purpose", "first_cataloged", "catalog_metadata_updated"],
+      "properties": {
+        "id": { "$ref": "#/$defs/planId" },
+        "kind": { "type": "string", "enum": ["discovery", "implementation", "family"] },
+        "purpose": { "type": "string", "minLength": 1, "pattern": "^[^\\r\\n]+$" },
+        "first_cataloged": { "$ref": "#/$defs/timestamp" },
+        "catalog_metadata_updated": { "$ref": "#/$defs/timestamp" },
+        "family": { "$ref": "#/$defs/planId" },
+        "products": { "$ref": "#/$defs/identifiers" },
+        "capabilities": { "$ref": "#/$defs/identifiers" },
+        "strategic_themes": { "$ref": "#/$defs/identifiers" },
+        "relations": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["kind", "target"],
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": ["parent", "child", "supersedes", "superseded-by", "depends-on", "blocks", "related"]
+              },
+              "target": { "$ref": "#/$defs/planId" }
+            }
+          }
+        }
+      }
+    },
+    "reviewIdentity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["evidence_scope", "repository_id", "logical_ref", "candidate_path"],
+      "properties": {
+        "evidence_scope": { "$ref": "#/$defs/evidenceScope" },
+        "repository_id": { "$ref": "#/$defs/identifier" },
+        "logical_ref": {
+          "$ref": "#/$defs/logicalRef"
+        },
+        "candidate_path": { "$ref": "#/$defs/path" }
+      }
+    },
+    "pathState": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["state"],
+          "properties": {
+            "state": { "const": "absent" }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["state", "mode", "object_id", "sha256"],
+          "properties": {
+            "state": { "const": "present" },
+            "mode": { "$ref": "#/$defs/gitMode" },
+            "object_id": { "$ref": "#/$defs/objectId" },
+            "sha256": { "$ref": "#/$defs/digest" }
+          }
+        }
+      ]
+    },
+    "presentPathState": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state", "mode", "object_id", "sha256"],
+      "properties": {
+        "state": { "const": "present" },
+        "mode": { "$ref": "#/$defs/candidateGitMode" },
+        "object_id": { "$ref": "#/$defs/objectId" },
+        "sha256": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "pathTransition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "before", "after"],
+      "properties": {
+        "path": { "$ref": "#/$defs/path" },
+        "before": { "$ref": "#/$defs/pathState" },
+        "after": { "$ref": "#/$defs/pathState" }
+      }
+    },
+    "sameContentProof": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "target_path_state", "ref_path_state"],
+      "properties": {
+        "kind": { "const": "same-content-v1" },
+        "target_path_state": { "$ref": "#/$defs/presentPathState" },
+        "ref_path_state": { "$ref": "#/$defs/presentPathState" }
+      }
+    },
+    "incorporatedHistoryProof": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "transition_digest",
+        "stable_patch_id",
+        "incorporated_parent",
+        "incorporated_commit",
+        "incorporated_transition_digest",
+        "incorporated_stable_patch_id"
+      ],
+      "properties": {
+        "kind": { "const": "incorporated-history-v1" },
+        "transition_digest": { "$ref": "#/$defs/digest" },
+        "stable_patch_id": { "$ref": "#/$defs/patchId" },
+        "incorporated_parent": { "$ref": "#/$defs/commit" },
+        "incorporated_commit": { "$ref": "#/$defs/commit" },
+        "incorporated_transition_digest": { "$ref": "#/$defs/digest" },
+        "incorporated_stable_patch_id": { "$ref": "#/$defs/patchId" }
+      }
+    },
+    "ownerTipCandidate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "mode", "object_id", "sha256", "lifecycle"],
+      "properties": {
+        "path": { "$ref": "#/$defs/path" },
+        "mode": { "$ref": "#/$defs/candidateGitMode" },
+        "object_id": { "$ref": "#/$defs/objectId" },
+        "sha256": { "$ref": "#/$defs/digest" },
+        "lifecycle": { "const": "active" }
+      }
+    },
+    "incrementalFollowUp": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "action",
+        "trigger",
+        "cutover_revision",
+        "plan_path",
+        "cutover_source_sha256",
+        "owner_ref",
+        "owner_tip",
+        "owner_path",
+        "owner_mode",
+        "owner_object_id",
+        "owner_sha256",
+        "state",
+        "success_conditions"
+      ],
+      "properties": {
+        "action": { "const": "reinventory-and-incremental-migrate" },
+        "trigger": { "const": "owner-ref-integrated-or-target-path-changed" },
+        "cutover_revision": { "$ref": "#/$defs/commit" },
+        "plan_path": { "$ref": "#/$defs/path" },
+        "cutover_source_sha256": { "$ref": "#/$defs/digest" },
+        "owner_ref": {
+          "$ref": "#/$defs/logicalRef"
+        },
+        "owner_tip": { "$ref": "#/$defs/commit" },
+        "owner_path": { "$ref": "#/$defs/path" },
+        "owner_mode": { "$ref": "#/$defs/candidateGitMode" },
+        "owner_object_id": { "$ref": "#/$defs/objectId" },
+        "owner_sha256": { "$ref": "#/$defs/digest" },
+        "state": { "const": "pending" },
+        "success_conditions": {
+          "type": "array",
+          "uniqueItems": true,
+          "minItems": 2,
+          "maxItems": 2,
+          "items": {
+            "enum": [
+              "owner-supplied-canonical-metadata-at-merge",
+              "new-reviewed-ledger-applied-to-merged-target-bytes"
+            ]
+          }
+        }
+      }
+    },
+    "branchTouchReview": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "identity",
+        "disposition"
+      ],
+      "properties": {
+        "identity": { "$ref": "#/$defs/reviewIdentity" },
+        "disposition": {
+          "type": "string",
+          "enum": [
+            "same-content-non-owner",
+            "incorporated-history-non-owner",
+            "deferred-active-owner",
+            "active-owner",
+            "blocking"
+          ]
+        },
+        "ref_tip": { "$ref": "#/$defs/commit" },
+        "merge_base": { "$ref": "#/$defs/commit" },
+        "path_transitions": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/pathTransition" }
+        },
+        "proof": {
+          "oneOf": [
+            { "$ref": "#/$defs/sameContentProof" },
+            { "$ref": "#/$defs/incorporatedHistoryProof" }
+          ]
+        },
+        "owner_tip_candidate": { "$ref": "#/$defs/ownerTipCandidate" },
+        "incremental_follow_up": { "$ref": "#/$defs/incrementalFollowUp" },
+        "blocking_reasons": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "minLength": 1 }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "disposition": { "const": "same-content-non-owner" } },
+            "required": ["disposition"]
+          },
+          "then": {
+            "required": ["ref_tip", "merge_base", "path_transitions", "proof"],
+            "properties": {
+              "proof": { "$ref": "#/$defs/sameContentProof" }
+            },
+            "not": {
+              "anyOf": [
+                { "required": ["owner_tip_candidate"] },
+                { "required": ["incremental_follow_up"] },
+                { "required": ["blocking_reasons"] }
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": { "disposition": { "const": "incorporated-history-non-owner" } },
+            "required": ["disposition"]
+          },
+          "then": {
+            "required": ["ref_tip", "merge_base", "path_transitions", "proof"],
+            "properties": {
+              "proof": { "$ref": "#/$defs/incorporatedHistoryProof" }
+            },
+            "not": {
+              "anyOf": [
+                { "required": ["owner_tip_candidate"] },
+                { "required": ["incremental_follow_up"] },
+                { "required": ["blocking_reasons"] }
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": { "disposition": { "const": "deferred-active-owner" } },
+            "required": ["disposition"]
+          },
+          "then": {
+            "required": ["ref_tip", "merge_base", "path_transitions", "owner_tip_candidate", "incremental_follow_up"],
+            "not": {
+              "anyOf": [
+                { "required": ["proof"] },
+                { "required": ["blocking_reasons"] }
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": { "disposition": { "const": "active-owner" } },
+            "required": ["disposition"]
+          },
+          "then": {
+            "required": ["ref_tip", "merge_base", "path_transitions", "owner_tip_candidate"],
+            "not": {
+              "anyOf": [
+                { "required": ["proof"] },
+                { "required": ["incremental_follow_up"] },
+                { "required": ["blocking_reasons"] }
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": { "disposition": { "const": "blocking" } },
+            "required": ["disposition"]
+          },
+          "then": {
+            "required": ["blocking_reasons"],
+            "not": {
+              "anyOf": [
+                { "required": ["proof"] },
+                { "required": ["incremental_follow_up"] }
+              ]
+            }
+          }
+        }
+      ]
+    }
   }
 }

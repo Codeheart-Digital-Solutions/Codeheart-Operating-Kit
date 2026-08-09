@@ -25,9 +25,9 @@ func storeCompleteCatalogWithHook(root string, catalog Catalog, hook func(string
 		_, readErr := readRootRegular(root, CatalogPath)
 		return false, readErr == nil, nil
 	}
-	if catalog.SchemaVersion != 2 || catalog.DiscoveryVersion != plancatalog.DiscoveryV2 {
+	if catalog.SchemaVersion != 3 || catalog.DiscoveryVersion != plancatalog.DiscoveryV2 {
 		_, readErr := readRootRegular(root, CatalogPath)
-		return false, readErr == nil, fmt.Errorf("portfolio_catalog_incompatible: only complete discovery-v2 evidence may replace the current cache")
+		return false, readErr == nil, fmt.Errorf("portfolio_catalog_incompatible: only complete schema-v3 discovery-v2 evidence may replace the current cache")
 	}
 	schemaPath, err := state.SchemaForPlanCatalogVersion(catalog.SchemaVersion)
 	if err != nil {

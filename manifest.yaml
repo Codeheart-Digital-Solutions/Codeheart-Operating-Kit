@@ -1,11 +1,12 @@
 schema_version: 1
-version: 0.1.26
+version: 0.1.27
 compatibility:
   lock_schema_versions:
     - 1
     - 2
   config_schema_versions:
     - 1
+    - 2
   operation_result_schema_version: 1
   platforms:
     - macos-universal
@@ -19,9 +20,9 @@ compatibility:
     - check
 components:
   - id: planning-workflows
-    version: 0.1.23
+    version: 0.1.24
     manifest_path: components/planning-workflows/component.yaml
-    checksum_sha256: 145ac1962b8e2ece37a0c44e51557784ee7dd7f8307a8356e770d4d4e99cd3c5
+    checksum_sha256: 53d172d121c0eda96e8902ae9dc3dbd8aa781fc6b078902e188f811d173e7e04
     consumer_impact:
       - component addition
       - instruction-only change
@@ -37,9 +38,9 @@ components:
       - instruction-only change
       - backwards-compatible scaffold addition
   - id: agent-interface
-    version: 0.1.26
+    version: 0.1.27
     manifest_path: components/agent-interface/component.yaml
-    checksum_sha256: 1eb0256dab55ca8004288aa9af5dcc9b92f0f55e973db689125f1e0883a24dbe
+    checksum_sha256: 974120f5d406dd6c2784291edba7029aefa1e1f3be2ab093cc671580179dd90e
     consumer_impact:
       - component addition
       - instruction-only change
@@ -71,10 +72,10 @@ components:
       - validator-only change
 profiles:
   - id: standard
-    version: 0.1.26
+    version: 0.1.27
     manifest_path: profiles/standard.yaml
-    checksum_sha256: 4a9f8461c17bf7832b22cf075564d3537b50501f52fe314f7c2b9b3db4a98efa
-    graph_sha256: 99d9b26e91a9370df463860346bd91ea53f11ce88328afeaaf2f397bcae8a4e8
+    checksum_sha256: 1c3bfb181549a2bed74608b4062c9c3c21af02e8dafe12abd8e1a8399cf93175
+    graph_sha256: ffe3ee6a2756d75171b0009bf7f5a4b2ae04f7d10f48bfb8d93ee7c374b6de5b
     components:
       - planning-workflows
       - agent-memory

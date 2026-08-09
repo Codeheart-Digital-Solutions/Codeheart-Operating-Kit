@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/schemas/kit-config.schema.json",
-  "title": "Codeheart Operating Kit Consumer Config",
+  "title": "Codeheart Operating Kit Consumer Config v2",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -13,7 +13,7 @@
     "component_settings"
   ],
   "properties": {
-    "schema_version": { "type": "integer", "const": 1 },
+    "schema_version": { "type": "integer", "const": 2 },
     "selected_profile": { "type": "string", "const": "standard" },
     "setup_purpose": {
       "type": "string",
@@ -65,9 +65,35 @@
                 }
               }
             },
+            "plan_catalog_migration_evidence": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "ledger_path",
+                "ledger_sha256",
+                "branch_evidence_digest",
+                "evidence_revision",
+                "activation_base_revision",
+                "migration_action_digest",
+                "evidence_scope"
+              ],
+              "properties": {
+                "ledger_path": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "^[^/\\\\\\r\\n][^\\\\\\r\\n]*$"
+                },
+                "ledger_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+                "branch_evidence_digest": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+                "evidence_revision": { "type": "string", "pattern": "^[0-9a-f]{40,64}$" },
+                "activation_base_revision": { "type": "string", "pattern": "^[0-9a-f]{40,64}$" },
+                "migration_action_digest": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+                "evidence_scope": { "type": "string", "enum": ["local", "remote-aware"] }
+              }
+            },
             "owned_roots": false
           },
-          "additionalProperties": true
+          "additionalProperties": false
         }
       },
       "additionalProperties": { "type": "object" }
@@ -329,5 +355,28 @@
         }
       ]
     }
-  }
+  },
+  "allOf": [
+    {
+      "properties": {
+        "component_settings": {
+          "required": ["planning-workflows"],
+          "properties": {
+            "planning-workflows": {
+              "required": [
+                "plan_catalog_mode",
+                "plan_catalog_cutover_revision",
+                "plan_catalog_discovery_version",
+                "plan_catalog_migration_evidence"
+              ],
+              "properties": {
+                "plan_catalog_mode": { "const": "mixed" },
+                "plan_catalog_discovery_version": { "const": 2 }
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
 }

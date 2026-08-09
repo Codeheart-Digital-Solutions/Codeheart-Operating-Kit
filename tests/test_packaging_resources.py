@@ -111,6 +111,40 @@ def test_changed_source_and_packaged_resources_match():
         assert_packaged_resource_matches(source)
 
 
+def test_packaged_migration_resources_expose_reviewed_v3_route_contract():
+    manifest_text = (
+        PACKAGED_ROOT / "components/planning-workflows/component.yaml"
+    ).read_text(encoding="utf-8")
+    migrate = (
+        PACKAGED_ROOT
+        / "components/planning-workflows/managed/runbooks/migrate-plan-catalog.md"
+    ).read_text(encoding="utf-8")
+    catalog = (
+        PACKAGED_ROOT
+        / "components/planning-workflows/managed/reference/plan-catalog-format.md"
+    ).read_text(encoding="utf-8")
+    router = (
+        PACKAGED_ROOT
+        / "components/agent-interface/managed/reference/operation-routing-and-dispatch.md"
+    ).read_text(encoding="utf-8")
+    refresh = (
+        PACKAGED_ROOT
+        / "components/planning-workflows/managed/runbooks/refresh-portfolio-catalog.md"
+    ).read_text(encoding="utf-8")
+
+    assert "route_id: planning.migrate-catalog" in manifest_text
+    for text in [migrate, catalog, router]:
+        assert "schema-v3" in text
+        assert "deferred-active-owner" in text
+        assert "canonical_ready" in text or "canonical readiness" in text
+    assert "E -> L -> migrate -> catalog-activate -> A -> validate" in migrate
+    assert "branch deletion is not a migration precondition" in migrate
+    assert "branch deletion is neither the primary remedy nor granted authority" in router
+    assert "schema-v3/discovery-v2" in refresh
+    assert "mixed-grandfathered" in refresh
+    assert "mixed_coverage_complete" in refresh and "canonical_ready" in refresh
+
+
 def test_repo_feedback_runbook_prefers_configured_destination():
     text = (
         ROOT / "components/agent-interface/managed/runbooks/capture-repo-feedback.md"

@@ -27,6 +27,8 @@ type packFixtureOptions struct {
 	nativeBinary      bool
 }
 
+const currentReleaseFixtureVersion = "0.1.27"
+
 func TestMain(m *testing.M) {
 	if len(os.Args) > 1 && os.Args[1] == "__upgrade-reconcile" {
 		switch os.Getenv("CODEHEART_RELEASE_TEST_RECONCILE_FAILURE") {
@@ -43,13 +45,13 @@ func TestMain(m *testing.M) {
 
 func TestCatalogAndPackVerification(t *testing.T) {
 	root := t.TempDir()
-	archive, asset := writePackFixture(t, root, packFixtureOptions{version: "0.1.26", platform: "macos-universal", command: "codeheart-operating-kit", includeBinary: true, reconcileSucceeds: true})
+	archive, asset := writePackFixture(t, root, packFixtureOptions{version: currentReleaseFixtureVersion, platform: "macos-universal", command: "codeheart-operating-kit", includeBinary: true, reconcileSucceeds: true})
 	catalogPath := writeCatalogFixture(t, root, asset)
 	catalog, err := LoadCatalog(catalogPath)
 	if err != nil {
 		t.Fatal(err)
 	}
-	selected, err := catalog.Select("0.1.26", "macos-universal")
+	selected, err := catalog.Select(currentReleaseFixtureVersion, "macos-universal")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -57,7 +59,7 @@ func TestCatalogAndPackVerification(t *testing.T) {
 	if err := FetchAsset(catalog, selected, fetched); err != nil {
 		t.Fatal(err)
 	}
-	verified, err := VerifyPack(fetched, filepath.Join(root, "extract"), selected, VerifyOptions{Version: "0.1.26", Platform: "macos-universal", Command: "codeheart-operating-kit"})
+	verified, err := VerifyPack(fetched, filepath.Join(root, "extract"), selected, VerifyOptions{Version: currentReleaseFixtureVersion, Platform: "macos-universal", Command: "codeheart-operating-kit"})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -75,13 +77,13 @@ func TestPackVerificationRejectsInvalidEvidence(t *testing.T) {
 		command  string
 		contains string
 	}{
-		{name: "missing-binary", options: packFixtureOptions{version: "0.1.26", platform: "macos-universal", command: "codeheart-operating-kit"}, version: "0.1.26", platform: "macos-universal", command: "codeheart-operating-kit", contains: "binary checksum"},
-		{name: "payload-checksum", options: packFixtureOptions{version: "0.1.26", platform: "macos-universal", command: "codeheart-operating-kit", includeBinary: true, corruptPayload: true}, version: "0.1.26", platform: "macos-universal", command: "codeheart-operating-kit", contains: "payload checksum"},
-		{name: "wrong-version", options: packFixtureOptions{version: "9.9.9", platform: "macos-universal", command: "codeheart-operating-kit", includeBinary: true}, version: "0.1.26", platform: "macos-universal", command: "codeheart-operating-kit", contains: "pack version"},
-		{name: "wrong-platform", options: packFixtureOptions{version: "0.1.26", platform: "windows-x64", command: "codeheart-operating-kit", includeBinary: true}, version: "0.1.26", platform: "macos-universal", command: "codeheart-operating-kit", contains: "pack platform"},
-		{name: "wrong-command", options: packFixtureOptions{version: "0.1.26", platform: "macos-universal", command: "other", includeBinary: true}, version: "0.1.26", platform: "macos-universal", command: "codeheart-operating-kit", contains: "jsonschema validation"},
-		{name: "traversal", options: packFixtureOptions{version: "0.1.26", platform: "macos-universal", command: "codeheart-operating-kit", includeBinary: true, traversal: true}, version: "0.1.26", platform: "macos-universal", command: "codeheart-operating-kit", contains: "unsafe archive path"},
-		{name: "symlink", options: packFixtureOptions{version: "0.1.26", platform: "macos-universal", command: "codeheart-operating-kit", includeBinary: true, symlink: true}, version: "0.1.26", platform: "macos-universal", command: "codeheart-operating-kit", contains: "symbolic link"},
+		{name: "missing-binary", options: packFixtureOptions{version: currentReleaseFixtureVersion, platform: "macos-universal", command: "codeheart-operating-kit"}, version: currentReleaseFixtureVersion, platform: "macos-universal", command: "codeheart-operating-kit", contains: "binary checksum"},
+		{name: "payload-checksum", options: packFixtureOptions{version: currentReleaseFixtureVersion, platform: "macos-universal", command: "codeheart-operating-kit", includeBinary: true, corruptPayload: true}, version: currentReleaseFixtureVersion, platform: "macos-universal", command: "codeheart-operating-kit", contains: "payload checksum"},
+		{name: "wrong-version", options: packFixtureOptions{version: "9.9.9", platform: "macos-universal", command: "codeheart-operating-kit", includeBinary: true}, version: currentReleaseFixtureVersion, platform: "macos-universal", command: "codeheart-operating-kit", contains: "pack version"},
+		{name: "wrong-platform", options: packFixtureOptions{version: currentReleaseFixtureVersion, platform: "windows-x64", command: "codeheart-operating-kit", includeBinary: true}, version: currentReleaseFixtureVersion, platform: "macos-universal", command: "codeheart-operating-kit", contains: "pack platform"},
+		{name: "wrong-command", options: packFixtureOptions{version: currentReleaseFixtureVersion, platform: "macos-universal", command: "other", includeBinary: true}, version: currentReleaseFixtureVersion, platform: "macos-universal", command: "codeheart-operating-kit", contains: "jsonschema validation"},
+		{name: "traversal", options: packFixtureOptions{version: currentReleaseFixtureVersion, platform: "macos-universal", command: "codeheart-operating-kit", includeBinary: true, traversal: true}, version: currentReleaseFixtureVersion, platform: "macos-universal", command: "codeheart-operating-kit", contains: "unsafe archive path"},
+		{name: "symlink", options: packFixtureOptions{version: currentReleaseFixtureVersion, platform: "macos-universal", command: "codeheart-operating-kit", includeBinary: true, symlink: true}, version: currentReleaseFixtureVersion, platform: "macos-universal", command: "codeheart-operating-kit", contains: "symbolic link"},
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
@@ -159,8 +161,8 @@ func TestHandoffTamperingAndFailedReconcileRestorePreviousBinary(t *testing.T) {
 	if err := os.WriteFile(target, []byte("previous binary\n"), 0o755); err != nil {
 		t.Fatal(err)
 	}
-	archive, asset := writePackFixture(t, root, packFixtureOptions{version: "0.1.26", platform: platform, command: "codeheart-operating-kit", includeBinary: true, nativeBinary: true})
-	pack, err := VerifyPack(archive, filepath.Join(root, "extract"), asset, VerifyOptions{Version: "0.1.26", Platform: platform, Command: "codeheart-operating-kit"})
+	archive, asset := writePackFixture(t, root, packFixtureOptions{version: currentReleaseFixtureVersion, platform: platform, command: "codeheart-operating-kit", includeBinary: true, nativeBinary: true})
+	pack, err := VerifyPack(archive, filepath.Join(root, "extract"), asset, VerifyOptions{Version: currentReleaseFixtureVersion, Platform: platform, Command: "codeheart-operating-kit"})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -205,8 +207,8 @@ func TestReadAndApplyLegacyV025DeferredHandoffWire(t *testing.T) {
 	if err := os.WriteFile(target, []byte("previous binary\n"), 0o755); err != nil {
 		t.Fatal(err)
 	}
-	archive, asset := writePackFixture(t, root, packFixtureOptions{version: "0.1.26", platform: platform, command: "codeheart-operating-kit", includeBinary: true, nativeBinary: true})
-	pack, err := VerifyPack(archive, filepath.Join(root, "legacy-extract"), asset, VerifyOptions{Version: "0.1.26", Platform: platform, Command: "codeheart-operating-kit"})
+	archive, asset := writePackFixture(t, root, packFixtureOptions{version: currentReleaseFixtureVersion, platform: platform, command: "codeheart-operating-kit", includeBinary: true, nativeBinary: true})
+	pack, err := VerifyPack(archive, filepath.Join(root, "legacy-extract"), asset, VerifyOptions{Version: currentReleaseFixtureVersion, Platform: platform, Command: "codeheart-operating-kit"})
 	if err != nil {
 		t.Fatal(err)
 	}

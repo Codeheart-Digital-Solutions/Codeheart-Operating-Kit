@@ -17,12 +17,24 @@ import (
 )
 
 type RepositorySettings struct {
-	Mode             CatalogMode      `json:"mode"`
-	RepositoryID     string           `json:"repository_id,omitempty"`
-	CutoverRevision  string           `json:"cutover_revision,omitempty"`
-	DiscoveryVersion DiscoveryVersion `json:"discovery_version"`
-	ExcludedRoots    []string         `json:"excluded_roots"`
-	PolicyDigest     string           `json:"policy_digest"`
+	ConfigSchemaVersion int                       `json:"config_schema_version"`
+	Mode                CatalogMode               `json:"mode"`
+	RepositoryID        string                    `json:"repository_id,omitempty"`
+	CutoverRevision     string                    `json:"cutover_revision,omitempty"`
+	DiscoveryVersion    DiscoveryVersion          `json:"discovery_version"`
+	ExcludedRoots       []string                  `json:"excluded_roots"`
+	PolicyDigest        string                    `json:"policy_digest"`
+	MigrationEvidence   *MigrationEvidenceBinding `json:"migration_evidence,omitempty"`
+}
+
+type MigrationEvidenceBinding struct {
+	LedgerPath             string `json:"ledger_path" yaml:"ledger_path"`
+	LedgerSHA256           string `json:"ledger_sha256" yaml:"ledger_sha256"`
+	BranchEvidenceDigest   string `json:"branch_evidence_digest" yaml:"branch_evidence_digest"`
+	EvidenceRevision       string `json:"evidence_revision" yaml:"evidence_revision"`
+	ActivationBaseRevision string `json:"activation_base_revision" yaml:"activation_base_revision"`
+	MigrationActionDigest  string `json:"migration_action_digest" yaml:"migration_action_digest"`
+	EvidenceScope          string `json:"evidence_scope" yaml:"evidence_scope"`
 }
 
 type RepositorySnapshot struct {
@@ -40,42 +52,50 @@ type RepositorySnapshot struct {
 	LegacyEntries      []LegacyEntry        `json:"legacy_entries"`
 	Reconciliation     LegacyReconciliation `json:"legacy_reconciliation"`
 	Problems           []Problem            `json:"problems"`
+	DeferredPaths      map[string]bool      `json:"-"`
 }
 
 type SnapshotOptions struct {
-	TargetDiscoveryVersion DiscoveryVersion
-	TargetCatalogMode      CatalogMode
-	IncludeUntracked       bool
+	TargetDiscoveryVersion       DiscoveryVersion
+	TargetCatalogMode            CatalogMode
+	IncludeUntracked             bool
+	ObservedRemoteOverlayDigest  string
+	ObservedRemoteBranchEvidence []BranchCandidateEvidence
 }
 
 type ViewRow struct {
-	ID             string    `json:"id"`
-	Title          string    `json:"title"`
-	Kind           Kind      `json:"kind"`
-	Purpose        string    `json:"purpose,omitempty"`
-	Lifecycle      Lifecycle `json:"lifecycle"`
-	Family         string    `json:"family,omitempty"`
-	CanonicalPath  string    `json:"canonical_path"`
-	Legacy         bool      `json:"legacy"`
-	LegacyEvidence []string  `json:"legacy_evidence"`
+	ID                           string    `json:"id"`
+	Title                        string    `json:"title"`
+	Kind                         Kind      `json:"kind"`
+	Purpose                      string    `json:"purpose,omitempty"`
+	Lifecycle                    Lifecycle `json:"lifecycle"`
+	Family                       string    `json:"family,omitempty"`
+	CanonicalPath                string    `json:"canonical_path"`
+	Legacy                       bool      `json:"legacy"`
+	LegacyEvidence               []string  `json:"legacy_evidence"`
+	CoverageDisposition          string    `json:"coverage_disposition,omitempty"`
+	IncrementalMigrationRequired bool      `json:"incremental_migration_required,omitempty"`
 }
 
 type View struct {
-	SchemaVersion              int              `json:"schema_version"`
-	Mode                       CatalogMode      `json:"mode"`
-	RepositoryID               string           `json:"repository_id,omitempty"`
-	DiscoveryVersion           DiscoveryVersion `json:"discovery_version,omitempty"`
-	ConfiguredDiscoveryVersion DiscoveryVersion `json:"configured_discovery_version,omitempty"`
-	ConfiguredCatalogMode      CatalogMode      `json:"configured_catalog_mode,omitempty"`
-	TargetCatalogMode          CatalogMode      `json:"target_catalog_mode,omitempty"`
-	PolicyDigest               string           `json:"policy_digest,omitempty"`
-	CandidateSetDigest         string           `json:"candidate_set_digest,omitempty"`
-	Complete                   *bool            `json:"complete,omitempty"`
-	Candidates                 []Candidate      `json:"candidates,omitempty"`
-	PreviewCandidates          []Candidate      `json:"preview_candidates,omitempty"`
-	PreviewProblems            []Problem        `json:"preview_problems,omitempty"`
-	Rows                       []ViewRow        `json:"rows"`
-	Problems                   []Problem        `json:"problems"`
+	SchemaVersion              int                       `json:"schema_version"`
+	Mode                       CatalogMode               `json:"mode"`
+	RepositoryID               string                    `json:"repository_id,omitempty"`
+	DiscoveryVersion           DiscoveryVersion          `json:"discovery_version,omitempty"`
+	ConfiguredDiscoveryVersion DiscoveryVersion          `json:"configured_discovery_version,omitempty"`
+	ConfiguredCatalogMode      CatalogMode               `json:"configured_catalog_mode,omitempty"`
+	TargetCatalogMode          CatalogMode               `json:"target_catalog_mode,omitempty"`
+	PolicyDigest               string                    `json:"policy_digest,omitempty"`
+	CandidateSetDigest         string                    `json:"candidate_set_digest,omitempty"`
+	Complete                   *bool                     `json:"complete,omitempty"`
+	MixedCoverageComplete      *bool                     `json:"mixed_coverage_complete,omitempty"`
+	CanonicalReady             *bool                     `json:"canonical_ready,omitempty"`
+	MigrationEvidence          *MigrationEvidenceBinding `json:"migration_evidence,omitempty"`
+	Candidates                 []Candidate               `json:"candidates,omitempty"`
+	PreviewCandidates          []Candidate               `json:"preview_candidates,omitempty"`
+	PreviewProblems            []Problem                 `json:"preview_problems,omitempty"`
+	Rows                       []ViewRow                 `json:"rows"`
+	Problems                   []Problem                 `json:"problems"`
 }
 
 func LoadRepositorySettings(root string) (RepositorySettings, []Problem) {
@@ -92,7 +112,7 @@ func LoadRepositorySettings(root string) (RepositorySettings, []Problem) {
 }
 
 func defaultRepositorySettings() RepositorySettings {
-	settings := RepositorySettings{Mode: ModeLegacy, DiscoveryVersion: DiscoveryV1, ExcludedRoots: []string{}}
+	settings := RepositorySettings{ConfigSchemaVersion: 1, Mode: ModeLegacy, DiscoveryVersion: DiscoveryV1, ExcludedRoots: []string{}}
 	settings.PolicyDigest = settings.DiscoveryPolicy(false).Digest()
 	return settings
 }
@@ -117,12 +137,13 @@ func DecodeRepositorySettings(data []byte) (RepositorySettings, []Problem) {
 		config["component_settings"] = map[string]any{}
 	}
 	if err == nil {
-		err = state.Validate(state.ConfigV1Schema, config)
+		err = state.ValidateConfig(config)
 	}
 	if err != nil {
 		return settings, []Problem{{Code: "catalog_config_invalid", Message: err.Error(), Path: state.ConfigPath, Severity: SeverityError, Remediation: "repair the shared Operating Kit configuration before plan catalog work"}}
 	}
 	components := state.Map(config["component_settings"])
+	settings.ConfigSchemaVersion = state.AsInt(config["schema_version"])
 	planning := state.Map(components["planning-workflows"])
 	mode, ok := ParseCatalogMode(state.AsString(planning["plan_catalog_mode"]))
 	if !ok {
@@ -139,6 +160,17 @@ func DecodeRepositorySettings(data []byte) (RepositorySettings, []Problem) {
 	}
 	ownership := state.Map(planning["plan_catalog_ownership"])
 	settings.ExcludedRoots = stringValues(ownership["excluded_roots"])
+	if evidence := state.Map(planning["plan_catalog_migration_evidence"]); len(evidence) > 0 {
+		settings.MigrationEvidence = &MigrationEvidenceBinding{
+			LedgerPath:             state.AsString(evidence["ledger_path"]),
+			LedgerSHA256:           state.AsString(evidence["ledger_sha256"]),
+			BranchEvidenceDigest:   state.AsString(evidence["branch_evidence_digest"]),
+			EvidenceRevision:       state.AsString(evidence["evidence_revision"]),
+			ActivationBaseRevision: state.AsString(evidence["activation_base_revision"]),
+			MigrationActionDigest:  state.AsString(evidence["migration_action_digest"]),
+			EvidenceScope:          state.AsString(evidence["evidence_scope"]),
+		}
+	}
 	portfolio := state.Map(config["portfolio"])
 	settings.RepositoryID = state.AsString(portfolio["member_repository_id"])
 	problems := []Problem{}
@@ -255,6 +287,10 @@ func LoadRepositorySnapshotWithOptions(root string, options SnapshotOptions) (Re
 		settings.Mode = options.TargetCatalogMode
 	}
 	targeted := settings.DiscoveryVersion != configuredSettings.DiscoveryVersion || settings.Mode != configuredSettings.Mode
+	if configuredSettings.ConfigSchemaVersion == 2 && !targeted {
+		settingsProblems = append(settingsProblems, validatePersistedMigrationEvidence(root, configuredSettings.MigrationEvidence, options.ObservedRemoteOverlayDigest, options.ObservedRemoteBranchEvidence)...)
+	}
+	deferredPaths := boundDeferredPaths(root, configuredSettings.MigrationEvidence)
 	if settings.Mode != ModeLegacy && settings.RepositoryID == "" && !problemCodePresent(settingsProblems, "repository_identity_missing") {
 		settingsProblems = append(settingsProblems, Problem{Code: "repository_identity_missing", Message: "mixed and canonical catalog modes require portfolio.member_repository_id", Path: state.ConfigPath, Severity: SeverityError, Remediation: "configure the stable repository identity before adopting semantic plan IDs"})
 	}
@@ -364,6 +400,7 @@ func LoadRepositorySnapshotWithOptions(root string, options SnapshotOptions) (Re
 		LegacyEntries:      entries,
 		Reconciliation:     reconciliation,
 		Problems:           problems,
+		DeferredPaths:      deferredPaths,
 	}, nil
 }
 
@@ -396,7 +433,7 @@ func loadMixedBaseline(root, revision string) (map[string]string, []Problem) {
 			return paths, []Problem{{Code: "mixed_cutover_baseline_config_invalid", Message: "cutover configuration is not a regular Git blob", Path: state.ConfigPath, Severity: SeverityError, Remediation: "select a pre-cutover commit with absent or valid legacy catalog configuration"}}
 		}
 		configData, readErr := gitBytes(root, "show", revision+":"+state.ConfigPath)
-		config, decodeErr := state.DecodeAndValidateYAML(state.ConfigV1Schema, configData)
+		config, decodeErr := state.DecodeAndValidateConfigYAML(configData)
 		if readErr != nil || decodeErr != nil {
 			if readErr == nil {
 				readErr = decodeErr
@@ -459,6 +496,10 @@ func BuildView(snapshot RepositorySnapshot) View {
 			Legacy:         record.Metadata == nil,
 			LegacyEvidence: []string{},
 		}
+		if snapshot.DeferredPaths[record.Path] && record.Metadata == nil {
+			row.CoverageDisposition = "mixed-grandfathered"
+			row.IncrementalMigrationRequired = true
+		}
 		for _, match := range matches {
 			row.LegacyEvidence = append(row.LegacyEvidence, match.ID)
 		}
@@ -486,7 +527,7 @@ func BuildView(snapshot RepositorySnapshot) View {
 	view := View{SchemaVersion: 1, Mode: snapshot.Settings.Mode, RepositoryID: snapshot.Settings.RepositoryID, Rows: rows, Problems: append([]Problem{}, snapshot.Problems...)}
 	if snapshot.Settings.DiscoveryVersion == DiscoveryV2 || snapshot.Targeted {
 		complete := snapshot.Complete
-		view.SchemaVersion = 2
+		view.SchemaVersion = 3
 		view.DiscoveryVersion = snapshot.Settings.DiscoveryVersion
 		view.ConfiguredDiscoveryVersion = snapshot.ConfiguredSettings.DiscoveryVersion
 		view.ConfiguredCatalogMode = snapshot.ConfiguredSettings.Mode
@@ -494,6 +535,11 @@ func BuildView(snapshot RepositorySnapshot) View {
 		view.PolicyDigest = snapshot.PolicyDigest
 		view.CandidateSetDigest = snapshot.CandidateSetDigest
 		view.Complete = &complete
+		mixedComplete := complete && !HasErrors(snapshot.Problems)
+		canonicalReady := mixedComplete && len(snapshot.DeferredPaths) == 0
+		view.MixedCoverageComplete = &mixedComplete
+		view.CanonicalReady = &canonicalReady
+		view.MigrationEvidence = snapshot.Settings.MigrationEvidence
 		view.Candidates = append([]Candidate{}, snapshot.Candidates...)
 		view.PreviewCandidates = append([]Candidate{}, snapshot.PreviewCandidates...)
 		view.PreviewProblems = append([]Problem{}, snapshot.PreviewProblems...)
@@ -522,14 +568,18 @@ func WriteViewText(writer io.Writer, view View) {
 	fmt.Fprintf(writer, "Plans (%s mode): %d\n", view.Mode, len(view.Rows))
 	if view.SchemaVersion >= 2 {
 		owned, excluded, blocked, hard := candidateOwnershipCounts(view.Candidates)
-		fmt.Fprintf(writer, "Discovery v%d (configured v%d); target mode=%s; complete=%t; candidates included=%d excluded=%d blocked=%d unowned=%d preview=%d.\n", view.DiscoveryVersion, view.ConfiguredDiscoveryVersion, view.TargetCatalogMode, view.Complete != nil && *view.Complete, owned, excluded, blocked, hard, len(view.PreviewCandidates))
+		fmt.Fprintf(writer, "Discovery v%d (configured v%d); target mode=%s; complete=%t; mixed coverage complete=%t; canonical ready=%t; candidates included=%d excluded=%d blocked=%d unowned=%d preview=%d.\n", view.DiscoveryVersion, view.ConfiguredDiscoveryVersion, view.TargetCatalogMode, view.Complete != nil && *view.Complete, view.MixedCoverageComplete != nil && *view.MixedCoverageComplete, view.CanonicalReady != nil && *view.CanonicalReady, owned, excluded, blocked, hard, len(view.PreviewCandidates))
 	}
 	for _, row := range view.Rows {
 		family := "-"
 		if row.Family != "" {
 			family = row.Family
 		}
-		fmt.Fprintf(writer, "- %s | %s | %s | %s | family=%s | %s\n", row.Title, row.Kind, row.ID, row.Lifecycle, family, row.CanonicalPath)
+		coverage := "canonical"
+		if row.CoverageDisposition != "" {
+			coverage = row.CoverageDisposition
+		}
+		fmt.Fprintf(writer, "- %s | %s | %s | %s | family=%s | coverage=%s | incremental migration required=%t | %s\n", row.Title, row.Kind, row.ID, row.Lifecycle, family, coverage, row.IncrementalMigrationRequired, row.CanonicalPath)
 	}
 	if len(view.Problems) > 0 {
 		fmt.Fprintf(writer, "Problems: %d\n", len(view.Problems))

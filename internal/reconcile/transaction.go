@@ -23,9 +23,11 @@ import (
 type PhaseHook func(phase string) error
 
 type ApplyOptions struct {
-	Now            time.Time
-	Hook           PhaseHook
-	AuthorityCheck func() ([]Blocker, error)
+	Now                     time.Time
+	Hook                    PhaseHook
+	AuthorityCheck          func() ([]Blocker, error) // compatibility alias for PreWriteAuthorityCheck
+	PreWriteAuthorityCheck  func() ([]Blocker, error)
+	PostWriteAuthorityCheck func() ([]Blocker, error)
 }
 
 type transactionMarker struct {
@@ -85,7 +87,23 @@ func Apply(plan Plan, options ApplyOptions) (Result, error) {
 		result.Blockers = append(result.Blockers, plan.Blockers...)
 		return result, nil
 	}
+	preWriteAuthorityCheck := options.PreWriteAuthorityCheck
+	if preWriteAuthorityCheck == nil {
+		preWriteAuthorityCheck = options.AuthorityCheck
+	}
 	if len(plan.Actions) == 0 {
+		if preWriteAuthorityCheck != nil {
+			blockers, authorityErr := preWriteAuthorityCheck()
+			if authorityErr != nil {
+				return result, fmt.Errorf("no-op authority check failed: %w", authorityErr)
+			}
+			if len(blockers) > 0 {
+				result.Status = StatusBlocked
+				result.Blockers = append(result.Blockers, blockers...)
+				return result, nil
+			}
+			result.Validations = append(result.Validations, Validation{Name: "pre-write-authority", Status: "passed"})
+		}
 		result.Status = StatusSucceeded
 		result.StateAfter = plan.StateBefore
 		result.Validations = append(result.Validations, Validation{Name: "no-op", Status: "passed"})
@@ -270,8 +288,8 @@ func Apply(plan Plan, options ApplyOptions) (Result, error) {
 	if err := invokeHook(options.Hook, "validated"); err != nil {
 		return rollbackBound(err)
 	}
-	if options.AuthorityCheck != nil {
-		blockers, authorityErr := options.AuthorityCheck()
+	if preWriteAuthorityCheck != nil {
+		blockers, authorityErr := preWriteAuthorityCheck()
 		if authorityErr != nil {
 			return rollbackBound(fmt.Errorf("pre-commit authority check failed: %w", authorityErr))
 		}
@@ -315,6 +333,26 @@ func Apply(plan Plan, options ApplyOptions) (Result, error) {
 		}
 		committed = append(committed, record)
 	}
+	if options.PostWriteAuthorityCheck != nil {
+		if err := invokeHook(options.Hook, "post-write-authority"); err != nil {
+			result, keepMarker := rollbackCommitted(result, repositoryRoot, transactionRoot, transactionInfo, markerFile, markerInfo, transactionRelative, markerRelative, marker, committed, err, options.Hook)
+			cleanupMarker = !keepMarker
+			return result, nil
+		}
+		blockers, authorityErr := options.PostWriteAuthorityCheck()
+		if authorityErr != nil {
+			result, keepMarker := rollbackCommitted(result, repositoryRoot, transactionRoot, transactionInfo, markerFile, markerInfo, transactionRelative, markerRelative, marker, committed, fmt.Errorf("post-write authority check failed: %w", authorityErr), options.Hook)
+			cleanupMarker = !keepMarker
+			return result, nil
+		}
+		if len(blockers) > 0 {
+			result.Blockers = append(result.Blockers, blockers...)
+			result, keepMarker := rollbackCommitted(result, repositoryRoot, transactionRoot, transactionInfo, markerFile, markerInfo, transactionRelative, markerRelative, marker, committed, fmt.Errorf("post-write authority changed"), options.Hook)
+			cleanupMarker = !keepMarker
+			return result, nil
+		}
+		result.Validations = append(result.Validations, Validation{Name: "post-write-authority", Status: "passed"})
+	}
 	marker.Phase = "post-check"
 	if err := writeMarkerBound(repositoryRoot, markerRelative, markerFile, markerInfo, marker); err != nil {
 		result, keepMarker := rollbackCommitted(result, repositoryRoot, transactionRoot, transactionInfo, markerFile, markerInfo, transactionRelative, markerRelative, marker, committed, err, options.Hook)
@@ -337,6 +375,26 @@ func Apply(plan Plan, options ApplyOptions) (Result, error) {
 	}
 	result.Validations = append(result.Validations, Validation{Name: "post-check", Status: "passed"})
 	result.StateAfter = string(observed.Classification)
+	if options.PostWriteAuthorityCheck != nil {
+		if err := invokeHook(options.Hook, "pre-cleanup-authority"); err != nil {
+			result, keepMarker := rollbackCommitted(result, repositoryRoot, transactionRoot, transactionInfo, markerFile, markerInfo, transactionRelative, markerRelative, marker, committed, err, options.Hook)
+			cleanupMarker = !keepMarker
+			return result, nil
+		}
+		blockers, authorityErr := options.PostWriteAuthorityCheck()
+		if authorityErr != nil {
+			result, keepMarker := rollbackCommitted(result, repositoryRoot, transactionRoot, transactionInfo, markerFile, markerInfo, transactionRelative, markerRelative, marker, committed, fmt.Errorf("pre-cleanup authority check failed: %w", authorityErr), options.Hook)
+			cleanupMarker = !keepMarker
+			return result, nil
+		}
+		if len(blockers) > 0 {
+			result.Blockers = append(result.Blockers, blockers...)
+			result, keepMarker := rollbackCommitted(result, repositoryRoot, transactionRoot, transactionInfo, markerFile, markerInfo, transactionRelative, markerRelative, marker, committed, fmt.Errorf("pre-cleanup authority changed"), options.Hook)
+			cleanupMarker = !keepMarker
+			return result, nil
+		}
+		result.Validations = append(result.Validations, Validation{Name: "pre-cleanup-authority", Status: "passed"})
+	}
 	markerAuthorityErr := validateBoundMarker(repositoryRoot, markerRelative, markerFile, markerInfo)
 	transactionAuthorityErr := validateBoundTransaction(repositoryRoot, transactionRoot, transactionRelative, transactionInfo)
 	if markerAuthorityErr != nil || transactionAuthorityErr != nil {
@@ -739,11 +797,7 @@ func validateStagedRoot(plan Plan, transactionRoot *os.Root) error {
 				return err
 			}
 		case state.ConfigPath:
-			config, err := state.DecodeYAMLMap(data)
-			if err != nil {
-				return err
-			}
-			if err := state.Validate(state.ConfigV1Schema, config); err != nil {
+			if _, err := state.DecodeAndValidateConfigYAML(data); err != nil {
 				return err
 			}
 		}

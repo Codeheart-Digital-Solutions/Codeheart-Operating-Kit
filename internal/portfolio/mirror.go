@@ -842,23 +842,31 @@ func (repository *GitRepository) ReadBlob(ctx context.Context, file GitTreeFile)
 }
 
 func (repository *GitRepository) MergeBase(ctx context.Context, ref string) (string, error) {
-	result, err := repository.git(ctx, "merge-base", repository.DefaultRef, ref)
+	return repository.MergeBaseFrom(ctx, repository.DefaultRef, ref)
+}
+
+func (repository *GitRepository) MergeBaseFrom(ctx context.Context, target, ref string) (string, error) {
+	result, err := repository.git(ctx, "merge-base", "--all", target, ref)
 	if err != nil {
 		return "", err
 	}
-	base := strings.TrimSpace(string(result.Stdout))
-	if base == "" {
-		return "", fmt.Errorf("empty merge base")
+	bases := strings.Fields(string(result.Stdout))
+	if len(bases) != 1 {
+		return "", fmt.Errorf("expected one merge base, found %d", len(bases))
 	}
-	return base, nil
+	return bases[0], nil
 }
 
 func (repository *GitRepository) IsMerged(ctx context.Context, ref, mergeBase string) (bool, error) {
+	return repository.IsMergedInto(ctx, ref, repository.DefaultRef, mergeBase)
+}
+
+func (repository *GitRepository) IsMergedInto(ctx context.Context, ref, target, mergeBase string) (bool, error) {
 	tip, err := repository.Revision(ctx, ref)
 	if err != nil {
 		return false, err
 	}
-	defaultRevision, err := repository.Revision(ctx, repository.DefaultRef)
+	defaultRevision, err := repository.Revision(ctx, target)
 	if err != nil {
 		return false, err
 	}
@@ -869,7 +877,7 @@ func (repository *GitRepository) IsMerged(ctx context.Context, ref, mergeBase st
 }
 
 func (repository *GitRepository) ChangedPaths(ctx context.Context, mergeBase, ref string) ([]GitTreeChange, error) {
-	result, err := repository.git(ctx, "diff", "--raw", "-z", "--find-renames", "--diff-filter=AMR", mergeBase+".."+ref, "--")
+	result, err := repository.git(ctx, "diff", "--raw", "-z", "--find-renames", "--diff-filter=ADMR", mergeBase+".."+ref, "--")
 	if err != nil {
 		return nil, err
 	}
@@ -897,7 +905,7 @@ func (repository *GitRepository) ChangedPaths(ctx context.Context, mergeBase, re
 			changes = append(changes, change)
 			continue
 		}
-		if status != "A" && status != "M" {
+		if status != "A" && status != "M" && status != "D" {
 			return nil, fmt.Errorf("branch_change_invalid: unexpected change status %q", status)
 		}
 		if index >= len(fields) {
@@ -906,9 +914,12 @@ func (repository *GitRepository) ChangedPaths(ctx context.Context, mergeBase, re
 		change.NewPath = fields[index]
 		if status == "M" {
 			change.OldPath = change.NewPath
+		} else if status == "D" {
+			change.OldPath = change.NewPath
+			change.NewPath = ""
 		}
 		index++
-		if change.NewPath == "" {
+		if change.NewPath == "" && change.OldPath == "" {
 			continue
 		}
 		changes = append(changes, change)

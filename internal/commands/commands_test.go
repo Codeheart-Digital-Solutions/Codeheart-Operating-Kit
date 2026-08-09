@@ -2,6 +2,7 @@ package commands
 
 import (
 	"bytes"
+	"crypto/sha256"
 	"encoding/json"
 	"fmt"
 	"io/fs"
@@ -250,7 +251,7 @@ func TestLifecycleStartingStatePreconditionMatrix(t *testing.T) {
 			if err != nil || syncResult.OK() != want.sync {
 				t.Fatalf("sync OK=%v want=%v err=%v result=%#v", syncResult.OK(), want.sync, err, syncResult)
 			}
-			_, updateResult, err := updateCheckOperation(root, "0.1.26", now.Format(time.RFC3339), "", true)
+			_, updateResult, err := updateCheckOperation(root, "0.1.27", now.Format(time.RFC3339), "", true)
 			if err != nil || updateResult.OK() != want.update {
 				t.Fatalf("update OK=%v want=%v err=%v result=%#v", updateResult.OK(), want.update, err, updateResult)
 			}
@@ -394,7 +395,7 @@ func TestPlansProspectiveV2AndPreviewCommandsPreserveAuthority(t *testing.T) {
 		t.Fatalf("prospective list exit=%d stderr=%s\n%s", code, stderr.String(), listJSON.String())
 	}
 	var listPayload map[string]any
-	if err := json.Unmarshal(listJSON.Bytes(), &listPayload); err != nil || listPayload["schema_version"] != float64(2) || listPayload["discovery_version"] != float64(2) || !bytes.Contains(listJSON.Bytes(), []byte(nested)) {
+	if err := json.Unmarshal(listJSON.Bytes(), &listPayload); err != nil || listPayload["schema_version"] != float64(3) || listPayload["discovery_version"] != float64(2) || !bytes.Contains(listJSON.Bytes(), []byte(nested)) {
 		t.Fatalf("prospective list payload=%#v err=%v\n%s", listPayload, err, listJSON.String())
 	}
 	listDigest, _ := listPayload["candidate_set_digest"].(string)
@@ -413,7 +414,7 @@ func TestPlansProspectiveV2AndPreviewCommandsPreserveAuthority(t *testing.T) {
 		t.Fatalf("prospective validate exit=%d stderr=%s\n%s", code, stderr.String(), validateJSON.String())
 	}
 	var validation plansValidationOutput
-	if err := json.Unmarshal(validateJSON.Bytes(), &validation); err != nil || validation.SchemaVersion != 2 || len(validation.PreviewCandidates) != 1 || validation.PreviewCandidates[0].Path != preview || !validation.Valid || validation.CandidateSetDigest != listDigest || len(validation.Candidates) != len(listCandidates) {
+	if err := json.Unmarshal(validateJSON.Bytes(), &validation); err != nil || validation.SchemaVersion != 3 || len(validation.PreviewCandidates) != 1 || validation.PreviewCandidates[0].Path != preview || !validation.Valid || validation.CandidateSetDigest != listDigest || len(validation.Candidates) != len(listCandidates) {
 		t.Fatalf("prospective validation=%#v err=%v\n%s", validation, err, validateJSON.String())
 	}
 	var canonicalJSON bytes.Buffer
@@ -450,7 +451,7 @@ func TestPlansProspectiveV2AndPreviewCommandsPreserveAuthority(t *testing.T) {
 		t.Fatalf("prospective inventory exit=%d stderr=%s\n%s", code, stderr.String(), inventoryJSON.String())
 	}
 	var inventory plancatalog.Inventory
-	if err := json.Unmarshal(inventoryJSON.Bytes(), &inventory); err != nil || inventory.SchemaVersion != 2 || inventory.CandidateSetDigest != listDigest || len(inventory.Candidates) != len(listCandidates) || inventory.Coverage.PreviewCandidates != 1 || len(inventory.PreviewCandidates) != 1 {
+	if err := json.Unmarshal(inventoryJSON.Bytes(), &inventory); err != nil || inventory.SchemaVersion != 3 || inventory.CandidateSetDigest != listDigest || len(inventory.Candidates) != len(listCandidates) || inventory.Coverage.PreviewCandidates != 1 || len(inventory.PreviewCandidates) != 1 {
 		t.Fatalf("prospective inventory=%#v err=%v\n%s", inventory, err, inventoryJSON.String())
 	}
 }
@@ -1041,7 +1042,7 @@ func TestPlansRemoteOverlayValidationAndInventoryUsePushedRefsOnly(t *testing.T)
 		t.Fatalf("remote inventory code=%d stdout=%s stderr=%s", code, stdout.String(), stderr.String())
 	}
 	data := mustRead(t, destination)
-	if !bytes.Contains(data, []byte(`"remote_overlays"`)) || !bytes.Contains(data, []byte(`"visibility": "unmerged-branch"`)) || bytes.Contains(data, []byte("local-only")) {
+	if !bytes.Contains(data, []byte(`"remote_overlays"`)) || !bytes.Contains(data, []byte(`"logical_ref": "remote:remote-example:refs/heads/feature/remote-plan-change"`)) || !bytes.Contains(data, []byte(`"proposed_disposition": "active-owner"`)) || !bytes.Contains(data, []byte(`"owner_tip_candidate"`)) || bytes.Contains(data, []byte(`"logical_ref": "remote:remote-example:refs/heads/local-only-plan"`)) {
 		t.Fatalf("remote inventory evidence is incomplete or includes local-only state:\n%s", data)
 	}
 }
@@ -1137,6 +1138,72 @@ func TestPlansMigrateRequiresExplicitModeAndReviewedLedger(t *testing.T) {
 	stderr.Reset()
 	if code := RunPlans([]string{"migrate", "--dry-run", "."}, &bytes.Buffer{}, &stderr); code != 2 || !strings.Contains(stderr.String(), "--ledger requires a value") {
 		t.Fatalf("migrate ledger error code=%d stderr=%s", code, stderr.String())
+	}
+	stderr.Reset()
+	if code := RunPlans([]string{"catalog-activate", "--ledger", "reviewed.yaml", "."}, &bytes.Buffer{}, &stderr); code != 2 || !strings.Contains(stderr.String(), "choose exactly one") {
+		t.Fatalf("catalog activation approval error code=%d stderr=%s", code, stderr.String())
+	}
+	stderr.Reset()
+	if code := RunPlans([]string{"catalog-activate", "--dry-run", "."}, &bytes.Buffer{}, &stderr); code != 2 || !strings.Contains(stderr.String(), "--ledger requires a value") {
+		t.Fatalf("catalog activation ledger error code=%d stderr=%s", code, stderr.String())
+	}
+}
+
+func TestRemoteOverlayDigestIsPortableAcrossGitVersions(t *testing.T) {
+	complete := true
+	evidence := plancatalog.BranchCandidateEvidence{
+		Algorithm: plancatalog.BranchEvidenceAlgorithm, GitVersion: "2.43.0",
+		Identity:         plancatalog.BranchReviewIdentity{EvidenceScope: "remote-aware", RepositoryID: "example", LogicalRef: "remote:example:refs/heads/history", CandidatePath: "docs/repo/plans/example/example_discovery_doc.md"},
+		EvidenceRevision: strings.Repeat("1", 40), PolicyDigest: strings.Repeat("2", 64), CandidateSetDigest: strings.Repeat("3", 64),
+		RefTip: strings.Repeat("4", 40), MergeBase: strings.Repeat("5", 40), ProposedDisposition: plancatalog.BranchDispositionBlocking,
+		Blockers: []plancatalog.BranchEvidenceBlocker{{Code: "branch_clearance_unproven", Message: "synthetic blocker"}},
+	}
+	evidence.Digest = plancatalog.CanonicalBranchEvidenceDigest(evidence)
+	result := portfolio.ScanResult{Catalog: portfolio.Catalog{CompletedAt: "2026-08-09T10:00:00Z", Members: []plancatalog.CatalogMember{{RepositoryID: "example", SourceIdentitySHA256: strings.Repeat("6", 64), DefaultRef: "refs/remotes/origin/main", SourceRevision: strings.Repeat("7", 40), Complete: &complete}}, RemoteBranchEvidence: []plancatalog.BranchCandidateEvidence{evidence}}}
+	first := remoteOverlayEvidence(result, "example").Digest
+	result.Catalog.RemoteBranchEvidence[0].GitVersion = "9.9.9"
+	result.Catalog.RemoteBranchEvidence[0].Digest = plancatalog.CanonicalBranchEvidenceDigest(result.Catalog.RemoteBranchEvidence[0])
+	if second := remoteOverlayEvidence(result, "example").Digest; second != first {
+		t.Fatalf("remote overlay digest changed across admitted Git versions: %s != %s", first, second)
+	}
+}
+
+func TestRemotePlanTargetForBindingReconstructsActivationAtAAndDescendant(t *testing.T) {
+	root := t.TempDir()
+	runGitCommandTest(t, root, "init", "-b", "main")
+	runGitCommandTest(t, root, "config", "user.email", "test@example.invalid")
+	runGitCommandTest(t, root, "config", "user.name", "Remote Target Test")
+	writeCommandTestFile(t, filepath.Join(root, "base.txt"), []byte("evidence\n"))
+	runGitCommandTest(t, root, "add", "base.txt")
+	runGitCommandTest(t, root, "commit", "-m", "record evidence revision")
+	evidenceRevision := strings.TrimSpace(runGitCommandTest(t, root, "rev-parse", "HEAD"))
+	ledgerPath := "docs/repo/plans/migrations/reviewed.yaml"
+	branchDigest := strings.Repeat("d", 64)
+	ledgerData := []byte(fmt.Sprintf("schema_version: 3\nrepository_id: example\nevidence_revision: %s\ntarget_mode: canonical\ninventory_revision: %s\npolicy_digest: %s\ncandidate_set_digest: %s\ntarget_config_precondition_sha256: %s\nbranch_evidence:\n  algorithm: git-candidate-proof-v1\n  git_version: 2.46.0\n  evidence_scope: local\n  remote_overlay_status: not-requested\n  digest: %s\nrecords: []\n", evidenceRevision, evidenceRevision, strings.Repeat("a", 64), strings.Repeat("b", 64), strings.Repeat("c", 64), branchDigest))
+	writeCommandTestFile(t, filepath.Join(root, filepath.FromSlash(ledgerPath)), ledgerData)
+	runGitCommandTest(t, root, "add", ledgerPath)
+	runGitCommandTest(t, root, "commit", "-m", "record ledger checkpoint")
+	activationBase := strings.TrimSpace(runGitCommandTest(t, root, "rev-parse", "HEAD"))
+	writeCommandTestFile(t, filepath.Join(root, "activated.txt"), []byte("activation\n"))
+	runGitCommandTest(t, root, "add", "activated.txt")
+	runGitCommandTest(t, root, "commit", "-m", "record activation checkpoint")
+	activation := strings.TrimSpace(runGitCommandTest(t, root, "rev-parse", "HEAD"))
+	actionDigest, _, err := plancatalog.MigrationActionDigestForCheckpoint(root, activationBase, activation)
+	if err != nil {
+		t.Fatal(err)
+	}
+	ledgerDigest := sha256.Sum256(ledgerData)
+	binding := &plancatalog.MigrationEvidenceBinding{LedgerPath: ledgerPath, LedgerSHA256: fmt.Sprintf("%x", ledgerDigest), BranchEvidenceDigest: branchDigest, EvidenceRevision: evidenceRevision, ActivationBaseRevision: activationBase, MigrationActionDigest: actionDigest, EvidenceScope: "local"}
+	target, err := remotePlanTargetForBinding(root, binding)
+	if err != nil || target.ActivationBaseRevision != activationBase || target.ActivationRevision != activation || target.EvidenceRevision != evidenceRevision || target.MigrationActionDigest != actionDigest {
+		t.Fatalf("activation target reconstruction failed: target=%#v err=%v", target, err)
+	}
+	writeCommandTestFile(t, filepath.Join(root, "unrelated.txt"), []byte("descendant\n"))
+	runGitCommandTest(t, root, "add", "unrelated.txt")
+	runGitCommandTest(t, root, "commit", "-m", "record unrelated descendant")
+	descendantTarget, err := remotePlanTargetForBinding(root, binding)
+	if err != nil || descendantTarget.ActivationRevision != activation || descendantTarget.ActivationBaseRevision != activationBase {
+		t.Fatalf("descendant target moved L or A: target=%#v err=%v", descendantTarget, err)
 	}
 }
 
@@ -1241,6 +1308,16 @@ func runGitCommandTest(t *testing.T, root string, args ...string) string {
 		t.Fatalf("git %s: %v\n%s", strings.Join(args, " "), err, output)
 	}
 	return string(output)
+}
+
+func writeCommandTestFile(t *testing.T, path string, data []byte) {
+	t.Helper()
+	if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(path, data, 0o644); err != nil {
+		t.Fatal(err)
+	}
 }
 
 func TestInitWritesStandardSurfaces(t *testing.T) {
@@ -1524,7 +1601,7 @@ func TestUpdateCheckWritesCadenceAndFailurePreservesDueDate(t *testing.T) {
 		t.Fatalf("failed update state = %#v, previous due %v", update, beforeDue)
 	}
 	var text bytes.Buffer
-	code = RunUpdateCheck([]string{root, "--latest-version", "0.1.26"}, &text, &bytes.Buffer{})
+	code = RunUpdateCheck([]string{root, "--latest-version", "0.1.27"}, &text, &bytes.Buffer{})
 	if code != 0 {
 		t.Fatalf("RunUpdateCheck text exit = %d; stdout: %s", code, text.String())
 	}

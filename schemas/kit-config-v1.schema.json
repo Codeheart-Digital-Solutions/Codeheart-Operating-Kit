@@ -1,0 +1,333 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/schemas/kit-config.schema.json",
+  "title": "Codeheart Operating Kit Consumer Config",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "selected_profile",
+    "project_display_name",
+    "selected_setup_folder",
+    "local_consumer_layer",
+    "component_settings"
+  ],
+  "properties": {
+    "schema_version": { "type": "integer", "const": 1 },
+    "selected_profile": { "type": "string", "const": "standard" },
+    "setup_purpose": {
+      "type": "string",
+      "enum": ["private-automation", "company-automation", "software-product"]
+    },
+    "project_display_name": { "type": "string", "minLength": 1 },
+    "selected_setup_folder": { "type": "string", "minLength": 1 },
+    "local_consumer_layer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["repo_docs_path", "agent_memory_path", "user_layer_path"],
+      "properties": {
+        "repo_docs_path": { "type": "string", "const": "docs/repo/" },
+        "agent_memory_path": { "type": "string", "const": "docs/agent-memory/" },
+        "user_layer_path": { "type": "string", "const": ".codeheart/user/" },
+        "local_machine_layer_path": { "type": "string", "const": ".codeheart/local/" }
+      }
+    },
+    "component_settings": {
+      "type": "object",
+      "properties": {
+        "planning-workflows": {
+          "type": "object",
+          "properties": {
+            "plan_catalog_mode": {
+              "type": "string",
+              "enum": ["legacy", "mixed", "canonical"]
+            },
+            "plan_catalog_cutover_revision": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{40}(?:[0-9a-f]{24})?$"
+            },
+            "plan_catalog_discovery_version": {
+              "type": "integer",
+              "enum": [1, 2]
+            },
+            "plan_catalog_ownership": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "excluded_roots": {
+                  "type": "array",
+                  "uniqueItems": true,
+                  "items": {
+                    "type": "string",
+                    "minLength": 2,
+                    "pattern": "^[^\\\\*?\\[\\]{}\\r\\n]+/$"
+                  }
+                }
+              }
+            },
+            "owned_roots": false
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": { "type": "object" }
+    },
+    "portfolio": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["role"],
+      "properties": {
+        "schema_version": { "type": "integer", "const": 2 },
+        "role": {
+          "type": "string",
+          "enum": ["member", "coordination-home"]
+        },
+        "member_repository_id": { "type": "string", "minLength": 1 },
+        "coordination_home_id": {
+          "type": "string",
+          "pattern": "^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$"
+        },
+        "coordination_home_path": { "type": "string", "minLength": 1 },
+        "coordination_home_register_path": { "type": "string", "minLength": 1 },
+        "discovery": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["sources"],
+          "properties": {
+            "sources": {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["kind", "owner"],
+                "properties": {
+                  "kind": { "type": "string", "const": "github-owner" },
+                  "owner": { "type": "string", "minLength": 1 }
+                }
+              }
+            }
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "schema_version": { "const": 2 } },
+            "required": ["schema_version"]
+          },
+          "then": {
+            "allOf": [
+              {
+                "if": {
+                  "properties": { "role": { "const": "member" } },
+                  "required": ["role"]
+                },
+                "then": {
+                  "required": ["member_repository_id", "coordination_home_id"],
+                  "properties": {
+                    "discovery": false,
+                    "member_repository_id": {
+                      "type": "string",
+                      "pattern": "^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$"
+                    },
+                    "coordination_home_id": {
+                      "type": "string",
+                      "pattern": "^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$"
+                    }
+                  }
+                }
+              },
+              {
+                "if": {
+                  "properties": { "role": { "const": "coordination-home" } },
+                  "required": ["role"]
+                },
+                "then": {
+                  "required": ["member_repository_id", "coordination_home_id"],
+                  "properties": {
+                    "member_repository_id": {
+                      "type": "string",
+                      "pattern": "^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$"
+                    },
+                    "coordination_home_id": {
+                      "type": "string",
+                      "pattern": "^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$"
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          "else": {
+            "allOf": [
+              {
+                "if": {
+                  "properties": { "role": { "const": "member" } },
+                  "required": ["role"]
+                },
+                "then": {
+                  "required": [
+                    "member_repository_id",
+                    "coordination_home_path",
+                    "coordination_home_register_path"
+                  ]
+                }
+              },
+              {
+                "if": {
+                  "properties": { "role": { "const": "coordination-home" } },
+                  "required": ["role"]
+                },
+                "then": {
+                  "required": ["coordination_home_register_path"]
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "repo_feedback": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode"],
+      "properties": {
+        "mode": {
+          "type": "string",
+          "enum": ["github_issues", "disabled"]
+        },
+        "destination": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["type", "owner", "repo"],
+          "properties": {
+            "type": { "type": "string", "const": "github_issues" },
+            "owner": { "type": "string", "minLength": 1 },
+            "repo": { "type": "string", "minLength": 1 }
+          }
+        },
+        "authorization": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "organization",
+            "require_verified_membership",
+            "require_gh_cli",
+            "unavailable_behavior"
+          ],
+          "properties": {
+            "organization": { "type": "string", "const": "Codeheart-Digital-Solutions" },
+            "require_verified_membership": { "const": true },
+            "require_gh_cli": { "const": true },
+            "unavailable_behavior": { "type": "string", "const": "silent" }
+          }
+        },
+        "github_standardization": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["labels", "issue_templates"],
+          "properties": {
+            "labels": {
+              "type": "string",
+              "enum": ["configured", "not_configured", "declined"]
+            },
+            "issue_templates": {
+              "type": "string",
+              "enum": ["configured", "not_configured", "declined"]
+            }
+          }
+        },
+        "disabled_reason": {
+          "type": "string",
+          "enum": [
+            "verified_maintainer_declined_issue_intake",
+            "repo_owner_policy",
+            "issues_unavailable",
+            "other"
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "mode": { "const": "github_issues" } },
+            "required": ["mode"]
+          },
+          "then": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["mode", "destination", "authorization"],
+            "properties": {
+              "mode": { "type": "string", "const": "github_issues" },
+              "destination": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["type", "owner", "repo"],
+                "properties": {
+                  "type": { "type": "string", "const": "github_issues" },
+                  "owner": { "type": "string", "minLength": 1 },
+                  "repo": { "type": "string", "minLength": 1 }
+                }
+              },
+              "authorization": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "organization",
+                  "require_verified_membership",
+                  "require_gh_cli",
+                  "unavailable_behavior"
+                ],
+                "properties": {
+                  "organization": { "type": "string", "const": "Codeheart-Digital-Solutions" },
+                  "require_verified_membership": { "const": true },
+                  "require_gh_cli": { "const": true },
+                  "unavailable_behavior": { "type": "string", "const": "silent" }
+                }
+              },
+              "github_standardization": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["labels", "issue_templates"],
+                "properties": {
+                  "labels": {
+                    "type": "string",
+                    "enum": ["configured", "not_configured", "declined"]
+                  },
+                  "issue_templates": {
+                    "type": "string",
+                    "enum": ["configured", "not_configured", "declined"]
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": { "mode": { "const": "disabled" } },
+            "required": ["mode"]
+          },
+          "then": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["mode", "disabled_reason"],
+            "properties": {
+              "mode": { "type": "string", "const": "disabled" },
+              "disabled_reason": {
+                "type": "string",
+                "enum": [
+                  "verified_maintainer_declined_issue_intake",
+                  "repo_owner_policy",
+                  "issues_unavailable",
+                  "other"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,7 +1,7 @@
 schema_version: 1
 component:
   id: planning-workflows
-  version: "0.1.23"
+  version: "0.1.24"
   name: Planning Workflows
   description: Managed discovery, implementation planning, execution, review, and lifecycle guidance.
   profiles:
@@ -43,6 +43,7 @@ component:
     - source: components/planning-workflows/managed/runbooks/migrate-plan-catalog.md
       target: .codeheart/kit/docs/planning-workflows/runbooks/migrate-plan-catalog.md
       ownership: managed
+      route_id: planning.migrate-catalog
     - source: components/planning-workflows/managed/reference/planning-document-lifecycle.md
       target: .codeheart/kit/docs/planning-workflows/reference/planning-document-lifecycle.md
       ownership: managed

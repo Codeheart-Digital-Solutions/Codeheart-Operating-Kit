@@ -1,4 +1,4 @@
-Last updated: 2026-08-07T00:26:02Z (UTC)
+Last updated: 2026-08-09T15:24:37Z (UTC)
 
 # Portfolio Coordination Format
 
@@ -142,6 +142,12 @@ repository and all branch observations. A feature branch cannot activate discove
 ownership, or relax exclusions. Excluded, conventionally ambiguous, hard-unowned, malformed, and
 filename-only candidates remain structured observations so completeness failures are visible.
 
+Config schema v2 is valid only for discovery-v2 mixed mode with a bound deferred-owner migration.
+Remote scanning verifies the ledger path/hash, evidence revision `E`, ledger checkpoint `L`,
+branch-evidence and action digests, evidence scope, frozen register/cutover authority, and current
+deferred source/owner snapshots before it emits a compatibility observation. Unknown config
+versions, missing ledger bytes, moved refs, stale proof, or mismatched binding fail closed.
+
 ## Default Baselines And Branch Overlays
 
 Each discovery-v2 member default branch contributes a complete canonical baseline. Every
@@ -156,30 +162,69 @@ repository, ref, commit, path, source mode, candidate signal, ownership disposit
 hash so conflicts and omissions remain visible.
 
 Optional pull-request facts enrich a selected same-repository ref. They never select or suppress a
-branch. Merged or deleted refs disappear after the next complete scan. Accessible observations
+branch and never independently prove non-ownership or incorporation. Merged or deleted refs
+disappear after the next complete scan. Accessible observations
 unchanged for more than 30 days are marked stale but retained.
+
+### Remote-Aware Migration Proof
+
+A remote-aware schema-v3 inventory records a complete target-member overlay with an observed time,
+digest, public-safe `source_identity_sha256`, and normalized ref/tip pairs. The source hash binds
+the normalized selected clone URL without exposing it. Tracking evidence coalesces with that
+mirror only when one configured remote has the same source hash; unmatched or ambiguous tracking
+remotes remain separate reviewed evidence. Reviewed identities use
+`remote:<source-id>:refs/...`; local inventories use `local:refs/...` and
+`tracking:<remote>:refs/...`. The same `git-candidate-proof-v1` evidence model applies: exact
+same-content path states or complete patch-equivalent candidate transitions to an incorporated
+commit reachable from `E`. Provider merge or pull-request evidence is corroboration only.
+
+The overlay status must be `complete` and its digest must match during inventory review, migration
+dry-run/apply, catalog activation, post-write authority checking, and later validation. Missing,
+incomplete, unavailable, or stale ref discovery cannot be converted to local evidence silently.
+Provider authentication, source access, pagination, and live-ref discovery are portfolio service
+preflight; the plan-catalog route consumes their structured result but does not improvise provider
+commands or credentials.
 
 ## Cache Contract And Completeness
 
-The discovery-v2 rebuildable factual cache uses schema version 2 and is:
+The reviewed branch-evidence factual cache uses schema version 3 and is:
 
 ```text
 .codeheart/local/portfolio/catalog.json
 ```
 
 It contains scan times, discovery policy/provenance, completeness, enrolled members, valid plan
-observations, candidate observations, errors, and metrics including duration, source/member/
-candidate/observation/stale/API-call counts and maximum concurrency.
+observations, `mixed-grandfathered` compatibility observations, candidate observations, errors,
+and metrics including duration, source/member/candidate/observation/compatibility/stale/API-call
+counts and maximum concurrency.
 
-Only a complete schema-v2/discovery-v2 scan atomically replaces the current complete cache. A v1,
-inaccessible, invalid, or incomplete required member makes the current v2 attempt incomplete. An
-incomplete attempt reports its current errors and preserves the previous complete v2 cache byte-
-for-byte. Historical schema-v1 caches remain preserved and labeled but are never reported as
-v2-complete. Therefore:
+Schema-v3 outputs keep three readiness facts separate:
+
+- `complete`: required source/member/ref discovery and validation closed without an error;
+- `mixed_coverage_complete`: every owned candidate is canonical or one verified deferred
+  compatibility observation; and
+- `canonical_ready`: mixed coverage is complete and no deferred compatibility observation remains.
+
+A mixed member with one exact deferral may therefore be complete and mixed-coverage-complete while
+canonical-ready remains false. Its compatibility observation preserves plan ID, title, kind,
+purpose, lifecycle, path/ref/commit/content hash, `coverage_disposition: mixed-grandfathered`,
+`incremental_migration_required: true`, and the config-v2 migration-evidence binding. It appears
+once and never masquerades as a canonical metadata observation.
+
+Only a complete compatible schema-v3/discovery-v2 scan atomically replaces the current complete
+cache. An inaccessible, invalid, or incomplete required member makes the current v3 attempt
+incomplete. An incomplete attempt reports its current errors and preserves the previous complete
+compatible cache byte-for-byte. Historical schema-v1/v2 caches remain preserved and labeled but
+are never reported as v3-complete. Therefore:
 
 - a command's current result describes the current attempt;
 - the cache is only the last complete result; and
 - neither proves that unpushed local work is globally visible.
+
+An offline/local-only inventory can prove its declared local ref universe and may support a local
+ledger. It cannot claim remote freshness, remote-aware overlay completeness, or aggregate portfolio
+readiness. When remote-aware evidence is required, run the portfolio preflight and bind its exact
+complete overlay; do not reuse a previous cache as current authority.
 
 Never call portfolio analysis current after a failed or incomplete refresh. State the last known
 complete time when available and disclose the current failure.
@@ -242,7 +287,9 @@ codeheart-operating-kit plans inventory --target-discovery-version 2 \
 ```
 
 These commands may refresh scanner-owned local mirrors and cache only. They do not modify member
-repositories.
+repositories. Use `--remote-overlays` consistently on a remote-aware schema-v3 ledger's
+`plans migrate` and `plans catalog-activate` dry-run/apply calls; omitting it is a blocker, not a
+fallback to local scope.
 
 Use `../runbooks/configure-portfolio-coordination.md` for setup and
 `../runbooks/refresh-portfolio-catalog.md` before portfolio analysis.

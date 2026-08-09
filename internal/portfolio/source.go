@@ -2,6 +2,8 @@ package portfolio
 
 import (
 	"context"
+	"crypto/sha256"
+	"encoding/hex"
 	"net/url"
 	"path/filepath"
 	"sort"
@@ -41,6 +43,15 @@ func canonicalRemoteIdentity(value string) string {
 		return "file:" + filepath.Clean(raw)
 	}
 	return strings.TrimSuffix(raw, ".git")
+}
+
+func remoteIdentitySHA256(value string) string {
+	identity := canonicalRemoteIdentity(value)
+	if identity == "" {
+		return ""
+	}
+	digest := sha256.Sum256([]byte(identity))
+	return hex.EncodeToString(digest[:])
 }
 
 func canonicalHostPath(host, repositoryPath string) string {
@@ -139,32 +150,37 @@ type ScanError struct {
 }
 
 type Metrics struct {
-	DurationMS       int64 `json:"duration_ms"`
-	SourceCount      int   `json:"source_count"`
-	MemberCount      int   `json:"member_count"`
-	CandidateCount   int   `json:"candidate_count"`
-	ObservationCount int   `json:"observation_count"`
-	StaleCount       int   `json:"stale_count"`
-	APICallCount     int   `json:"api_call_count"`
-	MaxConcurrency   int   `json:"max_concurrency"`
+	DurationMS                    int64 `json:"duration_ms"`
+	SourceCount                   int   `json:"source_count"`
+	MemberCount                   int   `json:"member_count"`
+	CandidateCount                int   `json:"candidate_count"`
+	ObservationCount              int   `json:"observation_count"`
+	CompatibilityObservationCount int   `json:"compatibility_observation_count"`
+	StaleCount                    int   `json:"stale_count"`
+	APICallCount                  int   `json:"api_call_count"`
+	MaxConcurrency                int   `json:"max_concurrency"`
 }
 
 type Catalog struct {
-	SchemaVersion      int                             `json:"schema_version"`
-	DiscoveryVersion   plancatalog.DiscoveryVersion    `json:"discovery_version,omitempty"`
-	PolicyDigest       string                          `json:"policy_digest,omitempty"`
-	CandidateSetDigest string                          `json:"candidate_set_digest,omitempty"`
-	CoordinationHomeID string                          `json:"coordination_home_id"`
-	StartedAt          string                          `json:"started_at"`
-	CompletedAt        string                          `json:"completed_at"`
-	LastCompleteScanAt string                          `json:"last_complete_scan_at,omitempty"`
-	Complete           bool                            `json:"complete"`
-	Members            []plancatalog.CatalogMember     `json:"members"`
-	Observations       []plancatalog.SourceObservation `json:"observations"`
-	PlanCandidates     []PlanCandidateObservation      `json:"plan_candidates,omitempty"`
-	Candidates         []Candidate                     `json:"candidates"`
-	Errors             []ScanError                     `json:"errors"`
-	Metrics            Metrics                         `json:"metrics"`
+	SchemaVersion             int                                    `json:"schema_version"`
+	DiscoveryVersion          plancatalog.DiscoveryVersion           `json:"discovery_version,omitempty"`
+	PolicyDigest              string                                 `json:"policy_digest,omitempty"`
+	CandidateSetDigest        string                                 `json:"candidate_set_digest,omitempty"`
+	CoordinationHomeID        string                                 `json:"coordination_home_id"`
+	StartedAt                 string                                 `json:"started_at"`
+	CompletedAt               string                                 `json:"completed_at"`
+	LastCompleteScanAt        string                                 `json:"last_complete_scan_at,omitempty"`
+	Complete                  bool                                   `json:"complete"`
+	MixedCoverageComplete     bool                                   `json:"mixed_coverage_complete"`
+	CanonicalReady            bool                                   `json:"canonical_ready"`
+	Members                   []plancatalog.CatalogMember            `json:"members"`
+	Observations              []plancatalog.SourceObservation        `json:"observations"`
+	CompatibilityObservations []plancatalog.CompatibilityObservation `json:"compatibility_observations"`
+	PlanCandidates            []PlanCandidateObservation             `json:"plan_candidates,omitempty"`
+	Candidates                []Candidate                            `json:"candidates"`
+	Errors                    []ScanError                            `json:"errors"`
+	Metrics                   Metrics                                `json:"metrics"`
+	RemoteBranchEvidence      []plancatalog.BranchCandidateEvidence  `json:"-"`
 }
 
 type ScanResult struct {
@@ -188,6 +204,16 @@ func sortCatalog(catalog *Catalog) {
 		}
 		if left.Ref != right.Ref {
 			return left.Ref < right.Ref
+		}
+		return left.CanonicalPath < right.CanonicalPath
+	})
+	sort.SliceStable(catalog.CompatibilityObservations, func(i, j int) bool {
+		left, right := catalog.CompatibilityObservations[i], catalog.CompatibilityObservations[j]
+		if left.RepositoryID != right.RepositoryID {
+			return left.RepositoryID < right.RepositoryID
+		}
+		if left.PlanID != right.PlanID {
+			return left.PlanID < right.PlanID
 		}
 		return left.CanonicalPath < right.CanonicalPath
 	})
