@@ -20,15 +20,18 @@ jobs:
       - uses: actions/setup-go@v5
         with:
           go-version-file: go.mod
-      - name: Assert the oldest admitted Git minor
+      - name: Build the exact oldest admitted Git
         run: |
           set -euo pipefail
-          VERSION="$(git version | awk '{print $3}')"
-          MAJOR="${VERSION%%.*}"
-          REST="${VERSION#*.}"
-          MINOR="${REST%%.*}"
-          test "$MAJOR" = "2"
-          test "$MINOR" = "43"
+          SOURCE="$RUNNER_TEMP/git-v2.43.0-source"
+          PREFIX="$RUNNER_TEMP/git-v2.43.0"
+          git clone --filter=blob:none --no-checkout https://github.com/git/git.git "$SOURCE"
+          git -C "$SOURCE" checkout --detach 564d0252ca632e0264ed670534a51d18a689ef5d
+          test "$(git -C "$SOURCE" rev-parse HEAD)" = "564d0252ca632e0264ed670534a51d18a689ef5d"
+          make -C "$SOURCE" -j2 prefix="$PREFIX" NO_CURL=YesPlease NO_EXPAT=YesPlease NO_GETTEXT=YesPlease NO_ICONV=YesPlease NO_OPENSSL=YesPlease NO_PERL=YesPlease NO_TCLTK=YesPlease install
+          echo "$PREFIX/bin" >> "$GITHUB_PATH"
+      - name: Assert the exact oldest admitted Git version
+        run: test "$(git version)" = "git version 2.43.0"
       - name: Validate branch proof generation on Git 2.43
         run: go test ./internal/plancatalog -run '^TestBranchEvidence' -count=1
 
