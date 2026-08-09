@@ -1423,6 +1423,63 @@ func TestApplyRollsBackCommittedChangesAfterInjectedFailure(t *testing.T) {
 	}
 }
 
+func TestApplyRechecksAuthorityForNoOpPlan(t *testing.T) {
+	checks := 0
+	plan := Plan{Command: "plans migrate", StateBefore: string(state.StateCurrent)}
+	result, err := Apply(plan, ApplyOptions{PreWriteAuthorityCheck: func() ([]Blocker, error) {
+		checks++
+		return []Blocker{{Code: "migration_authority_changed", Message: "reviewed evidence moved"}}, nil
+	}})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if checks != 1 || result.Status != StatusBlocked || len(result.Blockers) != 1 {
+		t.Fatalf("no-op authority result=%#v checks=%d", result, checks)
+	}
+}
+
+func TestApplyRollsBackWhenPostWriteAuthorityChanges(t *testing.T) {
+	root := t.TempDir()
+	observed, err := state.Inspect(root)
+	if err != nil {
+		t.Fatal(err)
+	}
+	graph, err := state.CompileGraph("standard")
+	if err != nil {
+		t.Fatal(err)
+	}
+	now := time.Date(2026, 7, 9, 20, 0, 0, 0, time.UTC)
+	plan, err := BuildPlan(Request{
+		Command:       "init",
+		Root:          root,
+		Observed:      observed,
+		Graph:         graph,
+		DesiredLock:   testLock(graph, nil, now, "init"),
+		DesiredConfig: testConfig(root),
+		EnsureIgnore:  true,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	checks := 0
+	result, err := Apply(plan, ApplyOptions{Now: now, PostWriteAuthorityCheck: func() ([]Blocker, error) {
+		checks++
+		return []Blocker{{Code: "migration_authority_changed", Message: "reviewed ref moved"}}, nil
+	}})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if checks != 1 || result.Status != StatusRolledBack || !result.Rollback.Succeeded {
+		t.Fatalf("post-write authority result=%#v checks=%d", result, checks)
+	}
+	if _, err := os.Stat(filepath.Join(root, filepath.FromSlash(state.ConfigPath))); !os.IsNotExist(err) {
+		t.Fatalf("rollback retained config: %v", err)
+	}
+	if _, err := os.Stat(filepath.Join(root, filepath.FromSlash(state.TransactionPath))); !os.IsNotExist(err) {
+		t.Fatalf("rollback retained marker: %v", err)
+	}
+}
+
 func TestBuildPlanPreservesModifiedRetiredManagedPath(t *testing.T) {
 	root := t.TempDir()
 	retired := filepath.Join(root, ".codeheart", "kit", "retired.md")

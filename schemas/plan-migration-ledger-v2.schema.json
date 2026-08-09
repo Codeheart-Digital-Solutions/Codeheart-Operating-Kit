@@ -1,0 +1,139 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/schemas/plan-migration-ledger.schema.json",
+  "title": "Codeheart Plan Metadata Migration Ledger v2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "repository_id", "discovery_version", "target_catalog_mode", "policy_digest", "candidate_set_digest", "inventory_revision", "reviewed_at", "records"],
+  "properties": {
+    "schema_version": { "type": "integer", "const": 2 },
+    "repository_id": { "$ref": "#/$defs/identifier" },
+    "discovery_version": { "type": "integer", "const": 2 },
+    "target_catalog_mode": { "type": "string", "enum": ["mixed", "canonical"] },
+    "policy_digest": { "$ref": "#/$defs/digest" },
+    "candidate_set_digest": { "$ref": "#/$defs/digest" },
+    "inventory_revision": { "$ref": "#/$defs/commit" },
+    "reviewed_at": { "$ref": "#/$defs/timestamp" },
+    "records": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "current_path",
+          "target_path",
+          "source_revision",
+          "source_sha256",
+          "target_precondition",
+          "ownership_disposition",
+          "decision",
+          "confidence",
+          "ambiguity",
+          "evidence",
+          "legacy_aliases",
+          "conflicts",
+          "deferred",
+          "branch_owner"
+        ],
+        "properties": {
+          "current_path": { "$ref": "#/$defs/path" },
+          "target_path": { "$ref": "#/$defs/path" },
+          "source_revision": { "$ref": "#/$defs/commit" },
+          "source_sha256": { "$ref": "#/$defs/digest" },
+          "target_precondition": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["state"],
+            "properties": {
+              "state": { "type": "string", "enum": ["same-path", "absent", "exact"] },
+              "sha256": { "$ref": "#/$defs/digest" }
+            },
+            "allOf": [
+              {
+                "if": { "properties": { "state": { "const": "exact" } }, "required": ["state"] },
+                "then": { "required": ["sha256"] }
+              }
+            ]
+          },
+          "ownership_disposition": { "type": "string", "const": "owned" },
+          "decision": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "kind", "purpose", "first_cataloged", "catalog_metadata_updated"],
+            "properties": {
+              "id": { "$ref": "#/$defs/planId" },
+              "kind": { "type": "string", "enum": ["discovery", "implementation", "family"] },
+              "purpose": { "type": "string", "minLength": 1, "pattern": "^[^\\r\\n]+$" },
+              "first_cataloged": { "$ref": "#/$defs/timestamp" },
+              "catalog_metadata_updated": { "$ref": "#/$defs/timestamp" },
+              "family": { "$ref": "#/$defs/planId" },
+              "products": { "$ref": "#/$defs/identifiers" },
+              "capabilities": { "$ref": "#/$defs/identifiers" },
+              "strategic_themes": { "$ref": "#/$defs/identifiers" },
+              "relations": {
+                "type": "array",
+                "uniqueItems": true,
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["kind", "target"],
+                  "properties": {
+                    "kind": { "type": "string", "enum": ["parent", "child", "supersedes", "superseded-by", "depends-on", "blocks", "related"] },
+                    "target": { "$ref": "#/$defs/planId" }
+                  }
+                }
+              }
+            }
+          },
+          "confidence": { "type": "string", "enum": ["high", "medium", "low"] },
+          "ambiguity": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+          "evidence": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } },
+          "legacy_aliases": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+            }
+          },
+          "conflicts": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+          "deferred": { "type": "boolean" },
+          "deferral_reason": { "type": "string", "minLength": 1 },
+          "branch_owner": { "type": "string", "minLength": 1 }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": { "deferred": { "const": true } },
+              "required": ["deferred"]
+            },
+            "then": { "required": ["deferral_reason"] }
+          }
+        ]
+      }
+    }
+  },
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "pattern": "^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$"
+    },
+    "identifiers": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z0-9](?:[a-z0-9._-]*[a-z0-9])?$"
+      }
+    },
+    "planId": {
+      "type": "string",
+      "pattern": "^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.(?:discovery|implementation|family)\\.[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$"
+    },
+    "commit": { "type": "string", "pattern": "^[0-9a-f]{40,64}$" },
+    "digest": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "path": { "type": "string", "minLength": 1, "pattern": "^[^\\\\\\r\\n]+$" },
+    "timestamp": { "type": "string", "format": "date-time", "pattern": "Z$" }
+  }
+}

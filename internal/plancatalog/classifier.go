@@ -428,6 +428,12 @@ func candidateDigest(candidates []Candidate) string {
 	return hex.EncodeToString(digest[:])
 }
 
+// CandidateSetDigestForCandidates returns the versioned, source-revision-
+// independent authority digest for an explicit candidate subset.
+func CandidateSetDigestForCandidates(candidates []Candidate) string {
+	return candidateDigest(candidates)
+}
+
 func parseCandidate(candidate Candidate, data []byte, mode CatalogMode) (Record, []Problem) {
 	record, parseErr := ParseDocument(candidate.Path, data, candidate.ExpectedKind)
 	record.FamilyQualified = candidate.FamilyQualified

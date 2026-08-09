@@ -1,7 +1,7 @@
-# Last updated: 2026-08-01T06:31:15Z (UTC)
+# Last updated: 2026-08-09T17:25:33Z (UTC)
 [CmdletBinding()]
 param(
-    [string]$Version = "0.1.26",
+    [string]$Version = "0.1.27",
     [string]$InstallDir = "$env:LOCALAPPDATA\Codeheart\OperatingKit",
     [string]$CatalogUrl = "",
     [string]$CatalogFile = "",
@@ -21,7 +21,7 @@ function Show-Usage {
 Install or repair codeheart-operating-kit for the current Windows user.
 
 Options:
-  -Version VERSION       Release version to install. Default: 0.1.26
+  -Version VERSION       Release version to install. Default: 0.1.27
   -InstallDir PATH       User-level install root. Default: %LOCALAPPDATA%\Codeheart\OperatingKit
   -CatalogUrl URL        External release catalog URL.
   -CatalogFile PATH      Local external release catalog.

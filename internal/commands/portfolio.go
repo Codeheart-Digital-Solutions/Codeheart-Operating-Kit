@@ -86,7 +86,7 @@ func runPortfolioConfigure(args []string, stdout io.Writer, stderr io.Writer) in
 	if config["component_settings"] == nil {
 		config["component_settings"] = map[string]any{}
 	}
-	if err := state.Validate(state.ConfigV1Schema, config); err != nil {
+	if err := state.ValidateConfig(config); err != nil {
 		fmt.Fprintf(stderr, "codeheart-operating-kit portfolio configure: error: %v\n", err)
 		return 1
 	}
@@ -110,7 +110,7 @@ func runPortfolioConfigure(args []string, stdout io.Writer, stderr io.Writer) in
 		portfolioValue["discovery"] = map[string]any{"sources": sources}
 	}
 	config["portfolio"] = portfolioValue
-	if err := state.Validate(state.ConfigV1Schema, config); err != nil {
+	if err := state.ValidateConfig(config); err != nil {
 		fmt.Fprintf(stderr, "codeheart-operating-kit portfolio configure: error: %v\n", err)
 		return 1
 	}
@@ -239,7 +239,7 @@ func runPortfolioScan(args []string, stdout io.Writer, stderr io.Writer) int {
 		}
 	} else {
 		catalog := result.Catalog
-		fmt.Fprintf(stdout, "Portfolio scan: complete=%t; %d member(s), %d candidate(s), %d observation(s), %d stale, %d error(s); duration %dms.\n", catalog.Complete, catalog.Metrics.MemberCount, catalog.Metrics.CandidateCount, catalog.Metrics.ObservationCount, catalog.Metrics.StaleCount, len(catalog.Errors), catalog.Metrics.DurationMS)
+		fmt.Fprintf(stdout, "Portfolio scan: complete=%t; mixed coverage complete=%t; canonical ready=%t; %d member(s), %d candidate(s), %d canonical observation(s), %d compatibility observation(s), %d stale, %d error(s); duration %dms.\n", catalog.Complete, catalog.MixedCoverageComplete, catalog.CanonicalReady, catalog.Metrics.MemberCount, catalog.Metrics.CandidateCount, catalog.Metrics.ObservationCount, catalog.Metrics.CompatibilityObservationCount, catalog.Metrics.StaleCount, len(catalog.Errors), catalog.Metrics.DurationMS)
 		fmt.Fprintln(stdout, "Only pushed remote refs are included; worktree changes, local heads, and unpushed commits are not globally visible.")
 		if result.CacheUpdated {
 			fmt.Fprintf(stdout, "Updated last complete cache: %s\n", portfolio.CatalogPath)

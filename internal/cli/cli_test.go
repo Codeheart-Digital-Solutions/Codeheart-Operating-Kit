@@ -49,7 +49,7 @@ func TestPlansGroupedHelpAndInvalidSubcommand(t *testing.T) {
 	if code != 0 || stderr != "" {
 		t.Fatalf("plans help code=%d stdout=%s stderr=%s", code, stdout, stderr)
 	}
-	for _, subcommand := range []string{"validate", "list", "inventory", "migrate"} {
+	for _, subcommand := range []string{"validate", "list", "inventory", "migrate", "catalog-activate"} {
 		if !strings.Contains(stdout, subcommand) {
 			t.Fatalf("plans help missing %s:\n%s", subcommand, stdout)
 		}
@@ -58,8 +58,12 @@ func TestPlansGroupedHelpAndInvalidSubcommand(t *testing.T) {
 	if code != 0 || stderr != "" || !strings.Contains(stdout, "--ledger LEDGER") || !strings.Contains(stdout, "--yes") {
 		t.Fatalf("plans migrate help code=%d stdout=%s stderr=%s", code, stdout, stderr)
 	}
+	code, stdout, stderr = runForTest("plans", "catalog-activate", "--help")
+	if code != 0 || stderr != "" || !strings.Contains(stdout, "--ledger LEDGER") || !strings.Contains(stdout, "--yes") || !strings.Contains(stdout, "--remote-overlays") {
+		t.Fatalf("plans catalog-activate help code=%d stdout=%s stderr=%s", code, stdout, stderr)
+	}
 	code, stdout, stderr = runForTest("plans", "list", "--help")
-	if code != 0 || stderr != "" || !strings.Contains(stdout, "--target-discovery-version 2") || !strings.Contains(stdout, "--format {text,json}") || !strings.Contains(stdout, "Backward-compatible alias") {
+	if code != 0 || stderr != "" || !strings.Contains(stdout, "--target-discovery-version 2") || !strings.Contains(stdout, "--remote-overlays") || !strings.Contains(stdout, "--format {text,json}") || !strings.Contains(stdout, "Backward-compatible alias") {
 		t.Fatalf("plans list help code=%d stdout=%s stderr=%s", code, stdout, stderr)
 	}
 	code, stdout, stderr = runForTest("plans", "inventory", "--help")

@@ -694,6 +694,21 @@ func TestMigrationAcceptsCleanCheckoutLineEndingConversion(t *testing.T) {
 	if record.SourceSHA256 != sha256Text(sourceBytes) || record.SourceSHA256 == sha256Text(mustReadFile(t, filepath.Join(root, filepath.FromSlash(alpha)))) {
 		t.Fatalf("inventory did not retain the committed blob identity across checkout conversion: %#v", record)
 	}
+	portableInventory, err := BuildInventoryWithOptions(root, time.Date(2026, 7, 31, 12, 0, 0, 0, time.UTC), SnapshotOptions{TargetDiscoveryVersion: DiscoveryV2, TargetCatalogMode: ModeCanonical})
+	if err != nil {
+		t.Fatal(err)
+	}
+	settings, settingProblems := LoadRepositorySettings(root)
+	if HasErrors(settingProblems) {
+		t.Fatalf("repository settings problems: %#v", settingProblems)
+	}
+	settings.DiscoveryVersion = DiscoveryV2
+	settings.Mode = portableInventory.TargetCatalogMode
+	settings.PolicyDigest = settings.DiscoveryPolicy(false).Digest()
+	committed, err := ClassifyCommitTree(root, portableInventory.SourceRevision, settings, portableInventory.TargetCatalogMode, portableInventory.RepositoryID)
+	if err != nil || portableInventory.CandidateSetDigest != committed.CandidateSetDigest {
+		t.Fatalf("clean checkout candidate digest diverged from commit-tree authority: inventory=%s committed=%s err=%v", portableInventory.CandidateSetDigest, committed.CandidateSetDigest, err)
+	}
 
 	plan, err := BuildMigrationPlan(root, migrationLedger(t, root))
 	if err != nil || len(plan.FilePlan.Actions) != 2 || len(plan.Skips) != 0 {

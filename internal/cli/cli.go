@@ -107,8 +107,8 @@ var commands = []command{
 	},
 	{
 		name:        "plans",
-		help:        "Validate, list, inventory, and migrate repository plans",
-		usage:       "{validate,list,inventory,migrate} ...",
+		help:        "Validate, list, inventory, migrate, and activate repository plans",
+		usage:       "{validate,list,inventory,migrate,catalog-activate} ...",
 		description: "Read canonical plan metadata and guarded legacy migration evidence.",
 		options: []option{
 			{flag: "--json", help: "Emit deterministic structured output where supported"},
@@ -124,9 +124,10 @@ var commands = []command{
 
 var planSubcommands = []command{
 	{name: "validate", help: "Validate repository plan metadata and catalog-mode rules", usage: "[--target-discovery-version 2] [--target-catalog-mode canonical] [--include-untracked] [--remote-overlays] [--json] [path]", options: []option{{flag: "path"}, {flag: "--target-discovery-version 2", help: "Read prospective discovery-v2 evidence without activating it"}, {flag: "--target-catalog-mode canonical", help: "Evaluate prospective canonical readiness (implies discovery v2)"}, {flag: "--include-untracked", help: "Include a non-authoritative, non-ignored authoring preview"}, {flag: "--remote-overlays", help: "Refresh scanner-owned mirrors and validate pushed remote plan overlays"}, {flag: "--json"}}},
-	{name: "list", help: "Generate the current repository-scoped plan view", usage: "[--target-discovery-version 2] [--format {text,json}] [--json] [path]", options: []option{{flag: "path"}, {flag: "--target-discovery-version 2", help: "Read prospective discovery-v2 evidence without activating it"}, {flag: "--format {text,json}", help: "Choose text or deterministic JSON output"}, {flag: "--json", help: "Backward-compatible alias for --format json"}}},
+	{name: "list", help: "Generate the current repository-scoped plan view", usage: "[--target-discovery-version 2] [--remote-overlays] [--format {text,json}] [--json] [path]", options: []option{{flag: "path"}, {flag: "--target-discovery-version 2", help: "Read prospective discovery-v2 evidence without activating it"}, {flag: "--remote-overlays", help: "Refresh pushed remote evidence required by a bound remote-aware catalog"}, {flag: "--format {text,json}", help: "Choose text or deterministic JSON output"}, {flag: "--json", help: "Backward-compatible alias for --format json"}}},
 	{name: "inventory", help: "Record Git-backed migration evidence without changing plans", usage: "--output OUTPUT [--target-discovery-version 2] [--target-catalog-mode canonical] [--include-untracked] [--remote-overlays] [--json] [path]", options: []option{{flag: "path"}, {flag: "--output OUTPUT", help: "Required inventory artifact destination"}, {flag: "--target-discovery-version 2", help: "Read prospective discovery-v2 evidence without activating it"}, {flag: "--target-catalog-mode canonical", help: "Evaluate prospective canonical readiness (implies discovery v2)"}, {flag: "--include-untracked", help: "Include a non-authoritative, non-ignored authoring preview"}, {flag: "--remote-overlays", help: "Refresh scanner-owned mirrors and inventory pushed remote plan overlays"}, {flag: "--json"}}},
-	{name: "migrate", help: "Apply an explicitly reviewed migration ledger", usage: "--ledger LEDGER (--dry-run | --yes) [--json] [path]", options: []option{{flag: "path"}, {flag: "--ledger LEDGER"}, {flag: "--dry-run"}, {flag: "--yes"}, {flag: "--json"}}},
+	{name: "migrate", help: "Apply an explicitly reviewed migration ledger", usage: "--ledger LEDGER (--dry-run | --yes) [--remote-overlays] [--json] [path]", options: []option{{flag: "path"}, {flag: "--ledger LEDGER"}, {flag: "--dry-run"}, {flag: "--yes"}, {flag: "--remote-overlays", help: "Refresh and bind the complete current member overlay required by a remote-aware ledger"}, {flag: "--json"}}},
+	{name: "catalog-activate", help: "Activate reviewed plan-catalog settings after exact migration output", usage: "--ledger LEDGER (--dry-run | --yes) [--remote-overlays] [--json] [path]", options: []option{{flag: "path"}, {flag: "--ledger LEDGER"}, {flag: "--dry-run"}, {flag: "--yes"}, {flag: "--remote-overlays", help: "Refresh and bind the complete current member overlay required by a remote-aware ledger"}, {flag: "--json"}}},
 }
 
 var portfolioSubcommands = []command{
@@ -292,7 +293,7 @@ func runPlansGroup(args []string, stdout io.Writer, stderr io.Writer) int {
 	subcommand, ok := findPlanSubcommand(args[0])
 	if !ok {
 		printPlansHelp(stderr)
-		fmt.Fprintf(stderr, "%s plans: error: invalid subcommand %q (choose from validate, list, inventory, migrate)\n", prog, args[0])
+		fmt.Fprintf(stderr, "%s plans: error: invalid subcommand %q (choose from validate, list, inventory, migrate, catalog-activate)\n", prog, args[0])
 		return 2
 	}
 	if containsCallableHelp(subcommand, args[1:]) {
@@ -312,9 +313,9 @@ func findPlanSubcommand(name string) (command, bool) {
 }
 
 func printPlansHelp(w io.Writer) {
-	fmt.Fprintf(w, "usage: %s plans [-h] {validate,list,inventory,migrate} ...\n\n", prog)
+	fmt.Fprintf(w, "usage: %s plans [-h] {validate,list,inventory,migrate,catalog-activate} ...\n\n", prog)
 	fmt.Fprintln(w, "positional arguments:")
-	fmt.Fprintln(w, "  {validate,list,inventory,migrate}")
+	fmt.Fprintln(w, "  {validate,list,inventory,migrate,catalog-activate}")
 	for _, cmd := range planSubcommands {
 		fmt.Fprintf(w, "    %-12s %s\n", cmd.name, cmd.help)
 	}

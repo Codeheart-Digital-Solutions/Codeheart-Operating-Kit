@@ -1,4 +1,4 @@
-Last updated: 2026-08-07T00:26:02Z (UTC)
+Last updated: 2026-08-09T15:24:37Z (UTC)
 
 # Operation Routing And Dispatch
 
@@ -71,15 +71,16 @@ manual register edit.
   rebuildable local cache.
 - Authority source: user request for current facts and committed source scope.
 - State/live truth: provider remotes and current scan result; older cache is historical only, and a
-  v1 cache is never v2-complete.
+  schema-v1/v2 cache is never schema-v3-complete.
 - Default surface: `refresh-portfolio-catalog.md` and `portfolio scan --format json`.
-- Preconditions: coordination-home role, tools/auth/access, exact membership evidence, required
-  default-branch discovery-v2 activation, and canonical candidate coverage.
+- Preconditions: coordination-home role, tools/auth/access/live-ref discovery, exact membership
+  evidence, required default-branch discovery-v2 activation, and claimed mixed/canonical coverage.
 - Approval class: configured read-only scopes; no member write.
 - Stop: incomplete scan, incompatible-v1 or inaccessible required member, non-canonical candidate,
   failed preflight, missing required source, freshness ambiguity.
-- Evidence: schema/discovery versions, attempt times, completeness, candidate observations,
-  last-complete time, metrics, errors, local-only omission.
+- Evidence: schema/discovery versions, attempt times, completeness, mixed coverage, canonical
+  readiness, compatibility/candidate observations, overlay digest, last-complete time, metrics,
+  errors, and local-only omission.
 
 ### `planning.migrate-catalog`
 
@@ -87,20 +88,48 @@ manual register edit.
   discovery v2, switch mixed/canonical, inventory legacy plans.
 - Domain/lifecycle: planning workflows; prospect, migrate, and activate.
 - Scope/action: one repository's filename-or-metadata candidates across every owned tracked `docs`
-  tree plus migration evidence; guarded local writes.
-- Authority source: reviewed ownership/exclusions, schema-v2 semantic ledger, and user approval.
-- State/live truth: Git index plan bytes, discovery policy/candidate set, revisions/branches, config,
-  and frozen legacy baseline only when mixed grandfathering applies.
-- Default surface: `migrate-plan-catalog.md`, prospective `plans inventory`/`plans validate`,
-  `plans migrate`, then a separate reviewed config activation.
-- Preconditions: discovery-v2-compatible CLI, exact policy/candidate/revision/source hashes, target
-  preconditions, branch ownership, dry-run, complete projected coverage.
-- Approval class: inventory read/evidence; explicit approval for metadata/config writes.
-- Stop: ownership/semantic ambiguity, excluded or unowned target, dirty/changed/branch-owned target,
-  invalid/stale ledger, incomplete coverage or required scan, recovery-required state.
-- Evidence: discovery/policy versions, candidate and policy digests, inventory, reviewed ledger,
-  source/target hashes, skips/blockers, projected coverage, activation commit, chronology,
-  idempotency.
+  tree, candidate/ref proofs, reviewed ledger, exact metadata/config deltas, and repository-local
+  checkpoints; guarded local writes only.
+- Authority source: current repository/user authority, reviewed ownership/exclusions, strict
+  schema-v3 candidate-scoped ledger, exact branch proofs, and separately scoped approvals.
+- State/live truth: clean evidence commit `E`; Git index/tree/ref/merge-base/path-transition facts;
+  discovery policy/candidate set; source/config/target bytes; ledger-only checkpoint `L`; required
+  remote overlay; and the frozen legacy baseline only for exact mixed grandfathering.
+- Default surface: `migrate-plan-catalog.md`; schema-v3 `plans inventory`, reviewed ledger checkpoint,
+  `plans migrate`, guarded `plans catalog-activate`, activation checkpoint, then immediate
+  `plans validate`/`plans list`.
+- Preconditions: route selection before Git/provider actions; discovery-v2-compatible CLI; Git
+  2.43 or newer; clean `E`; exact policy/candidate/config/source/ref/proof hashes; current target
+  preconditions; reviewed `same-content-non-owner`, `incorporated-history-non-owner`,
+  `deferred-active-owner`, `active-owner`, or `blocking` disposition for every touch; complete
+  remote overlay when remote-aware; dry-runs; and complete projected mixed/canonical coverage.
+- Approval class: inventory read/evidence; explicit metadata apply; separate config activation;
+  separately authorized ledger-only `L` and action-plus-config `A` repository commits. A CLI
+  `--yes` is not Git authority.
+- Stop: missing/old Git (route to tooling readiness); provider auth/access/live-ref failure (route
+  to portfolio preflight); ownership/semantic ambiguity; excluded/unowned/dirty target; missing,
+  partial, stale, unsupported, or moved ref/merge-base/path/patch/overlay proof; invalid ledger or
+  checkpoint; active owner outside exact mixed deferral; canonical gap; incremental follow-up
+  drift; recovery-required state; or any extra checkpoint/worktree path.
+- Evidence: schema/discovery versions; `E -> L -> migrate -> catalog-activate -> A -> validate`
+  chronology and exact first-parent/tree deltas; candidate/policy/branch/action/overlay digests;
+  ledger/config/source/target hashes; review identities/dispositions/proof kinds; skips/blockers;
+  mixed coverage, canonical readiness, deferred compatibility rows/follow-ups; transaction rollback;
+  first clean post-commit validation; and idempotent authority recheck.
+
+Select this route before invoking Git or a provider. Missing or Git older than 2.43 is the local
+tooling-readiness route in `../runbooks/handle-tooling-readiness.md`; do not choose an installer or
+package manager first. Provider authentication, source access, pagination, and live-ref discovery
+remain `portfolio.refresh-and-analyze` service preflight. Retaining historical branches is safe;
+branch deletion is neither the primary remedy nor granted authority.
+Direct canonical activation remains zero-gap; mixed deferral requires the exact reviewed binding
+and visible incremental follow-up.
+
+For a stopped migration, return a structured blocker with stable code/class, recipe phase,
+repository and sanitized candidate/ref target, non-secret message, evidence marker, preserved
+state, safe retry/recovery route, and user/owner/tooling/portfolio decision needed. Do not collapse
+missing evidence into `active-owner`, treat a merged PR as sole proof, or omit a deferred plan from
+the mixed view.
 
 ### `planning.activate-and-publish-checkpoint`
 

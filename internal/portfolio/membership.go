@@ -86,7 +86,7 @@ func decodeRemoteConfig(data []byte) (Config, error) {
 	if value["component_settings"] == nil {
 		value["component_settings"] = map[string]any{}
 	}
-	if err := state.Validate(state.ConfigV1Schema, value); err != nil {
+	if err := state.ValidateConfig(value); err != nil {
 		return Config{}, err
 	}
 	portfolio := state.Map(value["portfolio"])

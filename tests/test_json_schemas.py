@@ -1,3 +1,4 @@
+import hashlib
 import json
 import re
 import subprocess
@@ -139,6 +140,10 @@ def github_repo_feedback():
 
 
 def kit_config_schema():
+    return json.loads((ROOT / "schemas/kit-config-v1.schema.json").read_text(encoding="utf-8"))
+
+
+def kit_config_v2_schema():
     return json.loads((ROOT / "schemas/kit-config.schema.json").read_text(encoding="utf-8"))
 
 
@@ -241,7 +246,7 @@ def test_json_schema_validator_fails_fixture():
 
 
 def test_kit_config_schema_allows_missing_setup_purpose_fixture():
-    schema = json.loads((ROOT / "schemas/kit-config.schema.json").read_text(encoding="utf-8"))
+    schema = kit_config_schema()
     fixture = load_yaml(ROOT / "tests/fixtures/validator-valid/kit-config-without-purpose.yaml")
     assert "setup_purpose" not in schema["required"]
     assert set(schema["required"]).issubset(fixture)
@@ -249,7 +254,7 @@ def test_kit_config_schema_allows_missing_setup_purpose_fixture():
 
 
 def test_kit_config_schema_preserves_existing_setup_purpose_values():
-    schema = json.loads((ROOT / "schemas/kit-config.schema.json").read_text(encoding="utf-8"))
+    schema = kit_config_schema()
     assert schema["properties"]["setup_purpose"]["enum"] == [
         "private-automation",
         "company-automation",
@@ -276,6 +281,12 @@ def test_plan_catalog_schemas_define_strict_versioned_contracts():
         "plan-catalog.schema.json": {
             "schema_version", "discovery_version", "policy_digest", "candidate_set_digest",
             "coordination_home_id", "started_at", "completed_at", "complete", "members",
+            "mixed_coverage_complete", "canonical_ready", "observations",
+            "compatibility_observations", "candidates", "errors", "metrics",
+        },
+        "plan-catalog-v2.schema.json": {
+            "schema_version", "discovery_version", "policy_digest", "candidate_set_digest",
+            "coordination_home_id", "started_at", "completed_at", "complete", "members",
             "observations", "candidates", "errors", "metrics",
         },
         "plan-catalog-v1.schema.json": {
@@ -283,11 +294,24 @@ def test_plan_catalog_schemas_define_strict_versioned_contracts():
             "members", "observations", "candidates", "errors", "metrics",
         },
         "plan-migration-ledger.schema.json": {
+            "schema_version", "repository_id", "evidence_revision", "target_mode",
+            "inventory_revision", "policy_digest", "candidate_set_digest",
+            "target_config_precondition_sha256", "branch_evidence", "records",
+        },
+        "plan-migration-ledger-v2.schema.json": {
             "schema_version", "repository_id", "discovery_version", "target_catalog_mode",
             "policy_digest", "candidate_set_digest", "inventory_revision", "reviewed_at", "records",
         },
         "plan-migration-ledger-v1.schema.json": {
             "schema_version", "repository_id", "inventory_revision", "reviewed_at", "records",
+        },
+        "plan-inventory.schema.json": {
+            "schema_version", "repository_id", "catalog_mode", "source_revision",
+            "evidence_revision", "generated_at", "records", "unpaired_legacy_evidence",
+            "coverage", "problems", "discovery_version", "configured_discovery_version",
+            "configured_catalog_mode", "target_catalog_mode", "policy_digest",
+            "candidate_set_digest", "target_config_precondition_sha256", "complete",
+            "mixed_coverage_complete", "canonical_ready", "candidates", "branch_evidence",
         },
         "portfolio-local-sources.schema.json": {"schema_version", "sources"},
         "portfolio-strategic-overlay.schema.json": {
@@ -307,6 +331,11 @@ def test_plan_catalog_schemas_define_strict_versioned_contracts():
             }
         else:
             assert set(schema["required"]) == required
+
+    member_required = set(
+        durable_schema("plan-catalog.schema.json")["properties"]["members"]["items"]["required"]
+    )
+    assert "source_identity_sha256" in member_required
 
 
 def test_every_new_durable_schema_accepts_a_positive_instance_and_rejects_a_negative_one():
@@ -331,7 +360,7 @@ def test_every_new_durable_schema_accepts_a_positive_instance_and_rejects_a_nega
         ),
         "plan-catalog.schema.json": (
             {
-                "schema_version": 2,
+                "schema_version": 3,
                 "discovery_version": 2,
                 "policy_digest": digest,
                 "candidate_set_digest": "c" * 64,
@@ -339,8 +368,11 @@ def test_every_new_durable_schema_accepts_a_positive_instance_and_rejects_a_nega
                 "started_at": timestamp,
                 "completed_at": timestamp,
                 "complete": True,
+                "mixed_coverage_complete": True,
+                "canonical_ready": False,
                 "members": [],
                 "observations": [],
+                "compatibility_observations": [],
                 "plan_candidates": [
                     {
                         "repository_id": "example-member",
@@ -366,6 +398,7 @@ def test_every_new_durable_schema_accepts_a_positive_instance_and_rejects_a_nega
                     "member_count": 0,
                     "candidate_count": 0,
                     "observation_count": 0,
+                    "compatibility_observation_count": 0,
                     "stale_count": 0,
                     "api_call_count": 0,
                     "max_concurrency": 1,
@@ -376,21 +409,28 @@ def test_every_new_durable_schema_accepts_a_positive_instance_and_rejects_a_nega
         ),
         "plan-migration-ledger.schema.json": (
             {
-                "schema_version": 2,
+                "schema_version": 3,
                 "repository_id": "example",
-                "discovery_version": 2,
-                "target_catalog_mode": "canonical",
+                "evidence_revision": commit,
+                "target_mode": "canonical",
                 "policy_digest": digest,
                 "candidate_set_digest": "c" * 64,
                 "inventory_revision": commit,
-                "reviewed_at": timestamp,
+                "target_config_precondition_sha256": "d" * 64,
+                "branch_evidence": {
+                    "algorithm": "git-candidate-proof-v1",
+                    "git_version": "2.47.1",
+                    "evidence_scope": "local",
+                    "remote_overlay_status": "not-requested",
+                    "digest": "e" * 64,
+                },
                 "records": [
                     {
                         "current_path": "docs/repo/plans/catalog.md",
                         "target_path": "docs/repo/plans/catalog_discovery_doc.md",
                         "source_revision": commit,
                         "source_sha256": digest,
-                        "target_precondition": {"state": "absent"},
+                        "target_precondition": "absent",
                         "ownership_disposition": "owned",
                         "decision": {
                             "id": "example.discovery.catalog",
@@ -405,12 +445,62 @@ def test_every_new_durable_schema_accepts_a_positive_instance_and_rejects_a_nega
                         "legacy_aliases": ["PR01"],
                         "conflicts": [],
                         "deferred": False,
-                        "branch_owner": "none",
+                        "branch_touch_reviews": [],
                     }
                 ],
             },
             lambda value: value.pop("inventory_revision"),
             "missing inventory_revision",
+        ),
+        "plan-inventory.schema.json": (
+            {
+                "schema_version": 3,
+                "repository_id": "example",
+                "catalog_mode": "mixed",
+                "source_revision": commit,
+                "evidence_revision": commit,
+                "generated_at": timestamp,
+                "records": [],
+                "unpaired_legacy_evidence": [],
+                "coverage": {
+                    "formal_records": 0,
+                    "canonical_metadata": 0,
+                    "legacy_records": 0,
+                    "invalid_records": 0,
+                    "unreadable_records": 0,
+                    "unsafe_records": 0,
+                    "unpaired_legacy_evidence": 0,
+                    "branch_touch_candidates": 0,
+                    "blocking_branch_touches": 0,
+                    "dirty_overlaps": 0,
+                    "candidates": 0,
+                    "included_candidates": 0,
+                    "excluded_candidates": 0,
+                    "blocked_candidates": 0,
+                    "unowned_candidates": 0,
+                },
+                "problems": [],
+                "discovery_version": 2,
+                "configured_discovery_version": 2,
+                "configured_catalog_mode": "mixed",
+                "target_catalog_mode": "mixed",
+                "policy_digest": digest,
+                "candidate_set_digest": "c" * 64,
+                "target_config_precondition_sha256": "d" * 64,
+                "complete": True,
+                "mixed_coverage_complete": True,
+                "canonical_ready": False,
+                "candidates": [],
+                "branch_evidence": {
+                    "algorithm": "git-candidate-proof-v1",
+                    "git_version": "2.47.1",
+                    "evidence_scope": "local",
+                    "remote_overlay_status": "not-requested",
+                    "digest": "e" * 64,
+                },
+            },
+            lambda value: value["branch_evidence"].update({"unknown": True}),
+            "unknown unknown",
         ),
         "portfolio-local-sources.schema.json": (
             load_yaml(ROOT / "tests/fixtures/portfolio/local-sources.yaml"),
@@ -433,13 +523,61 @@ def test_every_new_durable_schema_accepts_a_positive_instance_and_rejects_a_nega
         assert any(expected_error in error for error in errors), (name, errors)
 
 
-def test_historical_plan_catalog_and_ledger_schemas_remain_v1_only():
+def test_historical_plan_catalog_and_ledger_schemas_remain_versioned():
     catalog_v1 = durable_schema("plan-catalog-v1.schema.json")
+    catalog_v2 = durable_schema("plan-catalog-v2.schema.json")
     ledger_v1 = durable_schema("plan-migration-ledger-v1.schema.json")
+    ledger_v2 = durable_schema("plan-migration-ledger-v2.schema.json")
     assert catalog_v1["properties"]["schema_version"]["const"] == 1
+    assert catalog_v2["properties"]["schema_version"]["const"] == 2
     assert ledger_v1["properties"]["schema_version"]["const"] == 1
-    assert durable_schema("plan-catalog.schema.json")["properties"]["schema_version"]["const"] == 2
-    assert durable_schema("plan-migration-ledger.schema.json")["properties"]["schema_version"]["const"] == 2
+    assert ledger_v2["properties"]["schema_version"]["const"] == 2
+    assert durable_schema("plan-catalog.schema.json")["properties"]["schema_version"]["const"] == 3
+    assert durable_schema("plan-migration-ledger.schema.json")["properties"]["schema_version"]["const"] == 3
+
+
+def test_released_config_v1_catalog_v2_and_ledger_v2_schema_bytes_are_frozen():
+    expected = {
+        "kit-config-v1.schema.json": "eb08db8a457f21458eafa65c37f36fd5c3a77f42b63bcc91ea5ee88ce1affb3b",
+        "plan-catalog-v2.schema.json": "324e282daca98c21f601472e971fd224a056988c7adf8cc1be1c5aa886c28fb8",
+        "plan-migration-ledger-v2.schema.json": "7d5e25b949152ce195059dd049042b8c198830e2a2a7ba8c280ac094abb18d6d",
+    }
+    for name, digest in expected.items():
+        assert hashlib.sha256((ROOT / "schemas" / name).read_bytes()).hexdigest() == digest
+
+
+def test_config_v2_requires_exact_mixed_migration_evidence_binding():
+    commit = "a" * 40
+    digest = "b" * 64
+    config = base_config()
+    config["schema_version"] = 2
+    config["component_settings"]["planning-workflows"] = {
+        "plan_catalog_mode": "mixed",
+        "plan_catalog_discovery_version": 2,
+        "plan_catalog_cutover_revision": commit,
+        "plan_catalog_migration_evidence": {
+            "ledger_path": "docs/repo/plans/example/attachments/ledger-v3.yaml",
+            "ledger_sha256": digest,
+            "branch_evidence_digest": "c" * 64,
+            "evidence_revision": commit,
+            "activation_base_revision": "d" * 40,
+            "migration_action_digest": "e" * 64,
+            "evidence_scope": "local",
+        },
+    }
+    assert validate_instance(kit_config_v2_schema(), config) == []
+
+    canonical = deepcopy(config)
+    canonical["component_settings"]["planning-workflows"]["plan_catalog_mode"] = "canonical"
+    assert any("expected const mixed" in error for error in validate_instance(kit_config_v2_schema(), canonical))
+
+    missing = deepcopy(config)
+    del missing["component_settings"]["planning-workflows"]["plan_catalog_migration_evidence"]["ledger_sha256"]
+    assert any("missing ledger_sha256" in error for error in validate_instance(kit_config_v2_schema(), missing))
+
+    unknown = deepcopy(config)
+    unknown["component_settings"]["planning-workflows"]["plan_catalog_migration_evidence"]["reviewed"] = True
+    assert any("unknown reviewed" in error for error in validate_instance(kit_config_v2_schema(), unknown))
 
 
 def test_kit_config_schema_exposes_exclusions_only_discovery_v2_settings():

@@ -1,6 +1,66 @@
-Last updated: 2026-08-08T16:00:11Z (UTC)
+Last updated: 2026-08-09T17:25:33Z (UTC)
 
 # Codeheart Operating Kit Release Notes
+
+## v0.1.27 Release Notes
+
+`v0.1.27` adds evidence-backed branch-ownership reconciliation so repositories can retain valuable
+historical refs while migrating plan catalogs, and can safely defer one genuine active owner in
+mixed mode without weakening fail-closed migration authority.
+
+### Included
+
+- Schema-v3 migration ledgers record candidate-scoped reviews for exact same-content non-owners,
+  incorporated-history non-owners, active owners, deferred active owners, and blocking evidence.
+  Proofs bind the evidence revision, policy and candidate set, logical ref, immutable tip, unique
+  merge base, complete path transitions, Git modes, object IDs, content hashes, and relevant
+  attributes.
+- Incorporated-history clearance requires one complete stable-patch-equivalent transition already
+  reachable from the reviewed target. Pull-request merge evidence may corroborate that proof but
+  never replaces offline Git evidence.
+- `plans catalog-activate` separates the reviewed evidence (`E`), ledger-only checkpoint (`L`), and
+  guarded activation checkpoint (`A`). The schema-v2 mixed config binds the ledger bytes, branch
+  evidence, activation base, migration action digest, and evidence scope without a self-referential
+  digest.
+- A genuine active owner may remain legacy only in mixed mode with exact frozen-cutover authority,
+  one reviewed owner-tip candidate, and a mandatory pending incremental-migration follow-up.
+  Direct canonical mode remains zero-gap and rejects deferral.
+- Remote-aware inventories bind a public-safe normalized source identity, keep unmatched or
+  ambiguous tracking evidence separate, and coalesce tracking/mirror observations only when their
+  candidate proofs agree. Catalog v3 keeps mixed-grandfathered compatibility observations visible
+  and reports `canonical_ready=false` until follow-up completes.
+- Migration and activation recheck every authority binding before and after writes. Ref movement,
+  target or candidate drift, dirty owner bytes, stale overlays, tampering, and post-write races
+  fail with structured blockers and roll back atomically.
+
+### Compatibility And Adoption
+
+- Existing config-v1, ledger-v1/v2, and catalog-v1/v2 contracts retain their historical behavior.
+  Operating Kit v0.1.25 and v0.1.26 reject config v2 and ledger/catalog v3 before writing; v0.1.27
+  continues to accept supported historical inputs.
+- Upgrade alone does not activate discovery v2, change catalog mode, write a clearance ledger,
+  migrate plans, delete branches, or publish a portfolio cache. Existing config, plans, ledgers,
+  registers, and consumer-owned files remain byte-preserved by the producer upgrade gates.
+- Adoption is a separate reviewed workflow: create a prospective local or remote-aware inventory,
+  review every branch candidate, commit the ledger alone directly after `E`, dry-run and apply the
+  migration, activate through the guarded command, and validate mixed coverage and canonical
+  readiness. When a deferred owner lands, reinventory and run the reviewed incremental migration.
+- The proof engine requires Git 2.43 or newer. Missing or older Git routes to managed tooling
+  readiness; proof safety is never downgraded.
+
+### Consumer Impact And Release Boundary
+
+- `instruction-only change`: managed migration, register, lifecycle, portfolio, refresh, and
+  routing guidance documents evidence review, activation, incremental follow-up, and rollback.
+- `validator-only change`, `consumer migration required`, and `security or safety policy change`:
+  strict schemas, local/remote evidence recomputation, source-stable overlays, checkpoint binding,
+  and transaction rollback protect the optional semantic adoption route.
+- No branch deletion is required or recommended. Consumer installations and catalog migrations
+  remain separate isolated follow-up tasks after this producer release is verified.
+- macOS universal and Windows x64 remain the supported release platforms. Assets remain unsigned
+  and unnotarized under the established HTTPS-plus-SHA-256 internal/prototype boundary; publisher
+  identity attestation does not extend beyond GitHub transport, repository control, and the
+  published digest chain.
 
 ## v0.1.26 Release Notes
 

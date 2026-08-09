@@ -1,4 +1,4 @@
-Last updated: 2026-08-07T00:26:02Z (UTC)
+Last updated: 2026-08-09T15:24:37Z (UTC)
 
 # Planning Workflows
 
@@ -21,7 +21,9 @@ and the stable plan-register entry point.
 - Use `runbooks/configure-portfolio-coordination.md` to preview and configure a member or
   coordination home.
 - Use `runbooks/refresh-portfolio-catalog.md` before current portfolio analysis.
-- Use `runbooks/migrate-plan-catalog.md` for reviewed legacy-to-canonical adoption.
+- Use `runbooks/migrate-plan-catalog.md` for reviewed legacy-to-canonical adoption, hash-bound
+  branch-touch reconciliation, exact mixed-mode deferral, guarded activation, and mandatory
+  incremental follow-up.
 - Use `../agent-interface/reference/runbook-authoring-standard.md` when plans create or
   materially change durable runbooks.
 - Use `../agent-interface/reference/operation-routing-and-dispatch.md` when plans create or
@@ -30,10 +32,11 @@ and the stable plan-register entry point.
   plan bundles, subplans, plan families, program folders, attachments, archives, and index
   maintenance.
 - Use `reference/plan-catalog-format.md` for canonical metadata, semantic IDs, families, modes,
-  repository-wide discovery, ownership/exclusions, derived views, source observations, and
-  compatibility activation.
+  repository-wide discovery, ownership/exclusions, reviewed ledger-v3 dispositions and proofs,
+  derived views, source observations, readiness, and compatibility activation.
 - Use `reference/portfolio-coordination-format.md` for roles, configuration, exact membership,
-  discovery sources, cache completeness, and strategic overlays.
+  discovery sources, remote-aware evidence, cache-v3 completeness/readiness, compatibility
+  observations, offline limits, and strategic overlays.
 - Use `reference/plan-register-format.md` for the stable entry point, legacy evidence, frozen
   mixed-mode baseline, and no-manual-append behavior.
 
@@ -48,6 +51,11 @@ documentation tree with an exact lowercase `docs` segment at arbitrary depth. Do
 otherwise truthful product, package, source-area, business, or domain plan into `docs/repo/plans/`
 merely to make it catalog-visible. Existing repositories activate v2 only after prospective review;
 a Kit upgrade alone preserves their current discovery contract.
+
+Historical branches may be retained. A branch touch blocks unless current reviewed evidence proves
+it is a same-content or incorporated-history non-owner, or mixed mode binds one genuine active
+owner to an exact deferred-plan snapshot and pending incremental migration. Missing, stale,
+ambiguous, or changed evidence always fails closed; direct canonical activation remains zero-gap.
 
 Do not copy consumer-private details into managed planning docs. Use generic placeholder paths and
 public-safe examples only.

@@ -62,14 +62,14 @@ func ReadConfig(root string) (map[string]any, error) {
 	if err != nil || len(value) == 0 {
 		return value, err
 	}
-	if err := state.Validate(state.ConfigV1Schema, value); err != nil {
+	if err := state.ValidateConfig(value); err != nil {
 		return nil, err
 	}
 	return value, nil
 }
 
 func WriteConfig(root string, config map[string]any) error {
-	if err := state.Validate(state.ConfigV1Schema, config); err != nil {
+	if err := state.ValidateConfig(config); err != nil {
 		return err
 	}
 	return writeYAML(filepath.Join(root, filepath.FromSlash(ConfigPath)), config)

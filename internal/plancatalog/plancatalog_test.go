@@ -297,7 +297,7 @@ func TestNewSchemasCompileAndPortfolioV2RequiresHomeRepositoryIdentity(t *testin
 		t.Fatal("v2 home without member_repository_id validated")
 	}
 	commit := strings.Repeat("b", 40)
-	self := CoordinationHomeSelfMember("example-home-repository", "refs/heads/main", commit)
+	self := CoordinationHomeSelfMember("example-home-repository", strings.Repeat("a", 64), "refs/heads/main", commit)
 	self.DiscoveryVersion = DiscoveryV2
 	self.PolicyDigest = strings.Repeat("d", 64)
 	self.CandidateSetDigest = strings.Repeat("e", 64)
@@ -375,9 +375,16 @@ func minimalSchemaInstance(schema string) any {
 	case state.PlanMetadataSchema:
 		return map[string]any{"plan": map[string]any{"schema_version": 1, "id": "repo.discovery.slug", "kind": "discovery", "purpose": "purpose", "first_cataloged": "2026-07-31T10:00:00Z", "catalog_metadata_updated": "2026-07-31T10:00:00Z"}}
 	case state.PlanCatalogSchema:
-		return map[string]any{"schema_version": 2, "discovery_version": 2, "policy_digest": strings.Repeat("d", 64), "candidate_set_digest": strings.Repeat("e", 64), "coordination_home_id": "home", "started_at": "2026-07-31T10:00:00Z", "completed_at": "2026-07-31T10:00:00Z", "complete": true, "members": []any{}, "observations": []any{}, "candidates": []any{}, "errors": []any{}, "metrics": map[string]any{"duration_ms": 0, "source_count": 0, "member_count": 0, "candidate_count": 0, "observation_count": 0, "stale_count": 0, "api_call_count": 0, "max_concurrency": 1}}
+		return map[string]any{"schema_version": 3, "discovery_version": 2, "policy_digest": strings.Repeat("d", 64), "candidate_set_digest": strings.Repeat("e", 64), "coordination_home_id": "home", "started_at": "2026-07-31T10:00:00Z", "completed_at": "2026-07-31T10:00:00Z", "complete": true, "mixed_coverage_complete": true, "canonical_ready": true, "members": []any{}, "observations": []any{}, "compatibility_observations": []any{}, "candidates": []any{}, "errors": []any{}, "metrics": map[string]any{"duration_ms": 0, "source_count": 0, "member_count": 0, "candidate_count": 0, "observation_count": 0, "compatibility_observation_count": 0, "stale_count": 0, "api_call_count": 0, "max_concurrency": 1}}
 	case state.PlanMigrationSchema:
-		return map[string]any{"schema_version": 2, "repository_id": "repo", "discovery_version": 2, "target_catalog_mode": "canonical", "policy_digest": strings.Repeat("d", 64), "candidate_set_digest": strings.Repeat("e", 64), "inventory_revision": strings.Repeat("a", 40), "reviewed_at": "2026-07-31T10:00:00Z", "records": []any{}}
+		return map[string]any{
+			"schema_version": 3, "repository_id": "repo", "evidence_revision": strings.Repeat("a", 40),
+			"target_mode": "canonical", "inventory_revision": strings.Repeat("a", 40),
+			"policy_digest": strings.Repeat("d", 64), "candidate_set_digest": strings.Repeat("e", 64),
+			"target_config_precondition_sha256": strings.Repeat("f", 64),
+			"branch_evidence":                   map[string]any{"algorithm": BranchEvidenceAlgorithm, "git_version": "2.46.0", "evidence_scope": "local", "remote_overlay_status": "not-requested", "digest": strings.Repeat("b", 64)},
+			"records":                           []any{},
+		}
 	case state.PortfolioSourcesSchema:
 		return map[string]any{"schema_version": 1, "sources": []any{}}
 	case state.PortfolioOverlaySchema:

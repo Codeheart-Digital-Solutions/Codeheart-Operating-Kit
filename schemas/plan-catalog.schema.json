@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/schemas/plan-catalog.schema.json",
-  "title": "Codeheart Source-Derived Plan Catalog v2",
+  "title": "Codeheart Source-Derived Plan Catalog v3",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -13,14 +13,17 @@
     "started_at",
     "completed_at",
     "complete",
+    "mixed_coverage_complete",
+    "canonical_ready",
     "members",
     "observations",
+    "compatibility_observations",
     "candidates",
     "errors",
     "metrics"
   ],
   "properties": {
-    "schema_version": { "type": "integer", "const": 2 },
+    "schema_version": { "type": "integer", "const": 3 },
     "discovery_version": { "type": "integer", "const": 2 },
     "policy_digest": { "$ref": "#/$defs/digest" },
     "candidate_set_digest": { "$ref": "#/$defs/digest" },
@@ -29,23 +32,28 @@
     "completed_at": { "$ref": "#/$defs/timestamp" },
     "last_complete_scan_at": { "$ref": "#/$defs/timestamp" },
     "complete": { "type": "boolean" },
+    "mixed_coverage_complete": { "type": "boolean" },
+    "canonical_ready": { "type": "boolean" },
     "members": {
       "type": "array",
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["repository_id", "source_kind", "default_ref", "source_revision", "self_member", "discovery_version", "complete"],
+        "required": ["repository_id", "source_kind", "source_identity_sha256", "default_ref", "source_revision", "self_member", "discovery_version", "complete", "mixed_coverage_complete", "canonical_ready"],
         "properties": {
           "repository_id": { "$ref": "#/$defs/identifier" },
           "source_kind": { "type": "string", "enum": ["local-git", "github"] },
           "source_locator": { "type": "string", "minLength": 1 },
+          "source_identity_sha256": { "$ref": "#/$defs/digest" },
           "default_ref": { "type": "string", "minLength": 1 },
           "source_revision": { "$ref": "#/$defs/commit" },
           "self_member": { "type": "boolean" },
           "discovery_version": { "type": "integer", "enum": [1, 2] },
           "policy_digest": { "$ref": "#/$defs/digest" },
           "candidate_set_digest": { "$ref": "#/$defs/digest" },
-          "complete": { "type": "boolean" }
+          "complete": { "type": "boolean" },
+          "mixed_coverage_complete": { "type": "boolean" },
+          "canonical_ready": { "type": "boolean" }
         },
         "allOf": [
           {
@@ -66,6 +74,10 @@
     "observations": {
       "type": "array",
       "items": { "$ref": "#/$defs/observation" }
+    },
+    "compatibility_observations": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/compatibilityObservation" }
     },
     "plan_candidates": {
       "type": "array",
@@ -91,13 +103,14 @@
     "metrics": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["duration_ms", "source_count", "member_count", "candidate_count", "observation_count", "stale_count", "api_call_count", "max_concurrency"],
+      "required": ["duration_ms", "source_count", "member_count", "candidate_count", "observation_count", "compatibility_observation_count", "stale_count", "api_call_count", "max_concurrency"],
       "properties": {
         "duration_ms": { "type": "integer", "minimum": 0 },
         "source_count": { "type": "integer", "minimum": 0 },
         "member_count": { "type": "integer", "minimum": 0 },
         "candidate_count": { "type": "integer", "minimum": 0 },
         "observation_count": { "type": "integer", "minimum": 0 },
+        "compatibility_observation_count": { "type": "integer", "minimum": 0 },
         "stale_count": { "type": "integer", "minimum": 0 },
         "api_call_count": { "type": "integer", "minimum": 0 },
         "max_concurrency": { "type": "integer", "minimum": 1 }
@@ -181,6 +194,76 @@
         "conflict": { "type": "boolean" }
       }
     },
+    "compatibilityObservation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "repository_id",
+        "plan_id",
+        "title",
+        "kind",
+        "purpose",
+        "lifecycle",
+        "canonical_path",
+        "ref",
+        "commit",
+        "content_sha256",
+        "coverage_disposition",
+        "incremental_migration_required",
+        "migration_evidence",
+        "verification",
+        "observed_at",
+        "stale",
+        "conflict"
+      ],
+      "properties": {
+        "repository_id": { "$ref": "#/$defs/identifier" },
+        "plan_id": { "$ref": "#/$defs/planId" },
+        "title": { "type": "string", "minLength": 1 },
+        "kind": { "type": "string", "enum": ["discovery", "implementation", "family"] },
+        "purpose": { "type": "string", "minLength": 1 },
+        "lifecycle": { "type": "string", "enum": ["draft", "active", "completed", "superseded", "archived"] },
+        "family": { "$ref": "#/$defs/planId" },
+        "products": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/publicIdentifier" } },
+        "capabilities": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/publicIdentifier" } },
+        "strategic_themes": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/publicIdentifier" } },
+        "relations": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/relation" } },
+        "legacy_aliases": { "type": "array", "uniqueItems": true, "items": { "type": "string", "minLength": 1 } },
+        "canonical_path": { "type": "string", "minLength": 1 },
+        "ref": { "type": "string", "minLength": 1 },
+        "commit": { "$ref": "#/$defs/commit" },
+        "content_sha256": { "$ref": "#/$defs/digest" },
+        "coverage_disposition": { "const": "mixed-grandfathered" },
+        "incremental_migration_required": { "const": true },
+        "migration_evidence": { "$ref": "#/$defs/migrationEvidence" },
+        "verification": { "type": "string", "const": "verified" },
+        "observed_at": { "$ref": "#/$defs/timestamp" },
+        "stale": { "type": "boolean" },
+        "conflict": { "type": "boolean" }
+      }
+    },
+    "migrationEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "ledger_path",
+        "ledger_sha256",
+        "branch_evidence_digest",
+        "evidence_revision",
+        "activation_base_revision",
+        "migration_action_digest",
+        "evidence_scope"
+      ],
+      "properties": {
+        "ledger_path": { "type": "string", "minLength": 1 },
+        "ledger_sha256": { "$ref": "#/$defs/digest" },
+        "branch_evidence_digest": { "$ref": "#/$defs/digest" },
+        "evidence_revision": { "$ref": "#/$defs/commit" },
+        "activation_base_revision": { "$ref": "#/$defs/commit" },
+        "migration_action_digest": { "$ref": "#/$defs/digest" },
+        "evidence_scope": { "type": "string", "enum": ["local", "remote-aware"] }
+      }
+    },
     "planCandidateObservation": {
       "type": "object",
       "additionalProperties": false,
@@ -223,5 +306,16 @@
       "type": "string",
       "pattern": "^[a-z0-9](?:[a-z0-9._-]*[a-z0-9])?$"
     }
-  }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": { "compatibility_observations": { "minItems": 1 } },
+        "required": ["compatibility_observations"]
+      },
+      "then": {
+        "properties": { "canonical_ready": { "const": false } }
+      }
+    }
+  ]
 }
