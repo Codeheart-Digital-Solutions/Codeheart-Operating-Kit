@@ -371,7 +371,11 @@ func LoadRepositorySnapshotWithOptions(root string, options SnapshotOptions) (Re
 			}
 			if len(reconciliation.ByCanonicalPath[record.Path]) > 0 && baselinePaths[record.Path] != "" {
 				current, currentErr := readRegularSource(root, record.Path)
-				if currentErr == nil && sha256Text(current) == baselinePaths[record.Path] {
+				checkoutMatches := false
+				if currentErr == nil {
+					checkoutMatches, currentErr = cleanCheckoutMatchesReviewedSource(root, settings.CutoverRevision, record.Path, baselinePaths[record.Path], current)
+				}
+				if currentErr == nil && checkoutMatches {
 					continue
 				}
 				message := "grandfathered filename-only plan bytes differ from the exact mixed-mode cutover blob"

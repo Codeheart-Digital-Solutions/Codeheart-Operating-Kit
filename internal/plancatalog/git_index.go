@@ -8,6 +8,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"runtime"
 	"strconv"
 	"strings"
 )
@@ -191,6 +192,18 @@ func ClassifyLocalIndex(root string, settings RepositorySettings, mode CatalogMo
 	reader := func(blob GitBlob) ([]byte, error) {
 		boundary := localBoundaries[blob.Path]
 		if boundary == "" {
+			dirty, dirtyErr := gitPathDirty(root, blob.Path)
+			if dirtyErr != nil {
+				return nil, fmt.Errorf("git_dirty_check_failed: %w", dirtyErr)
+			}
+			// A Git-clean checkout may contain platform checkout conversion
+			// (notably CRLF on Windows). Classify the exact stage-zero blob so
+			// candidate identity remains byte-stable with commit-tree and remote
+			// adapters. Dirty paths still use their observed worktree bytes and
+			// are rejected by migration authority checks.
+			if !dirty {
+				return batch.Read(blob)
+			}
 			data, readErr := readBoundedRegularSource(root, blob.Path)
 			if readErr == nil {
 				return data, nil
@@ -231,6 +244,157 @@ type localSourceFallbackError struct {
 
 func (err *localSourceFallbackError) Error() string { return err.Err.Error() }
 func (err *localSourceFallbackError) Unwrap() error { return err.Err }
+
+// cleanCheckoutMatchesReviewedSource binds a source to the reviewed commit and
+// stage-zero blob while permitting Git's ordinary LF/CRLF checkout conversion.
+// It accepts no other byte drift; the Git cleanliness check remains the
+// repository's authority for configured checkout filters.
+func cleanCheckoutMatchesReviewedSource(root, revision, candidatePath, expectedSHA256 string, worktree []byte) (bool, error) {
+	dirty, err := gitPathDirty(root, candidatePath)
+	if err != nil {
+		return false, err
+	}
+	if dirty {
+		return false, nil
+	}
+	source, err := gitBytes(root, "show", revision+":"+candidatePath)
+	if err != nil {
+		return false, err
+	}
+	if sha256Text(source) != expectedSHA256 {
+		return false, nil
+	}
+	sourceBlob, err := gitText(root, "rev-parse", "--verify", revision+":"+candidatePath)
+	if err != nil {
+		return false, err
+	}
+	indexBlob, err := gitText(root, "rev-parse", "--verify", ":"+candidatePath)
+	if err != nil {
+		return false, err
+	}
+	return sourceBlob == indexBlob && checkoutLineEndingEquivalent(worktree, source), nil
+}
+
+func checkoutLineEndingEquivalent(left, right []byte) bool {
+	if bytes.Equal(left, right) {
+		return true
+	}
+	return bytes.Equal(bytes.ReplaceAll(left, []byte("\r\n"), []byte("\n")), bytes.ReplaceAll(right, []byte("\r\n"), []byte("\n")))
+}
+
+// checkoutLineEndingEquivalentForPath permits a dirty migration projection to
+// differ only when the current path attributes and Git checkout policy
+// corroborate CRLF materialization. This is stricter than clean-checkout
+// validation because the projected path is intentionally dirty at activation.
+func checkoutLineEndingEquivalentForPath(root, candidatePath string, observed, reviewed []byte) (bool, error) {
+	if bytes.Equal(observed, reviewed) {
+		return true, nil
+	}
+	if !checkoutLineEndingEquivalent(observed, reviewed) {
+		return false, nil
+	}
+	return checkoutPolicyUsesCRLF(root, candidatePath, runtime.GOOS == "windows")
+}
+
+func checkoutPolicyUsesCRLF(root, candidatePath string, nativeCRLF bool) (bool, error) {
+	output, err := gitBytes(root, "check-attr", "-z", "text", "eol", "working-tree-encoding", "binary", "--", candidatePath)
+	if err != nil {
+		return false, err
+	}
+	fields := bytes.Split(output, []byte{0})
+	if len(fields) > 0 && len(fields[len(fields)-1]) == 0 {
+		fields = fields[:len(fields)-1]
+	}
+	if len(fields) != 12 {
+		return false, fmt.Errorf("git_attributes_invalid: expected four path attributes for %s", candidatePath)
+	}
+	attributes := map[string]string{}
+	for index := 0; index < len(fields); index += 3 {
+		if string(fields[index]) != candidatePath {
+			return false, fmt.Errorf("git_attributes_invalid: Git returned an unexpected path for %s", candidatePath)
+		}
+		attribute := string(fields[index+1])
+		if attribute != "text" && attribute != "eol" && attribute != "working-tree-encoding" && attribute != "binary" {
+			return false, fmt.Errorf("git_attributes_invalid: Git returned an unexpected attribute for %s", candidatePath)
+		}
+		if _, duplicate := attributes[attribute]; duplicate {
+			return false, fmt.Errorf("git_attributes_invalid: Git returned a duplicate attribute for %s", candidatePath)
+		}
+		attributes[attribute] = string(fields[index+2])
+	}
+	if !stringIn(attributes["text"], "set", "unset", "auto", "unspecified") ||
+		!stringIn(attributes["eol"], "lf", "crlf", "unset", "unspecified") ||
+		!stringIn(attributes["working-tree-encoding"], "unset", "unspecified") ||
+		!stringIn(attributes["binary"], "set", "unset", "unspecified") {
+		return false, nil
+	}
+	if attributes["working-tree-encoding"] != "unspecified" && attributes["working-tree-encoding"] != "unset" {
+		return false, nil
+	}
+	if attributes["binary"] == "set" || attributes["text"] == "unset" || attributes["eol"] == "lf" {
+		return false, nil
+	}
+	if attributes["eol"] == "crlf" {
+		return true, nil
+	}
+	autocrlf, autocrlfPresent, autocrlfErr := optionalGitConfig(root, "core.autocrlf")
+	if autocrlfErr != nil {
+		return false, autocrlfErr
+	}
+	autocrlf = strings.ToLower(strings.TrimSpace(autocrlf))
+	if autocrlfPresent && autocrlf == "true" {
+		return true, nil
+	}
+	if autocrlfPresent && autocrlf != "false" && autocrlf != "input" {
+		return false, nil
+	}
+	if autocrlf == "input" {
+		return false, nil
+	}
+	coreEOL, coreEOLPresent, coreEOLErr := optionalGitConfig(root, "core.eol")
+	if coreEOLErr != nil {
+		return false, coreEOLErr
+	}
+	text := attributes["text"]
+	if text != "set" && text != "auto" {
+		return false, nil
+	}
+	if !coreEOLPresent {
+		return nativeCRLF, nil
+	}
+	switch strings.ToLower(strings.TrimSpace(coreEOL)) {
+	case "crlf":
+		return true, nil
+	case "native":
+		return nativeCRLF, nil
+	default:
+		return false, nil
+	}
+}
+
+func optionalGitConfig(root, key string) (string, bool, error) {
+	command := exec.Command("git", "-C", root, "config", "--get", key)
+	command.Env = append(command.Environ(), "GIT_TERMINAL_PROMPT=0", "GIT_NO_LAZY_FETCH=1", "GIT_NO_REPLACE_OBJECTS=1")
+	var stderr bytes.Buffer
+	command.Stderr = &stderr
+	output, err := command.Output()
+	if err == nil {
+		return strings.TrimSpace(string(output)), true, nil
+	}
+	if exitErr, ok := err.(*exec.ExitError); ok && exitErr.ExitCode() == 1 {
+		return "", false, nil
+	}
+	return "", false, fmt.Errorf("git_config_unavailable: %w: %s", err, strings.TrimSpace(stderr.String()))
+}
+
+func stringIn(value string, admitted ...string) bool {
+	for _, candidate := range admitted {
+		if value == candidate {
+			return true
+		}
+	}
+	return false
+}
 
 type indexBatchReader struct {
 	command *exec.Cmd

@@ -276,10 +276,17 @@ func verifyMigrationWorktree(root string, actions []reconcile.Action) []Problem 
 			continue
 		}
 		data, readErr := readRegularSource(root, action.Target)
-		if readErr != nil || !bytes.Equal(data, action.Content) {
+		matches := false
+		var matchErr error
+		if readErr == nil {
+			matches, matchErr = checkoutLineEndingEquivalentForPath(root, action.Target, data, action.Content)
+		}
+		if readErr != nil || matchErr != nil || !matches {
 			message := "worktree bytes do not match the reviewed migration output"
 			if readErr != nil {
 				message = readErr.Error()
+			} else if matchErr != nil {
+				message = matchErr.Error()
 			}
 			problems = append(problems, Problem{Code: "catalog_activation_action_mismatch", Message: message, Path: action.Target, Severity: SeverityError})
 		}

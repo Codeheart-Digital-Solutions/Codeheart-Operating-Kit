@@ -285,6 +285,41 @@ func TestV3PostWriteActionDigestDriftRollsBack(t *testing.T) {
 	}
 }
 
+func TestV3ActivationPostWriteCRLFDriftWithoutCheckoutAuthorityRollsBack(t *testing.T) {
+	fixture := newV3DeferralFixture(t)
+	plan := requireReadyV3MigrationPlan(t, fixture)
+	migration, err := ExecuteMigration(plan, MigrationApplyOptions{Now: time.Date(2026, 8, 9, 13, 10, 0, 0, time.UTC)})
+	if err != nil || migration.Result.Status != reconcile.StatusSucceeded {
+		t.Fatalf("migration before activation=%#v err=%v", migration, err)
+	}
+	activationPlan, err := BuildCatalogActivationPlan(fixture.Root, fixture.Ledger)
+	if err != nil || len(activationPlan.FilePlan.Blockers) != 0 || len(activationPlan.MigrationActions) != 1 {
+		t.Fatalf("activation plan blockers=%#v problems=%#v err=%v", activationPlan.FilePlan.Blockers, activationPlan.Problems, err)
+	}
+	configBefore := mustReadFile(t, filepath.Join(fixture.Root, filepath.FromSlash(state.ConfigPath)))
+	target := activationPlan.MigrationActions[0].Target
+	tampered := false
+	activation, err := ExecuteCatalogActivation(activationPlan, CatalogActivationOptions{
+		Now: time.Date(2026, 8, 9, 13, 11, 0, 0, time.UTC),
+		Hook: func(phase string) error {
+			if phase != "commit:"+state.ConfigPath || tampered {
+				return nil
+			}
+			tampered = true
+			current := mustReadFile(t, filepath.Join(fixture.Root, filepath.FromSlash(target)))
+			writeCheckpointFixture(t, fixture.Root, target, bytes.ReplaceAll(current, []byte("\n"), []byte("\r\n")))
+			runGitTest(t, fixture.Root, "config", "core.autocrlf", "false")
+			return nil
+		},
+	})
+	if err != nil || !tampered || activation.Result.Status != reconcile.StatusRolledBack || !activation.Result.Rollback.Succeeded || !reconcileBlockerExists(activation.Result, "catalog_activation_authority_drift") {
+		t.Fatalf("activation drift outcome=%#v tampered=%t err=%v", activation, tampered, err)
+	}
+	if configAfter := mustReadFile(t, filepath.Join(fixture.Root, filepath.FromSlash(state.ConfigPath))); !bytes.Equal(configAfter, configBefore) {
+		t.Fatal("activation rollback did not restore exact config bytes")
+	}
+}
+
 func newV3DeferralFixture(t *testing.T) v3DeferralFixture {
 	t.Helper()
 	root := migrationRepository(t)

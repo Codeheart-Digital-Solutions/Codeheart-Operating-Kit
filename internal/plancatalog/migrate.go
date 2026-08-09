@@ -764,22 +764,22 @@ func buildReviewedMigrationPlan(root string, ledger MigrationLedger, reviewedV3 
 			continue
 		}
 		currentSHA := sha256Text(current)
-		if currentSHA != item.SourceSHA256 || candidate.Provenance.Source.ContentSHA256 != item.SourceSHA256 {
+		if candidate.Provenance.Source.ContentSHA256 != item.SourceSHA256 {
 			problems = append(problems, Problem{Code: "source_mismatch", Message: "current candidate bytes no longer match the reviewed source hash", Path: currentPath, Severity: SeverityError})
-			continue
-		}
-		sourceBytes, gitErr := gitBytes(root, "show", item.SourceRevision+":"+currentPath)
-		if gitErr != nil || sha256Text(sourceBytes) != item.SourceSHA256 || !bytes.Equal(sourceBytes, current) {
-			message := "reviewed source revision, index, and worktree bytes must match exactly"
-			if gitErr != nil {
-				message = gitErr.Error()
-			}
-			problems = append(problems, Problem{Code: "source_revision_mismatch", Message: message, Path: currentPath, Severity: SeverityError})
 			continue
 		}
 		inventoryRecord := inventoryRecords[currentPath]
 		if inventoryRecord.DirtyOverlap {
 			problems = append(problems, Problem{Code: "dirty_plan_overlap", Message: "candidate has uncommitted changes", Path: currentPath, Severity: SeverityError})
+			continue
+		}
+		checkoutMatches, checkoutErr := cleanCheckoutMatchesReviewedSource(root, item.SourceRevision, currentPath, item.SourceSHA256, current)
+		if checkoutErr != nil || !checkoutMatches {
+			message := "reviewed source revision, index, and Git-clean worktree must match, allowing only checkout line-ending conversion"
+			if checkoutErr != nil {
+				message = checkoutErr.Error()
+			}
+			problems = append(problems, Problem{Code: "source_revision_mismatch", Message: message, Path: currentPath, Severity: SeverityError})
 			continue
 		}
 		if !reviewedV3 && len(inventoryRecord.ActiveBranchTouch) > 0 {
@@ -810,7 +810,7 @@ func buildReviewedMigrationPlan(root string, ledger MigrationLedger, reviewedV3 
 			}
 			baseline, baselineProblems := loadMixedBaseline(root, loadCutoverRevision(root))
 			problems = append(problems, baselineProblems...)
-			if baseline[currentPath] == "" || baseline[currentPath] != currentSHA {
+			if baseline[currentPath] == "" || baseline[currentPath] != item.SourceSHA256 {
 				problems = append(problems, Problem{Code: "mixed_grandfathered_plan_modified", Message: "deferred plan does not match its exact register-proven cutover blob", Path: currentPath, Severity: SeverityError})
 				continue
 			}

@@ -71,6 +71,65 @@ func TestMigrationActionDigestAndExactWorktreeValidation(t *testing.T) {
 	}
 }
 
+func TestMigrationWorktreeCRLFRequiresCorroboratingCheckoutPolicy(t *testing.T) {
+	setup := func(t *testing.T, attributes []byte) (string, []reconcile.Action) {
+		t.Helper()
+		root := t.TempDir()
+		runGitTest(t, root, "init")
+		runGitTest(t, root, "config", "user.name", "Test")
+		runGitTest(t, root, "config", "user.email", "test@example.com")
+		if attributes != nil {
+			writeCheckpointFixture(t, root, ".gitattributes", attributes)
+		}
+		writeCheckpointFixture(t, root, "replace.md", []byte("before\n"))
+		runGitTest(t, root, "add", ".")
+		runGitTest(t, root, "commit", "-m", "baseline")
+		writeCheckpointFixture(t, root, "replace.md", []byte("after\r\n"))
+		return root, []reconcile.Action{{Kind: "replace", Target: "replace.md", Content: []byte("after\n"), Mode: 0o644, ExpectedSHA256: sha256Text([]byte("before\n"))}}
+	}
+
+	t.Run("core autocrlf", func(t *testing.T) {
+		root, actions := setup(t, nil)
+		runGitTest(t, root, "config", "core.autocrlf", "false")
+		if problems := verifyMigrationWorktree(root, actions); !problemCodePresent(problems, "catalog_activation_action_mismatch") {
+			t.Fatalf("CRLF drift without checkout authority was accepted: %#v", problems)
+		}
+		runGitTest(t, root, "config", "core.autocrlf", "true")
+		if problems := verifyMigrationWorktree(root, actions); HasErrors(problems) {
+			t.Fatalf("corroborated CRLF checkout projection was rejected: %#v", problems)
+		}
+	})
+
+	t.Run("text disabled", func(t *testing.T) {
+		root, actions := setup(t, []byte("*.md -text\n"))
+		runGitTest(t, root, "config", "core.autocrlf", "true")
+		if problems := verifyMigrationWorktree(root, actions); !problemCodePresent(problems, "catalog_activation_action_mismatch") {
+			t.Fatalf("CRLF drift under -text was accepted: %#v", problems)
+		}
+	})
+
+	t.Run("autocrlf input overrides core eol", func(t *testing.T) {
+		root, _ := setup(t, []byte("*.md text\n"))
+		runGitTest(t, root, "config", "core.autocrlf", "input")
+		runGitTest(t, root, "config", "core.eol", "crlf")
+		if permitted, err := checkoutPolicyUsesCRLF(root, "replace.md", true); err != nil || permitted {
+			t.Fatalf("core.autocrlf=input credited output conversion: permitted=%t err=%v", permitted, err)
+		}
+	})
+
+	t.Run("native eol follows platform", func(t *testing.T) {
+		root, _ := setup(t, []byte("*.md text\n"))
+		runGitTest(t, root, "config", "core.autocrlf", "false")
+		runGitTest(t, root, "config", "core.eol", "native")
+		if permitted, err := checkoutPolicyUsesCRLF(root, "replace.md", true); err != nil || !permitted {
+			t.Fatalf("Windows-native CRLF policy was not credited: permitted=%t err=%v", permitted, err)
+		}
+		if permitted, err := checkoutPolicyUsesCRLF(root, "replace.md", false); err != nil || permitted {
+			t.Fatalf("LF-native policy credited CRLF conversion: permitted=%t err=%v", permitted, err)
+		}
+	})
+}
+
 func writeCheckpointFixture(t *testing.T, root, relative string, data []byte) {
 	t.Helper()
 	absolute := filepath.Join(root, filepath.FromSlash(relative))

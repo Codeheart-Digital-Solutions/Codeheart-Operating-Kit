@@ -1,4 +1,4 @@
-Last updated: 2026-08-09T18:09:54Z (UTC)
+Last updated: 2026-08-09T19:05:26Z (UTC)
 Created: 2026-08-09
 
 # Branch Ownership Reconciliation Execution Log
@@ -30,7 +30,7 @@ worktrees and branches remain untouched. The frozen plan register remains unchan
 | `EP-04` | completed | Added remote-aware evidence, tracking/mirror coalescing, compatibility observations, cache v3, and readiness semantics. | Portfolio and command focused suites passed. |
 | `EP-05` | completed | Updated managed doctrine, routing, runbooks, component manifest, resource mirrors, and impact/release inputs. | Schema/resource/routing/parity suite passed. |
 | `EP-06` | completed | Added adversarial, compatibility, synthetic acceptance, remote descendant, remote-overlay invalidation, and portability coverage; full Go, race, Python, and validator gates pass. | Four iterative fresh review rounds repaired every High/Medium finding; final verdict has no implementation blocker. |
-| `EP-07` | in progress | Prepared v0.1.27 version, component, manifest, release-note, installer, compatibility, and CI upgrade/platform surfaces. | Clean reproducible asset builds, PR/CI, merge, tag, publication, and live verification remain. |
+| `EP-07` | in progress | Prepared v0.1.27 version, component, manifest, release-note, installer, compatibility, and CI upgrade/platform surfaces; opened ready PR #10 and repaired the Windows CRLF portability defects it exposed. | Independent repair review passed; final-head reproducible assets, green CI, merge, tag, publication, and live verification remain. |
 
 ## Review Gate Metrics
 
@@ -38,11 +38,15 @@ worktrees and branches remain untouched. The frozen plan register remains unchan
 - Review gate skipped: no.
 - Reviewer mode: fresh read-only subagent.
 - Reviewer model and reasoning mode: inherited from the implementing agent.
-- Review rounds: four iterative fresh read-only rounds completed.
-- Material findings: four High and three Medium findings across post-activation remote checkpoint
+- Review rounds: six iterative fresh read-only rounds completed, including two release-platform
+  repair rounds.
+- Material findings: four High and five Medium findings across post-activation remote checkpoint
   reconstruction, remote descendant drift, tracking/mirror identity, merged-owner resolution,
-  compatibility-row invalidation, and complete reviewed-overlay digest binding.
-- Files changed because of review: `internal/commands/plans.go`, `internal/portfolio/scanner.go`, `internal/plancatalog/inventory.go`, `migration_binding.go`, `migration_branch_review.go`, `migration_checkpoint.go`, and focused tests.
+  compatibility-row invalidation, complete reviewed-overlay digest binding, checkout conversion
+  authority, and Git configuration precedence.
+- Files changed because of review: `internal/commands/plans.go`, `internal/portfolio/scanner.go`,
+  `internal/plancatalog/inventory.go`, `git_index.go`, `migrate.go`, `migration_binding.go`,
+  `migration_branch_review.go`, `migration_checkpoint.go`, and focused tests.
 - Final accepted result: no High or Medium findings remain; implementation is ready for normal
   release and platform gates.
 - Approximate added time: multiple focused repair-and-rerun cycles during EP-06.
@@ -115,10 +119,20 @@ tests, all four validators, and `git diff --check`.
 ## EP-07 Delta - Versioned Release, Publication Gate, And Consumer Handoff
 
 Status: in progress. v0.1.27 version and release inputs are prepared. Clean reproducible builds,
-platform/installer verification, ready PR/CI, guarded merge, annotated tag, publication, and live
-asset verification remain.
+pack-shape and macOS installer/upgrade verification passed for the first release-candidate head.
+Ready PR #10 targets exact v0.1.26 main. Its oldest-admitted Git 2.43, Ubuntu, and macOS jobs passed;
+the real-Windows job exposed clean-checkout CRLF candidate hashing and Git warning/stdout parsing
+defects. The repair now classifies Git-clean tracked plans from their stage-zero blobs, retains raw
+worktree preconditions for writes, accepts only LF/CRLF checkout equivalence after clean index/
+revision proof, and separates Git stderr from machine-parsed stdout. Full Go, focused race, vet,
+normal affected-package, and CRLF-simulated migration/remote-overlay suites pass locally. An
+independent read-only review found and closed two Medium policy-precedence gaps, then returned no
+remaining High or Medium findings. The repaired full Go suite, focused race suite, Go vet, Markdown
+timestamp/public-core validators, and diff check pass. A fresh exact-head CI and reproducible build
+remain required before merge and publication; prior binary asset digests are superseded by this
+code repair.
 
 ## Final Validation
 
-Implementation validation is complete. EP-07 release-build, platform, PR/CI, merge, tag,
+Implementation validation is complete. EP-07 final-head release-build, Windows CI, merge, tag,
 publication, and live-verification evidence remains pending.
