@@ -1,4 +1,4 @@
-Last updated: 2026-07-31T23:43:02Z (UTC)
+Last updated: 2026-08-09T14:33:58Z (UTC)
 
 # Repo Documentation
 
@@ -23,6 +23,9 @@ This folder contains public repository governance for Codeheart Operating Kit.
 - `plans/README.md`: repository-level discovery and implementation plans.
 - `plans/plan-register.md`: stable compatibility entry point and frozen legacy evidence; current
   plan views are generated with `codeheart-operating-kit plans list`.
+- `plans/branch-ownership-reconciliation/branch-ownership-reconciliation_implementation_doc.md`:
+  active implementation plan for hash-bound non-owner clearance, exact mixed-mode active-plan
+  deferral, mandatory incremental migration, remote visibility, and fail-closed ref drift.
 - `plans/semantic-plan-catalog-coordination/semantic-plan-catalog-coordination_discovery_doc.md`:
   implementation-handoff-ready discovery for semantic plan identity, rich canonical metadata,
   automatic config-driven portfolio discovery, on-demand source refresh, default-branch baselines,

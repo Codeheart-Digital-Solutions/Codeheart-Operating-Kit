@@ -1,4 +1,4 @@
-Last updated: 2026-07-09T23:56:33Z (UTC)
+Last updated: 2026-08-09T14:33:58Z (UTC)
 
 # Docs Index
 
@@ -23,6 +23,8 @@ This folder contains public Codeheart Operating Kit documentation.
 - Kit feedback triage runbook: `docs/repo/runbooks/triage-kit-feedback.md`
 - Repo plans: `docs/repo/plans/README.md`
 - Repo plan register: `docs/repo/plans/plan-register.md`
+- Branch ownership reconciliation and active-plan deferral implementation plan:
+  `docs/repo/plans/branch-ownership-reconciliation/branch-ownership-reconciliation_implementation_doc.md`
 - Operating Kit state and release architecture discovery:
   `docs/repo/plans/operating-kit-state-release-architecture/operating-kit-state-release-architecture_discovery_doc.md`
 - Operating Kit state and release architecture implementation plan:

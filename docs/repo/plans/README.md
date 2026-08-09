@@ -1,4 +1,4 @@
-Last updated: 2026-08-06T21:13:00Z (UTC)
+Last updated: 2026-08-09T14:33:58Z (UTC)
 
 # Repo Plans
 
@@ -18,6 +18,8 @@ entries after mixed cutover.
 ## Current Plans
 
 - Plan register: `plan-register.md`
+- Evidence-backed branch ownership reconciliation and active-plan deferral implementation plan:
+  `branch-ownership-reconciliation/branch-ownership-reconciliation_implementation_doc.md`
 - Ownership-aware repository-wide plan catalog discovery:
   `ownership-aware-plan-catalog-discovery/ownership-aware-plan-catalog-discovery_discovery_doc.md`
 - Ownership-aware repository-wide plan catalog implementation plan:
