@@ -255,7 +255,7 @@ def main() -> int:
     output_dir.mkdir(parents=True, exist_ok=True)
 
     phases = ["source-validation"]
-    run(["go", "test", "./..."])
+    run(["go", "test", "-timeout", "30m", "./..."])
     platforms = ["macos-universal", "windows-x64"] if args.platform == "all" else [args.platform]
     assets: list[tuple[Path, str]] = []
     for platform in platforms:

@@ -1,4 +1,4 @@
-Last updated: 2026-08-09T19:21:58Z (UTC)
+Last updated: 2026-08-09T20:12:54Z (UTC)
 Created: 2026-08-09
 
 # Branch Ownership Reconciliation Execution Log
@@ -38,9 +38,9 @@ worktrees and branches remain untouched. The frozen plan register remains unchan
 - Review gate skipped: no.
 - Reviewer mode: fresh read-only subagent.
 - Reviewer model and reasoning mode: inherited from the implementing agent.
-- Review rounds: seven iterative fresh read-only rounds completed, including three release-platform
+- Review rounds: eight iterative fresh read-only rounds completed, including four release-platform
   repair rounds.
-- Material findings: four High and six Medium findings across post-activation remote checkpoint
+- Material findings: four High and seven Medium findings across post-activation remote checkpoint
   reconstruction, remote descendant drift, tracking/mirror identity, merged-owner resolution,
   compatibility-row invalidation, complete reviewed-overlay digest binding, checkout conversion
   authority, and Git configuration precedence.
@@ -134,7 +134,8 @@ code repair. Exact-head CI then proved the Git 2.43, Ubuntu, and macOS lanes whi
 Go's default ten-minute package timeout with completed packages passing and a normal plan-catalog
 test still running. The Windows source and later grouped plan-catalog commands now preserve their
 complete suites and raise only the Go test deadline to 30 minutes; no test is skipped, narrowed,
-or made permissive.
+or made permissive. The release-asset builder's independent source-validation rerun uses the same
+deadline so the real-Windows packaging gate cannot silently inherit the old ten-minute default.
 
 ## Final Validation
 
