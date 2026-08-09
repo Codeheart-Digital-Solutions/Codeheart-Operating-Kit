@@ -875,7 +875,8 @@ func runApprovedUpgrade(t *testing.T, args []string) (int, []byte) {
 
 func waitForFile(t *testing.T, path string) {
 	t.Helper()
-	for attempt := 0; attempt < 240; attempt++ {
+	deadline := time.Now().Add(35 * time.Second)
+	for time.Now().Before(deadline) {
 		if _, err := os.Stat(path); err == nil {
 			return
 		}
@@ -886,7 +887,8 @@ func waitForFile(t *testing.T, path string) {
 
 func waitForRestoredBinary(t *testing.T, installed string, expected []byte) {
 	t.Helper()
-	for attempt := 0; attempt < 240; attempt++ {
+	deadline := time.Now().Add(35 * time.Second)
+	for time.Now().Before(deadline) {
 		if actual, err := os.ReadFile(installed); err == nil && bytes.Equal(actual, expected) {
 			return
 		}
@@ -897,7 +899,8 @@ func waitForRestoredBinary(t *testing.T, installed string, expected []byte) {
 
 func waitForUpgrade(t *testing.T, root, installed string) {
 	t.Helper()
-	for attempt := 0; attempt < 240; attempt++ {
+	deadline := time.Now().Add(35 * time.Second)
+	for time.Now().Before(deadline) {
 		output, err := exec.Command(installed, "--version").CombinedOutput()
 		observed, inspectErr := state.Inspect(root)
 		if err == nil && strings.TrimSpace(string(output)) == "codeheart-operating-kit "+version.Version && inspectErr == nil && observed.Classification == state.StateCurrent {
