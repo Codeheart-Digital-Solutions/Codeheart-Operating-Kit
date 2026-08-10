@@ -92,6 +92,8 @@ func TestV3MixedActiveOwnerDeferralAndELAActivation(t *testing.T) {
 func TestV3PersistedActivationEvidenceSurvivesNormalMerge(t *testing.T) {
 	fixture, _ := activateV3DeferralFixture(t)
 	activationRevision := runGitTest(t, fixture.Root, "rev-parse", "HEAD")
+	runGitTest(t, fixture.Root, "config", "core.autocrlf", "true")
+	runGitTest(t, fixture.Root, "config", "core.eol", "crlf")
 	runGitTest(t, fixture.Root, "branch", "reviewed-activation", activationRevision)
 	runGitTest(t, fixture.Root, "switch", "-c", "integration-main", fixture.EvidenceRevision)
 	runGitTest(t, fixture.Root, "merge", "--no-ff", "reviewed-activation", "-m", "merge reviewed activation")
@@ -101,6 +103,12 @@ func TestV3PersistedActivationEvidenceSurvivesNormalMerge(t *testing.T) {
 	}
 	if mergeTree, activationTree := runGitTest(t, fixture.Root, "rev-parse", mergeRevision+"^{tree}"), runGitTest(t, fixture.Root, "rev-parse", activationRevision+"^{tree}"); mergeTree != activationTree {
 		t.Fatalf("normal merge tree=%s want activation tree=%s", mergeTree, activationTree)
+	}
+	if checkedOut := mustReadFile(t, filepath.Join(fixture.Root, filepath.FromSlash(v3LedgerPath))); !bytes.Contains(checkedOut, []byte("\r\n")) {
+		t.Fatal("fixture did not materialize the reviewed ledger with CRLF checkout bytes")
+	}
+	if checkedOut := mustReadFile(t, filepath.Join(fixture.Root, filepath.FromSlash(state.ConfigPath))); !bytes.Contains(checkedOut, []byte("\r\n")) {
+		t.Fatal("fixture did not materialize the guarded config with CRLF checkout bytes")
 	}
 
 	snapshot, err := LoadRepositorySnapshot(fixture.Root)

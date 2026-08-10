@@ -1207,9 +1207,14 @@ func TestRemotePlanTargetForBindingReconstructsActivationAtAAndDescendant(t *tes
 	if err != nil || descendantTarget.ActivationRevision != activation || descendantTarget.ActivationBaseRevision != activationBase {
 		t.Fatalf("descendant target moved L or A: target=%#v err=%v", descendantTarget, err)
 	}
+	runGitCommandTest(t, root, "config", "core.autocrlf", "true")
+	runGitCommandTest(t, root, "config", "core.eol", "crlf")
 	runGitCommandTest(t, root, "branch", "reviewed-activation", activation)
 	runGitCommandTest(t, root, "switch", "-c", "integration-main", evidenceRevision)
 	runGitCommandTest(t, root, "merge", "--no-ff", "reviewed-activation", "-m", "merge reviewed activation")
+	if checkedOut := mustRead(t, filepath.Join(root, filepath.FromSlash(ledgerPath))); !bytes.Contains(checkedOut, []byte("\r\n")) {
+		t.Fatal("fixture did not materialize the reviewed ledger with CRLF checkout bytes")
+	}
 	mergedTarget, err := remotePlanTargetForBinding(root, binding)
 	if err != nil || mergedTarget.ActivationRevision != activation || mergedTarget.ActivationBaseRevision != activationBase {
 		t.Fatalf("merge target moved L or A: target=%#v err=%v", mergedTarget, err)

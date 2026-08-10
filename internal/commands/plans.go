@@ -577,7 +577,7 @@ func remotePlanTargetForBinding(root string, binding *plancatalog.MigrationEvide
 	if binding == nil {
 		return nil, fmt.Errorf("migration_evidence_binding_missing: remote-aware evidence binding is required")
 	}
-	ledger, err := plancatalog.LoadMigrationLedgerArtifact(root, binding.LedgerPath)
+	ledger, err := plancatalog.LoadBoundMigrationLedger(root, binding)
 	if err != nil {
 		return nil, err
 	}

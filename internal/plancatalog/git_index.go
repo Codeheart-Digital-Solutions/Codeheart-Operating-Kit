@@ -275,6 +275,47 @@ func cleanCheckoutMatchesReviewedSource(root, revision, candidatePath, expectedS
 	return sourceBlob == indexBlob && checkoutLineEndingEquivalent(worktree, source), nil
 }
 
+// cleanCheckoutCommittedSource returns the exact committed bytes for a
+// Git-clean regular path while allowing only Git's ordinary LF/CRLF checkout
+// materialization in the worktree. Persisted evidence binds committed blobs;
+// platform checkout conversion must not change that authority, while arbitrary
+// clean/smudge output remains outside the accepted equivalence.
+func cleanCheckoutCommittedSource(root, revision, candidatePath string) ([]byte, error) {
+	if problem := validateGitPath(candidatePath); problem != nil {
+		return nil, fmt.Errorf("%s: %s", problem.Code, problem.Message)
+	}
+	if !gitRevisionHasRegularFile(root, revision, candidatePath) {
+		return nil, fmt.Errorf("git_source_invalid: %s is not a regular committed file", candidatePath)
+	}
+	worktree, err := readRegularSource(root, candidatePath)
+	if err != nil {
+		return nil, err
+	}
+	dirty, err := gitPathDirty(root, candidatePath)
+	if err != nil {
+		return nil, err
+	}
+	if dirty {
+		return nil, fmt.Errorf("git_source_dirty: %s differs from the committed revision", candidatePath)
+	}
+	source, err := gitBytes(root, "show", revision+":"+candidatePath)
+	if err != nil {
+		return nil, err
+	}
+	sourceBlob, err := gitText(root, "rev-parse", "--verify", revision+":"+candidatePath)
+	if err != nil {
+		return nil, err
+	}
+	indexBlob, err := gitText(root, "rev-parse", "--verify", ":"+candidatePath)
+	if err != nil {
+		return nil, err
+	}
+	if sourceBlob != indexBlob || !checkoutLineEndingEquivalent(worktree, source) {
+		return nil, fmt.Errorf("git_source_mismatch: %s differs from the committed blob beyond checkout line endings", candidatePath)
+	}
+	return source, nil
+}
+
 func checkoutLineEndingEquivalent(left, right []byte) bool {
 	if bytes.Equal(left, right) {
 		return true

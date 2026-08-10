@@ -1,4 +1,4 @@
-Last updated: 2026-08-10T21:10:34Z (UTC)
+Last updated: 2026-08-10T22:23:09Z (UTC)
 Created: 2026-08-10
 Status: active
 Execution log: activation-ancestry-hotfix_execution_log.md
@@ -13,7 +13,7 @@ plan:
   kind: implementation
   purpose: Accept safely incorporated activation checkpoints across normal merge topology while preserving exact migration chronology and fail-closed evidence.
   first_cataloged: 2026-08-10T19:08:24Z
-  catalog_metadata_updated: 2026-08-10T21:10:34Z
+  catalog_metadata_updated: 2026-08-10T22:23:09Z
   products:
     - codeheart-operating-kit
   capabilities:
@@ -65,7 +65,9 @@ The validator resolves one immutable activation checkpoint `A` without weakening
    from another match, and requires one unambiguous ancestry-minimal match. This retains `A` when a
    merge wrapper also has `L` as first parent and the same resulting tree.
 5. Current config, candidate authority, deferred-owner integration, remote overlay, index, and
-   worktree checks remain unchanged after `A` is resolved.
+   worktree checks remain unchanged after `A` is resolved. Git-clean LF/CRLF checkout
+   materialization is compared through the exact stage-zero committed blobs, while any other byte
+   drift remains blocking.
 
 Tree equality alone is never incorporation proof. A matching tree on an unrelated sibling,
 reparented commit, or branch that is not an ancestor of current `HEAD` cannot satisfy the binding.
@@ -84,6 +86,8 @@ across merge graphs while rejecting absent or ambiguous evidence.
 - [x] Use the resolver consistently in persisted local validation, command-side remote target
   reconstruction, portfolio target reconstruction, and compatibility projection.
 - [x] Preserve exact checkpoint parent/delta/blob/config/action and current-authority guards.
+- [x] Preserve committed ledger/config identity across Git-clean Windows CRLF checkout conversion
+  without admitting arbitrary clean/smudge byte drift.
 
 ## EP-02 - Compatibility And Release Proof
 

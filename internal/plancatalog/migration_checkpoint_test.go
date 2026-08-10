@@ -1,6 +1,7 @@
 package plancatalog
 
 import (
+	"bytes"
 	"os"
 	"path/filepath"
 	"strings"
@@ -181,6 +182,112 @@ func TestMigrationActionDigestAndExactWorktreeValidation(t *testing.T) {
 	if problems := verifyMigrationWorktree(root, actions); !problemCodePresent(problems, "catalog_activation_worktree_mismatch") {
 		t.Fatalf("extra path problems=%#v", problems)
 	}
+}
+
+func TestCleanCheckoutCommittedSourceRejectsAuthorityDrift(t *testing.T) {
+	setup := func(t *testing.T) (string, string, []byte) {
+		t.Helper()
+		root := t.TempDir()
+		runGitTest(t, root, "init", "-b", "main")
+		runGitTest(t, root, "config", "user.name", "Committed Source Test")
+		runGitTest(t, root, "config", "user.email", "committed-source@example.invalid")
+		runGitTest(t, root, "config", "core.autocrlf", "false")
+		path := "evidence.yaml"
+		data := []byte("schema_version: 3\nstatus: reviewed\n")
+		writeCheckpointFixture(t, root, path, data)
+		runGitTest(t, root, "add", path)
+		runGitTest(t, root, "commit", "-m", "record evidence")
+		return root, path, data
+	}
+	expectRejected := func(t *testing.T, root, path string) {
+		t.Helper()
+		if _, err := cleanCheckoutCommittedSource(root, "HEAD", path); err == nil {
+			t.Fatalf("authority drift for %s was accepted", path)
+		}
+	}
+
+	t.Run("ordinary CRLF checkout", func(t *testing.T) {
+		root, path, committed := setup(t)
+		runGitTest(t, root, "config", "core.autocrlf", "true")
+		runGitTest(t, root, "config", "core.eol", "crlf")
+		if err := os.Remove(filepath.Join(root, path)); err != nil {
+			t.Fatal(err)
+		}
+		runGitTest(t, root, "checkout", "--", path)
+		if checkedOut := mustReadFile(t, filepath.Join(root, path)); !bytes.Contains(checkedOut, []byte("\r\n")) {
+			t.Fatal("fixture did not materialize CRLF checkout bytes")
+		}
+		actual, err := cleanCheckoutCommittedSource(root, "HEAD", path)
+		if err != nil || !bytes.Equal(actual, committed) {
+			t.Fatalf("clean CRLF checkout did not resolve exact committed bytes: actual=%q err=%v", actual, err)
+		}
+	})
+
+	t.Run("dirty worktree", func(t *testing.T) {
+		root, path, _ := setup(t)
+		writeCheckpointFixture(t, root, path, []byte("schema_version: 3\nstatus: changed\n"))
+		expectRejected(t, root, path)
+	})
+
+	t.Run("staged blob", func(t *testing.T) {
+		root, path, _ := setup(t)
+		writeCheckpointFixture(t, root, path, []byte("schema_version: 3\nstatus: staged\n"))
+		runGitTest(t, root, "add", path)
+		expectRejected(t, root, path)
+	})
+
+	t.Run("staged mode", func(t *testing.T) {
+		root, path, _ := setup(t)
+		runGitTest(t, root, "update-index", "--chmod=+x", path)
+		expectRejected(t, root, path)
+	})
+
+	t.Run("non-regular worktree path", func(t *testing.T) {
+		root, path, _ := setup(t)
+		if err := os.Remove(filepath.Join(root, path)); err != nil {
+			t.Fatal(err)
+		}
+		if err := os.Mkdir(filepath.Join(root, path), 0o755); err != nil {
+			t.Fatal(err)
+		}
+		expectRejected(t, root, path)
+	})
+
+	t.Run("symlink worktree path", func(t *testing.T) {
+		root, path, _ := setup(t)
+		if err := os.Remove(filepath.Join(root, path)); err != nil {
+			t.Fatal(err)
+		}
+		outside := filepath.Join(root, "outside.yaml")
+		writeCheckpointFixture(t, root, "outside.yaml", []byte("schema_version: 3\nstatus: outside\n"))
+		if err := os.Symlink(outside, filepath.Join(root, path)); err != nil {
+			t.Skipf("symlink creation is unavailable: %v", err)
+		}
+		expectRejected(t, root, path)
+	})
+
+	t.Run("Git-clean checkout transform", func(t *testing.T) {
+		root := t.TempDir()
+		runGitTest(t, root, "init", "-b", "main")
+		runGitTest(t, root, "config", "user.name", "Committed Source Test")
+		runGitTest(t, root, "config", "user.email", "committed-source@example.invalid")
+		path := "evidence.yaml"
+		writeCheckpointFixture(t, root, ".gitattributes", []byte("evidence.yaml ident\n"))
+		writeCheckpointFixture(t, root, path, []byte("schema_version: 3\nidentity: $Id$\n"))
+		runGitTest(t, root, "add", ".gitattributes", path)
+		runGitTest(t, root, "commit", "-m", "record transformed evidence")
+		if err := os.Remove(filepath.Join(root, path)); err != nil {
+			t.Fatal(err)
+		}
+		runGitTest(t, root, "checkout", "--", path)
+		if status := runGitTest(t, root, "status", "--porcelain=v1", "--", path); status != "" {
+			t.Fatalf("checkout transform unexpectedly dirtied the path: %q", status)
+		}
+		if checkedOut := mustReadFile(t, filepath.Join(root, path)); !bytes.Contains(checkedOut, []byte("$Id:")) {
+			t.Fatal("fixture did not materialize the Git ident checkout transform")
+		}
+		expectRejected(t, root, path)
+	})
 }
 
 func TestMigrationWorktreeCRLFRequiresCorroboratingCheckoutPolicy(t *testing.T) {

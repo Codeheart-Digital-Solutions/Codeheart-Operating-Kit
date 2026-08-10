@@ -1,4 +1,4 @@
-Last updated: 2026-08-10T21:10:34Z (UTC)
+Last updated: 2026-08-10T22:23:09Z (UTC)
 Created: 2026-08-10
 
 # Activation Ancestry Resolution Hotfix Execution Log
@@ -35,10 +35,12 @@ incorporated checkpoint. Independent matching siblings remain ambiguous and bloc
 - Review gate skipped: no.
 - Reviewer mode: fresh read-only reviewer agent when available; otherwise strongest independent
   main-thread review with explicit evidence.
-- Review rounds: one completed round.
-- Material findings: three Medium findings resolved: ancestry-minimal selection was documented;
+- Review rounds: two completed rounds, including a fresh review after the exact-head Windows
+  failure.
+- Material findings: four Medium findings resolved: ancestry-minimal selection was documented;
   persisted wrong-ledger/delta/blob negatives were added; exact guarded activation config is now
-  reconstructed and byte-checked in both local and remote validation.
+  reconstructed and byte-checked in both local and remote validation; and the CRLF committed-byte
+  boundary gained a direct negative authority matrix.
 - Final accepted result: accepted; no remaining High or Medium code or test blocker.
 
 ## Activation Delta
@@ -128,24 +130,48 @@ The first local Python invocation used the sandbox-blocked default Go cache and 
 subprocesses attempted to open that cache. The exact suite passed with a writable isolated
 `GOCACHE`; no product assertion changed and no dependency or source workaround was required.
 
+The first exact-head Windows candidate run exposed a platform-specific persisted-evidence gap in
+the new merge fixtures. Git for Windows materialized the Git-clean reviewed ledger and config with
+CRLF bytes after the branch switch, while local validation compared those checkout bytes directly
+with the immutable LF blobs. The focused correction now proves each current path is regular,
+stage-zero clean, and equal to the committed blob with only LF/CRLF checkout equivalence admitted;
+all ledger/config hashes and security comparisons continue to use the exact committed bytes.
+Both affected tests force CRLF checkout materialization on every platform, so the regression is no
+longer Windows-only. Direct negative coverage rejects dirty worktrees, staged blob or mode drift,
+non-regular and symbolic-link replacements, and a Git-clean checkout transform beyond line-ending
+conversion. The final independent review accepted this boundary with no remaining High or Medium
+finding. The failed run remains a closed gate until a replacement exact-head run passes.
+
+Final validation after the CRLF correction and negative authority matrix:
+
+- focused CRLF merge, command reconstruction, and authority-boundary regressions: pass;
+- full affected packages: pass (`internal/plancatalog` `198.665s`, `internal/commands` `37.038s`,
+  and `internal/portfolio` `59.687s`);
+- repository-wide `go test -timeout 30m ./...`: pass;
+- repository-wide `go test -race -timeout 30m ./...`: pass;
+- repository-wide `go vet ./...`: pass;
+- complete Python/schema/resource/routing/release suite: `158 passed in 334.29s`;
+- gofmt, `git diff --check`, archive sidecars, payload checksums, binary platform/version identity,
+  and isolated macOS installer evidence: pass.
+
 Final release-candidate identity:
 
 - macOS universal archive SHA-256:
-  `14a64e1ae25088291046353858a153fef0f3938340431cacb3937c0d50850449`;
+  `bfbd76a9e8905019abc1b7f571d0526439665395d6d485cfe25694a5eb5b7baf`;
 - macOS pack-manifest SHA-256:
-  `7857dd4653e5963bdd2290ad9a3899b34144e685d3e4c15213567b3358b5aa39`;
+  `f673401dac813ea1df052f1d70fef910d3990fca55ee1b014c28afcc3fe03478`;
 - macOS binary SHA-256:
-  `a3b7e91615c2c4e20004c4392c3648a8ceb79509e65ab8f3496990240e206d7a`;
+  `68fc6e058e4a9ce96813d31bdf332bf734c784dec11bbd01e6bad0c8d4888529`;
 - Windows x64 archive SHA-256:
-  `c4e9cf0c06939dbceddb26ee350de8c0fe8fa76762a8b770dc7968d1a78fa856`;
+  `99a3472c3870b60626dad1237de88874785aa89d812c072d4e4c1f8cf615290a`;
 - Windows pack-manifest SHA-256:
-  `4d94a7f8209a68e33b46e4347a05b8ad590679ad7f46faf1ed82da92213ab95c`;
+  `a5332d544b5b1df84d93e354d66b19d9a3b764d625d365355a8ab3608274bb44`;
 - Windows binary SHA-256:
-  `79972ec886c69a8336f96b5cad7e11cbfa32690fbe07bccc495a2b00363632e5`;
+  `716d3c899700ab74c29be2a359bbd94997495bc4ed2ddb97e430c9d2d778843f`;
 - embedded content-manifest SHA-256:
   `71c23246364595e231c211fe71ce32a0e21d18c89cac2b1d86646cc5cd4ce66c`;
 - external release-catalog SHA-256:
-  `2b03bf5b8ad5196e0699b8bd51ef2e4fb2415a63610cb5d1b2b3c23f6bc10bf6`.
+  `0b96f26c556ccd6e270f39a85773d2ac3c591060cd225cad474f557e6f939b27`.
 
 The final builder reran source validation, built each platform twice, required byte equality, and
 emitted the catalog only after the packs. Sidecars verify both archives. Pack-manifest, payload
