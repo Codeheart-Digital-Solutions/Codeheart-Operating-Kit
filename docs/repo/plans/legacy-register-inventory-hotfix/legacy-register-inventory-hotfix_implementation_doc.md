@@ -93,7 +93,7 @@ Outcome: the exact reviewed merge is reproducibly packaged, published, and verif
 - [x] Update every authoritative version, manifest, installer, compatibility, catalog, and release-note surface.
 - [x] Build macOS universal and Windows x64 assets twice and require byte equality.
 - [x] Generate and verify SHA-256 sidecars and the complete catalog-to-binary/content identity chain.
-- [ ] Verify isolated installer/upgrade compatibility and the unsigned internal/prototype boundary.
+- [x] Verify isolated installer/upgrade compatibility and the unsigned internal/prototype boundary.
 - [ ] Push a focused ready PR; verify base, head, changed paths, CI, and reviews.
 - [ ] Merge with the exact expected-head guard and verify merged `main`.
 - [ ] Create an annotated v0.1.28 tag at exact merged `main` and publish every required asset.

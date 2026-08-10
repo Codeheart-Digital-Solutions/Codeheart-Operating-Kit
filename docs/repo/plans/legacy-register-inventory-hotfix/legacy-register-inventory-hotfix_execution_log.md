@@ -1,4 +1,4 @@
-Last updated: 2026-08-10T07:02:22Z (UTC)
+Last updated: 2026-08-10T07:19:50Z (UTC)
 Created: 2026-08-10
 
 # Legacy Register Inventory Hotfix Execution Log
@@ -126,9 +126,9 @@ Two independent final-public builds matched byte-for-byte for both platform pack
 sidecars, and the external release catalog. Each build also performed the builder's internal
 two-build comparison per platform. The exact archive digests are:
 
-- macOS universal: `49b2fe0f360840d28838bf05018d628037b000e30948e20d9041f8a06a63e8c1`;
-- Windows x64: `c92708a2869f4ffb905819b1ad8ff1b30da26f1c68151714fe166183bb8c9350`;
-- final-public catalog: `80d133862773138ad9e88e24ac47ebb30ce6ee415f690493cca780c0e7d156d6`.
+- macOS universal: `ffc3cbea73241099fc6820f97cc13a4294f65b096421f7e7aa88779514a63701`;
+- Windows x64: `46b8d44285e917310b2c751dd5dab72c0ed0b1805034268ef72b7da201d14e61`;
+- final-public catalog: `124422c57df4733a23b0fb87cb786b7089b38b157d5b1ab737c3906f5d9768ee`.
 
 Fresh install, reinstall, checksum-failure preservation, v0.1.27-to-v0.1.28 upgrade dry-run, and
 applied upgrade passed in isolated generic macOS fixtures. The installed binary and catalog chain
@@ -152,4 +152,6 @@ preserves the staging directory and backup as recovery evidence instead of delet
 binary. Unix behavior remains a single fail-closed attempt. A direct restore regression, three
 consecutive focused legacy/current-lock transaction runs, the affected release suite, and Windows
 cross-compilation pass locally. Release assets and the full exact-head validation matrix will be
-rebuilt and rerun from this repair checkpoint before merge.
+rebuilt and rerun from this repair checkpoint before merge. The corrected builds now match
+byte-for-byte across both independent final-public directories, and an exact v0.1.27 isolated
+consumer again passed dry-run and applied upgrade with its frozen register byte-identical.
