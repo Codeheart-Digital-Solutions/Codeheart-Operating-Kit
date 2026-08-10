@@ -255,6 +255,27 @@ func TestReadAndApplyLegacyV025DeferredHandoffWire(t *testing.T) {
 	}
 }
 
+func TestRestorePreviousBinaryReplacesFailedTarget(t *testing.T) {
+	root := t.TempDir()
+	backup := filepath.Join(root, "previous-binary")
+	target := filepath.Join(root, "installed-binary")
+	if err := os.WriteFile(backup, []byte("previous binary\n"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(target, []byte("failed target\n"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := restorePreviousBinary(backup, target); err != nil {
+		t.Fatal(err)
+	}
+	if data, err := os.ReadFile(target); err != nil || string(data) != "previous binary\n" {
+		t.Fatalf("restored target=%q err=%v", data, err)
+	}
+	if _, err := os.Stat(backup); !os.IsNotExist(err) {
+		t.Fatalf("restored backup still exists: %v", err)
+	}
+}
+
 func TestVersionDirection(t *testing.T) {
 	if err := RequireForwardUpgrade("0.1.25", "0.1.26"); err != nil {
 		t.Fatal(err)

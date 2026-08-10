@@ -116,7 +116,12 @@ func ApplyHandoff(handoff Handoff) (resultErr error) {
 	if err := os.MkdirAll(stageDir, 0o700); err != nil {
 		return err
 	}
-	defer os.RemoveAll(stageDir)
+	cleanupStage := true
+	defer func() {
+		if cleanupStage {
+			_ = os.RemoveAll(stageDir)
+		}
+	}()
 	stagedCopy := filepath.Join(stageDir, filepath.Base(handoff.TargetBinary))
 	if err := copyFile(handoff.StagedBinary, stagedCopy, 0o755); err != nil {
 		return err
@@ -133,13 +138,9 @@ func ApplyHandoff(handoff Handoff) (resultErr error) {
 	restore := true
 	defer func() {
 		if restore {
-			removeErr := os.Remove(handoff.TargetBinary)
-			if os.IsNotExist(removeErr) {
-				removeErr = nil
-			}
-			renameErr := os.Rename(backup, handoff.TargetBinary)
-			if removeErr != nil || renameErr != nil {
-				resultErr = fmt.Errorf("%v; restore previous binary failed: remove=%v rename=%v", resultErr, removeErr, renameErr)
+			if err := restorePreviousBinary(backup, handoff.TargetBinary); err != nil {
+				cleanupStage = false
+				resultErr = fmt.Errorf("%v; restore previous binary failed: %w; backup preserved at %s", resultErr, err, backup)
 			}
 		}
 	}()
@@ -175,6 +176,30 @@ func ApplyHandoff(handoff Handoff) (resultErr error) {
 	}
 	restore = false
 	return nil
+}
+
+func restorePreviousBinary(backup, target string) error {
+	attempts := 1
+	if runtime.GOOS == "windows" {
+		attempts = 300
+	}
+	var removeErr, renameErr error
+	for attempt := 0; attempt < attempts; attempt++ {
+		removeErr = os.Remove(target)
+		if os.IsNotExist(removeErr) {
+			removeErr = nil
+		}
+		if removeErr == nil {
+			renameErr = os.Rename(backup, target)
+			if renameErr == nil {
+				return nil
+			}
+		}
+		if attempt+1 < attempts {
+			time.Sleep(100 * time.Millisecond)
+		}
+	}
+	return fmt.Errorf("remove target: %v; rename backup: %v", removeErr, renameErr)
 }
 
 func WriteHandoff(path string, handoff Handoff) error {

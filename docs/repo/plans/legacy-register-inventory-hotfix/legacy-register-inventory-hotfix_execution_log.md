@@ -1,4 +1,4 @@
-Last updated: 2026-08-10T06:32:50Z (UTC)
+Last updated: 2026-08-10T07:02:22Z (UTC)
 Created: 2026-08-10
 
 # Legacy Register Inventory Hotfix Execution Log
@@ -137,3 +137,19 @@ recorded in `attachments/release-readiness-evidence.md`.
 
 Real-Windows CI, ready-PR scope and review verification, expected-head merge, annotated tag,
 publication, and live-download verification remain.
+
+## EP-03 Delta - Windows Rollback Gate Repair
+
+The first exact-head pull-request run passed the full Windows Go suite, then its deliberately
+repeated legacy lock-v1 transaction gate exposed an intermittent executable-release race. After a
+failed target reconciliation, Windows could transiently retain the failed executable; the handoff
+made only one restore attempt and then unconditionally removed the staging directory that held the
+previous-binary backup.
+
+The production handoff now retries failed-target removal and previous-binary restoration for the
+existing bounded 30-second Windows handoff window. If restoration still cannot complete, it
+preserves the staging directory and backup as recovery evidence instead of deleting the last good
+binary. Unix behavior remains a single fail-closed attempt. A direct restore regression, three
+consecutive focused legacy/current-lock transaction runs, the affected release suite, and Windows
+cross-compilation pass locally. Release assets and the full exact-head validation matrix will be
+rebuilt and rerun from this repair checkpoint before merge.
