@@ -1,4 +1,4 @@
-Last updated: 2026-08-10T05:25:11Z (UTC)
+Last updated: 2026-08-10T05:39:08Z (UTC)
 Created: 2026-08-10
 Status: active
 Execution log: legacy-register-inventory-hotfix_execution_log.md
@@ -66,24 +66,24 @@ unchanged.
 Outcome: raw historical evidence and canonical schema-v3 output have distinct representations and
 fail closed at their boundary.
 
-- [ ] Introduce a typed raw legacy-register observation separate from the canonical inventory wire record.
-- [ ] Recognize the supported historical status vocabulary without mapping it into canonical lifecycle.
-- [ ] Parse and retain separate `Last updated` and `Completed` dates.
-- [ ] Project only unambiguous canonical fields plus closed typed legacy evidence.
-- [ ] Emit stable structured blockers for unsupported labels, malformed or combined values, duplicates, and ambiguity.
-- [ ] Preserve deterministic hashing and zero-write inventory behavior.
+- [x] Introduce a typed raw legacy-register observation separate from the canonical inventory wire record.
+- [x] Recognize the supported historical status vocabulary without mapping it into canonical lifecycle.
+- [x] Parse and retain separate `Last updated` and `Completed` dates.
+- [x] Project only unambiguous canonical fields plus closed typed legacy evidence.
+- [x] Emit stable structured blockers for unsupported labels, malformed or combined values, duplicates, and ambiguity.
+- [x] Preserve deterministic hashing and zero-write inventory behavior.
 
 ## EP-02 - Regression And Compatibility Proof
 
 Outcome: sanitized tests prove accepted and rejected evidence across every supported inventory
 mode without weakening historical or safety contracts.
 
-- [ ] Add generic positive fixtures for recognized legacy statuses, canonical statuses, and separate dates.
-- [ ] Add generic negative fixtures for combined malformed forms, duplicate fields, unsupported labels, and ambiguous evidence.
-- [ ] Prove repeated inventory bytes/digests are deterministic.
-- [ ] Prove local, prospective canonical-target, and remote-aware projections are equivalent.
+- [x] Add generic positive fixtures for recognized legacy statuses, canonical statuses, and separate dates.
+- [x] Add generic negative fixtures for combined malformed forms, duplicate fields, unsupported labels, and ambiguous evidence.
+- [x] Prove repeated inventory bytes/digests are deterministic.
+- [x] Prove local, prospective canonical-target, and remote-aware projections are equivalent.
 - [ ] Prove inventory v1/v2 compatibility and all v0.1.27 branch/checkpoint/activation invariants remain passing.
-- [ ] Prove inventory writes only its explicit artifact and never changes frozen register or other consumer bytes.
+- [x] Prove inventory writes only its explicit artifact and never changes frozen register or other consumer bytes.
 - [ ] Run focused tests, full Go/race/vet, Python/schema/resource/routing/release validation, and independent review; resolve every High and Medium finding.
 
 ## EP-03 - v0.1.28 Release And Live Verification

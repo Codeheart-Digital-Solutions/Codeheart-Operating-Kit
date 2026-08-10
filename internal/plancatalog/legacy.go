@@ -6,23 +6,45 @@ import (
 	"regexp"
 	"sort"
 	"strings"
+	"time"
 )
 
 const LegacyRegisterPath = "docs/repo/plans/plan-register.md"
 
 var legacyEntryHeading = regexp.MustCompile(`^#{2,6}\s+([A-Za-z0-9][A-Za-z0-9._:-]*)\s+-\s+(.+?)\s*$`)
 
+type LegacyStatus string
+
+const LegacyStatusImplementationHandoffReady LegacyStatus = "implementation-handoff-ready"
+
 type LegacyEntry struct {
-	ID            string     `json:"id" yaml:"id"`
-	Title         string     `json:"title" yaml:"title"`
-	Type          string     `json:"type,omitempty" yaml:"type,omitempty"`
-	Purpose       string     `json:"purpose,omitempty" yaml:"purpose,omitempty"`
-	Lifecycle     Lifecycle  `json:"lifecycle,omitempty" yaml:"lifecycle,omitempty"`
-	Owner         string     `json:"owner,omitempty" yaml:"owner,omitempty"`
-	CanonicalDocs []string   `json:"canonical_docs" yaml:"canonical_docs"`
-	Created       string     `json:"created,omitempty" yaml:"created,omitempty"`
-	LastUpdated   string     `json:"last_updated,omitempty" yaml:"last_updated,omitempty"`
-	Relations     []Relation `json:"relations,omitempty" yaml:"relations,omitempty"`
+	ID            string       `json:"id" yaml:"id"`
+	Title         string       `json:"title" yaml:"title"`
+	Type          string       `json:"type,omitempty" yaml:"type,omitempty"`
+	Purpose       string       `json:"purpose,omitempty" yaml:"purpose,omitempty"`
+	Lifecycle     Lifecycle    `json:"lifecycle,omitempty" yaml:"lifecycle,omitempty"`
+	LegacyStatus  LegacyStatus `json:"legacy_status,omitempty" yaml:"legacy_status,omitempty"`
+	Owner         string       `json:"owner,omitempty" yaml:"owner,omitempty"`
+	CanonicalDocs []string     `json:"canonical_docs" yaml:"canonical_docs"`
+	Created       string       `json:"created,omitempty" yaml:"created,omitempty"`
+	LastUpdated   string       `json:"last_updated,omitempty" yaml:"last_updated,omitempty"`
+	Completed     string       `json:"completed,omitempty" yaml:"completed,omitempty"`
+	Relations     []Relation   `json:"relations,omitempty" yaml:"relations,omitempty"`
+}
+
+type legacyRegisterField struct {
+	Values []string
+}
+
+// legacyRegisterObservation is intentionally not a wire type. It retains raw,
+// possibly duplicated historical fields until projection can either produce a
+// closed LegacyEntry or emit a structured blocker without choosing an
+// ambiguous value.
+type legacyRegisterObservation struct {
+	ID        string
+	Title     string
+	Fields    map[string][]legacyRegisterField
+	Relations []Relation
 }
 
 type LegacyReconciliation struct {
@@ -32,6 +54,28 @@ type LegacyReconciliation struct {
 }
 
 func ParseLegacyRegister(data []byte) ([]LegacyEntry, []Problem) {
+	observations := parseLegacyRegisterObservations(data)
+	entries := make([]LegacyEntry, 0, len(observations))
+	problems := []Problem{}
+	seen := map[string]bool{}
+	for _, observation := range observations {
+		entry, projectionProblems := projectLegacyRegisterObservation(observation)
+		problems = append(problems, projectionProblems...)
+		if seen[entry.ID] {
+			problems = append(problems, Problem{Code: "legacy_duplicate_id", Message: fmt.Sprintf("legacy register ID %q occurs more than once", entry.ID), Path: LegacyRegisterPath, Severity: SeverityError, Remediation: "preserve both entries as evidence and resolve the duplicate during semantic review"})
+		}
+		seen[entry.ID] = true
+		if len(entry.CanonicalDocs) == 0 {
+			problems = append(problems, Problem{Code: "legacy_canonical_path_missing", Message: fmt.Sprintf("legacy register entry %q has no local canonical document path", entry.ID), Path: LegacyRegisterPath, Severity: SeverityWarning, Remediation: "review the entry as unpaired legacy evidence"})
+		}
+		entries = append(entries, entry)
+	}
+	sort.SliceStable(entries, func(i, j int) bool { return entries[i].ID < entries[j].ID })
+	SortProblems(problems)
+	return entries, problems
+}
+
+func parseLegacyRegisterObservations(data []byte) []legacyRegisterObservation {
 	lines := strings.Split(strings.ReplaceAll(string(data), "\r\n", "\n"), "\n")
 	type boundary struct {
 		line  int
@@ -45,38 +89,140 @@ func ParseLegacyRegister(data []byte) ([]LegacyEntry, []Problem) {
 			boundaries = append(boundaries, boundary{line: index, id: match[1], title: strings.TrimSpace(match[2])})
 		}
 	}
-	entries := []LegacyEntry{}
-	problems := []Problem{}
-	seen := map[string]bool{}
+	observations := []legacyRegisterObservation{}
 	for index, item := range boundaries {
 		end := len(lines)
 		if index+1 < len(boundaries) {
 			end = boundaries[index+1].line
 		}
-		entry := LegacyEntry{
-			ID:            item.id,
-			Title:         item.title,
-			Type:          readLegacyField(lines, item.line+1, end, "Type"),
-			Purpose:       readLegacyField(lines, item.line+1, end, "Purpose"),
-			Lifecycle:     Lifecycle(readLegacyField(lines, item.line+1, end, "Status")),
-			Owner:         readLegacyField(lines, item.line+1, end, "Owner / repository"),
-			CanonicalDocs: readLegacyPaths(lines, item.line+1, end),
-			Created:       readLegacyField(lines, item.line+1, end, "Created"),
-			LastUpdated:   strings.TrimSuffix(readLegacyField(lines, item.line+1, end, "Last updated"), " (UTC)"),
-			Relations:     readLegacyRelations(lines, item.line+1, end),
+		observation := legacyRegisterObservation{
+			ID:     item.id,
+			Title:  item.title,
+			Fields: map[string][]legacyRegisterField{},
 		}
-		if seen[entry.ID] {
-			problems = append(problems, Problem{Code: "legacy_duplicate_id", Message: fmt.Sprintf("legacy register ID %q occurs more than once", entry.ID), Path: LegacyRegisterPath, Severity: SeverityError, Remediation: "preserve both entries as evidence and resolve the duplicate during semantic review"})
+		for _, name := range []string{"Type", "Purpose", "Status", "Owner / repository", "Canonical docs", "Created", "Last updated", "Completed", "Relations"} {
+			observation.Fields[name] = readLegacyFields(lines, item.line+1, end, name)
 		}
-		seen[entry.ID] = true
-		if len(entry.CanonicalDocs) == 0 {
-			problems = append(problems, Problem{Code: "legacy_canonical_path_missing", Message: fmt.Sprintf("legacy register entry %q has no local canonical document path", entry.ID), Path: LegacyRegisterPath, Severity: SeverityWarning, Remediation: "review the entry as unpaired legacy evidence"})
+		if len(observation.Fields["Relations"]) == 1 {
+			observation.Relations = readLegacyRelations(lines, item.line+1, end)
 		}
-		entries = append(entries, entry)
+		observations = append(observations, observation)
 	}
-	sort.SliceStable(entries, func(i, j int) bool { return entries[i].ID < entries[j].ID })
-	SortProblems(problems)
-	return entries, problems
+	return observations
+}
+
+func projectLegacyRegisterObservation(observation legacyRegisterObservation) (LegacyEntry, []Problem) {
+	entry := LegacyEntry{ID: observation.ID, Title: observation.Title, CanonicalDocs: []string{}}
+	problems := []Problem{}
+	entry.Type, problems = projectLegacyScalar(observation, "Type", problems)
+	entry.Purpose, problems = projectLegacyScalar(observation, "Purpose", problems)
+	status, next := projectLegacyScalar(observation, "Status", problems)
+	problems = next
+	if status != "" {
+		switch Lifecycle(status) {
+		case LifecycleDraft, LifecycleActive, LifecycleCompleted, LifecycleSuperseded, LifecycleArchived:
+			entry.Lifecycle = Lifecycle(status)
+		case Lifecycle(LegacyStatusImplementationHandoffReady):
+			entry.LegacyStatus = LegacyStatusImplementationHandoffReady
+		default:
+			problems = append(problems, legacyProjectionProblem("legacy_status_unsupported", observation.ID, "Status", "uses an unsupported historical label", "use a canonical lifecycle or a recognized pre-canonical status"))
+		}
+	}
+	entry.Owner, problems = projectLegacyScalar(observation, "Owner / repository", problems)
+	entry.CanonicalDocs, problems = projectLegacyPaths(observation, problems)
+	created, next := projectLegacyScalar(observation, "Created", problems)
+	problems = next
+	entry.Created, problems = projectLegacyDate(observation.ID, "Created", created, false, problems)
+	lastUpdated, next := projectLegacyScalar(observation, "Last updated", problems)
+	problems = next
+	entry.LastUpdated, problems = projectLegacyDate(observation.ID, "Last updated", lastUpdated, true, problems)
+	completed, next := projectLegacyScalar(observation, "Completed", problems)
+	problems = next
+	entry.Completed, problems = projectLegacyDate(observation.ID, "Completed", completed, false, problems)
+	if fields := observation.Fields["Relations"]; len(fields) > 1 {
+		problems = append(problems, legacyProjectionProblem("legacy_field_duplicate", observation.ID, "Relations", "occurs more than once", "retain one unambiguous Relations block before regenerating inventory"))
+	} else if len(fields) == 1 {
+		entry.Relations = append([]Relation{}, observation.Relations...)
+	}
+	return entry, problems
+}
+
+func projectLegacyScalar(observation legacyRegisterObservation, name string, problems []Problem) (string, []Problem) {
+	fields := observation.Fields[name]
+	if len(fields) == 0 {
+		return "", problems
+	}
+	if len(fields) > 1 {
+		problems = append(problems, legacyProjectionProblem("legacy_field_duplicate", observation.ID, name, "occurs more than once", "retain one unambiguous field value before regenerating inventory"))
+		return "", problems
+	}
+	value := strings.TrimSpace(strings.Join(fields[0].Values, " "))
+	if value == "" {
+		problems = append(problems, legacyProjectionProblem("legacy_field_malformed", observation.ID, name, "has no value", "supply one well-formed value or remove the empty field"))
+		return "", problems
+	}
+	return value, problems
+}
+
+func projectLegacyPaths(observation legacyRegisterObservation, problems []Problem) ([]string, []Problem) {
+	fields := observation.Fields["Canonical docs"]
+	if len(fields) > 1 {
+		problems = append(problems, legacyProjectionProblem("legacy_field_duplicate", observation.ID, "Canonical docs", "occurs more than once", "retain one unambiguous Canonical docs field before regenerating inventory"))
+	}
+	paths := []string{}
+	seen := map[string]bool{}
+	for _, field := range fields {
+		if len(field.Values) == 0 {
+			problems = append(problems, legacyProjectionProblem("legacy_field_malformed", observation.ID, "Canonical docs", "has no value", "supply contained repository-relative canonical paths"))
+			continue
+		}
+		for _, raw := range field.Values {
+			value := strings.Trim(strings.TrimSpace(strings.TrimPrefix(raw, "-")), "`")
+			if legacyExternalCanonicalReference(value) {
+				continue
+			}
+			normalized, ok := normalizeLegacyCanonicalPath(value)
+			if !ok {
+				problems = append(problems, legacyProjectionProblem("legacy_canonical_path_malformed", observation.ID, "Canonical docs", "contains an unsafe or malformed path", "retain only contained repository-relative canonical paths"))
+				continue
+			}
+			if !seen[normalized] {
+				seen[normalized] = true
+				paths = append(paths, normalized)
+			}
+		}
+	}
+	sort.Strings(paths)
+	return paths, problems
+}
+
+func projectLegacyDate(id, name, value string, timestamp bool, problems []Problem) (string, []Problem) {
+	if value == "" {
+		return "", problems
+	}
+	if timestamp {
+		if !strings.HasSuffix(value, " (UTC)") {
+			problems = append(problems, legacyProjectionProblem("legacy_date_malformed", id, name, "must end in (UTC)", "use one UTC RFC3339 timestamp ending in Z followed by (UTC)"))
+			return "", problems
+		}
+		value = strings.TrimSuffix(value, " (UTC)")
+		parsed, err := time.Parse(time.RFC3339, value)
+		if err != nil || !strings.HasSuffix(value, "Z") || parsed.Format(time.RFC3339) != value {
+			problems = append(problems, legacyProjectionProblem("legacy_date_malformed", id, name, "is not a canonical UTC RFC3339 timestamp", "use one UTC RFC3339 timestamp with second precision ending in Z followed by (UTC)"))
+			return "", problems
+		}
+		return value, problems
+	}
+	parsed, err := time.Parse("2006-01-02", value)
+	if err != nil || parsed.Format("2006-01-02") != value {
+		problems = append(problems, legacyProjectionProblem("legacy_date_malformed", id, name, "is not a valid YYYY-MM-DD date", "use one valid calendar date in YYYY-MM-DD form"))
+		return "", problems
+	}
+	return value, problems
+}
+
+func legacyProjectionProblem(code, id, field, detail, remediation string) Problem {
+	return Problem{Code: code, Message: fmt.Sprintf("legacy register entry %q field %q %s", id, field, detail), Path: LegacyRegisterPath, Severity: SeverityError, Remediation: remediation}
 }
 
 func ReconcileLegacy(records []Record, candidates []Candidate, entries []LegacyEntry) LegacyReconciliation {
@@ -117,32 +263,9 @@ func ReconcileLegacy(records []Record, candidates []Candidate, entries []LegacyE
 	return result
 }
 
-func readLegacyField(lines []string, start, end int, name string) string {
+func readLegacyFields(lines []string, start, end int, name string) []legacyRegisterField {
 	prefix := name + ":"
-	for index := start; index < end; index++ {
-		line := strings.TrimSpace(lines[index])
-		if !strings.HasPrefix(line, prefix) {
-			continue
-		}
-		parts := []string{}
-		if value := strings.TrimSpace(strings.TrimPrefix(line, prefix)); value != "" {
-			parts = append(parts, value)
-		}
-		for nested := index + 1; nested < end; nested++ {
-			value := strings.TrimSpace(lines[nested])
-			if value == "" || legacyFieldBoundary(value) {
-				break
-			}
-			parts = append(parts, value)
-		}
-		return strings.Join(parts, " ")
-	}
-	return ""
-}
-
-func readLegacyPaths(lines []string, start, end int) []string {
-	prefix := "Canonical docs:"
-	paths := []string{}
+	fields := []legacyRegisterField{}
 	for index := start; index < end; index++ {
 		line := strings.TrimSpace(lines[index])
 		if !strings.HasPrefix(line, prefix) {
@@ -159,16 +282,9 @@ func readLegacyPaths(lines []string, start, end int) []string {
 			}
 			values = append(values, value)
 		}
-		for _, value := range values {
-			value = strings.Trim(strings.TrimSpace(strings.TrimPrefix(value, "-")), "`")
-			if normalized, ok := normalizeLegacyCanonicalPath(value); ok {
-				paths = append(paths, normalized)
-			}
-		}
-		break
+		fields = append(fields, legacyRegisterField{Values: values})
 	}
-	sort.Strings(paths)
-	return paths
+	return fields
 }
 
 func normalizeLegacyCanonicalPath(value string) (string, bool) {
@@ -176,7 +292,7 @@ func normalizeLegacyCanonicalPath(value string) (string, bool) {
 	if value == "" || filepath.IsAbs(filepath.FromSlash(value)) {
 		return "", false
 	}
-	if colon := strings.Index(value, ":"); colon >= 0 && (strings.Index(value, "/") < 0 || colon < strings.Index(value, "/")) {
+	if legacyExternalCanonicalReference(value) {
 		return "", false
 	}
 	cleaned := filepath.ToSlash(filepath.Clean(filepath.FromSlash(value)))
@@ -184,6 +300,12 @@ func normalizeLegacyCanonicalPath(value string) (string, bool) {
 		return "", false
 	}
 	return cleaned, true
+}
+
+func legacyExternalCanonicalReference(value string) bool {
+	colon := strings.Index(value, ":")
+	slash := strings.Index(value, "/")
+	return colon >= 0 && (slash < 0 || colon < slash)
 }
 
 func readLegacyRelations(lines []string, start, end int) []Relation {
@@ -223,7 +345,7 @@ func readLegacyRelations(lines []string, start, end int) []Relation {
 func legacyFieldBoundary(line string) bool {
 	for _, prefix := range []string{
 		"Type:", "Purpose:", "Status:", "Owner / repository:", "Canonical docs:", "Created:",
-		"Last updated:", "Priority / ordering note:", "Relations:", "Session refs:",
+		"Last updated:", "Completed:", "Priority / ordering note:", "Relations:", "Session refs:",
 		"Coordination note:", "Coverage note:", "Last reviewed:", "Sync state:",
 	} {
 		if strings.HasPrefix(line, prefix) {

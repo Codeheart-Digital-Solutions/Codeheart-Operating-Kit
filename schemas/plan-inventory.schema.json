@@ -94,10 +94,7 @@
     "objectId": { "type": "string", "pattern": "^(?:[0-9a-f]{40}|[0-9a-f]{64})$" },
     "digest": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
     "timestamp": { "type": "string", "format": "date-time", "pattern": "Z$" },
-    "legacyDate": {
-      "type": "string",
-      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}(?:T[0-9]{2}:[0-9]{2}:[0-9]{2}Z)?$"
-    },
+    "legacyDate": { "type": "string", "format": "date", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$" },
     "path": { "type": "string", "minLength": 1, "pattern": "^[^\\\\\\r\\n]+$" },
     "catalogMode": { "type": "string", "enum": ["legacy", "mixed", "canonical"] },
     "gitMode": { "type": "string", "enum": ["100644", "100755", "120000", "160000"] },
@@ -123,19 +120,24 @@
       "type": "object",
       "additionalProperties": false,
       "required": ["id", "title", "canonical_docs"],
+      "allOf": [
+        { "not": { "required": ["lifecycle", "legacy_status"] } }
+      ],
       "properties": {
         "id": { "type": "string", "minLength": 1 },
         "title": { "type": "string", "minLength": 1 },
         "type": { "type": "string", "minLength": 1 },
         "purpose": { "type": "string", "minLength": 1 },
         "lifecycle": { "type": "string", "enum": ["draft", "active", "completed", "superseded", "archived"] },
+        "legacy_status": { "type": "string", "enum": ["implementation-handoff-ready"] },
         "owner": { "type": "string", "minLength": 1 },
         "canonical_docs": {
           "type": "array",
           "items": { "$ref": "#/$defs/path" }
         },
         "created": { "$ref": "#/$defs/legacyDate" },
-        "last_updated": { "$ref": "#/$defs/legacyDate" },
+        "last_updated": { "$ref": "#/$defs/timestamp" },
+        "completed": { "$ref": "#/$defs/legacyDate" },
         "relations": {
           "type": "array",
           "items": {

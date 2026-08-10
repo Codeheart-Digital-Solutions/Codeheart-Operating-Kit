@@ -523,16 +523,18 @@ func TestPlansInventoryWritesOnlyTheExplicitArtifact(t *testing.T) {
 	root := copyPlanCommandFixture(t)
 	alpha := filepath.Join(root, "docs/repo/plans/alpha/alpha_discovery_doc.md")
 	beta := filepath.Join(root, "docs/repo/plans/beta/beta_implementation_doc.md")
+	register := filepath.Join(root, "docs/repo/plans/plan-register.md")
 	beforeAlpha := mustRead(t, alpha)
 	beforeBeta := mustRead(t, beta)
+	beforeRegister := mustRead(t, register)
 	destination := filepath.Join(root, "migration-inventory.yaml")
 	var stdout bytes.Buffer
 	var stderr bytes.Buffer
 	if code := RunPlans([]string{"inventory", "--output", destination, root}, &stdout, &stderr); code != 0 {
 		t.Fatalf("plans inventory exit=%d stdout=%s stderr=%s", code, stdout.String(), stderr.String())
 	}
-	if !exists(destination) || !bytes.Equal(beforeAlpha, mustRead(t, alpha)) || !bytes.Equal(beforeBeta, mustRead(t, beta)) {
-		t.Fatal("inventory failed to preserve canonical plan bytes or explicit output")
+	if !exists(destination) || !bytes.Equal(beforeAlpha, mustRead(t, alpha)) || !bytes.Equal(beforeBeta, mustRead(t, beta)) || !bytes.Equal(beforeRegister, mustRead(t, register)) {
+		t.Fatal("inventory failed to preserve plan/register bytes or explicit output")
 	}
 	if data := mustRead(t, destination); !bytes.Contains(data, []byte("source_revision:")) || !bytes.Contains(data, []byte("unpaired_legacy_evidence:")) {
 		t.Fatalf("inventory artifact missing evidence:\n%s", data)

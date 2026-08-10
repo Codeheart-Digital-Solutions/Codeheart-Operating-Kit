@@ -1,4 +1,4 @@
-Last updated: 2026-08-10T05:25:11Z (UTC)
+Last updated: 2026-08-10T05:39:08Z (UTC)
 Created: 2026-08-10
 
 # Legacy Register Inventory Hotfix Execution Log
@@ -23,8 +23,8 @@ branch/worktree remains untouched. The frozen register and all consumer reposito
 
 | Epic | Status | Meaningful delta | Review gate |
 | --- | --- | --- | --- |
-| `EP-01` | pending | None yet. | Required. |
-| `EP-02` | pending | None yet. | Required. |
+| `EP-01` | completed | Split raw observations from strict wire projection; canonical lifecycle, typed legacy status, and separate dates now fail closed. | Focused parser/schema review passed; independent gate pending with EP-02. |
+| `EP-02` | in progress | Added generic positive/negative fixtures plus schema-v3 mode parity, deterministic digest/bytes, ambiguity, and zero-write coverage. | Focused Go and schema suites pass; full compatibility and independent review pending. |
 | `EP-03` | pending | None yet. | Required before publication. |
 
 ## Review Gate Metrics
@@ -48,6 +48,24 @@ branch/worktree remains untouched. The frozen register and all consumer reposito
   plan index only.
 - External note: local `gh` credentials were invalid at preflight, while authenticated `git` fetch
   and the GitHub connector succeeded. Publication will recheck both routes before the live gate.
+
+## EP-01 Delta - Typed Parsing And Strict Projection
+
+Raw legacy-register observations now retain repeated historical fields without JSON/YAML wire
+tags. A separate projector emits only canonical lifecycle values or the closed
+`implementation-handoff-ready` evidence value, never both. `Completed` is a field boundary and a
+separate calendar date; `Last updated` remains a second-precision UTC timestamp. Invalid or
+ambiguous values are omitted from typed wire fields and retained as stable error problems.
+
+## EP-02 Delta - Focused Regression Evidence
+
+Synthetic fixtures cover all canonical lifecycles, the recognized pre-canonical status, separate
+completion/update dates, combined date text, duplicate fields, invalid dates and paths,
+unsupported status labels, and two entries claiming one canonical path. Focused tests prove
+schema-v3 validation in configured local, prospective canonical-target, and attached remote-aware
+modes, repeat-build byte/digest determinism, and byte preservation for the frozen register and
+formal plans. Affected `plancatalog`, `commands`, and `portfolio` packages plus the JSON-schema
+validator and 42 Python schema tests pass.
 
 ## Final Validation
 
