@@ -251,7 +251,7 @@ func TestLifecycleStartingStatePreconditionMatrix(t *testing.T) {
 			if err != nil || syncResult.OK() != want.sync {
 				t.Fatalf("sync OK=%v want=%v err=%v result=%#v", syncResult.OK(), want.sync, err, syncResult)
 			}
-			_, updateResult, err := updateCheckOperation(root, "0.1.27", now.Format(time.RFC3339), "", true)
+			_, updateResult, err := updateCheckOperation(root, "0.1.28", now.Format(time.RFC3339), "", true)
 			if err != nil || updateResult.OK() != want.update {
 				t.Fatalf("update OK=%v want=%v err=%v result=%#v", updateResult.OK(), want.update, err, updateResult)
 			}
@@ -523,16 +523,18 @@ func TestPlansInventoryWritesOnlyTheExplicitArtifact(t *testing.T) {
 	root := copyPlanCommandFixture(t)
 	alpha := filepath.Join(root, "docs/repo/plans/alpha/alpha_discovery_doc.md")
 	beta := filepath.Join(root, "docs/repo/plans/beta/beta_implementation_doc.md")
+	register := filepath.Join(root, "docs/repo/plans/plan-register.md")
 	beforeAlpha := mustRead(t, alpha)
 	beforeBeta := mustRead(t, beta)
+	beforeRegister := mustRead(t, register)
 	destination := filepath.Join(root, "migration-inventory.yaml")
 	var stdout bytes.Buffer
 	var stderr bytes.Buffer
 	if code := RunPlans([]string{"inventory", "--output", destination, root}, &stdout, &stderr); code != 0 {
 		t.Fatalf("plans inventory exit=%d stdout=%s stderr=%s", code, stdout.String(), stderr.String())
 	}
-	if !exists(destination) || !bytes.Equal(beforeAlpha, mustRead(t, alpha)) || !bytes.Equal(beforeBeta, mustRead(t, beta)) {
-		t.Fatal("inventory failed to preserve canonical plan bytes or explicit output")
+	if !exists(destination) || !bytes.Equal(beforeAlpha, mustRead(t, alpha)) || !bytes.Equal(beforeBeta, mustRead(t, beta)) || !bytes.Equal(beforeRegister, mustRead(t, register)) {
+		t.Fatal("inventory failed to preserve plan/register bytes or explicit output")
 	}
 	if data := mustRead(t, destination); !bytes.Contains(data, []byte("source_revision:")) || !bytes.Contains(data, []byte("unpaired_legacy_evidence:")) {
 		t.Fatalf("inventory artifact missing evidence:\n%s", data)
@@ -1601,7 +1603,7 @@ func TestUpdateCheckWritesCadenceAndFailurePreservesDueDate(t *testing.T) {
 		t.Fatalf("failed update state = %#v, previous due %v", update, beforeDue)
 	}
 	var text bytes.Buffer
-	code = RunUpdateCheck([]string{root, "--latest-version", "0.1.27"}, &text, &bytes.Buffer{})
+	code = RunUpdateCheck([]string{root, "--latest-version", "0.1.28"}, &text, &bytes.Buffer{})
 	if code != 0 {
 		t.Fatalf("RunUpdateCheck text exit = %d; stdout: %s", code, text.String())
 	}

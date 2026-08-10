@@ -330,6 +330,9 @@ func BuildInventoryWithOptions(root string, now time.Time, options SnapshotOptio
 			inventory.PreviewValid = &previewValid
 		}
 	}
+	if inventory.SchemaVersion == 1 {
+		inventory.UnpairedLegacy = legacyEntriesForInventoryV1(inventory.UnpairedLegacy)
+	}
 	inventory.Problems = append(inventory.Problems, touchProblems...)
 	if inventory.Complete != nil && HasErrors(touchProblems) {
 		complete := false
@@ -357,6 +360,9 @@ func BuildInventoryWithOptions(root string, now time.Time, options SnapshotOptio
 	for _, candidate := range allCandidates {
 		record, parsed := recordsByPath[candidate.Path]
 		matches := append([]LegacyEntry{}, snapshot.Reconciliation.ByCanonicalPath[candidate.Path]...)
+		if inventory.SchemaVersion == 1 {
+			matches = legacyEntriesForInventoryV1(matches)
+		}
 		coverage := "invalid"
 		parseStatus := "invalid"
 		planID := ""

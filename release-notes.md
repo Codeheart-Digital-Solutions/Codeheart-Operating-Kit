@@ -1,6 +1,45 @@
-Last updated: 2026-08-09T17:25:33Z (UTC)
+Last updated: 2026-08-10T06:04:50Z (UTC)
 
 # Codeheart Operating Kit Release Notes
+
+## v0.1.28 Release Notes
+
+`v0.1.28` is a focused compatibility hotfix for `plans inventory`. Schema-v3 inventory now
+validates legitimate frozen legacy-register evidence while malformed or ambiguous historical
+evidence remains fail-closed.
+
+### Included
+
+- Raw legacy-register observations and strict schema-v3 wire projection use distinct internal
+  representations. Repeated historical fields remain visible to validation instead of being
+  silently selected or collapsed.
+- Canonical `lifecycle` remains closed to canonical lifecycle values. The recognized
+  pre-canonical `implementation-handoff-ready` status is preserved separately as closed typed
+  `legacy_status` evidence; no lifecycle mapping is invented.
+- `Last updated` is projected only as a second-precision UTC timestamp and `Completed` as a
+  separate calendar date. Combined, duplicated, malformed, or unsupported values produce stable
+  structured blockers and do not leak invalid strings into schema-v3 output.
+- Canonical-document and relation evidence is all-or-nothing when malformed or ambiguous.
+  Unsupported relation kinds, missing targets, duplicate relations, repeated canonical fields or
+  values, unsafe paths, rooted paths, and platform-specific backslash paths project no ambiguous
+  reconciliation authority.
+- Sanitized fixtures prove deterministic bytes and digests, local/prospective canonical-target/
+  remote-aware parity, schema validation, v1 compatibility, and zero writes to the frozen register
+  or another consumer-owned file.
+
+### Compatibility And Adoption
+
+- This is a `validator-only change`. Consumers may use the normal v0.1.28 upgrade path; no catalog
+  activation, plan migration, register normalization, sync, or repair is required.
+- Inventory schema-v1 retains the exact v0.1.27 historical wire behavior, including recognized
+  pre-canonical status and combined update/completion text. Schema-v2 discovery and schema-v3
+  inventory behavior remain compatible with the v0.1.27 ownership, checkpoint, activation,
+  transaction, and remote-overlay contracts.
+- Frozen registers remain byte-for-byte unchanged. A consumer does not need to edit accepted
+  legacy evidence for the hotfix; unsupported, malformed, duplicated, or ambiguous evidence must
+  still be resolved through the existing reviewed workflow.
+- macOS universal and Windows x64 remain the supported release platforms. Assets remain unsigned
+  and unnotarized under the established HTTPS-plus-SHA-256 internal/prototype boundary.
 
 ## v0.1.27 Release Notes
 

@@ -27,7 +27,7 @@ type packFixtureOptions struct {
 	nativeBinary      bool
 }
 
-const currentReleaseFixtureVersion = "0.1.27"
+const currentReleaseFixtureVersion = "0.1.28"
 
 func TestMain(m *testing.M) {
 	if len(os.Args) > 1 && os.Args[1] == "__upgrade-reconcile" {
@@ -252,6 +252,27 @@ func TestReadAndApplyLegacyV025DeferredHandoffWire(t *testing.T) {
 	}
 	if data, _ := os.ReadFile(target); string(data) != "previous binary\n" {
 		t.Fatalf("legacy handoff did not restore previous binary: %q", data)
+	}
+}
+
+func TestRestorePreviousBinaryReplacesFailedTarget(t *testing.T) {
+	root := t.TempDir()
+	backup := filepath.Join(root, "previous-binary")
+	target := filepath.Join(root, "installed-binary")
+	if err := os.WriteFile(backup, []byte("previous binary\n"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(target, []byte("failed target\n"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := restorePreviousBinary(backup, target); err != nil {
+		t.Fatal(err)
+	}
+	if data, err := os.ReadFile(target); err != nil || string(data) != "previous binary\n" {
+		t.Fatalf("restored target=%q err=%v", data, err)
+	}
+	if _, err := os.Stat(backup); !os.IsNotExist(err) {
+		t.Fatalf("restored backup still exists: %v", err)
 	}
 }
 
