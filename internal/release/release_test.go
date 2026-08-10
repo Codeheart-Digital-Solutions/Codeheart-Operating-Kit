@@ -27,7 +27,7 @@ type packFixtureOptions struct {
 	nativeBinary      bool
 }
 
-const currentReleaseFixtureVersion = "0.1.27"
+const currentReleaseFixtureVersion = "0.1.28"
 
 func TestMain(m *testing.M) {
 	if len(os.Args) > 1 && os.Args[1] == "__upgrade-reconcile" {

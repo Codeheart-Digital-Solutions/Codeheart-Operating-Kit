@@ -1,5 +1,5 @@
 schema_version: 1
-version: 0.1.27
+version: 0.1.28
 compatibility:
   lock_schema_versions:
     - 1
@@ -20,13 +20,14 @@ compatibility:
     - check
 components:
   - id: planning-workflows
-    version: 0.1.24
+    version: 0.1.25
     manifest_path: components/planning-workflows/component.yaml
-    checksum_sha256: 53d172d121c0eda96e8902ae9dc3dbd8aa781fc6b078902e188f811d173e7e04
+    checksum_sha256: 7634bb6b34b99daa7f19f1f9abe71935cb680a959fd1dd40f17cc26825b48b52
     consumer_impact:
       - component addition
       - instruction-only change
       - backwards-compatible scaffold addition
+      - validator-only change
       - consumer migration required
       - security or safety policy change
   - id: agent-memory
@@ -72,10 +73,10 @@ components:
       - validator-only change
 profiles:
   - id: standard
-    version: 0.1.27
+    version: 0.1.28
     manifest_path: profiles/standard.yaml
-    checksum_sha256: 1c3bfb181549a2bed74608b4062c9c3c21af02e8dafe12abd8e1a8399cf93175
-    graph_sha256: ffe3ee6a2756d75171b0009bf7f5a4b2ae04f7d10f48bfb8d93ee7c374b6de5b
+    checksum_sha256: 5f108811399d957ea3b7a1d237c58057a4f8fbfe99c1759b024b7f72b863fbf2
+    graph_sha256: 17bb602a7e45016671b4003c5a9a90827c08e3a12a17c609a78d27abd2c35c14
     components:
       - planning-workflows
       - agent-memory
