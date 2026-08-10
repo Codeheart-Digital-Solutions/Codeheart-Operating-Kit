@@ -1,4 +1,4 @@
-Last updated: 2026-08-10T20:22:47Z (UTC)
+Last updated: 2026-08-10T21:10:34Z (UTC)
 Created: 2026-08-10
 Status: active
 Execution log: activation-ancestry-hotfix_execution_log.md
@@ -13,7 +13,7 @@ plan:
   kind: implementation
   purpose: Accept safely incorporated activation checkpoints across normal merge topology while preserving exact migration chronology and fail-closed evidence.
   first_cataloged: 2026-08-10T19:08:24Z
-  catalog_metadata_updated: 2026-08-10T20:22:47Z
+  catalog_metadata_updated: 2026-08-10T21:10:34Z
   products:
     - codeheart-operating-kit
   capabilities:
@@ -90,12 +90,12 @@ across merge graphs while rejecting absent or ambiguous evidence.
 Outcome: the correction is released as v0.1.29 with no migration and no unrelated behavior change.
 
 - [x] Run focused plan-catalog, command, and portfolio suites first.
-- [ ] Run full Go, race, vet, Python/schema/resource/routing/release, backward-compatibility,
+- [x] Run full Go, race, vet, Python/schema/resource/routing/release, backward-compatibility,
   installer, and transaction validation.
 - [x] Complete fresh read-only review and resolve every High or Medium finding.
-- [ ] Update all authoritative v0.1.29 version, compatibility, manifest, fixture, and release-note
+- [x] Update all authoritative v0.1.29 version, compatibility, manifest, fixture, and release-note
   surfaces.
-- [ ] Build macOS universal and Windows x64 assets twice, verify byte equality, sidecars, catalog,
+- [x] Build macOS universal and Windows x64 assets twice, verify byte equality, sidecars, catalog,
   platform identity, and catalog-to-binary chain.
 - [ ] Push a focused PR, pass exact-head CI, merge with the expected-head guard, create an annotated
   v0.1.29 tag, publish the exact assets, and pass live public installer and post-publication gates.

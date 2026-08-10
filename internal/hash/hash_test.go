@@ -47,7 +47,7 @@ func TestFileSHA256MatchesPythonHelperFixtureOutputs(t *testing.T) {
 		},
 		{
 			relative: "profiles/standard.yaml",
-			expected: "5f108811399d957ea3b7a1d237c58057a4f8fbfe99c1759b024b7f72b863fbf2",
+			expected: "458c9800095a9c2ca1b6658d0c2bb6e39e76278a6a7cb57e7e7d4f14565397a6",
 		},
 	}
 	for _, test := range tests {
