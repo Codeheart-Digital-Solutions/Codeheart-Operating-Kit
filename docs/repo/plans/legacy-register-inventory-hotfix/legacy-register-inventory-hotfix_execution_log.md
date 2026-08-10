@@ -1,4 +1,4 @@
-Last updated: 2026-08-10T06:23:56Z (UTC)
+Last updated: 2026-08-10T06:32:50Z (UTC)
 Created: 2026-08-10
 
 # Legacy Register Inventory Hotfix Execution Log
@@ -89,8 +89,6 @@ Validation completed before release versioning:
 - producer inventory validation and deterministic local/canonical-target/remote-aware evidence;
 - `git diff --check` after the final reviewer repairs.
 
-## Final Validation
-
 ## EP-03 Delta - v0.1.28 Release Source
 
 Every authoritative version surface now identifies v0.1.28: Python and Go package versions,
@@ -119,5 +117,23 @@ Exact release-source validation passes:
 - focused manifest, release, commands, plan-catalog, and portfolio suites;
 - `git diff --check`.
 
-EP-01 and EP-02 are complete. Reproducible assets, isolated installer/upgrade evidence,
-publication, and live verification remain under EP-03.
+EP-01 and EP-02 are complete. Reproducible assets and isolated macOS installer/upgrade evidence
+are complete under EP-03; real-Windows CI, publication, and live verification remain.
+
+## EP-03 Delta - Reproducible Assets And macOS Upgrade
+
+Two independent final-public builds matched byte-for-byte for both platform packs, both archive
+sidecars, and the external release catalog. Each build also performed the builder's internal
+two-build comparison per platform. The exact archive digests are:
+
+- macOS universal: `49b2fe0f360840d28838bf05018d628037b000e30948e20d9041f8a06a63e8c1`;
+- Windows x64: `c92708a2869f4ffb905819b1ad8ff1b30da26f1c68151714fe166183bb8c9350`;
+- final-public catalog: `80d133862773138ad9e88e24ac47ebb30ce6ee415f690493cca780c0e7d156d6`.
+
+Fresh install, reinstall, checksum-failure preservation, v0.1.27-to-v0.1.28 upgrade dry-run, and
+applied upgrade passed in isolated generic macOS fixtures. The installed binary and catalog chain
+match the candidate pack; the synthetic frozen register remained byte-identical. Full evidence is
+recorded in `attachments/release-readiness-evidence.md`.
+
+Real-Windows CI, ready-PR scope and review verification, expected-head merge, annotated tag,
+publication, and live-download verification remain.
