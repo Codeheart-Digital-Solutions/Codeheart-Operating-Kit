@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"sort"
+	"strings"
 
 	"github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/internal/state"
 )
@@ -146,19 +147,22 @@ func validatePersistedMigrationEvidence(root string, binding *MigrationEvidenceB
 	if committedLedger, readErr := gitBytes(root, "show", binding.ActivationBaseRevision+":"+binding.LedgerPath); readErr != nil || sha256Text(committedLedger) != binding.LedgerSHA256 {
 		problems = append(problems, Problem{Code: "ledger_checkpoint_blob_mismatch", Message: "ledger checkpoint blob differs from the bound ledger", Path: binding.LedgerPath, Severity: SeverityError})
 	}
-	firstParent, historyErr := gitText(root, "rev-list", "--first-parent", "--reverse", binding.ActivationBaseRevision+"..HEAD")
-	if historyErr != nil || firstParent == "" {
-		problems = append(problems, Problem{Code: "activation_checkpoint_missing", Message: "no first-parent activation checkpoint follows the ledger checkpoint", Path: state.ConfigPath, Severity: SeverityError, Remediation: "commit only the projected migration outputs and guarded config activation"})
+	activationRevision, activationErr := BoundActivationCheckpointRevision(root, binding.ActivationBaseRevision, "HEAD", binding.MigrationActionDigest)
+	if activationErr != nil {
+		code := "activation_checkpoint_missing"
+		if strings.HasPrefix(activationErr.Error(), "activation_checkpoint_ambiguous:") {
+			code = "activation_checkpoint_ambiguous"
+		}
+		problems = append(problems, Problem{Code: code, Message: strings.TrimSpace(strings.TrimPrefix(activationErr.Error(), code+":")), Path: state.ConfigPath, Severity: SeverityError, Remediation: "incorporate exactly one reviewed activation checkpoint without rewriting its E-to-L-to-A chronology"})
 		SortProblems(problems)
 		return problems
-	}
-	activationRevision := firstParent
-	if index := bytes.IndexByte([]byte(firstParent), '\n'); index >= 0 {
-		activationRevision = firstParent[:index]
 	}
 	activationParent, err := gitText(root, "rev-parse", "--verify", activationRevision+"^1")
 	if err != nil || activationParent != binding.ActivationBaseRevision {
 		problems = append(problems, Problem{Code: "activation_checkpoint_parent_mismatch", Message: "activation checkpoint is not the immediate first-parent child of the ledger checkpoint", Severity: SeverityError})
+	}
+	if configErr := ValidateGuardedActivationConfig(root, ledger, binding.ActivationBaseRevision, activationRevision, binding.MigrationActionDigest); configErr != nil {
+		problems = append(problems, Problem{Code: "activation_checkpoint_config_mismatch", Message: strings.TrimSpace(strings.TrimPrefix(configErr.Error(), "activation_checkpoint_config_mismatch:")), Path: state.ConfigPath, Severity: SeverityError})
 	}
 	actions, projection, _, _, projectionProblems, projectErr := projectV3MigrationActions(root, ledger)
 	if projectErr != nil {

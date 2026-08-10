@@ -35,16 +35,105 @@ func LedgerActivationBaseRevision(root string, ledger MigrationLedger) (string, 
 }
 
 func ActivationCheckpointRevision(root, activationBase string) (string, error) {
-	history, err := gitText(root, "rev-list", "--first-parent", "--reverse", activationBase+"..HEAD")
+	return BoundActivationCheckpointRevision(root, activationBase, "HEAD", "")
+}
+
+// BoundActivationCheckpointRevision locates the immutable activation
+// checkpoint incorporated into targetRevision. The checkpoint itself remains
+// an exact first-parent child of activationBase, but targetRevision may contain
+// it through any merge parent or later descendant.
+func BoundActivationCheckpointRevision(root, activationBase, targetRevision, expectedActionDigest string) (string, error) {
+	base, err := gitText(root, "rev-parse", "--verify", activationBase+"^{commit}")
+	if err != nil {
+		return "", fmt.Errorf("activation_checkpoint_missing: activation base is unavailable")
+	}
+	target, err := gitText(root, "rev-parse", "--verify", targetRevision+"^{commit}")
+	if err != nil {
+		return "", fmt.Errorf("activation_checkpoint_missing: target revision is unavailable")
+	}
+	if base == target {
+		return "", fmt.Errorf("activation_checkpoint_missing: no incorporated activation checkpoint follows the ledger checkpoint")
+	}
+	if _, err := gitText(root, "merge-base", "--is-ancestor", base, target); err != nil {
+		return "", fmt.Errorf("activation_checkpoint_missing: activation base is not incorporated in the target revision")
+	}
+	history, err := gitText(root, "rev-list", "--ancestry-path", "--reverse", "--topo-order", "--parents", base+".."+target)
 	if err != nil || strings.TrimSpace(history) == "" {
-		return "", fmt.Errorf("activation_checkpoint_missing: no first-parent activation checkpoint follows the ledger checkpoint")
+		return "", fmt.Errorf("activation_checkpoint_missing: no incorporated activation checkpoint follows the ledger checkpoint")
 	}
-	activation := strings.Fields(history)[0]
-	parent, err := gitText(root, "rev-parse", "--verify", activation+"^1")
-	if err != nil || parent != activationBase {
-		return "", fmt.Errorf("activation_checkpoint_parent_mismatch: activation checkpoint is not the immediate first-parent child of the ledger checkpoint")
+	matches := []string{}
+	for _, line := range strings.Split(history, "\n") {
+		fields := strings.Fields(line)
+		if len(fields) < 2 || fields[1] != base {
+			continue
+		}
+		candidate := fields[0]
+		if expectedActionDigest != "" {
+			digest, _, digestErr := MigrationActionDigestForCheckpoint(root, base, candidate)
+			if digestErr != nil || digest != expectedActionDigest {
+				continue
+			}
+		}
+		matches = append(matches, candidate)
 	}
-	return activation, nil
+	minimalMatches := make([]string, 0, len(matches))
+	for _, candidate := range matches {
+		descendsFromMatch := false
+		for _, other := range matches {
+			if other == candidate {
+				continue
+			}
+			if _, ancestryErr := gitText(root, "merge-base", "--is-ancestor", other, candidate); ancestryErr == nil {
+				descendsFromMatch = true
+				break
+			}
+		}
+		if !descendsFromMatch {
+			minimalMatches = append(minimalMatches, candidate)
+		}
+	}
+	matches = minimalMatches
+	switch len(matches) {
+	case 0:
+		return "", fmt.Errorf("activation_checkpoint_missing: no incorporated direct child matches the reviewed activation binding")
+	case 1:
+		return matches[0], nil
+	default:
+		return "", fmt.Errorf("activation_checkpoint_ambiguous: multiple incorporated direct children match the reviewed activation binding")
+	}
+}
+
+// ValidateGuardedActivationConfig reconstructs the only config bytes that a
+// persisted schema-v2 migration binding may contain. The action digest omits
+// the config by design, so callers must apply this check after locating A.
+func ValidateGuardedActivationConfig(root string, ledger MigrationLedger, activationBase, activationRevision, actionDigest string) error {
+	baseConfig, err := gitBytes(root, "show", activationBase+":"+state.ConfigPath)
+	if err != nil {
+		return fmt.Errorf("activation_checkpoint_config_mismatch: guarded config precondition is unavailable at the ledger checkpoint")
+	}
+	if sha256Text(baseConfig) != ledger.TargetConfigPreconditionSHA256 {
+		return fmt.Errorf("activation_checkpoint_config_mismatch: ledger checkpoint config differs from the reviewed precondition")
+	}
+	expected, err := BuildGuardedActivationConfig(baseConfig, ledger, activationBase, actionDigest)
+	if err != nil {
+		return fmt.Errorf("activation_checkpoint_config_mismatch: guarded config reconstruction failed: %w", err)
+	}
+	actual, err := gitBytes(root, "show", activationRevision+":"+state.ConfigPath)
+	if err != nil || !bytes.Equal(actual, expected) {
+		return fmt.Errorf("activation_checkpoint_config_mismatch: activation config differs from the exact guarded projection")
+	}
+	return nil
+}
+
+// BuildGuardedActivationConfig returns the deterministic schema-v2 config wire
+// emitted for a reviewed mixed activation. It is shared by persisted local and
+// remote checkpoint verification so both routes enforce byte-identical config
+// authority.
+func BuildGuardedActivationConfig(baseConfig []byte, ledger MigrationLedger, activationBase, actionDigest string) ([]byte, error) {
+	// Persisted schema-v2 bindings are emitted only for mixed activation with
+	// reviewed grandfathered evidence. Other projection counts do not affect
+	// the canonical config wire representation.
+	return buildActivatedConfig(baseConfig, ledger, activationBase, actionDigest, MigrationProjection{Grandfathered: 1})
 }
 
 func bindLedgerArtifact(root, ledgerPath string, data []byte) (string, string, error) {

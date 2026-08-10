@@ -225,6 +225,46 @@ func TestRemotePlanTargetAllowsUnrelatedDescendantAndRejectsBoundPathDrift(t *te
 	if err := validateRemotePlanTarget(ctx, repository, activation, target); err != nil {
 		t.Fatalf("exact activation checkpoint was rejected: %v", err)
 	}
+	t.Run("forged sibling config", func(t *testing.T) {
+		config, decodeErr := state.DecodeYAMLMap(configData)
+		if decodeErr != nil {
+			t.Fatal(decodeErr)
+		}
+		config["project_display_name"] = "Forged remote sibling"
+		forgedConfig, encodeErr := state.EncodeYAML(config)
+		if encodeErr != nil {
+			t.Fatal(encodeErr)
+		}
+		planPath := "docs/repo/plans/example/example_discovery_doc.md"
+		planData, readErr := repository.ReadFile(ctx, activation, planPath)
+		if readErr != nil {
+			t.Fatal(readErr)
+		}
+		runPortfolioGit(t, root, "switch", "-c", "forged-activation-config", expectedTarget.ActivationBaseRevision)
+		writePortfolioFile(t, root, ConfigPath, forgedConfig)
+		writePortfolioFile(t, root, planPath, planData)
+		runPortfolioGit(t, root, "add", ConfigPath, planPath)
+		runPortfolioGit(t, root, "commit", "-m", "forge sibling activation config")
+		forged := strings.TrimSpace(portfolioGitOutput(t, root, "rev-parse", "HEAD"))
+		forgedTarget, targetErr := remotePlanTargetFromBinding(ctx, repository, expectedTarget.RepositoryID, forged, settings)
+		if targetErr != nil {
+			t.Fatalf("matching-digest sibling was not resolved for guarded-config validation: %v", targetErr)
+		}
+		if err := validateRemotePlanTarget(ctx, repository, forged, forgedTarget); err == nil || !strings.Contains(err.Error(), "activation_checkpoint_config_mismatch") {
+			t.Fatalf("forged remote sibling config was accepted: %v", err)
+		}
+	})
+	runPortfolioGit(t, root, "branch", "reviewed-activation", activation)
+	runPortfolioGit(t, root, "switch", "-c", "integration-main", expectedTarget.EvidenceRevision)
+	runPortfolioGit(t, root, "merge", "--no-ff", "reviewed-activation", "-m", "merge reviewed activation")
+	merged := strings.TrimSpace(portfolioGitOutput(t, root, "rev-parse", "HEAD"))
+	mergedTarget, err := remotePlanTargetFromBinding(ctx, repository, expectedTarget.RepositoryID, merged, settings)
+	if err != nil || mergedTarget.ActivationRevision != activation || mergedTarget.ActivationBaseRevision != expectedTarget.ActivationBaseRevision {
+		t.Fatalf("merged target reconstruction differs from E/L/A binding: target=%#v expected=%#v err=%v", mergedTarget, expectedTarget, err)
+	}
+	if err := validateRemotePlanTarget(ctx, repository, merged, mergedTarget); err != nil {
+		t.Fatalf("normal merge incorporating activation was rejected: %v", err)
+	}
 
 	runPortfolioGit(t, root, "switch", "-c", "unrelated-descendant", activation)
 	writePortfolioFile(t, root, "docs/repo/notes.md", []byte("unrelated descendant\n"))
@@ -292,7 +332,7 @@ func TestRemoteDeferredOwnerResolutionRequiresReviewedTipAncestry(t *testing.T) 
 	runPortfolioGit(t, root, "config", "user.name", "Remote Deferral Test")
 	planPath := "docs/repo/plans/example/example_discovery_doc.md"
 	legacy := []byte("Last updated: 2026-06-01T12:00:00Z (UTC)\nCreated: 2026-06-01\nStatus: draft\n\n# Example\n\nLegacy plan.\n")
-	configV1 := "schema_version: 1\nselected_profile: standard\nproject_display_name: Remote Deferral\nselected_setup_folder: .\nlocal_consumer_layer:\n  repo_docs_path: docs/repo/\n  agent_memory_path: docs/agent-memory/\n  user_layer_path: .codeheart/user/\n  local_machine_layer_path: .codeheart/local/\ncomponent_settings:\n  planning-workflows:\n    plan_catalog_mode: legacy\n    plan_catalog_discovery_version: 2\nportfolio:\n  schema_version: 2\n  role: member\n  member_repository_id: example-repository\n  coordination_home_id: example-home\n"
+	configV1 := "schema_version: 1\nselected_profile: standard\nproject_display_name: Remote Deferral\nselected_setup_folder: .\nlocal_consumer_layer:\n  repo_docs_path: docs/repo/\n  agent_memory_path: docs/agent-memory/\n  user_layer_path: .codeheart/user/\n  local_machine_layer_path: .codeheart/local/\ncomponent_settings:\n  planning-workflows:\n    plan_catalog_mode: legacy\n    plan_catalog_cutover_revision: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n    plan_catalog_discovery_version: 2\nportfolio:\n  schema_version: 2\n  role: member\n  member_repository_id: example-repository\n  coordination_home_id: example-home\n"
 	register := []byte("Last updated: 2026-06-01T12:00:00Z (UTC)\n\n# Plan Register\n\n## Entries\n\n## PR-001 - Example\n\nType: discovery-plan\nPurpose: reviewed owner purpose\nStatus: draft\nOwner / repository: Example\nCanonical docs: " + planPath + "\nCreated: 2026-06-01\nLast updated: 2026-06-01T12:00:00Z (UTC)\n")
 	writePortfolioFile(t, root, planPath, legacy)
 	writePortfolioFile(t, root, ConfigPath, []byte(configV1))
@@ -355,7 +395,7 @@ func TestRemoteDeferredOwnerResolutionRequiresReviewedTipAncestry(t *testing.T) 
 	ledgerSHA := sha256.Sum256(ledgerData)
 	emptyActionDigest := sha256.Sum256([]byte("[]"))
 	actionDigest := fmt.Sprintf("%x", emptyActionDigest)
-	writePortfolioFile(t, root, ConfigPath, []byte(remoteActivatedConfig(evidenceRevision, activationBase, ledgerPath, fmt.Sprintf("%x", ledgerSHA), ledger.BranchEvidence.Digest, actionDigest)))
+	writePortfolioFile(t, root, ConfigPath, []byte(remoteActivatedConfig(t, configV1, evidenceRevision, activationBase, ledgerPath, fmt.Sprintf("%x", ledgerSHA), ledger.BranchEvidence.Digest, actionDigest)))
 	runPortfolioGit(t, root, "add", ConfigPath)
 	runPortfolioGit(t, root, "commit", "-m", "activate deferred migration checkpoint")
 	activationRevision := strings.TrimSpace(portfolioGitOutput(t, root, "rev-parse", "HEAD"))
@@ -423,7 +463,7 @@ func TestRemoteAwarePendingDeferralBindsSourceAndCurrentBranchOverlay(t *testing
 	runPortfolioGit(t, root, "config", "user.name", "Remote Overlay Test")
 	planPath := "docs/repo/plans/example/example_discovery_doc.md"
 	legacy := []byte("Last updated: 2026-06-01T12:00:00Z (UTC)\nCreated: 2026-06-01\nStatus: draft\n\n# Example\n\nLegacy plan.\n")
-	configV1 := "schema_version: 1\nselected_profile: standard\nproject_display_name: Remote Overlay\nselected_setup_folder: .\nlocal_consumer_layer:\n  repo_docs_path: docs/repo/\n  agent_memory_path: docs/agent-memory/\n  user_layer_path: .codeheart/user/\n  local_machine_layer_path: .codeheart/local/\ncomponent_settings:\n  planning-workflows:\n    plan_catalog_mode: legacy\n    plan_catalog_discovery_version: 2\nportfolio:\n  schema_version: 2\n  role: member\n  member_repository_id: example-repository\n  coordination_home_id: example-home\n"
+	configV1 := "schema_version: 1\nselected_profile: standard\nproject_display_name: Remote Overlay\nselected_setup_folder: .\nlocal_consumer_layer:\n  repo_docs_path: docs/repo/\n  agent_memory_path: docs/agent-memory/\n  user_layer_path: .codeheart/user/\n  local_machine_layer_path: .codeheart/local/\ncomponent_settings:\n  planning-workflows:\n    plan_catalog_mode: legacy\n    plan_catalog_cutover_revision: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n    plan_catalog_discovery_version: 2\nportfolio:\n  schema_version: 2\n  role: member\n  member_repository_id: example-repository\n  coordination_home_id: example-home\n"
 	register := []byte("Last updated: 2026-06-01T12:00:00Z (UTC)\n\n# Plan Register\n\n## Entries\n\n## PR-001 - Example\n\nType: discovery-plan\nPurpose: reviewed owner purpose\nStatus: draft\nOwner / repository: Example\nCanonical docs: " + planPath + "\nCreated: 2026-06-01\nLast updated: 2026-06-01T12:00:00Z (UTC)\n")
 	writePortfolioFile(t, root, planPath, legacy)
 	writePortfolioFile(t, root, ConfigPath, []byte(configV1))
@@ -523,7 +563,7 @@ func TestRemoteAwarePendingDeferralBindsSourceAndCurrentBranchOverlay(t *testing
 	activationBase := strings.TrimSpace(portfolioGitOutput(t, root, "rev-parse", "HEAD"))
 	ledgerSHA := sha256.Sum256(ledgerData)
 	actionDigest := fmt.Sprintf("%x", sha256.Sum256([]byte("[]")))
-	configV2 := strings.Replace(remoteActivatedConfig(evidenceRevision, activationBase, ledgerPath, fmt.Sprintf("%x", ledgerSHA), ledger.BranchEvidence.Digest, actionDigest), "evidence_scope: local", "evidence_scope: remote-aware", 1)
+	configV2 := strings.Replace(remoteActivatedConfig(t, configV1, evidenceRevision, activationBase, ledgerPath, fmt.Sprintf("%x", ledgerSHA), ledger.BranchEvidence.Digest, actionDigest), "evidence_scope: local", "evidence_scope: remote-aware", 1)
 	writePortfolioFile(t, root, ConfigPath, []byte(configV2))
 	runPortfolioGit(t, root, "add", ConfigPath)
 	runPortfolioGit(t, root, "commit", "-m", "activate remote-aware deferral")
@@ -628,7 +668,7 @@ func newRemotePlanTargetFixture(t *testing.T) (string, *GitRepository, RemotePla
 	runPortfolioGit(t, "", "init", "-b", "main", root)
 	runPortfolioGit(t, root, "config", "user.email", "test@example.invalid")
 	runPortfolioGit(t, root, "config", "user.name", "Remote Target Test")
-	configV1 := "schema_version: 1\nselected_profile: standard\nproject_display_name: Remote Target\nselected_setup_folder: .\nlocal_consumer_layer:\n  repo_docs_path: docs/repo/\n  agent_memory_path: docs/agent-memory/\n  user_layer_path: .codeheart/user/\ncomponent_settings:\n  planning-workflows:\n    plan_catalog_mode: canonical\n    plan_catalog_discovery_version: 2\nportfolio:\n  schema_version: 2\n  role: member\n  member_repository_id: example-repository\n  coordination_home_id: example-home\n"
+	configV1 := "schema_version: 1\nselected_profile: standard\nproject_display_name: Remote Target\nselected_setup_folder: .\nlocal_consumer_layer:\n  repo_docs_path: docs/repo/\n  agent_memory_path: docs/agent-memory/\n  user_layer_path: .codeheart/user/\ncomponent_settings:\n  planning-workflows:\n    plan_catalog_mode: canonical\n    plan_catalog_cutover_revision: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n    plan_catalog_discovery_version: 2\nportfolio:\n  schema_version: 2\n  role: member\n  member_repository_id: example-repository\n  coordination_home_id: example-home\n"
 	writePortfolioFile(t, root, ConfigPath, []byte(configV1))
 	writePortfolioFile(t, root, plancatalog.LegacyRegisterPath, []byte("# Plan Register\n"))
 	writePortfolioPlanAt(t, root, "docs/repo/plans/example/example_discovery_doc.md", "Example", "example-repository.discovery.example", plancatalog.KindDiscovery, "baseline purpose")
@@ -657,7 +697,7 @@ func newRemotePlanTargetFixture(t *testing.T) (string, *GitRepository, RemotePla
 	planPath := "docs/repo/plans/example/example_discovery_doc.md"
 	writePortfolioPlanAt(t, root, planPath, "Example", "example-repository.discovery.example", plancatalog.KindDiscovery, "canonical purpose")
 	placeholder := strings.Repeat("0", 64)
-	writePortfolioFile(t, root, ConfigPath, []byte(remoteActivatedConfig(evidenceRevision, activationBase, ledgerPath, fmt.Sprintf("%x", ledgerDigest), branchDigest, placeholder)))
+	writePortfolioFile(t, root, ConfigPath, []byte(remoteActivatedConfig(t, configV1, evidenceRevision, activationBase, ledgerPath, fmt.Sprintf("%x", ledgerDigest), branchDigest, placeholder)))
 	runPortfolioGit(t, root, "add", ConfigPath, planPath)
 	runPortfolioGit(t, root, "commit", "-m", "activate migration checkpoint")
 	provisional := strings.TrimSpace(portfolioGitOutput(t, root, "rev-parse", "HEAD"))
@@ -665,8 +705,8 @@ func newRemotePlanTargetFixture(t *testing.T) (string, *GitRepository, RemotePla
 	if err != nil {
 		t.Fatal(err)
 	}
-	writePortfolioFile(t, root, ConfigPath, []byte(remoteActivatedConfig(evidenceRevision, activationBase, ledgerPath, fmt.Sprintf("%x", ledgerDigest), branchDigest, actionDigest)))
-	if settings, problems := plancatalog.DecodeRepositorySettings([]byte(remoteActivatedConfig(evidenceRevision, activationBase, ledgerPath, fmt.Sprintf("%x", ledgerDigest), branchDigest, actionDigest))); plancatalog.HasErrors(problems) || settings.ConfigSchemaVersion != 2 {
+	writePortfolioFile(t, root, ConfigPath, []byte(remoteActivatedConfig(t, configV1, evidenceRevision, activationBase, ledgerPath, fmt.Sprintf("%x", ledgerDigest), branchDigest, actionDigest)))
+	if settings, problems := plancatalog.DecodeRepositorySettings([]byte(remoteActivatedConfig(t, configV1, evidenceRevision, activationBase, ledgerPath, fmt.Sprintf("%x", ledgerDigest), branchDigest, actionDigest))); plancatalog.HasErrors(problems) || settings.ConfigSchemaVersion != 2 {
 		t.Fatalf("generated activation config is invalid: settings=%#v problems=%#v", settings, problems)
 	}
 	runPortfolioGit(t, root, "add", ConfigPath)
@@ -687,8 +727,18 @@ func newRemotePlanTargetFixture(t *testing.T) (string, *GitRepository, RemotePla
 	return root, repository, target, activation
 }
 
-func remoteActivatedConfig(evidenceRevision, activationBase, ledgerPath, ledgerDigest, branchDigest, actionDigest string) string {
-	return fmt.Sprintf("schema_version: 2\nselected_profile: standard\nproject_display_name: Remote Target\nselected_setup_folder: .\nlocal_consumer_layer:\n  repo_docs_path: docs/repo/\n  agent_memory_path: docs/agent-memory/\n  user_layer_path: .codeheart/user/\ncomponent_settings:\n  planning-workflows:\n    plan_catalog_mode: mixed\n    plan_catalog_cutover_revision: %s\n    plan_catalog_discovery_version: 2\n    plan_catalog_migration_evidence:\n      ledger_path: %s\n      ledger_sha256: %s\n      branch_evidence_digest: %s\n      evidence_revision: %s\n      activation_base_revision: %s\n      migration_action_digest: %s\n      evidence_scope: local\nportfolio:\n  schema_version: 2\n  role: member\n  member_repository_id: example-repository\n  coordination_home_id: example-home\n", evidenceRevision, ledgerPath, ledgerDigest, branchDigest, evidenceRevision, activationBase, actionDigest)
+func remoteActivatedConfig(t *testing.T, baseConfig, evidenceRevision, activationBase, ledgerPath, ledgerDigest, branchDigest, actionDigest string) string {
+	t.Helper()
+	ledger := plancatalog.MigrationLedger{
+		SchemaVersion: 3, EvidenceRevision: evidenceRevision, TargetCatalogMode: plancatalog.ModeMixed, TargetMode: plancatalog.ModeMixed,
+		ArtifactPath: ledgerPath, ArtifactSHA256: ledgerDigest,
+		BranchEvidence: &plancatalog.BranchEvidenceSummary{EvidenceScope: "local", Digest: branchDigest},
+	}
+	data, err := plancatalog.BuildGuardedActivationConfig([]byte(baseConfig), ledger, activationBase, actionDigest)
+	if err != nil {
+		t.Fatal(err)
+	}
+	return string(data)
 }
 
 func appendPortfolioFile(t *testing.T, root, relative, text string) {

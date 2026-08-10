@@ -587,7 +587,7 @@ func remotePlanTargetForBinding(root string, binding *plancatalog.MigrationEvide
 	if binding.EvidenceScope == "remote-aware" && (ledger.BranchEvidence.RemoteOverlayStatus != "complete" || ledger.BranchEvidence.RemoteOverlayDigest == "" || ledger.BranchEvidence.RemoteSourceIdentitySHA256 == "") {
 		return nil, fmt.Errorf("migration_evidence_binding_mismatch: remote-aware config binding lacks complete ledger overlay authority")
 	}
-	activationRevision, err := plancatalog.ActivationCheckpointRevision(root, binding.ActivationBaseRevision)
+	activationRevision, err := plancatalog.BoundActivationCheckpointRevision(root, binding.ActivationBaseRevision, "HEAD", binding.MigrationActionDigest)
 	if err != nil {
 		return nil, err
 	}

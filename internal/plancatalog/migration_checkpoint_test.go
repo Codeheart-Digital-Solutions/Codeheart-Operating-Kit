@@ -3,10 +3,122 @@ package plancatalog
 import (
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/internal/reconcile"
 )
+
+type activationTopologyFixture struct {
+	Root             string
+	EvidenceRevision string
+	LedgerRevision   string
+	Activation       string
+	ActionDigest     string
+}
+
+func newActivationTopologyFixture(t *testing.T) activationTopologyFixture {
+	t.Helper()
+	root := t.TempDir()
+	runGitTest(t, root, "init", "-b", "main")
+	runGitTest(t, root, "config", "user.name", "Topology Test")
+	runGitTest(t, root, "config", "user.email", "topology@example.invalid")
+	writeCheckpointFixture(t, root, "base.txt", []byte("evidence\n"))
+	runGitTest(t, root, "add", "base.txt")
+	runGitTest(t, root, "commit", "-m", "record evidence")
+	evidence := runGitTest(t, root, "rev-parse", "HEAD")
+	writeCheckpointFixture(t, root, "reviewed-ledger.yaml", []byte("schema_version: 3\n"))
+	runGitTest(t, root, "add", "reviewed-ledger.yaml")
+	runGitTest(t, root, "commit", "-m", "record ledger")
+	ledger := runGitTest(t, root, "rev-parse", "HEAD")
+	writeCheckpointFixture(t, root, "docs/repo/plans/example/example_implementation_doc.md", []byte("reviewed activation\n"))
+	runGitTest(t, root, "add", "docs/repo/plans/example/example_implementation_doc.md")
+	runGitTest(t, root, "commit", "-m", "record activation")
+	activation := runGitTest(t, root, "rev-parse", "HEAD")
+	digest, _, err := MigrationActionDigestForCheckpoint(root, ledger, activation)
+	if err != nil {
+		t.Fatal(err)
+	}
+	return activationTopologyFixture{Root: root, EvidenceRevision: evidence, LedgerRevision: ledger, Activation: activation, ActionDigest: digest}
+}
+
+func TestBoundActivationCheckpointRevisionAcrossMergeTopologies(t *testing.T) {
+	t.Run("exact activation", func(t *testing.T) {
+		fixture := newActivationTopologyFixture(t)
+		actual, err := BoundActivationCheckpointRevision(fixture.Root, fixture.LedgerRevision, fixture.Activation, fixture.ActionDigest)
+		if err != nil || actual != fixture.Activation {
+			t.Fatalf("exact activation=%s want=%s err=%v", actual, fixture.Activation, err)
+		}
+	})
+
+	t.Run("normal merge and descendant", func(t *testing.T) {
+		fixture := newActivationTopologyFixture(t)
+		runGitTest(t, fixture.Root, "branch", "reviewed-activation", fixture.Activation)
+		runGitTest(t, fixture.Root, "switch", "-c", "integration-main", fixture.EvidenceRevision)
+		runGitTest(t, fixture.Root, "merge", "--no-ff", "reviewed-activation", "-m", "merge reviewed activation")
+		merge := runGitTest(t, fixture.Root, "rev-parse", "HEAD")
+		actual, err := BoundActivationCheckpointRevision(fixture.Root, fixture.LedgerRevision, merge, fixture.ActionDigest)
+		if err != nil || actual != fixture.Activation {
+			t.Fatalf("merged activation=%s want=%s err=%v", actual, fixture.Activation, err)
+		}
+		writeCheckpointFixture(t, fixture.Root, "later.txt", []byte("safe descendant\n"))
+		runGitTest(t, fixture.Root, "add", "later.txt")
+		runGitTest(t, fixture.Root, "commit", "-m", "record safe descendant")
+		descendant := runGitTest(t, fixture.Root, "rev-parse", "HEAD")
+		actual, err = BoundActivationCheckpointRevision(fixture.Root, fixture.LedgerRevision, descendant, fixture.ActionDigest)
+		if err != nil || actual != fixture.Activation {
+			t.Fatalf("descendant activation=%s want=%s err=%v", actual, fixture.Activation, err)
+		}
+	})
+
+	t.Run("merge first parent is ledger and second parent is activation", func(t *testing.T) {
+		fixture := newActivationTopologyFixture(t)
+		tree := runGitTest(t, fixture.Root, "rev-parse", fixture.Activation+"^{tree}")
+		merged := runGitTest(t, fixture.Root, "commit-tree", tree, "-p", fixture.LedgerRevision, "-p", fixture.Activation, "-m", "merge reviewed activation from ledger main")
+		actual, err := BoundActivationCheckpointRevision(fixture.Root, fixture.LedgerRevision, merged, fixture.ActionDigest)
+		if err != nil || actual != fixture.Activation {
+			t.Fatalf("ledger-first-parent merge activation=%s want=%s err=%v", actual, fixture.Activation, err)
+		}
+	})
+
+	t.Run("unrelated sibling", func(t *testing.T) {
+		fixture := newActivationTopologyFixture(t)
+		runGitTest(t, fixture.Root, "switch", "-c", "unrelated-sibling", fixture.LedgerRevision)
+		writeCheckpointFixture(t, fixture.Root, "unrelated.txt", []byte("not activation\n"))
+		runGitTest(t, fixture.Root, "add", "unrelated.txt")
+		runGitTest(t, fixture.Root, "commit", "-m", "record unrelated sibling")
+		sibling := runGitTest(t, fixture.Root, "rev-parse", "HEAD")
+		if _, err := BoundActivationCheckpointRevision(fixture.Root, fixture.LedgerRevision, sibling, fixture.ActionDigest); err == nil || !strings.HasPrefix(err.Error(), "activation_checkpoint_missing:") {
+			t.Fatalf("unrelated sibling was accepted: %v", err)
+		}
+	})
+
+	t.Run("tree-only reparented coincidence", func(t *testing.T) {
+		fixture := newActivationTopologyFixture(t)
+		tree := runGitTest(t, fixture.Root, "rev-parse", fixture.Activation+"^{tree}")
+		forged := runGitTest(t, fixture.Root, "commit-tree", tree, "-p", fixture.EvidenceRevision, "-m", "reparent activation tree")
+		if _, err := BoundActivationCheckpointRevision(fixture.Root, fixture.LedgerRevision, forged, fixture.ActionDigest); err == nil || !strings.HasPrefix(err.Error(), "activation_checkpoint_missing:") {
+			t.Fatalf("tree-only reparented coincidence was accepted: %v", err)
+		}
+	})
+
+	t.Run("wrong action digest", func(t *testing.T) {
+		fixture := newActivationTopologyFixture(t)
+		if _, err := BoundActivationCheckpointRevision(fixture.Root, fixture.LedgerRevision, fixture.Activation, strings.Repeat("f", 64)); err == nil || !strings.HasPrefix(err.Error(), "activation_checkpoint_missing:") {
+			t.Fatalf("wrong action digest was accepted: %v", err)
+		}
+	})
+
+	t.Run("ambiguous matching children", func(t *testing.T) {
+		fixture := newActivationTopologyFixture(t)
+		tree := runGitTest(t, fixture.Root, "rev-parse", fixture.Activation+"^{tree}")
+		duplicate := runGitTest(t, fixture.Root, "commit-tree", tree, "-p", fixture.LedgerRevision, "-m", "duplicate activation")
+		merged := runGitTest(t, fixture.Root, "commit-tree", tree, "-p", fixture.Activation, "-p", duplicate, "-m", "incorporate both activations")
+		if _, err := BoundActivationCheckpointRevision(fixture.Root, fixture.LedgerRevision, merged, fixture.ActionDigest); err == nil || !strings.HasPrefix(err.Error(), "activation_checkpoint_ambiguous:") {
+			t.Fatalf("ambiguous matching activation children were accepted: %v", err)
+		}
+	})
+}
 
 func TestLedgerCheckpointRequiresExactFirstParentAndLedgerOnlyDelta(t *testing.T) {
 	root := t.TempDir()

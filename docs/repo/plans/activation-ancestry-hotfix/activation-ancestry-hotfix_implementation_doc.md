@@ -1,4 +1,4 @@
-Last updated: 2026-08-10T19:08:24Z (UTC)
+Last updated: 2026-08-10T20:22:47Z (UTC)
 Created: 2026-08-10
 Status: active
 Execution log: activation-ancestry-hotfix_execution_log.md
@@ -13,7 +13,7 @@ plan:
   kind: implementation
   purpose: Accept safely incorporated activation checkpoints across normal merge topology while preserving exact migration chronology and fail-closed evidence.
   first_cataloged: 2026-08-10T19:08:24Z
-  catalog_metadata_updated: 2026-08-10T19:08:24Z
+  catalog_metadata_updated: 2026-08-10T20:22:47Z
   products:
     - codeheart-operating-kit
   capabilities:
@@ -61,7 +61,9 @@ The validator resolves one immutable activation checkpoint `A` without weakening
 3. `A` must be reachable from current `HEAD`; current `HEAD` may equal `A`, be a linear descendant,
    or incorporate `A` through any merge parent.
 4. Resolution searches the complete `L..HEAD` ancestry path for direct first-parent children of
-   `L`, filters by the bound migration action digest, and requires one unambiguous match.
+   `L`, filters by the bound migration action digest, discards later matching commits that descend
+   from another match, and requires one unambiguous ancestry-minimal match. This retains `A` when a
+   merge wrapper also has `L` as first parent and the same resulting tree.
 5. Current config, candidate authority, deferred-owner integration, remote overlay, index, and
    worktree checks remain unchanged after `A` is resolved.
 
@@ -73,23 +75,24 @@ reparented commit, or branch that is not an ancestor of current `HEAD` cannot sa
 Outcome: local and remote-aware validation resolve the exact incorporated activation checkpoint
 across merge graphs while rejecting absent or ambiguous evidence.
 
-- [ ] Add synthetic `E -> L -> A` fixtures for exact `A`, a normal merge with `A` as second parent,
+- [x] Add synthetic `E -> L -> A` fixtures for exact `A`, a normal merge with `A` as second parent,
   and safe later descendants.
-- [ ] Add negative fixtures for unreachable `A`, reparented/tree-only coincidence, wrong ledger,
-  unrelated sibling, action-digest mismatch, and ambiguous matching activation children.
-- [ ] Replace first-parent-from-`HEAD` discovery with one shared ancestry-path resolver.
-- [ ] Use the resolver consistently in persisted local validation, command-side remote target
+- [x] Add negative fixtures for unreachable `A`, reparented/tree-only coincidence, wrong ledger,
+  unrelated sibling, action-digest mismatch, and independent ambiguous matching activation
+  children; prove a later matching merge wrapper does not replace `A`.
+- [x] Replace first-parent-from-`HEAD` discovery with one shared ancestry-path resolver.
+- [x] Use the resolver consistently in persisted local validation, command-side remote target
   reconstruction, portfolio target reconstruction, and compatibility projection.
-- [ ] Preserve exact checkpoint parent/delta/blob/config/action and current-authority guards.
+- [x] Preserve exact checkpoint parent/delta/blob/config/action and current-authority guards.
 
 ## EP-02 - Compatibility And Release Proof
 
 Outcome: the correction is released as v0.1.29 with no migration and no unrelated behavior change.
 
-- [ ] Run focused plan-catalog, command, and portfolio suites first.
+- [x] Run focused plan-catalog, command, and portfolio suites first.
 - [ ] Run full Go, race, vet, Python/schema/resource/routing/release, backward-compatibility,
   installer, and transaction validation.
-- [ ] Complete fresh read-only review and resolve every High or Medium finding.
+- [x] Complete fresh read-only review and resolve every High or Medium finding.
 - [ ] Update all authoritative v0.1.29 version, compatibility, manifest, fixture, and release-note
   surfaces.
 - [ ] Build macOS universal and Windows x64 assets twice, verify byte equality, sidecars, catalog,
