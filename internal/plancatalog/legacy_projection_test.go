@@ -49,7 +49,7 @@ func TestLegacyRegisterProjectsRecognizedStatusesAndSeparateDates(t *testing.T) 
 func TestLegacyRegisterMalformedAndAmbiguousFormsBlockWithoutInvalidWireValues(t *testing.T) {
 	data := legacyProjectionFixture(t, "malformed-and-ambiguous.md")
 	entries, problems := ParseLegacyRegister(data)
-	for _, code := range []string{"legacy_date_malformed", "legacy_field_duplicate", "legacy_status_unsupported", "legacy_canonical_path_malformed"} {
+	for _, code := range []string{"legacy_date_malformed", "legacy_field_duplicate", "legacy_status_unsupported", "legacy_canonical_path_malformed", "legacy_canonical_path_duplicate", "legacy_relation_unsupported", "legacy_relation_malformed", "legacy_relation_duplicate"} {
 		if !problemExists(problems, code, SeverityError) {
 			t.Fatalf("missing %s in %#v", code, problems)
 		}
@@ -58,7 +58,7 @@ func TestLegacyRegisterMalformedAndAmbiguousFormsBlockWithoutInvalidWireValues(t
 	if entry := byID["GENERIC-NEG-001"]; entry.LastUpdated != "" || entry.Completed != "" || entry.Lifecycle != LifecycleCompleted {
 		t.Fatalf("combined date leaked into wire fields: %#v", entry)
 	}
-	if entry := byID["GENERIC-NEG-002"]; entry.Lifecycle != "" || entry.Created != "" {
+	if entry := byID["GENERIC-NEG-002"]; entry.Lifecycle != "" || entry.Created != "" || len(entry.CanonicalDocs) != 0 {
 		t.Fatalf("duplicated fields were selected arbitrarily: %#v", entry)
 	}
 	if entry := byID["GENERIC-NEG-003"]; entry.Lifecycle != "" || entry.LegacyStatus != "" {
@@ -66,6 +66,27 @@ func TestLegacyRegisterMalformedAndAmbiguousFormsBlockWithoutInvalidWireValues(t
 	}
 	if entry := byID["GENERIC-NEG-004"]; len(entry.CanonicalDocs) != 0 || entry.Created != "" || entry.LastUpdated != "" || entry.Completed != "" {
 		t.Fatalf("malformed values leaked into wire fields: %#v", entry)
+	}
+	if entry := byID["GENERIC-NEG-007"]; len(entry.Relations) != 0 {
+		t.Fatalf("malformed relations leaked into wire fields: %#v", entry)
+	}
+	if entry := byID["GENERIC-NEG-008"]; len(entry.CanonicalDocs) != 0 {
+		t.Fatalf("backslash path leaked into schema-v3 wire fields: %#v", entry)
+	}
+	if entry := byID["GENERIC-NEG-009"]; len(entry.CanonicalDocs) != 0 {
+		t.Fatalf("duplicate path retained reconciliation authority: %#v", entry)
+	}
+	if entry := byID["GENERIC-NEG-010"]; len(entry.CanonicalDocs) != 0 {
+		t.Fatalf("rooted path leaked into schema-v3 wire fields: %#v", entry)
+	}
+	legacyV1ByID := legacyEntriesByID(legacyEntriesForInventoryV1(entries))
+	rawV1Path := `docs\repo\plans\generic-backslash\generic-backslash_discovery_doc.md`
+	wantV1Path := filepath.ToSlash(filepath.Clean(filepath.FromSlash(rawV1Path)))
+	if entry := legacyV1ByID["GENERIC-NEG-008"]; len(entry.CanonicalDocs) != 1 || entry.CanonicalDocs[0] != wantV1Path {
+		t.Fatalf("schema-v1 backslash path compatibility changed: %#v", entry)
+	}
+	if entry := legacyV1ByID["GENERIC-NEG-009"]; len(entry.CanonicalDocs) != 2 || entry.CanonicalDocs[0] != entry.CanonicalDocs[1] {
+		t.Fatalf("schema-v1 duplicate path compatibility changed: %#v", entry)
 	}
 	reconciliation := ReconcileLegacy([]Record{{Path: "docs/repo/plans/generic-shared/generic-shared_discovery_doc.md"}}, nil, entries)
 	if !problemExists(reconciliation.Problems, "legacy_evidence_ambiguous", SeverityError) {
@@ -90,6 +111,24 @@ func TestLegacyRegisterSchemaV3ProjectionHasModeParityDeterministicHashingAndZer
 	register := legacyProjectionFixture(t, "recognized-statuses-and-dates.md")
 	writeLegacyProjectionRegister(t, root, register)
 	fixedNow := time.Date(2026, 8, 10, 1, 2, 3, 0, time.UTC)
+	legacyV1, err := BuildInventory(root, fixedNow)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if legacyV1.SchemaVersion != 1 {
+		t.Fatalf("legacy inventory schema=%d", legacyV1.SchemaVersion)
+	}
+	legacyV1ByID := legacyInventoryProjection(legacyV1)
+	if entry := legacyV1ByID["GENERIC-006"]; entry.Lifecycle != Lifecycle(LegacyStatusImplementationHandoffReady) || entry.LegacyStatus != "" {
+		t.Fatalf("schema-v1 pre-canonical status compatibility changed: %#v", entry)
+	}
+	if entry := legacyV1ByID["GENERIC-003"]; entry.Completed != "" || entry.LastUpdated != "2026-03-03T03:04:05Z (UTC) Completed: 2026-03-02" {
+		t.Fatalf("schema-v1 combined date compatibility changed: %#v", entry)
+	}
+	legacyV1JSON, _ := json.Marshal(legacyV1)
+	if bytes.Contains(legacyV1JSON, []byte(`"legacy_status":`)) || bytes.Contains(legacyV1JSON, []byte(`"completed":`)) {
+		t.Fatalf("schema-v3 legacy fields leaked into schema-v1 inventory: %s", legacyV1JSON)
+	}
 
 	prospective, err := BuildInventoryWithOptions(root, fixedNow, SnapshotOptions{TargetDiscoveryVersion: DiscoveryV2, TargetCatalogMode: ModeCanonical})
 	if err != nil {

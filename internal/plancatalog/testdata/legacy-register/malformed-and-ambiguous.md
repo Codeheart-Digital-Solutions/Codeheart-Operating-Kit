@@ -16,6 +16,7 @@ Last updated: 2026-01-02T03:04:05Z (UTC) Completed: 2026-01-03
 Status: draft
 Status: active
 Canonical docs: docs/repo/plans/generic-duplicate/generic-duplicate_discovery_doc.md
+Canonical docs: docs/repo/plans/generic-duplicate-second/generic-duplicate-second_discovery_doc.md
 Created: 2026-02-01
 Created: 2026-02-02
 Last updated: 2026-02-03T03:04:05Z (UTC)
@@ -41,6 +42,42 @@ Status: active
 Canonical docs: docs/repo/plans/generic-shared/generic-shared_discovery_doc.md
 Created: 2026-05-01
 Last updated: 2026-05-02T03:04:05Z (UTC)
+
+## GENERIC-NEG-007 - Malformed Relations Example
+
+Status: draft
+Canonical docs: docs/repo/plans/generic-relations/generic-relations_discovery_doc.md
+Created: 2026-06-01
+Last updated: 2026-06-02T03:04:05Z (UTC)
+
+Relations:
+- unknown-kind: GENERIC-NEG-001
+- related:
+- depends-on: GENERIC-NEG-001
+- depends-on: GENERIC-NEG-001
+
+## GENERIC-NEG-008 - Backslash Path Example
+
+Status: draft
+Canonical docs: docs\repo\plans\generic-backslash\generic-backslash_discovery_doc.md
+Created: 2026-07-01
+Last updated: 2026-07-02T03:04:05Z (UTC)
+
+## GENERIC-NEG-009 - Duplicate Path Value Example
+
+Status: draft
+Canonical docs:
+- docs/repo/plans/generic-repeat/generic-repeat_discovery_doc.md
+- docs/repo/plans/generic-repeat/generic-repeat_discovery_doc.md
+Created: 2026-08-01
+Last updated: 2026-08-02T03:04:05Z (UTC)
+
+## GENERIC-NEG-010 - Rooted Path Example
+
+Status: draft
+Canonical docs: /outside-repository.md
+Created: 2026-08-03
+Last updated: 2026-08-04T03:04:05Z (UTC)
 
 ## GENERIC-NEG-006 - Second Ambiguous Example
 

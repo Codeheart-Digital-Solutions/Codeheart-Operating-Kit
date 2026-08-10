@@ -1,4 +1,4 @@
-Last updated: 2026-08-10T05:39:08Z (UTC)
+Last updated: 2026-08-10T06:04:50Z (UTC)
 Created: 2026-08-10
 Status: active
 Execution log: legacy-register-inventory-hotfix_execution_log.md
@@ -82,9 +82,9 @@ mode without weakening historical or safety contracts.
 - [x] Add generic negative fixtures for combined malformed forms, duplicate fields, unsupported labels, and ambiguous evidence.
 - [x] Prove repeated inventory bytes/digests are deterministic.
 - [x] Prove local, prospective canonical-target, and remote-aware projections are equivalent.
-- [ ] Prove inventory v1/v2 compatibility and all v0.1.27 branch/checkpoint/activation invariants remain passing.
+- [x] Prove inventory v1/v2 compatibility and all v0.1.27 branch/checkpoint/activation invariants remain passing.
 - [x] Prove inventory writes only its explicit artifact and never changes frozen register or other consumer bytes.
-- [ ] Run focused tests, full Go/race/vet, Python/schema/resource/routing/release validation, and independent review; resolve every High and Medium finding.
+- [x] Run focused tests, full Go/race/vet, Python/schema/resource/routing/release validation, and independent review; resolve every High and Medium finding.
 
 ## EP-03 - v0.1.28 Release And Live Verification
 

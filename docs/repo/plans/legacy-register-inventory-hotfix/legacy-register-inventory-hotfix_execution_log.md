@@ -1,4 +1,4 @@
-Last updated: 2026-08-10T05:39:08Z (UTC)
+Last updated: 2026-08-10T06:04:50Z (UTC)
 Created: 2026-08-10
 
 # Legacy Register Inventory Hotfix Execution Log
@@ -23,8 +23,8 @@ branch/worktree remains untouched. The frozen register and all consumer reposito
 
 | Epic | Status | Meaningful delta | Review gate |
 | --- | --- | --- | --- |
-| `EP-01` | completed | Split raw observations from strict wire projection; canonical lifecycle, typed legacy status, and separate dates now fail closed. | Focused parser/schema review passed; independent gate pending with EP-02. |
-| `EP-02` | in progress | Added generic positive/negative fixtures plus schema-v3 mode parity, deterministic digest/bytes, ambiguity, and zero-write coverage. | Focused Go and schema suites pass; full compatibility and independent review pending. |
+| `EP-01` | completed | Split raw observations from strict wire projection; canonical lifecycle, typed legacy status, and separate dates now fail closed. | Focused parser/schema review and final independent gate passed. |
+| `EP-02` | completed | Added generic positive/negative fixtures plus v1 compatibility, schema-v3 mode parity, deterministic digest/bytes, ambiguity, and zero-write coverage. | Focused and full validation passed; every High/Medium review finding is resolved. |
 | `EP-03` | pending | None yet. | Required before publication. |
 
 ## Review Gate Metrics
@@ -32,10 +32,11 @@ branch/worktree remains untouched. The frozen register and all consumer reposito
 - Review gate required: yes.
 - Review gate skipped: no.
 - Reviewer mode: fresh read-only reviewer agent when implementation is ready.
-- Review rounds: zero at activation.
-- Material findings: pending.
-- Final accepted result: pending.
-- Worth-it assessment: pending.
+- Review rounds: three read-only passes across two fresh reviewer agents.
+- Material findings: zero High; seven Medium and one Low found and resolved.
+- Final accepted result: no remaining High or Medium release blocker.
+- Worth-it assessment: accepted; review closed schema-invalid relation/path edges, ambiguous
+  reconciliation authority, and schema-v1 compatibility drift before release preparation.
 
 ## Activation Delta
 
@@ -67,6 +68,28 @@ modes, repeat-build byte/digest determinism, and byte preservation for the froze
 formal plans. Affected `plancatalog`, `commands`, and `portfolio` packages plus the JSON-schema
 validator and 42 Python schema tests pass.
 
+The compatibility adapter reconstructs the exact v0.1.27 schema-v1 legacy wire projection from
+the raw observation while schema-v3 remains strict. Repeated or malformed relation blocks,
+canonical-doc fields, canonical-doc values, backslash paths, and rooted paths now emit structured
+blockers and project no ambiguous reconciliation authority. Focused cross-platform assertions
+retain historical schema-v1 path semantics.
+
+Independent review required three repair passes. The first pass found malformed relation wire,
+duplicate canonical-doc field authority, and schema-v1 projection drift. The second found
+platform-dependent backslash acceptance, duplicate path-value authority, and missing duplicate
+relation proof. The final follow-up found and closed a Windows-specific assertion and a rooted-path
+strictness edge. The concluding read-only review reported no remaining High or Medium blocker.
+
+Validation completed before release versioning:
+
+- focused `plancatalog`, `commands`, and `portfolio` Go suites;
+- repository-wide Go tests, race tests, and `go vet`;
+- 158 Python tests, including 42 JSON-schema tests;
+- public-core, Markdown, JSON-schema, and release-manifest validators;
+- producer inventory validation and deterministic local/canonical-target/remote-aware evidence;
+- `git diff --check` after the final reviewer repairs.
+
 ## Final Validation
 
-Pending implementation, review, release-candidate validation, and live publication evidence.
+EP-01 and EP-02 are complete. Exact v0.1.28 release-source validation, reproducible assets,
+installer/upgrade proof, publication, and live verification remain under EP-03.
