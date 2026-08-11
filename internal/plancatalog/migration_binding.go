@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"sort"
+	"strings"
 
 	"github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/internal/state"
 )
@@ -13,12 +14,11 @@ func boundDeferredPaths(root string, binding *MigrationEvidenceBinding) map[stri
 	if binding == nil {
 		return paths
 	}
-	data, err := readRegularSource(root, binding.LedgerPath)
-	if err != nil || sha256Text(data) != binding.LedgerSHA256 {
+	ledger, err := LoadBoundMigrationLedger(root, binding)
+	if err != nil {
 		return paths
 	}
-	ledger, err := LoadMigrationLedger(data)
-	if err != nil || ledger.SchemaVersion != 3 {
+	if ledger.SchemaVersion != 3 {
 		return paths
 	}
 	for _, record := range ledger.Records {
@@ -84,15 +84,39 @@ func BoundRemoteOverlayDigest(root string, binding *MigrationEvidenceBinding) st
 	if binding == nil || binding.EvidenceScope != "remote-aware" {
 		return ""
 	}
-	data, err := readRegularSource(root, binding.LedgerPath)
-	if err != nil || sha256Text(data) != binding.LedgerSHA256 {
+	ledger, err := LoadBoundMigrationLedger(root, binding)
+	if err != nil {
 		return ""
 	}
-	ledger, err := LoadMigrationLedger(data)
-	if err != nil || ledger.BranchEvidence == nil {
+	if ledger.BranchEvidence == nil {
 		return ""
 	}
 	return ledger.BranchEvidence.RemoteOverlayDigest
+}
+
+// LoadBoundMigrationLedger reads the exact ledger blob committed at current
+// HEAD after proving that its regular stage-zero path is Git-clean and differs
+// from the worktree only by ordinary LF/CRLF checkout materialization.
+// Migration bindings are blob authorities, so Windows checkout conversion must
+// not rewrite their digest identity.
+func LoadBoundMigrationLedger(root string, binding *MigrationEvidenceBinding) (MigrationLedger, error) {
+	if binding == nil {
+		return MigrationLedger{}, fmt.Errorf("migration_evidence_binding_missing: migration evidence binding is required")
+	}
+	data, err := cleanCheckoutCommittedSource(root, "HEAD", binding.LedgerPath)
+	if err != nil || sha256Text(data) != binding.LedgerSHA256 {
+		if err != nil {
+			return MigrationLedger{}, fmt.Errorf("migration_evidence_ledger_mismatch: %w", err)
+		}
+		return MigrationLedger{}, fmt.Errorf("migration_evidence_ledger_mismatch: bound ledger bytes changed")
+	}
+	ledger, err := LoadMigrationLedger(data)
+	if err != nil {
+		return MigrationLedger{}, err
+	}
+	ledger.ArtifactPath = binding.LedgerPath
+	ledger.ArtifactSHA256 = binding.LedgerSHA256
+	return ledger, nil
 }
 
 func validatePersistedMigrationEvidence(root string, binding *MigrationEvidenceBinding, observedRemoteOverlayDigest string, observedRemoteBranchEvidence []BranchCandidateEvidence) []Problem {
@@ -100,24 +124,16 @@ func validatePersistedMigrationEvidence(root string, binding *MigrationEvidenceB
 		return []Problem{{Code: "migration_evidence_binding_missing", Message: "config schema v2 requires a migration evidence binding", Path: state.ConfigPath, Severity: SeverityError}}
 	}
 	problems := []Problem{}
-	ledgerData, err := readRegularSource(root, binding.LedgerPath)
-	if err != nil || sha256Text(ledgerData) != binding.LedgerSHA256 {
+	ledger, err := LoadBoundMigrationLedger(root, binding)
+	if err != nil {
 		message := "bound migration ledger is missing or changed"
-		if err != nil {
-			message = err.Error()
-		}
+		message = err.Error()
 		return []Problem{{Code: "migration_evidence_ledger_mismatch", Message: message, Path: binding.LedgerPath, Severity: SeverityError, Remediation: "restore the exact reviewed ledger or perform a new reviewed migration"}}
 	}
-	ledger, err := LoadMigrationLedger(ledgerData)
-	if err != nil || ledger.SchemaVersion != 3 {
+	if ledger.SchemaVersion != 3 {
 		message := "bound migration ledger is not a valid schema-v3 artifact"
-		if err != nil {
-			message = err.Error()
-		}
 		return []Problem{{Code: "migration_evidence_ledger_invalid", Message: message, Path: binding.LedgerPath, Severity: SeverityError}}
 	}
-	ledger.ArtifactPath = binding.LedgerPath
-	ledger.ArtifactSHA256 = binding.LedgerSHA256
 	ledger.ObservedRemoteOverlayDigest = observedRemoteOverlayDigest
 	ledger.ObservedRemoteBranchEvidence = append([]BranchCandidateEvidence{}, observedRemoteBranchEvidence...)
 	if ledger.EvidenceRevision != binding.EvidenceRevision || ledger.BranchEvidence == nil || ledger.BranchEvidence.Digest != binding.BranchEvidenceDigest || ledger.BranchEvidence.EvidenceScope != binding.EvidenceScope {
@@ -146,19 +162,22 @@ func validatePersistedMigrationEvidence(root string, binding *MigrationEvidenceB
 	if committedLedger, readErr := gitBytes(root, "show", binding.ActivationBaseRevision+":"+binding.LedgerPath); readErr != nil || sha256Text(committedLedger) != binding.LedgerSHA256 {
 		problems = append(problems, Problem{Code: "ledger_checkpoint_blob_mismatch", Message: "ledger checkpoint blob differs from the bound ledger", Path: binding.LedgerPath, Severity: SeverityError})
 	}
-	firstParent, historyErr := gitText(root, "rev-list", "--first-parent", "--reverse", binding.ActivationBaseRevision+"..HEAD")
-	if historyErr != nil || firstParent == "" {
-		problems = append(problems, Problem{Code: "activation_checkpoint_missing", Message: "no first-parent activation checkpoint follows the ledger checkpoint", Path: state.ConfigPath, Severity: SeverityError, Remediation: "commit only the projected migration outputs and guarded config activation"})
+	activationRevision, activationErr := BoundActivationCheckpointRevision(root, binding.ActivationBaseRevision, "HEAD", binding.MigrationActionDigest)
+	if activationErr != nil {
+		code := "activation_checkpoint_missing"
+		if strings.HasPrefix(activationErr.Error(), "activation_checkpoint_ambiguous:") {
+			code = "activation_checkpoint_ambiguous"
+		}
+		problems = append(problems, Problem{Code: code, Message: strings.TrimSpace(strings.TrimPrefix(activationErr.Error(), code+":")), Path: state.ConfigPath, Severity: SeverityError, Remediation: "incorporate exactly one reviewed activation checkpoint without rewriting its E-to-L-to-A chronology"})
 		SortProblems(problems)
 		return problems
-	}
-	activationRevision := firstParent
-	if index := bytes.IndexByte([]byte(firstParent), '\n'); index >= 0 {
-		activationRevision = firstParent[:index]
 	}
 	activationParent, err := gitText(root, "rev-parse", "--verify", activationRevision+"^1")
 	if err != nil || activationParent != binding.ActivationBaseRevision {
 		problems = append(problems, Problem{Code: "activation_checkpoint_parent_mismatch", Message: "activation checkpoint is not the immediate first-parent child of the ledger checkpoint", Severity: SeverityError})
+	}
+	if configErr := ValidateGuardedActivationConfig(root, ledger, binding.ActivationBaseRevision, activationRevision, binding.MigrationActionDigest); configErr != nil {
+		problems = append(problems, Problem{Code: "activation_checkpoint_config_mismatch", Message: strings.TrimSpace(strings.TrimPrefix(configErr.Error(), "activation_checkpoint_config_mismatch:")), Path: state.ConfigPath, Severity: SeverityError})
 	}
 	actions, projection, _, _, projectionProblems, projectErr := projectV3MigrationActions(root, ledger)
 	if projectErr != nil {
@@ -194,7 +213,7 @@ func validatePersistedMigrationEvidence(root string, binding *MigrationEvidenceB
 			problems = append(problems, Problem{Code: "mixed_coverage_incomplete", Message: "bound migration no longer covers every reviewed candidate", Severity: SeverityError})
 		}
 	}
-	currentConfig, configErr := readRegularSource(root, state.ConfigPath)
+	currentConfig, configErr := cleanCheckoutCommittedSource(root, "HEAD", state.ConfigPath)
 	activationConfig, activationConfigErr := gitBytes(root, "show", activationRevision+":"+state.ConfigPath)
 	if configErr != nil || activationConfigErr != nil || !bytes.Equal(currentConfig, activationConfig) {
 		problems = append(problems, Problem{Code: "migration_evidence_config_moved", Message: "current config differs from the guarded activation checkpoint", Path: state.ConfigPath, Severity: SeverityError})

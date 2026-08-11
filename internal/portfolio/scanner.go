@@ -673,11 +673,10 @@ func remotePlanTargetFromBinding(ctx context.Context, repository *GitRepository,
 	if binding == nil {
 		return RemotePlanTarget{}, fmt.Errorf("migration_evidence_binding_missing: config schema v2 requires an exact binding")
 	}
-	history, err := repositoryGitText(ctx, repository, "rev-list", "--first-parent", "--reverse", binding.ActivationBaseRevision+".."+revision)
-	if err != nil || history == "" {
-		return RemotePlanTarget{}, fmt.Errorf("activation_checkpoint_missing: bound activation checkpoint is absent")
+	activation, err := plancatalog.BoundActivationCheckpointRevision(repository.Path, binding.ActivationBaseRevision, revision, binding.MigrationActionDigest)
+	if err != nil {
+		return RemotePlanTarget{}, err
 	}
-	activation := strings.Fields(history)[0]
 	ledgerData, err := repository.ReadFile(ctx, binding.ActivationBaseRevision, binding.LedgerPath)
 	if err != nil {
 		return RemotePlanTarget{}, fmt.Errorf("migration_evidence_ledger_unavailable: bound ledger is unavailable at L")
@@ -777,6 +776,11 @@ func validateRemotePlanTarget(ctx context.Context, repository *GitRepository, de
 		ledger.BranchEvidence == nil || ledger.BranchEvidence.Digest != target.BranchEvidenceDigest || ledger.BranchEvidence.EvidenceScope != target.EvidenceScope ||
 		ledger.BranchEvidence.RemoteOverlayDigest != target.RemoteOverlayDigest || ledger.BranchEvidence.RemoteSourceIdentitySHA256 != target.RemoteSourceIdentity {
 		return fmt.Errorf("remote ledger checkpoint is not a valid schema-v3 ledger")
+	}
+	ledger.ArtifactPath = target.LedgerPath
+	ledger.ArtifactSHA256 = target.LedgerSHA256
+	if configErr := plancatalog.ValidateGuardedActivationConfig(repository.Path, ledger, target.ActivationBaseRevision, target.ActivationRevision, target.MigrationActionDigest); configErr != nil {
+		return fmt.Errorf("remote %w", configErr)
 	}
 	resolvedDeferred := map[string]bool{}
 	for _, record := range ledger.Records {
@@ -954,11 +958,14 @@ func collectCompatibilityObservations(ctx context.Context, repository *GitReposi
 	if parent, parentErr := repositoryGitText(ctx, repository, "rev-parse", "--verify", binding.ActivationBaseRevision+"^1"); parentErr != nil || parent != binding.EvidenceRevision {
 		return nil, []ScanError{{Code: "ledger_checkpoint_parent_mismatch", Message: "remote ledger checkpoint first parent is not the evidence revision", RepositoryID: repositoryID, Ref: ref}}
 	}
-	children, historyErr := repositoryGitText(ctx, repository, "rev-list", "--first-parent", "--reverse", binding.ActivationBaseRevision+".."+revision)
-	if historyErr != nil || children == "" {
-		return nil, []ScanError{{Code: "activation_checkpoint_missing", Message: "remote default history does not contain the bound activation checkpoint", RepositoryID: repositoryID, Ref: ref}}
+	activation, activationErr := plancatalog.BoundActivationCheckpointRevision(repository.Path, binding.ActivationBaseRevision, revision, binding.MigrationActionDigest)
+	if activationErr != nil {
+		code := "activation_checkpoint_missing"
+		if strings.HasPrefix(activationErr.Error(), "activation_checkpoint_ambiguous:") {
+			code = "activation_checkpoint_ambiguous"
+		}
+		return nil, []ScanError{{Code: code, Message: activationErr.Error(), RepositoryID: repositoryID, Ref: ref}}
 	}
-	activation := strings.Fields(children)[0]
 	if parent, parentErr := repositoryGitText(ctx, repository, "rev-parse", "--verify", activation+"^1"); parentErr != nil || parent != binding.ActivationBaseRevision {
 		return nil, []ScanError{{Code: "activation_checkpoint_parent_mismatch", Message: "remote activation checkpoint is not the immediate first-parent child", RepositoryID: repositoryID, Ref: ref}}
 	}

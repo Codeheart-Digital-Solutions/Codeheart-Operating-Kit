@@ -251,7 +251,7 @@ func TestLifecycleStartingStatePreconditionMatrix(t *testing.T) {
 			if err != nil || syncResult.OK() != want.sync {
 				t.Fatalf("sync OK=%v want=%v err=%v result=%#v", syncResult.OK(), want.sync, err, syncResult)
 			}
-			_, updateResult, err := updateCheckOperation(root, "0.1.28", now.Format(time.RFC3339), "", true)
+			_, updateResult, err := updateCheckOperation(root, "0.1.29", now.Format(time.RFC3339), "", true)
 			if err != nil || updateResult.OK() != want.update {
 				t.Fatalf("update OK=%v want=%v err=%v result=%#v", updateResult.OK(), want.update, err, updateResult)
 			}
@@ -1207,6 +1207,18 @@ func TestRemotePlanTargetForBindingReconstructsActivationAtAAndDescendant(t *tes
 	if err != nil || descendantTarget.ActivationRevision != activation || descendantTarget.ActivationBaseRevision != activationBase {
 		t.Fatalf("descendant target moved L or A: target=%#v err=%v", descendantTarget, err)
 	}
+	runGitCommandTest(t, root, "config", "core.autocrlf", "true")
+	runGitCommandTest(t, root, "config", "core.eol", "crlf")
+	runGitCommandTest(t, root, "branch", "reviewed-activation", activation)
+	runGitCommandTest(t, root, "switch", "-c", "integration-main", evidenceRevision)
+	runGitCommandTest(t, root, "merge", "--no-ff", "reviewed-activation", "-m", "merge reviewed activation")
+	if checkedOut := mustRead(t, filepath.Join(root, filepath.FromSlash(ledgerPath))); !bytes.Contains(checkedOut, []byte("\r\n")) {
+		t.Fatal("fixture did not materialize the reviewed ledger with CRLF checkout bytes")
+	}
+	mergedTarget, err := remotePlanTargetForBinding(root, binding)
+	if err != nil || mergedTarget.ActivationRevision != activation || mergedTarget.ActivationBaseRevision != activationBase {
+		t.Fatalf("merge target moved L or A: target=%#v err=%v", mergedTarget, err)
+	}
 }
 
 func TestPlansMigrateV2ReportsProjectedReadinessWithoutActivation(t *testing.T) {
@@ -1603,7 +1615,7 @@ func TestUpdateCheckWritesCadenceAndFailurePreservesDueDate(t *testing.T) {
 		t.Fatalf("failed update state = %#v, previous due %v", update, beforeDue)
 	}
 	var text bytes.Buffer
-	code = RunUpdateCheck([]string{root, "--latest-version", "0.1.28"}, &text, &bytes.Buffer{})
+	code = RunUpdateCheck([]string{root, "--latest-version", "0.1.29"}, &text, &bytes.Buffer{})
 	if code != 0 {
 		t.Fatalf("RunUpdateCheck text exit = %d; stdout: %s", code, text.String())
 	}

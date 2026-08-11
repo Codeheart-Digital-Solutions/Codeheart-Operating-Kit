@@ -1,6 +1,45 @@
-Last updated: 2026-08-10T06:04:50Z (UTC)
+Last updated: 2026-08-10T20:22:47Z (UTC)
 
 # Codeheart Operating Kit Release Notes
+
+## v0.1.29 Release Notes
+
+`v0.1.29` is a focused activation-ancestry correction for persisted discovery-v2 plan catalogs.
+A reviewed activation checkpoint now remains valid after a normal merge or a later descendant,
+including when the activation is incorporated through a non-first merge parent.
+
+### Included
+
+- Activation resolution searches the complete ancestry path from the exact ledger checkpoint to
+  the validated target. It accepts only direct first-parent children of the ledger checkpoint whose
+  plan-action digest matches the persisted binding.
+- When a later merge wrapper also has the ledger checkpoint as its first parent and reproduces the
+  activation result, the unique ancestry-minimal matching checkpoint remains authoritative.
+  Independent matching siblings remain ambiguous and block.
+- The ledger checkpoint must still be the exact ledger-only child of the reviewed evidence
+  revision, and the selected activation must still be its exact direct child. Tree equality alone
+  never proves incorporation.
+- The guarded activation config is reconstructed from the config bytes at the ledger checkpoint,
+  the ledger's reviewed precondition, and the persisted action binding, then compared byte for
+  byte. A sibling with copied plan actions but changed config cannot gain activation authority.
+- Sanitized regressions cover the exact activation, ordinary second-parent merges, safe
+  descendants, unreachable or unrelated siblings, tree-only reparenting, wrong ledger bindings,
+  wrong action digests or plan blobs, config forgery, and independent ambiguity across local,
+  command-side, and portfolio validation routes.
+
+### Compatibility And Adoption
+
+- This is a `validator-only change`. Consumers may use the normal v0.1.29 Kit upgrade path; no
+  catalog inventory, migration, reactivation, register normalization, sync, or repair is required.
+- Existing config-v1/v2, discovery-v1/v2, migration-ledger-v1/v2/v3, catalog-v1/v2/v3, ownership,
+  remote-overlay, transaction, index, worktree, and deferred-owner guards remain in force.
+- Consumer plan, register, ledger, catalog, and config bytes remain unchanged by the upgrade. A
+  repository whose reviewed activation was incorporated by a normal merge can validate that
+  existing state directly after installing v0.1.29.
+- Missing, rewritten, stale, unincorporated, reparented, digest-mismatched, or ambiguous evidence
+  continues to fail closed with structured validation errors.
+- macOS universal and Windows x64 remain the supported release platforms. Assets remain unsigned
+  and unnotarized under the established HTTPS-plus-SHA-256 internal/prototype boundary.
 
 ## v0.1.28 Release Notes
 

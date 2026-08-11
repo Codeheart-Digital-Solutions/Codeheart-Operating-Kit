@@ -1,4 +1,4 @@
-Last updated: 2026-08-10T05:25:11Z (UTC)
+Last updated: 2026-08-10T20:22:47Z (UTC)
 
 # Repo Plans
 
@@ -18,7 +18,10 @@ entries after mixed cutover.
 ## Current Plans
 
 - Plan register: `plan-register.md`
-- Active v0.1.28 legacy-register inventory projection hotfix plan and execution log:
+- Active v0.1.29 activation-ancestry resolution hotfix plan and execution log:
+  `activation-ancestry-hotfix/activation-ancestry-hotfix_implementation_doc.md`
+  `activation-ancestry-hotfix/activation-ancestry-hotfix_execution_log.md`
+- Released v0.1.28 legacy-register inventory projection hotfix plan and execution log:
   `legacy-register-inventory-hotfix/legacy-register-inventory-hotfix_implementation_doc.md`
   `legacy-register-inventory-hotfix/legacy-register-inventory-hotfix_execution_log.md`
 - Evidence-backed branch ownership reconciliation and active-plan deferral implementation plan:

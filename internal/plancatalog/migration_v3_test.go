@@ -89,6 +89,164 @@ func TestV3MixedActiveOwnerDeferralAndELAActivation(t *testing.T) {
 	}
 }
 
+func TestV3PersistedActivationEvidenceSurvivesNormalMerge(t *testing.T) {
+	fixture, _ := activateV3DeferralFixture(t)
+	activationRevision := runGitTest(t, fixture.Root, "rev-parse", "HEAD")
+	runGitTest(t, fixture.Root, "config", "core.autocrlf", "true")
+	runGitTest(t, fixture.Root, "config", "core.eol", "crlf")
+	runGitTest(t, fixture.Root, "branch", "reviewed-activation", activationRevision)
+	runGitTest(t, fixture.Root, "switch", "-c", "integration-main", fixture.EvidenceRevision)
+	runGitTest(t, fixture.Root, "merge", "--no-ff", "reviewed-activation", "-m", "merge reviewed activation")
+	mergeRevision := runGitTest(t, fixture.Root, "rev-parse", "HEAD")
+	if secondParent := runGitTest(t, fixture.Root, "rev-parse", mergeRevision+"^2"); secondParent != activationRevision {
+		t.Fatalf("normal merge second parent=%s want activation=%s", secondParent, activationRevision)
+	}
+	if mergeTree, activationTree := runGitTest(t, fixture.Root, "rev-parse", mergeRevision+"^{tree}"), runGitTest(t, fixture.Root, "rev-parse", activationRevision+"^{tree}"); mergeTree != activationTree {
+		t.Fatalf("normal merge tree=%s want activation tree=%s", mergeTree, activationTree)
+	}
+	if checkedOut := mustReadFile(t, filepath.Join(fixture.Root, filepath.FromSlash(v3LedgerPath))); !bytes.Contains(checkedOut, []byte("\r\n")) {
+		t.Fatal("fixture did not materialize the reviewed ledger with CRLF checkout bytes")
+	}
+	if checkedOut := mustReadFile(t, filepath.Join(fixture.Root, filepath.FromSlash(state.ConfigPath))); !bytes.Contains(checkedOut, []byte("\r\n")) {
+		t.Fatal("fixture did not materialize the guarded config with CRLF checkout bytes")
+	}
+
+	snapshot, err := LoadRepositorySnapshot(fixture.Root)
+	if err != nil || HasErrors(snapshot.Problems) {
+		t.Fatalf("normal merge incorporating reviewed activation was rejected: problems=%#v err=%v", snapshot.Problems, err)
+	}
+	writeCheckpointFixture(t, fixture.Root, "later.txt", []byte("safe descendant\n"))
+	runGitTest(t, fixture.Root, "add", "later.txt")
+	runGitTest(t, fixture.Root, "commit", "-m", "record safe descendant")
+	snapshot, err = LoadRepositorySnapshot(fixture.Root)
+	if err != nil || HasErrors(snapshot.Problems) {
+		t.Fatalf("safe descendant of merged activation was rejected: problems=%#v err=%v", snapshot.Problems, err)
+	}
+}
+
+func TestV3PersistedActivationEvidenceRejectsTreeOnlyCoincidence(t *testing.T) {
+	fixture, _ := activateV3DeferralFixture(t)
+	activationRevision := runGitTest(t, fixture.Root, "rev-parse", "HEAD")
+	activationTree := runGitTest(t, fixture.Root, "rev-parse", activationRevision+"^{tree}")
+	forged := runGitTest(t, fixture.Root, "commit-tree", activationTree, "-p", fixture.EvidenceRevision, "-m", "reparent activation tree")
+	runGitTest(t, fixture.Root, "branch", "tree-only-coincidence", forged)
+	runGitTest(t, fixture.Root, "switch", "tree-only-coincidence")
+	if currentTree := runGitTest(t, fixture.Root, "rev-parse", "HEAD^{tree}"); currentTree != activationTree {
+		t.Fatalf("tree-only fixture tree=%s want activation tree=%s", currentTree, activationTree)
+	}
+	snapshot, err := LoadRepositorySnapshot(fixture.Root)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !problemCodePresent(snapshot.Problems, "activation_checkpoint_missing") {
+		t.Fatalf("tree-only coincidence without activation ancestry was accepted: %#v", snapshot.Problems)
+	}
+}
+
+func TestV3PersistedActivationEvidenceRejectsForgedSiblingConfig(t *testing.T) {
+	fixture, activation := activateV3DeferralFixture(t)
+	reviewedActivation := runGitTest(t, fixture.Root, "rev-parse", "HEAD")
+	reviewedConfig, err := gitBytes(fixture.Root, "show", reviewedActivation+":"+state.ConfigPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	config, err := state.DecodeYAMLMap(reviewedConfig)
+	if err != nil {
+		t.Fatal(err)
+	}
+	config["project_display_name"] = "Forged sibling activation"
+	forgedConfig, err := state.EncodeYAML(config)
+	if err != nil {
+		t.Fatal(err)
+	}
+	reviewedPlan, err := gitBytes(fixture.Root, "show", reviewedActivation+":"+v3MigratedPlanPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	runGitTest(t, fixture.Root, "switch", "-c", "forged-config-sibling", fixture.LedgerRevision)
+	writeCheckpointFixture(t, fixture.Root, state.ConfigPath, forgedConfig)
+	writeCheckpointFixture(t, fixture.Root, v3MigratedPlanPath, reviewedPlan)
+	runGitTest(t, fixture.Root, "add", state.ConfigPath, v3MigratedPlanPath)
+	runGitTest(t, fixture.Root, "commit", "-m", "forge sibling with copied action delta")
+	forged := runGitTest(t, fixture.Root, "rev-parse", "HEAD")
+	if _, ancestryErr := gitText(fixture.Root, "merge-base", "--is-ancestor", reviewedActivation, forged); ancestryErr == nil {
+		t.Fatal("forged sibling unexpectedly incorporates the reviewed activation")
+	}
+	if digest, _, digestErr := MigrationActionDigestForCheckpoint(fixture.Root, fixture.LedgerRevision, forged); digestErr != nil || digest != activation.MigrationActionDigest {
+		t.Fatalf("forged sibling did not preserve the reviewed action digest: digest=%s want=%s err=%v", digest, activation.MigrationActionDigest, digestErr)
+	}
+	snapshot, err := LoadRepositorySnapshot(fixture.Root)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !problemCodePresent(snapshot.Problems, "activation_checkpoint_config_mismatch") {
+		t.Fatalf("forged non-binding config bytes were accepted: %#v", snapshot.Problems)
+	}
+}
+
+func TestV3PersistedActivationEvidenceRejectsWrongBaseAndPlanBlob(t *testing.T) {
+	t.Run("wrong activation base binding", func(t *testing.T) {
+		fixture, _ := activateV3DeferralFixture(t)
+		reviewedActivation := runGitTest(t, fixture.Root, "rev-parse", "HEAD")
+		reviewedConfig, err := gitBytes(fixture.Root, "show", reviewedActivation+":"+state.ConfigPath)
+		if err != nil {
+			t.Fatal(err)
+		}
+		config, err := state.DecodeYAMLMap(reviewedConfig)
+		if err != nil {
+			t.Fatal(err)
+		}
+		planning := state.Map(state.Map(config["component_settings"])["planning-workflows"])
+		binding := state.Map(planning["plan_catalog_migration_evidence"])
+		binding["activation_base_revision"] = fixture.EvidenceRevision
+		wrongBinding, err := state.EncodeYAML(config)
+		if err != nil {
+			t.Fatal(err)
+		}
+		reviewedPlan, err := gitBytes(fixture.Root, "show", reviewedActivation+":"+v3MigratedPlanPath)
+		if err != nil {
+			t.Fatal(err)
+		}
+		runGitTest(t, fixture.Root, "switch", "-c", "wrong-activation-base", fixture.LedgerRevision)
+		writeCheckpointFixture(t, fixture.Root, state.ConfigPath, wrongBinding)
+		writeCheckpointFixture(t, fixture.Root, v3MigratedPlanPath, reviewedPlan)
+		runGitTest(t, fixture.Root, "add", state.ConfigPath, v3MigratedPlanPath)
+		runGitTest(t, fixture.Root, "commit", "-m", "bind activation to wrong ledger base")
+		snapshot, err := LoadRepositorySnapshot(fixture.Root)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if !problemCodePresent(snapshot.Problems, "ledger_checkpoint_parent_mismatch") || !problemCodePresent(snapshot.Problems, "activation_checkpoint_missing") {
+			t.Fatalf("wrong ledger activation base was accepted: %#v", snapshot.Problems)
+		}
+	})
+
+	t.Run("wrong projected plan blob", func(t *testing.T) {
+		fixture, _ := activateV3DeferralFixture(t)
+		reviewedActivation := runGitTest(t, fixture.Root, "rev-parse", "HEAD")
+		reviewedConfig, err := gitBytes(fixture.Root, "show", reviewedActivation+":"+state.ConfigPath)
+		if err != nil {
+			t.Fatal(err)
+		}
+		reviewedPlan, err := gitBytes(fixture.Root, "show", reviewedActivation+":"+v3MigratedPlanPath)
+		if err != nil {
+			t.Fatal(err)
+		}
+		runGitTest(t, fixture.Root, "switch", "-c", "wrong-plan-blob", fixture.LedgerRevision)
+		writeCheckpointFixture(t, fixture.Root, state.ConfigPath, reviewedConfig)
+		writeCheckpointFixture(t, fixture.Root, v3MigratedPlanPath, append(reviewedPlan, []byte("\nforged projection\n")...))
+		runGitTest(t, fixture.Root, "add", state.ConfigPath, v3MigratedPlanPath)
+		runGitTest(t, fixture.Root, "commit", "-m", "forge projected plan bytes")
+		snapshot, err := LoadRepositorySnapshot(fixture.Root)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if !problemCodePresent(snapshot.Problems, "activation_checkpoint_missing") {
+			t.Fatalf("wrong projected blob retained reviewed activation authority: %#v", snapshot.Problems)
+		}
+	})
+}
+
 func TestV3DirectCanonicalRejectsActiveOwnerDeferral(t *testing.T) {
 	fixture := newV3DeferralFixture(t)
 	ledger := fixture.Ledger
