@@ -18,6 +18,9 @@ entries after mixed cutover.
 ## Current Plans
 
 - Plan register: `plan-register.md`
+- Active v0.1.30 frozen-register canonical migration hotfix plan and execution log:
+  `frozen-register-canonical-migration-hotfix/frozen-register-canonical-migration-hotfix_implementation_doc.md`
+  `frozen-register-canonical-migration-hotfix/frozen-register-canonical-migration-hotfix_execution_log.md`
 - Active v0.1.29 activation-ancestry resolution hotfix plan and execution log:
   `activation-ancestry-hotfix/activation-ancestry-hotfix_implementation_doc.md`
   `activation-ancestry-hotfix/activation-ancestry-hotfix_execution_log.md`
