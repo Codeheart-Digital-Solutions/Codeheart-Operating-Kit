@@ -1,4 +1,4 @@
-Last updated: 2026-07-31T22:23:19Z (UTC)
+Last updated: 2026-08-11T14:12:23Z (UTC)
 
 # Plan Register Format
 
@@ -44,7 +44,11 @@ Do not copy generated rows back into this file.
 
 `canonical`
 : Every formal plan has canonical metadata. The old register body is historical evidence only.
-  Keep it stable unless a later explicit archival plan changes the retention policy.
+  Keep it stable unless a later explicit archival plan changes the retention policy. Unsupported
+  historical status labels and malformed or unsupported historical relation forms remain visible
+  as compatibility warnings because canonical metadata owns current lifecycle and relations.
+  Register identity, canonical-path, duplicate-field/relation, date, readability, safety, and
+  reconciliation problems remain blocking; canonical mode does not make ambiguous authority safe.
 
 See `plan-catalog-format.md` for mode and baseline requirements.
 

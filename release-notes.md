@@ -1,6 +1,43 @@
-Last updated: 2026-08-10T20:22:47Z (UTC)
+Last updated: 2026-08-11T14:12:23Z (UTC)
 
 # Codeheart Operating Kit Release Notes
+
+## v0.1.30 Release Notes
+
+`v0.1.30` is a focused canonical-migration compatibility correction for frozen legacy plan
+registers. A complete reviewed canonical migration may now retain unsupported historical status
+labels and malformed or unsupported historical relation forms as non-authoritative warnings,
+without rewriting the register or weakening current catalog authority.
+
+### Included
+
+- Prospective and configured canonical views project only `legacy_status_unsupported`,
+  `legacy_relation_malformed`, and `legacy_relation_unsupported` errors from the exact frozen
+  `docs/repo/plans/plan-register.md` path as warnings.
+- Legacy and mixed modes keep the same three problem codes as errors because the historical
+  register still participates in their authority model.
+- Duplicate IDs, canonical paths, fields, or relations; malformed dates or canonical paths;
+  missing/ambiguous reconciliation; unsafe or unreadable sources; and every other register problem
+  remain blocking in canonical mode.
+- Migration still requires complete discovery-v2 inventory, exact ownership and branch review, a
+  coherent reviewed ledger, clean checkpoint chronology, immutable source/config/candidate/policy
+  bindings, and all existing transaction and activation guards.
+- Sanitized regressions prove target-canonical migration readiness, configured canonical warning
+  retention, strict legacy/mixed behavior, wrong-path rejection, authority-critical error
+  preservation, input immutability, and zero frozen-register writes.
+
+### Compatibility And Adoption
+
+- This is a `validator-only change` with an `instruction-only change` to managed plan-catalog
+  guidance. Consumers may use the normal v0.1.30 Kit upgrade path; the upgrade itself does not
+  inventory, migrate, activate, normalize, repair, or sync a catalog.
+- Consumer plan, register, ledger, catalog metadata, and config bytes remain unchanged by the Kit
+  upgrade. Any later plan metadata migration and discovery-v2 activation remain separately guarded
+  explicit operations.
+- Existing config-v1/v2, discovery-v1/v2, migration-ledger-v1/v2/v3, catalog-v1/v2/v3, branch,
+  remote-overlay, transaction, index, worktree, and activation bindings remain in force.
+- macOS universal and Windows x64 remain the supported release platforms. Assets remain unsigned
+  and unnotarized under the established HTTPS-plus-SHA-256 internal/prototype boundary.
 
 ## v0.1.29 Release Notes
 
