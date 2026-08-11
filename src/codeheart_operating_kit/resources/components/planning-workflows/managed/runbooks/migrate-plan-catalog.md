@@ -1,4 +1,4 @@
-Last updated: 2026-08-09T15:24:37Z (UTC)
+Last updated: 2026-08-11T14:12:23Z (UTC)
 
 # Migrate Plan Catalog
 
@@ -111,6 +111,14 @@ Review every owned, excluded, prospective-blocked, hard-unowned, filename-only, 
 malformed, renamed/deleted-path, duplicate, family, dirty, and branch-touch observation. Require
 schema version 3, exact `evidence_revision: E`, policy and candidate-set digests, config
 precondition, complete path states, and `git-candidate-proof-v1` branch evidence.
+
+For a direct canonical target, frozen-register `legacy_status_unsupported`,
+`legacy_relation_malformed`, and `legacy_relation_unsupported` observations may be warnings only:
+the reviewed ledger must supply the current lifecycle and relations, and the register stays
+unchanged as historical evidence. The same codes remain errors in legacy and mixed modes. Every
+identity, canonical-path, duplicate, date, field, readability, safety, or reconciliation error
+remains blocking in canonical mode too. Do not broaden this compatibility rule or edit the register
+to clear an observation.
 
 For each branch touch choose exactly the reviewed disposition justified by recomputable evidence:
 

@@ -106,6 +106,137 @@ func TestLegacyRegisterMalformedAndAmbiguousFormsBlockWithoutInvalidWireValues(t
 	validateLegacyProjectionInventory(t, inventory)
 }
 
+func TestFrozenRegisterHistoricalFieldsAreWarningsOnlyForCanonicalAuthority(t *testing.T) {
+	allowed := []string{"legacy_status_unsupported", "legacy_relation_malformed", "legacy_relation_unsupported"}
+	problems := []Problem{
+		{Code: allowed[0], Path: LegacyRegisterPath, Severity: SeverityError},
+		{Code: allowed[1], Path: LegacyRegisterPath, Severity: SeverityError},
+		{Code: allowed[2], Path: LegacyRegisterPath, Severity: SeverityError},
+		{Code: "legacy_relation_duplicate", Path: LegacyRegisterPath, Severity: SeverityError},
+		{Code: allowed[0], Path: "docs/repo/plans/not-the-register.md", Severity: SeverityError},
+	}
+	for _, mode := range []CatalogMode{ModeLegacy, ModeMixed} {
+		if projected := projectFrozenRegisterCompatibility(problems, mode); !reflect.DeepEqual(projected, problems) {
+			t.Fatalf("%s mode changed strict legacy evidence:\ngot=%#v\nwant=%#v", mode, projected, problems)
+		}
+	}
+	projected := projectFrozenRegisterCompatibility(problems, ModeCanonical)
+	for _, code := range allowed {
+		if !problemExists(projected, code, SeverityWarning) {
+			t.Fatalf("canonical mode did not retain %s as a warning: %#v", code, projected)
+		}
+	}
+	if !problemExists(projected, "legacy_relation_duplicate", SeverityError) {
+		t.Fatalf("canonical mode weakened authority-critical legacy evidence: %#v", projected)
+	}
+	if projected[4].Severity != SeverityError {
+		t.Fatalf("canonical mode weakened a problem outside the frozen register: %#v", projected[4])
+	}
+	for index := range problems {
+		if problems[index].Severity != SeverityError {
+			t.Fatalf("projection mutated its input: %#v", problems)
+		}
+	}
+}
+
+func TestCanonicalMigrationRetainsMalformedFrozenFieldsWithoutRegisterWrite(t *testing.T) {
+	root := legacyV2MigrationRepository(t)
+	register := []byte(`Last updated: 2026-08-11T00:00:00Z (UTC)
+
+# Plan Register
+
+## Entries
+
+## PR-001 - Alpha Discovery
+
+Status: awaiting-review
+Canonical docs: docs/repo/plans/alpha/alpha_discovery_doc.md
+Created: 2026-07-30
+Last updated: 2026-07-31T09:00:00Z (UTC)
+
+Relations:
+related: PR-002
+
+## PR-002 - Beta Implementation
+
+Status: active
+Canonical docs: docs/repo/plans/beta/beta_implementation_doc.md
+Created: 2026-07-31
+Last updated: 2026-07-31T09:05:00Z (UTC)
+
+Relations:
+- obsolete-kind: PR-001
+	`)
+	writeLegacyProjectionRegister(t, root, register)
+	adoptMixedCatalogTest(t, root)
+	registerPath := filepath.Join(root, filepath.FromSlash(LegacyRegisterPath))
+	registerBefore := mustReadFile(t, registerPath)
+
+	mixed, err := LoadRepositorySnapshot(root)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, code := range []string{"legacy_status_unsupported", "legacy_relation_malformed", "legacy_relation_unsupported"} {
+		if !problemExists(mixed.Problems, code, SeverityError) {
+			t.Fatalf("mixed mode did not retain strict %s evidence: %#v", code, mixed.Problems)
+		}
+	}
+
+	prospective, err := LoadRepositorySnapshotWithOptions(root, SnapshotOptions{TargetDiscoveryVersion: DiscoveryV2, TargetCatalogMode: ModeCanonical})
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, code := range []string{"legacy_status_unsupported", "legacy_relation_malformed", "legacy_relation_unsupported"} {
+		if !problemExists(prospective.Problems, code, SeverityWarning) || problemExists(prospective.Problems, code, SeverityError) {
+			t.Fatalf("prospective canonical mode did not project %s as warning-only: %#v", code, prospective.Problems)
+		}
+	}
+
+	ledger := v2MigrationLedger(t, root, ModeCanonical, nil, nil)
+	plan, err := BuildMigrationPlan(root, ledger)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, code := range []string{"legacy_status_unsupported", "legacy_relation_malformed", "legacy_relation_unsupported"} {
+		if problemExists(plan.Problems, code, SeverityError) {
+			t.Fatalf("reviewed canonical migration remained blocked on %s: %#v", code, plan.Problems)
+		}
+	}
+	if !plan.Projection.Ready {
+		t.Fatalf("otherwise-complete reviewed canonical migration is not ready: %#v", plan.Problems)
+	}
+	if after := mustReadFile(t, registerPath); !bytes.Equal(after, registerBefore) {
+		t.Fatal("prospective inventory or migration planning changed the frozen register")
+	}
+
+	configPath := filepath.Join(root, filepath.FromSlash(state.ConfigPath))
+	config := mustReadFile(t, configPath)
+	cutover := cutoverRevisionFromConfig(t, config)
+	old := "    plan_catalog_mode: mixed\n    plan_catalog_cutover_revision: " + cutover + "\n"
+	replacement := "    plan_catalog_mode: canonical\n    plan_catalog_discovery_version: 2\n    plan_catalog_ownership:\n      excluded_roots: []\n"
+	configured := bytes.Replace(config, []byte(old), []byte(replacement), 1)
+	if bytes.Equal(configured, config) {
+		t.Fatal("mixed fixture config did not contain the expected cutover block")
+	}
+	if err := os.WriteFile(configPath, configured, 0o644); err != nil {
+		t.Fatal(err)
+	}
+	runGitTest(t, root, "add", state.ConfigPath)
+	runGitTest(t, root, "commit", "-m", "configure canonical catalog")
+	activated, err := LoadRepositorySnapshot(root)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, code := range []string{"legacy_status_unsupported", "legacy_relation_malformed", "legacy_relation_unsupported"} {
+		if !problemExists(activated.Problems, code, SeverityWarning) || problemExists(activated.Problems, code, SeverityError) {
+			t.Fatalf("configured canonical mode did not retain %s as warning-only: %#v", code, activated.Problems)
+		}
+	}
+	if after := mustReadFile(t, registerPath); !bytes.Equal(after, registerBefore) {
+		t.Fatal("canonical configuration changed the frozen register")
+	}
+}
+
 func TestLegacyRegisterSchemaV3ProjectionHasModeParityDeterministicHashingAndZeroWrites(t *testing.T) {
 	root := migrationRepository(t)
 	register := legacyProjectionFixture(t, "recognized-statuses-and-dates.md")

@@ -359,6 +359,7 @@ func LoadRepositorySnapshotWithOptions(root string, options SnapshotOptions) (Re
 	problems = append(problems, discovery.Problems...)
 	problems = append(problems, legacyProblems...)
 	problems = append(problems, reconciliation.Problems...)
+	problems = projectFrozenRegisterCompatibility(problems, settings.Mode)
 	for _, entry := range reconciliation.Unpaired {
 		problems = append(problems, Problem{Code: "legacy_evidence_unpaired", Message: fmt.Sprintf("legacy register entry %q does not identify an enumerated local canonical document", entry.ID), Path: LegacyRegisterPath, Severity: SeverityWarning, Remediation: "retain it in inventory for semantic reconciliation"})
 	}
@@ -406,6 +407,24 @@ func LoadRepositorySnapshotWithOptions(root string, options SnapshotOptions) (Re
 		Problems:           problems,
 		DeferredPaths:      deferredPaths,
 	}, nil
+}
+
+func projectFrozenRegisterCompatibility(problems []Problem, mode CatalogMode) []Problem {
+	if mode != ModeCanonical {
+		return problems
+	}
+	projected := append([]Problem{}, problems...)
+	for index := range projected {
+		problem := &projected[index]
+		if problem.Path != LegacyRegisterPath || problem.Severity != SeverityError {
+			continue
+		}
+		switch problem.Code {
+		case "legacy_status_unsupported", "legacy_relation_malformed", "legacy_relation_unsupported":
+			problem.Severity = SeverityWarning
+		}
+	}
+	return projected
 }
 
 func problemCodePresent(problems []Problem, code string) bool {

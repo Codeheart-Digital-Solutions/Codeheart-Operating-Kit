@@ -1,4 +1,4 @@
-Last updated: 2026-08-11T14:07:59Z (UTC)
+Last updated: 2026-08-11T14:45:48Z (UTC)
 Created: 2026-08-11
 Status: active
 Execution log: frozen-register-canonical-migration-hotfix_execution_log.md
@@ -15,7 +15,7 @@ plan:
   kind: implementation
   purpose: Allow complete reviewed canonical migrations to retain malformed frozen-register fields as non-authoritative historical evidence without weakening legacy or mixed authority.
   first_cataloged: 2026-08-11T14:05:49Z
-  catalog_metadata_updated: 2026-08-11T14:07:59Z
+  catalog_metadata_updated: 2026-08-11T14:45:48Z
   products:
     - codeheart-operating-kit
   capabilities:
@@ -194,20 +194,20 @@ Outcome: the bounded correction has an authoritative plan checkpoint before prod
 Outcome: canonical mode retains non-authoritative malformed historical fields as warnings without
 weakening any authority-bearing gate.
 
-- [ ] Add the narrow canonical-mode compatibility projection.
-- [ ] Add positive canonical-target and configured-canonical regressions.
-- [ ] Add negative legacy, mixed, wrong-path, and authority-critical regression coverage.
-- [ ] Clarify the managed migration and legacy-register references and update packaged mirrors.
-- [ ] Run focused tests and fresh main-thread security review; resolve every High or Medium finding.
+- [x] Add the narrow canonical-mode compatibility projection.
+- [x] Add positive canonical-target and configured-canonical regressions.
+- [x] Add negative legacy, mixed, wrong-path, and authority-critical regression coverage.
+- [x] Clarify the managed migration and legacy-register references and update packaged mirrors.
+- [x] Run focused tests and fresh main-thread security review; resolve every High or Medium finding.
 
 ## EP-03 - v0.1.30 Release
 
 Outcome: the correction is merged, tagged, published, and live-verified as one reproducible patch
 release.
 
-- [ ] Update version, compatibility, release-note, manifest, checksum, graph, fixture, and packaged
+- [x] Update version, compatibility, release-note, manifest, checksum, graph, fixture, and packaged
   resource surfaces.
-- [ ] Run the full producer validation matrix and deterministic asset build twice.
+- [x] Run the full producer validation matrix and deterministic asset build twice.
 - [ ] Push the implementation, open a ready PR, pass exact-head CI, and merge with expected-head
   protection.
 - [ ] Create and push annotated `v0.1.30`; publish the exact assets and verify public checksums,
