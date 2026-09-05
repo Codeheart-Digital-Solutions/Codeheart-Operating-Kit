@@ -1,4 +1,4 @@
-Last updated: 2026-07-31T22:23:19Z (UTC)
+Last updated: 2026-09-05T21:03:41Z (UTC)
 
 <!-- BEGIN CODEHEART OPERATING KIT MANAGED BLOCK -->
 
@@ -26,6 +26,10 @@ Last updated: 2026-07-31T22:23:19Z (UTC)
   declaring the capability unavailable.
 
 ## Managed Routes
+
+- Routine changes: `.codeheart/kit/docs/planning-workflows/runbooks/handle-routine-change.md`
+- Whole-plan assignment and agent coordination:
+  `.codeheart/kit/docs/agent-interface/reference/agent-task-coordination.md`
 
 - Discovery: `.codeheart/kit/docs/planning-workflows/runbooks/discovery-workflow.md`
 - Implementation planning:

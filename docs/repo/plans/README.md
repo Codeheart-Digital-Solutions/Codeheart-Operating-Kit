@@ -1,4 +1,4 @@
-Last updated: 2026-08-10T20:22:47Z (UTC)
+Last updated: 2026-09-05T16:59:13Z (UTC)
 
 # Repo Plans
 
@@ -17,6 +17,8 @@ entries after mixed cutover.
 
 ## Current Plans
 
+- Draft proportionate changes, approval reuse and agent task coordination implementation plan:
+  `proportionate-agent-workflows/proportionate-agent-workflows_implementation_doc.md`
 - Plan register: `plan-register.md`
 - Active v0.1.30 frozen-register canonical migration hotfix plan and execution log:
   `frozen-register-canonical-migration-hotfix/frozen-register-canonical-migration-hotfix_implementation_doc.md`

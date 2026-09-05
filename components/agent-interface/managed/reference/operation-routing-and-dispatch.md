@@ -1,4 +1,4 @@
-Last updated: 2026-08-09T15:24:37Z (UTC)
+Last updated: 2026-09-05T21:03:41Z (UTC)
 
 # Operation Routing And Dispatch
 
@@ -30,6 +30,44 @@ change, and `check` diagnoses without writing. Full route:
 
 Route plain-language planning and coordination requests before choosing Git, a provider, or a
 manual register edit.
+
+### `planning.routine-change`
+
+- Intent patterns: routine repair, known correction, bounded change.
+- Domain/lifecycle: owning repository or module; implement and validate.
+- Scope/action: known owner and method, bounded understood impact, reversible change and current
+  authority; line/file count does not decide eligibility.
+- Authority source: current request and applicable existing authorization, subject to owner gates.
+- State/live truth: current target, owning record, repository instructions and module state/route.
+- Default surface: `../../planning-workflows/runbooks/handle-routine-change.md`, then owner recipe.
+- Preconditions: eligibility resolved; placement and module checks when applicable; preserve user work.
+- Approval class: only covered effects; reuse sufficient authority without duplicate prompts.
+- Stop: uncertain outcome/impact, material scope or authority change, failed binding gate.
+- Evidence: purpose, scope, authority, result, validation and delivery state in an existing record.
+
+Work required by an active epic remains in that epic. A separate routine repair records its
+relationship to affected work and cannot bypass plan review or acceptance.
+
+### `planning.execute-whole-plan`
+
+- Intent patterns: execute the complete plan, deliver all ordered epics, resume implementation.
+- Domain/lifecycle: planning workflows; implementation through the agreed delivery boundary.
+- Scope/action: canonical plan, owning repository/branch and specified effects at coherent checkpoints.
+- Authority source: explicit whole-plan execution request and recorded delegation/limits.
+- State/live truth: plan/log, current Git state, required checks and exact candidate/target inputs.
+- Default surface: `../../planning-workflows/runbooks/execute-implementation-plan.md` and
+  `agent-task-coordination.md`; ordinary Git and supported task reporting after routing.
+- Preconditions: active valid plan, ordered outcomes, acceptance owner, planned Git effects and final
+  boundary resolved; no overlapping dirty work; specific controlled-operation predicates satisfied.
+- Approval class: covered implementation, validation, coherent commits, normal pushes and PR
+  creation/updates. Merge/release/adoption proceed only when included or delegated and gates pass.
+- Stop: material scope/outcome/authority change, required acceptance pending, failed enforced gate.
+- Evidence: named epic outcome, validation, actual commit/push/PR/merge/release/adoption state and
+  direct report to the commissioned director at review, completion or genuine blocker.
+
+Draft review and activation-only bookkeeping do not commission whole-plan implementation. One
+implementer may execute all epics, with delegated director review instead of a new user gate per
+step. See `agent-task-coordination.md` for assignment and best-effort report-back.
 
 ### `planning.author-or-update`
 
@@ -146,7 +184,7 @@ the mixed view.
 - Stop: ambiguity, unrelated paths, auth/policy/normal-push rejection, broader external action.
 - Evidence: repository, branch, included paths, commit, push result, explicit exclusions.
 
-Activation authority never includes implementation code outside the approved checkpoint, PR,
+Activation-only authority never includes implementation code outside the approved checkpoint, PR,
 merge, release, force-push, deletion, history rewrite, or destructive Git. After a failed refresh
 or push, disclose the visibility limit rather than selecting a broader execution surface.
 
@@ -242,7 +280,9 @@ Prefer the highest applicable routing authority:
 
 Lower layers still matter. They may provide required target detail, execution constraints,
 preflight results, or current external facts. Live external preflight, approval gates, and current
-official documentation may still stop or reshape execution after a route is selected.
+official documentation may still stop or reshape execution after a route is selected. Reuse
+sufficient current authorization while target, scope and limits remain applicable; route selection
+itself creates none. A covered whole-plan assignment can supply authority for its stated effects.
 
 ## Ambiguity Handling
 
@@ -435,7 +475,11 @@ Capability advertisements, route registries, route cards, and committed routing 
 the path. They do not authorize sensitive reads, writes, deletes, permission changes, releases, or
 external changes.
 
-Before those actions, run the route's live preflight and approval gate. If committed state
+Before those actions, run the route's live preflight and verify its approval requirements against
+current authority. Do not request the same approval again when its actual contract is already
+satisfied. If a specific fresh confirmation or exact-effect binding is required, name it and
+resolve the missing input with the delegated owner or user as applicable. Tool-enforced gates
+remain binding. If committed state
 conflicts with live truth, stop and resolve through the owner route or canonical runbook.
 
 ## Advertisement Maintenance

@@ -1,4 +1,4 @@
-Last updated: 2026-07-31T22:23:19Z (UTC)
+Last updated: 2026-09-05T21:03:41Z (UTC)
 
 # Execute Implementation Plan
 
@@ -88,6 +88,22 @@ After successful execution:
 - do not archive the plan unless the user explicitly asks or the plan includes an approved archive
   task.
 
+## Whole-Plan Authority And Assignment
+
+Read the whole delivery grant and the existing execution log before selecting effects. The
+assignment should name the owning branch, ordered epics, acceptance owner, coherent commits,
+normal pushes, PR creation/updates and final boundary. Follow
+`../../agent-interface/reference/agent-task-coordination.md` for the complete assignment and
+explicit direct report-back. Distinguish draft review, activation-only bookkeeping and whole-plan
+execution. A whole-plan request covers the specified implementation, validation and Git checkpoints;
+it is not a new user permission decision at each epic.
+
+Merge, release, adoption and provider effects require included or delegated authority, their named
+owner, exact action-time inputs and passing gates. Reuse valid authority while target, scope and
+limits still apply. A specific mandatory fresh confirmation or binding tool gate remains binding.
+Never invent approval evidence. At starts and transitions, name the phase, Plan/epic outcome and
+next actor; use readable names before IDs.
+
 ## Activation Publication Preflight
 
 When the current user request activates the plan, publish the bounded planning checkpoint before
@@ -103,10 +119,13 @@ The activation request itself is approval for this one plan-only branch/use/comm
 checkpoint; do not ask for a duplicate push prompt. Execution may continue on that active pushed
 branch without waiting for a PR or merge.
 
-This is not authority for unrelated dirty files, unauthorized implementation code, another plan,
+Activation alone is not authority for unrelated dirty files, unauthorized implementation code, another plan,
 PR creation, merge, release, force-push, branch deletion, history rewrite, destructive Git, or a
 broader external action. Stop on ambiguity, overlapping dirty paths, auth failure, policy rejection,
 or rejected normal push. Preserve and report the local checkpoint; do not bypass the rejection.
+
+A whole-plan assignment may separately cover the later implementation and Git effects. Apply that
+existing grant rather than asking again under this activation-only rule.
 
 For a user-requested material update to an active plan, apply the same bounded checkpoint after the
 plan/log change validates. Routine checkbox progress does not trigger a publication checkpoint.
@@ -117,7 +136,10 @@ plan/log change validates. Routine checkbox progress does not trigger a publicat
 - Treat each epic outcome as the authority for completion.
 - Treat checkbox tasks as planned execution aids.
 - Add missing tasks when they are required for the epic outcome and are low-risk.
-- Stop and ask when a new high-impact decision has no clear safe default.
+- Return a material outcome, scope, dependency, cost or authority change to the delegated director
+  for plan amendment; involve the user only outside that mandate or at a genuinely enforced user gate.
+- Keep necessary low-risk corrections inside the named epic. A separate routine repair uses
+  `handle-routine-change.md` with a visible relationship, never as an escape from epic acceptance.
 - Preserve unrelated user work.
 - Do not mark an epic complete until validation and the review gate pass.
 
@@ -135,7 +157,8 @@ Verify the changed runbook surface against the plan and standard:
   conditions;
 - hybrid runbooks clearly separate user dialogue from agent-only execution;
 - maintainer-facing runbooks preserve authority, evidence, rollback, and validation boundaries;
-- approval gates use explicit user-facing wording before external-state-changing actions;
+- approval gates recognize existing sufficient authority and use explicit wording for any
+  uncovered effect or specific mandatory fresh confirmation;
 - runbooks that can hit missing local tooling route generic environment blockers to
   `../../agent-interface/runbooks/handle-tooling-readiness.md`;
 - module-specific install commands, version requirements, service authentication, and live
@@ -207,7 +230,7 @@ Use a safe default without stopping only when all of these are true:
   external governance;
 - the decision is needed to satisfy the epic outcome.
 
-Stop before decisions that affect:
+Resolve new decisions outside the approved plan with the acceptance owner before changing:
 
 - architecture or product boundaries;
 - durable docs or code path conventions;
@@ -232,7 +255,15 @@ For each epic:
 8. Fix material findings and repeat the review gate.
 9. Update checklist state only for completed and validated tasks.
 10. Update the execution log with meaningful divergence and review evidence.
-11. Recap whether the epic intention is achieved.
+11. Make the agreed coherent commit/normal-push/PR checkpoint, reporting each actual state accurately.
+12. Send the named epic result, evidence, Git state and requested decision directly to the assigned
+    director at required review, completion or genuine blocker. Retain the result and disclose any
+    message rejection; best-effort reporting needs no watcher, heartbeat or busy polling.
+13. At a required acceptance point, complete independent preparation then hand off for review.
+    Continue dependent epic work once delegated acceptance arrives. Do not require a new task,
+    release, PR or user authorization per epic.
+14. Recap whether the epic intention and acceptance are achieved; keep the plan and any whole-plan
+    goal incomplete while required release/adoption outcomes remain.
 
 ## Per-Epic Review Gate
 
@@ -363,8 +394,10 @@ completion, supersession, archive, or user-requested material active-plan change
    update to an active plan.
 
 After a successful push, coordination visibility still depends on the next complete home refresh.
-After push failure or before push, state that the checkpoint is local-only. Completion does not
-authorize a PR, merge, or release.
+After push failure or before push, state that the checkpoint is local-only. Completion itself
+does not authorize additional effects; execute covered PR, merge or release work under the existing
+whole-plan grant and its required gates. Keep committed, pushed, PR opened, merged, released,
+adopted and pilot-pending states distinct.
 
 ## Final User Summary
 

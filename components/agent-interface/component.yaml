@@ -1,7 +1,7 @@
 schema_version: 1
 component:
   id: agent-interface
-  version: "0.1.27"
+  version: "0.1.31"
   name: Agent Interface
   description: Managed root AGENTS contract, onboarding, optional update-check, and repair guidance.
   profiles:
@@ -86,3 +86,9 @@ component:
       target: AGENTS.md
       ownership: template
       install_mode: managed-block
+    - source: components/agent-interface/managed/reference/agent-task-coordination.md
+      target: .codeheart/kit/docs/agent-interface/reference/agent-task-coordination.md
+      ownership: managed
+    - source: components/agent-interface/managed/reference/codex-task-operations.md
+      target: .codeheart/kit/docs/agent-interface/reference/codex-task-operations.md
+      ownership: managed

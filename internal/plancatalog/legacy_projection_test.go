@@ -139,6 +139,51 @@ func TestFrozenRegisterHistoricalFieldsAreWarningsOnlyForCanonicalAuthority(t *t
 	}
 }
 
+func TestLegacyRelationProseDoesNotInventDuplicateTargets(t *testing.T) {
+	cases := []struct {
+		name, body           string
+		malformed, duplicate bool
+		want                 []Relation
+	}{
+		{"wrapped prose", "- related: first consumer discovery handoff -\n  <consumer>/docs/discovery.md\n- related: first consumer implementation handoff -\n  <consumer>/docs/implementation.md", true, false, nil},
+		{"unwrapped prose", "- related: first consumer discovery\n- related: first consumer implementation", true, false, nil},
+		{"duplicate IDs with different titles", "- related: PR-001 - Discovery\n- related: PR-001 - Renamed discovery", false, true, nil},
+		{"duplicate paths", "- related: docs/discovery.md\n- related: docs/discovery.md", false, true, nil},
+		{"targets and optional titles", "- related: PR-001 - Discovery\n- depends-on: other:PR-002\n- related: docs/discovery.md", false, false, []Relation{{Kind: "related", Target: "PR-001"}, {Kind: "depends-on", Target: "other:PR-002"}, {Kind: "related", Target: "docs/discovery.md"}}},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			data := []byte("## PR-010 - Example\nCanonical docs: docs/example.md\nRelations:\n" + tc.body + "\n")
+			entries, problems := ParseLegacyRegister(data)
+			if len(entries) != 1 || !reflect.DeepEqual(entries[0].Relations, tc.want) {
+				t.Fatalf("relations=%#v want=%#v", entries, tc.want)
+			}
+			if problemExists(problems, "legacy_relation_malformed", SeverityError) != tc.malformed || problemExists(problems, "legacy_relation_duplicate", SeverityError) != tc.duplicate {
+				t.Fatalf("incorrect classification: %#v", problems)
+			}
+			for _, mode := range []CatalogMode{ModeLegacy, ModeMixed} {
+				if !reflect.DeepEqual(projectFrozenRegisterCompatibility(problems, mode), problems) {
+					t.Fatalf("%s weakened strict evidence", mode)
+				}
+			}
+			canonical := projectFrozenRegisterCompatibility(problems, ModeCanonical)
+			if HasErrors(canonical) != tc.duplicate {
+				t.Fatalf("canonical duplicate guard changed: %#v", canonical)
+			}
+			// The schema-v1 compatibility projection deliberately retains its old
+			// first-token behavior, including stopping at a wrapped continuation.
+			v1 := legacyEntriesForInventoryV1(entries)
+			lines := strings.Split(string(data), "\n")
+			if !reflect.DeepEqual(v1[0].Relations, readLegacyRelationsV1(lines, 0, len(lines))) {
+				t.Fatalf("schema-v1 relation compatibility changed: %#v", v1)
+			}
+			if tc.name == "wrapped prose" && !reflect.DeepEqual(v1[0].Relations, []Relation{{Kind: "related", Target: "first"}}) {
+				t.Fatalf("schema-v1 wrapped projection changed: %#v", v1)
+			}
+		})
+	}
+}
+
 func TestCanonicalMigrationRetainsMalformedFrozenFieldsWithoutRegisterWrite(t *testing.T) {
 	root := legacyV2MigrationRepository(t)
 	register := []byte(`Last updated: 2026-08-11T00:00:00Z (UTC)

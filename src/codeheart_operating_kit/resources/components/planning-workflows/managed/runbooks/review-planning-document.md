@@ -1,4 +1,4 @@
-Last updated: 2026-07-31T22:23:19Z (UTC)
+Last updated: 2026-09-05T21:03:41Z (UTC)
 
 # Review Planning Document
 
@@ -239,10 +239,20 @@ For implementation documents, verify:
 - blocker handling is coherent;
 - future planning does not hide required work;
 - execution log expectations are present for goal-style runs.
-- activation wording, when present, grants only plan/log/direct-metadata branch creation/use,
+- activation-only wording, when present, grants only plan/log/direct-metadata branch creation/use,
   commit, and normal push; excludes unrelated files, code, PR, merge, release, force-push,
   deletion, destructive Git, ambiguity, auth/policy/rejected-push bypass; and permits execution on
   the active pushed branch without merge;
+- whole-plan execution wording separately covers planned implementation, validation, coherent
+  commits, normal pushes and PR creation/updates; one implementer can execute all ordered epics
+  with delegated director acceptance and explicit report-back, without per-step user prompts;
+- the finish line, integration owner, included/delegated/reserved effects and required exact inputs
+  are explicit; existing sufficient authority is reused without weakening binding gates;
+- work communicates its named plan/epic and actual Git/delivery state; optional goals require an
+  explicit request and verified activation, and cannot complete at an intermediate review handoff;
+- necessary corrections stay in their epic; genuinely separate routine repairs retain a visible
+  relationship and do not evade review;
+- a meaningful plan title is used instead of the literal H1 `Document Header`;
 - mixed/canonical guidance uses generated views rather than manual register appends, and portfolio
   claims distinguish pushed remote observations from local-only work.
 

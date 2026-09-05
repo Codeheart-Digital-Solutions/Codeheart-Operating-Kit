@@ -283,7 +283,17 @@ func projectLegacyRelations(observation legacyRegisterObservation, problems []Pr
 			continue
 		}
 		target = strings.TrimSpace(target)
-		if values := strings.Fields(target); len(values) > 0 {
+		values := strings.Fields(target)
+		// Historical targets may carry a ' - title' suffix. Free-form prose
+		// does not identify a target: truncating it to its first word invents
+		// identities and can incorrectly promote malformed evidence to a
+		// duplicate blocker. Keep the schema-v1 projection separately frozen.
+		if len(values) > 1 && (len(values) < 3 || values[1] != "-") {
+			problems = append(problems, legacyProjectionProblem("legacy_relation_malformed", observation.ID, "Relations", "contains prose without an unambiguous target", "use one target optionally followed by ' - title'"))
+			valid = false
+			continue
+		}
+		if len(values) > 0 {
 			target = values[0]
 		} else {
 			target = ""

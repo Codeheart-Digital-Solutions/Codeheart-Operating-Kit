@@ -1,7 +1,7 @@
 schema_version: 1
 component:
   id: planning-workflows
-  version: "0.1.30"
+  version: "0.1.31"
   name: Planning Workflows
   description: Managed discovery, implementation planning, execution, review, and lifecycle guidance.
   profiles:
@@ -69,3 +69,6 @@ component:
       target: docs/repo/portfolio/strategic-overlay.yaml
       ownership: scaffold
       install_when: absent
+    - source: components/planning-workflows/managed/runbooks/handle-routine-change.md
+      target: .codeheart/kit/docs/planning-workflows/runbooks/handle-routine-change.md
+      ownership: managed

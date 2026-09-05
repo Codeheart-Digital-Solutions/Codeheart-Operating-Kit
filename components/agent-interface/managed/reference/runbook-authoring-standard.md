@@ -1,4 +1,4 @@
-Last updated: 2026-06-29T14:49:19Z (UTC)
+Last updated: 2026-09-05T21:03:41Z (UTC)
 
 # Runbook Authoring Standard
 
@@ -67,6 +67,21 @@ For agent-facing runbooks, the intent should describe the desired execution beha
 named lane, inspect before writes, record evidence, validate results, and stop before inventing
 high-impact actions.
 
+## Authority Reuse
+
+State intended effects and required gates explicitly. Match existing authorization to the target,
+scope, limits and action-time inputs before asking. A whole-plan execution grant can cover its
+planned implementation, validation, coherent commits, normal pushes and PR work; final integration,
+release and adoption must have a named owner and included, delegated or reserved boundary. Draft
+review and activation-only publication remain narrower. Use `agent-task-coordination.md`.
+
+A generic instruction to ask before an effect must not become a repeated question when the user's
+request or valid earlier authorization already covers it. Specific exact-effect approvals, fresh
+confirmations, signing/audience rules and binding tool controls remain applicable. Never invent an
+approval reference or bypass a rejection. Prepare a concrete reviewable result before requesting
+an uncovered decision, name the requirement and explain the missing authority. Return delegated
+decisions to the commissioned acceptance owner; involve the user only outside that mandate.
+
 ## Human-Facing Runbooks
 
 Human-facing runbooks must include a `User-Facing Flow` section or equivalent.
@@ -81,8 +96,9 @@ Required quality bar:
 - Put the recommended default first when a safe default exists.
 - Keep internal file paths, local state, logs, and implementation mechanics out of first-turn copy.
 - Explain how the user can find values they may not know.
-- Ask explicit approval before writes, sign-ins, installs, external changes, destructive actions,
-  or sensitive reads.
+- Verify authority before writes, sign-ins, installs, external changes, destructive actions or
+  sensitive reads. Reuse a sufficient existing request/approval; ask only for uncovered effects
+  or a specific confirmation the actual owner contract still requires.
 - Use visible-terminal handoff when the user must type or paste values into a terminal prompt.
 - Route missing local tooling through `../runbooks/handle-tooling-readiness.md` and offer
   blocker-specific choices instead of broad "install tools" prompts.
@@ -271,8 +287,8 @@ Human-facing checks:
 - The first turn avoids internal mechanics.
 - Questions are paced for a nontechnical user.
 - Help text exists for hard-to-find values.
-- Approval wording is explicit before writes, sign-ins, installs, external changes, or sensitive
-  reads.
+- Approval requirements are explicit before controlled effects, existing sufficient authority is
+  recognized, and fresh questions are limited to uncovered decisions or specific mandatory gates.
 - User-entered terminal prompts use visible-terminal handoff.
 - Language preference is reused when a readable local `language` preference exists.
 - Missing local tooling routes to the managed tooling-readiness runbook with concrete user

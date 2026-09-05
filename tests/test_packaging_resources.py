@@ -40,6 +40,9 @@ def test_packaged_resource_fallback(monkeypatch, tmp_path):
     assert (tmp_path / ".codeheart/kit/docs/agent-interface/reference/runbook-authoring-standard.md").exists()
     assert (tmp_path / ".codeheart/kit/docs/structure-governance/reference/module-extension-state.md").exists()
     for relative in [
+        ".codeheart/kit/docs/planning-workflows/runbooks/handle-routine-change.md",
+        ".codeheart/kit/docs/agent-interface/reference/agent-task-coordination.md",
+        ".codeheart/kit/docs/agent-interface/reference/codex-task-operations.md",
         ".codeheart/kit/docs/planning-workflows/reference/plan-catalog-format.md",
         ".codeheart/kit/docs/planning-workflows/reference/portfolio-coordination-format.md",
         ".codeheart/kit/docs/planning-workflows/runbooks/configure-portfolio-coordination.md",
@@ -61,6 +64,9 @@ def test_packaged_resource_fallback(monkeypatch, tmp_path):
 
 def test_changed_source_and_packaged_resources_match():
     for source in [
+        "components/planning-workflows/managed/runbooks/handle-routine-change.md",
+        "components/agent-interface/managed/reference/agent-task-coordination.md",
+        "components/agent-interface/managed/reference/codex-task-operations.md",
         "components/planning-workflows/component.yaml",
         "components/planning-workflows/managed/README.md",
         "components/planning-workflows/managed/reference/plan-register-format.md",
