@@ -1,4 +1,4 @@
-Last updated: 2026-09-05T21:09:42Z (UTC)
+Last updated: 2026-09-05T21:22:29Z (UTC)
 Created: 2026-09-05
 
 # Proportionate Agent Workflows Execution Log
@@ -128,3 +128,98 @@ Release correction: CI on candidate `f043070` exposed the standard-profile golde
 to v0.1.30. Regenerated its exact expectation using the existing Python SHA-256 helper and verified
 all three helper fixtures plus `go test ./internal/hash -count=1`. The assertion remains exact.
 The corrected head, not the failing candidate, must supply final release/platform evidence.
+
+
+## EP-02 Local Candidate Evidence
+
+Validated product source: `be3936b28dbb6190d9d5e993d346499f82f31511`, version `0.1.31`, on
+`codex/proportionate-agent-workflows` / PR 14. No product source changed after these builds.
+
+- Two independent `scripts/build-release-assets.py` invocations completed. Each internally repeated
+  both macOS universal and Windows x64 builds; the two complete output directories also match byte
+  for byte. Their source-validation phase runs `go test -timeout 30m ./...` and passes.
+- Full Python suite: 156 passed initially, with a local test-environment Markdown scan conflict and
+  the stale profile-hash candidate build as its two failures. After correction, both failed cases
+  pass (29.03 seconds), yielding 158 effective passes. No assertions or validation gates were waived.
+- The default environment path exposed dependency license Markdown to the blanket repository
+  validator. The task-owned environment was moved under the existing `.venv` exclusion inside the
+  ignored local tooling layer. Full default Markdown/public-core validators now pass. This is a
+  tooling-layout exception, not a source-validator change.
+- JSON schemas, content identity, `go vet ./...`, whitespace and configured source catalog pass;
+  the catalog contains 40 records. Frozen register/config remain byte-identical.
+- Verified external catalog -> archive -> pack manifest -> every payload checksum -> content
+  manifest and binary/version chain. Packs have the required assets and no Python payload. All
+  staged public asset sidecars match. Public URLs exist only in the staged external catalog;
+  nothing has been uploaded by this preparation.
+- Isolated macOS fresh install and `0.1.30 -> 0.1.31` upgrade preview/failure/apply/check pass.
+  Dry-run and missing-catalog failure preserve old binary and lock hashes. Four consumer-owned
+  config/record/local-note/memory hashes and the root local-instruction sentinel survive upgrade.
+- A separate macOS PATH containing no Python/pip commands rejects a bad checksum and passes
+  fresh install, init and check. Universal binary has arm64 and x86_64 slices; Windows binary is
+  PE32+ x86-64. Native Windows execution remains a CI gate, not inferred from cross-compilation.
+- macOS binary has linker ad-hoc signature, no Developer ID/team identity and no notarization.
+  Broad public distribution is not authorized by candidate readiness. Director must preserve the
+  existing internal/prototype audience boundary and action-time release conditions.
+
+Candidate identity:
+
+| Artifact | SHA-256 |
+| --- | --- |
+| macos-universal archive | `02d469078b8896b790e9e0a0b1cf33d1e483ed5215229dae8530aff5db48db64` |
+| macos-universal pack manifest | `972f6824b36d729fcf6004cc1f4819e86b6a04f418a312f54b2912f6955fb3ac` |
+| macos-universal binary | `7388e1eee4e986b0070ee5e765d9e20b4b627373819c4874152ad157d6855d89` |
+| windows-x64 archive | `78d487fa7ed48e6aa97f217b3e22e70e9589ef790534753f5616636920d75e2f` |
+| windows-x64 pack manifest | `9d72073ed6e78da85bc281d4891a86932fd927632d2b86fa1b8cc9cee805d0df` |
+| windows-x64 binary | `bedec2b9c52952847ad1f475c99001ec8a740d6b221fabaaf809784805a913ea` |
+| Shared content manifest | `53cb77f53eb0b991c17c58661807d146173c17bbe079ee8a963c6711175785bd` |
+| Staged public-URL catalog | `b25e38cc10e4f64598f81c5e49060e794a56db240b8e8f726cb9060d67eae988` |
+
+
+## Single Shared Installed Walkthrough
+
+One fresh read-only reviewer started from a synthetic consumer's installed root instructions and
+discovered both owners without using the source Plan as an answer key. It read Operating Kit
+`0.1.31` and Organization Home `0.1.2` bundle schema 3. It verified all 50 Kit managed checksums,
+38 module-manifest members and nine shared components; all 52 pre-existing module/tool files were
+preserved by Kit init. The combined Kit check passed.
+
+Kit source association is retained execution provenance at `be3936b`; the installed lock honestly
+records `embedded-running-binary` / `local-source`, not an embedded source commit. The companion's
+build evidence names `523f4041fe2fb2460990d99a74a3b9ad6136683e`; its separate release declaration
+names checkpoint `1d88f66323fc2b06340b70bd8230826f4702c38e`. Bundle digest is
+`a8b9c2d769107f7dc4ad9d2b8340c9e8a8220ea7c2bcbd448000192be5775859`; runtime wheel digest is
+`597eeec3f4c11d07592a358aa459a44646587661e283bf6c753dc9d0ee67f71a`.
+
+Walkthrough outcomes:
+
+- Root -> operation router -> `planning.execute-whole-plan` -> coordination and execution routes
+  resolves the authorized two-epic assignment. Covered implementation, tests, coherent commits,
+  normal pushes and one PR proceed; required review returns to the Director. A sent message is not
+  acceptance; independent release preparation may continue while dependent work waits.
+- Material outcome/scope changes require a Plan amendment with the right owner; genuinely separate
+  routine repairs retain an existing record and relationship. Necessary epic corrections stay in
+  the epic. Rejected reporting preserves the result and discloses nondelivery without a watcher.
+- Active-descendant archival requires reachable transferred review ownership or retention of the
+  parent, plus worktree preservation. Goals are explicit-only and require observed activation;
+  no goal creates authority or completes an intermediate review handoff.
+- The nested Program Governance route discovers `organization-home` through the installed module
+  system, then its guidance, operation contract and reconciliation route before choosing a tool.
+  Governance prose is material: preserve typed payload/owner/history and exact before/after and
+  approval bindings. Prior sufficient authority is reused; downstream effects retain their own
+  owner gates. Proposal intake does not silently become an approved Plan or a second epic tracker.
+
+No blocking workflow contradiction was found. One nonblocking companion wording ambiguity about
+Program/Plan endpoints in the Strategy/Capability section was reported to its owner for assessment.
+The walkthrough itself made no source, provider, task, archival or consumer-record changes. It is
+not live release/adoption or observed user experience. Do not repeat this clean shared walkthrough
+without a material change.
+
+## Integration Handoff State
+
+EP-01 accepted. EP-02 local candidate and shared walkthrough evidence are ready. At this checkpoint,
+corrected-head Git-2.43 and Ubuntu semantic CI pass; macOS and real Windows jobs remain in progress.
+Director acceptance, required platform results, merge, release publication and authorized pilot
+consumer adoption are still required. Final release assets must match the reviewed candidate and
+applicable audience; release availability and adoption cannot be inferred from this source evidence.
+User experience remains pilot-pending until observed. The Plan stays active and the whole finish
+line remains unchanged.

@@ -1,4 +1,4 @@
-Last updated: 2026-09-05T21:06:54Z (UTC)
+Last updated: 2026-09-05T21:22:29Z (UTC)
 Created: 2026-09-05
 Status: active
 Execution log: docs/repo/plans/proportionate-agent-workflows/proportionate-agent-workflows_execution_log.md
@@ -339,10 +339,10 @@ for a module change. Coordinate the single walkthrough with the downstream deliv
 
 **F) Tasks Checklist**
 
-- [ ] Record explicit review of the whole-plan external-action doctrine and its impact classification from 1.3 in the existing execution evidence, with workflow and adoption notes in `release-notes.md`.
+- [x] Record explicit review of the whole-plan external-action doctrine and its impact classification from 1.3 in the existing execution evidence, with workflow and adoption notes in `release-notes.md`.
 - [ ] Prepare the exact version and release candidate using `docs/repo/runbooks/release-operating-kit.md`, retaining its required Go, Python, schema, installer and reproducibility evidence.
-- [ ] Perform the shared fresh-context walkthrough using a neutral authorized two-epic plan: proceed through implementation, testing, agreed commits/pushes/PR work and delegated epic review without extra user approval; check readable state and explicit result-report instructions.
-- [ ] Contrast a material scope exception, separate routine repair, blocked report-back and active-descendant archival in that same walkthrough; retain a module-owner routing example without live provider work.
+- [x] Perform the shared fresh-context walkthrough using a neutral authorized two-epic plan: proceed through implementation, testing, agreed commits/pushes/PR work and delegated epic review without extra user approval; check readable state and explicit result-report instructions.
+- [x] Contrast a material scope exception, separate routine repair, blocked report-back and active-descendant archival in that same walkthrough; retain a module-owner routing example without live provider work.
 - [ ] Publish the validated version through `release-operating-kit.md` under applicable explicit publication authority and record exact commit, asset digests, URLs and platform/signing evidence.
 - [ ] Apply the published Kit through the installed `maintain-operating-kit-installation.md` route to the specifically authorized pilot consumer; verify installed route discovery and preservation of its local guidance and records.
 - [ ] Record source completion, release availability, consumer adoption and pilot-pending status separately in the execution evidence, with a concise handoff to the consumer's coordination owner.
