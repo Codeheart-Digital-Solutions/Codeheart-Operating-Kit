@@ -1,4 +1,4 @@
-Last updated: 2026-08-09T15:24:37Z (UTC)
+Last updated: 2026-09-05T21:03:41Z (UTC)
 
 # Planning Workflows
 
@@ -7,6 +7,10 @@ execution, planning document review, semantic plan catalogs, portfolio coordinat
 and the stable plan-register entry point.
 
 ## Use
+
+- Use `runbooks/handle-routine-change.md` for known bounded changes with existing-record evidence.
+- Use `../agent-interface/reference/agent-task-coordination.md` to commission whole-plan execution,
+  name Git/delivery boundaries and delegate epic review with direct report-back.
 
 - Use `runbooks/discovery-workflow.md` for unclear, early, cross-domain, or decision-heavy
   discovery work.

@@ -69,3 +69,6 @@ component:
       target: docs/repo/portfolio/strategic-overlay.yaml
       ownership: scaffold
       install_when: absent
+    - source: components/planning-workflows/managed/runbooks/handle-routine-change.md
+      target: .codeheart/kit/docs/planning-workflows/runbooks/handle-routine-change.md
+      ownership: managed

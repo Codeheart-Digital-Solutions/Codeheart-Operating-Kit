@@ -1,4 +1,4 @@
-Last updated: 2026-09-05T18:02:06Z (UTC)
+Last updated: 2026-09-05T21:06:54Z (UTC)
 Created: 2026-09-05
 Status: active
 Execution log: docs/repo/plans/proportionate-agent-workflows/proportionate-agent-workflows_execution_log.md
@@ -305,15 +305,15 @@ work and recheck current source changes against the planning base. Rebase only w
 
 **F) Tasks Checklist**
 
-- [ ] Resolve the catalog prerequisite in 2.4 with focused parser/projection evidence, preserve frozen register bytes and genuine duplicate/identity guards, and require a passing configured catalog before the remaining source tasks.
-- [ ] Add `handle-routine-change.md` with eligibility, existing-record evidence, escalation triggers, authority reuse and proportionate validation from 1.2.
-- [ ] Add `agent-task-coordination.md` with whole-plan assignments, explicit report-back instructions, director review, readable communication, naming, handover, descendant checks and consumer model policy from 1.2.
-- [ ] Add `codex-task-operations.md` with supported direct task reporting, an explicitly authorized whole-plan goal example, goal-activation verification and current official task/archival references; preserve app permissions.
-- [ ] Align `operation-routing-and-dispatch.md`, `runbook-authoring-standard.md` and the draft/execution/review planning runbooks with whole-plan authorization, actual epic sequencing, planned commits/pushes/PRs, delegated review and material-exception handling; correct the formal-plan H1 instruction.
-- [ ] Add the new routes to the two component manifests, their managed READMEs and `AGENTS.managed-block.md` with short owner pointers.
-- [ ] Synchronize the declared changed resources under `src/codeheart_operating_kit/resources/` and extend `tests/test_packaging_resources.py` to check their materialization and exact source equality.
-- [ ] Run `python -m pytest -q tests/test_packaging_resources.py tests/test_routing.py` in the repository's ready Python environment and inspect the materialized routine and coordination routes.
-- [ ] Run `scripts/validate-markdown-headers.py` and `scripts/validate-public-core.py` against the changed Markdown/resource files and review the final diff for conflicting approval instructions.
+- [x] Resolve the catalog prerequisite in 2.4 with focused parser/projection evidence, preserve frozen register bytes and genuine duplicate/identity guards, and require a passing configured catalog before the remaining source tasks.
+- [x] Add `handle-routine-change.md` with eligibility, existing-record evidence, escalation triggers, authority reuse and proportionate validation from 1.2.
+- [x] Add `agent-task-coordination.md` with whole-plan assignments, explicit report-back instructions, director review, readable communication, naming, handover, descendant checks and consumer model policy from 1.2.
+- [x] Add `codex-task-operations.md` with supported direct task reporting, an explicitly authorized whole-plan goal example, goal-activation verification and current official task/archival references; preserve app permissions.
+- [x] Align `operation-routing-and-dispatch.md`, `runbook-authoring-standard.md` and the draft/execution/review planning runbooks with whole-plan authorization, actual epic sequencing, planned commits/pushes/PRs, delegated review and material-exception handling; correct the formal-plan H1 instruction.
+- [x] Add the new routes to the two component manifests, their managed READMEs and `AGENTS.managed-block.md` with short owner pointers.
+- [x] Synchronize the declared changed resources under `src/codeheart_operating_kit/resources/` and extend `tests/test_packaging_resources.py` to check their materialization and exact source equality.
+- [x] Run `python -m pytest -q tests/test_packaging_resources.py tests/test_routing.py` in the repository's ready Python environment and inspect the materialized routine and coordination routes.
+- [x] Run `scripts/validate-markdown-headers.py` and `scripts/validate-public-core.py` against the changed Markdown/resource files and review the final diff for conflicting approval instructions.
 
 **G) Implementation Notes:** Do not assert exact prose in new tests. Existing tests that enforce
 materialization and declarations remain relevant. Tooling gaps follow the tooling-readiness route.

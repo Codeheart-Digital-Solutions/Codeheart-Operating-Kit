@@ -1,4 +1,4 @@
-Last updated: 2026-07-31T22:23:19Z (UTC)
+Last updated: 2026-09-05T21:03:41Z (UTC)
 
 # Draft Implementation Plan
 
@@ -27,6 +27,9 @@ authority without approval, or replace feature behavior with policy-only scaffol
 Stop boundary:
 Stop before normal epic drafting when discovery handoff authority is missing, capability scope is
 absent or unapproved, or a blocker prevents a single-path implementation plan.
+
+For known bounded changes, first consider `handle-routine-change.md`. Do not require a formal plan
+solely because a change touches several files. Work already necessary to an active epic stays there.
 
 ## Trigger
 
@@ -255,13 +258,16 @@ explicit migration.
 Use exactly these top-level sections in this order:
 
 ```text
-# Document Header
+# <Meaningful Plan Title>
 # Section 1 - Foundation
 # Section 2 - Strategy
 # Section 3 - Execution Plan
 # Section 4 - Future Planning
 # Revision Notes
 ```
+
+The first H1 is the meaningful plan title, matching semantic catalog identity. Do not use the
+literal generic title `Document Header`; retain the required sections below it.
 
 ## Document Header Content
 
@@ -335,6 +341,25 @@ a clean boundary or add explicit deferred standardization in Section 4.
 
 Do not use existing patterns as a reason to preserve weak design when the plan is the right place
 to set a better boundary.
+
+## Whole-Plan Commissioning And Delivery Boundary
+
+Before execution, settle the intended outcome, owning repository/branch, ordered epics, acceptance
+evidence, director and delegated review points in the existing plan/assignment. Include coherent
+commits, normal pushes and PR creation/updates at agreed review, recovery and handover checkpoints.
+One delivery PR normally suffices; do not leave these ordinary implementation effects as permission
+blanks to rediscover in each epic.
+
+State the finish line (reviewed branch, merged main, released product or adopted consumer), who
+integrates, and whether merge/release/adoption/provider effects are included, delegated or reserved.
+Name required checks and exact action-time inputs. Reuse sufficient applicable authority; success
+of checks alone does not authorize an unspecified effect. A draft review is not execution approval.
+
+Use `../../agent-interface/reference/agent-task-coordination.md` to commission the complete plan
+with explicit report-back to the director at required epic review, completion, genuine blocker or
+material scope issue. Plan delegated acceptance rather than a fresh user gate for every epic. State
+how material exceptions return to the owner and how independently useful preparation may proceed
+while a review is pending. Optional goal use requires an explicit request and verified activation.
 
 ## Section 3 - Execution Plan
 
@@ -412,7 +437,7 @@ execution without changing the main path.
 
 ## Activation And Plan-Checkpoint Publication
 
-A user's unambiguous request to activate a specific implementation plan is approval to:
+An activation-only request for a specific implementation plan is approval to:
 
 - set that plan to `Status: active` and make directly required plan metadata/log changes;
 - create or use its unambiguous work branch;
@@ -422,11 +447,13 @@ A user's unambiguous request to activate a specific implementation plan is appro
 Do not ask for a second push approval for that bounded checkpoint. The same rule applies when the
 user explicitly requests a material update to an already active plan.
 
-This authority excludes unrelated dirty files, implementation code not already included in the
+This activation-only authority excludes unrelated dirty files, implementation code not already included in the
 requested checkpoint, another plan, ambiguous targets or branches, PR creation, merge, release,
 force-push, branch deletion, history rewrite, destructive Git, credential changes, rejected-push
 bypass, and any broader external action. Activation remains an L1 managed workflow; do not invent
-an activation/commit/push CLI.
+an activation/commit/push CLI. A whole-plan execution request additionally covers the implementation
+and planned Git effects declared above; do not use the activation-only boundary to ask again for
+those covered steps.
 
 Before publication:
 

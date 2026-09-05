@@ -1,6 +1,33 @@
-Last updated: 2026-08-11T14:12:23Z (UTC)
+Last updated: 2026-09-05T21:04:48Z (UTC)
 
 # Codeheart Operating Kit Release Notes
+
+## Unreleased — Proportionate Agent Workflows
+
+Known bounded changes gain an installed routine route with existing-record evidence. Whole-plan
+assignments name ordered epics, coherent Git checkpoints, delegated review, explicit direct
+report-back and the intended final delivery boundary. Generic coordination remains usable without
+Codex; an optional Codex note covers supported task/goal operations and archival consequences.
+
+### Impact And Compatibility
+
+- `instruction-only change`: routine eligibility, readable Plan/epic communication, meaningful plan
+  titles, report-back, handover and distinct technical delivery/pilot status.
+- `security or safety policy change`: whole-plan execution requests cover their specified
+  implementation, validation, commits, normal pushes and PR updates. Existing sufficient authority
+  is reused. Draft review and activation-only bookkeeping remain narrower. Merge, release,
+  adoption, provider effects, exact-effect bindings, signing/audience limits and enforced tool
+  gates still require their applicable authority and predicates; no permission code changes.
+- `validator-only change`: ambiguous multiword legacy relation prose is classified as malformed
+  rather than truncated into invented duplicate targets. Canonical frozen-history compatibility
+  retains that evidence as warnings. Legacy/mixed modes stay strict; genuine duplicate targets,
+  ambiguous identities/paths and all other guards remain blocking. Schema-v1 projection is unchanged.
+- New managed routes and their root pointers are delivered through normal Kit upgrade. Consumer
+  records, frozen registers, catalog configuration and discovery modes are not migrated or rewritten.
+  Adoption must verify route discovery and preservation using the existing lifecycle route.
+
+Release candidate, release availability, consumer adoption and real-use pilot evidence are tracked
+separately. This source change alone does not claim a published release or consumer adoption.
 
 ## v0.1.30 Release Notes
 
