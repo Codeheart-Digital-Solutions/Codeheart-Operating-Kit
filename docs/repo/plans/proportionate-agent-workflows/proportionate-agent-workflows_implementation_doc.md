@@ -1,6 +1,6 @@
-Last updated: 2026-09-05T21:22:29Z (UTC)
+Last updated: 2026-09-05T23:32:12Z (UTC)
 Created: 2026-09-05
-Status: active
+Status: completed
 Execution log: docs/repo/plans/proportionate-agent-workflows/proportionate-agent-workflows_execution_log.md
 
 # Proportionate Changes, Approval Reuse and Agent Task Coordination
@@ -13,7 +13,7 @@ plan:
   kind: implementation
   purpose: Ship proportionate routine work and whole-plan execution with predictable Git checkpoints, delegated review, simple agent report-back and clear communication.
   first_cataloged: 2026-09-05T16:59:13Z
-  catalog_metadata_updated: 2026-09-05T18:02:06Z
+  catalog_metadata_updated: 2026-09-05T23:32:12Z
 ```
 <!-- END CODEHEART PLAN METADATA -->
 
@@ -340,12 +340,12 @@ for a module change. Coordinate the single walkthrough with the downstream deliv
 **F) Tasks Checklist**
 
 - [x] Record explicit review of the whole-plan external-action doctrine and its impact classification from 1.3 in the existing execution evidence, with workflow and adoption notes in `release-notes.md`.
-- [ ] Prepare the exact version and release candidate using `docs/repo/runbooks/release-operating-kit.md`, retaining its required Go, Python, schema, installer and reproducibility evidence.
+- [x] Prepare the exact version and release candidate using `docs/repo/runbooks/release-operating-kit.md`, retaining its required Go, Python, schema, installer and reproducibility evidence.
 - [x] Perform the shared fresh-context walkthrough using a neutral authorized two-epic plan: proceed through implementation, testing, agreed commits/pushes/PR work and delegated epic review without extra user approval; check readable state and explicit result-report instructions.
 - [x] Contrast a material scope exception, separate routine repair, blocked report-back and active-descendant archival in that same walkthrough; retain a module-owner routing example without live provider work.
-- [ ] Publish the validated version through `release-operating-kit.md` under applicable explicit publication authority and record exact commit, asset digests, URLs and platform/signing evidence.
-- [ ] Apply the published Kit through the installed `maintain-operating-kit-installation.md` route to the specifically authorized pilot consumer; verify installed route discovery and preservation of its local guidance and records.
-- [ ] Record source completion, release availability, consumer adoption and pilot-pending status separately in the execution evidence, with a concise handoff to the consumer's coordination owner.
+- [x] Publish the validated version through `release-operating-kit.md` under applicable explicit publication authority and record exact commit, asset digests, URLs and platform/signing evidence.
+- [x] Apply the published Kit through the installed `maintain-operating-kit-installation.md` route to the specifically authorized pilot consumer; verify installed route discovery and preservation of its local guidance and records.
+- [x] Record source completion, release availability, consumer adoption and pilot-pending status separately in the execution evidence, with a concise handoff to the consumer's coordination owner.
 
 **G) Implementation Notes:** Resolve this Plan's intended integration, release and adoption
 authority together at execution commissioning. Routine Git work should follow the declared
@@ -378,3 +378,8 @@ expanding this scope. Guidance about supported module records belongs to that mo
 - 2026-09-05: Activated under the user-approved whole-delivery authority in 2.4, including delegated
   acceptance, routine Git work, source merge, validated release and named-consumer adoption.
   Implementation and actual delivery evidence are tracked in the execution log.
+
+- 2026-09-05: Closed technical delivery after delegated acceptance, native platform validation,
+  publication and authenticated redownload of v0.1.31, and authorized pilot-consumer adoption
+  with preservation and installed-route proof. Source, release and adoption are complete;
+  practical user experience remains pilot-pending with the coordination owner.
