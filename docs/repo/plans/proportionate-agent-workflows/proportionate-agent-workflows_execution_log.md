@@ -1,11 +1,14 @@
-Last updated: 2026-09-05T21:22:29Z (UTC)
+Last updated: 2026-09-05T23:32:12Z (UTC)
 Created: 2026-09-05
 
 # Proportionate Agent Workflows Execution Log
 
 Plan: `proportionate-agent-workflows_implementation_doc.md`
-Status: active
+Status: completed
 Mode: whole-plan delivery with delegated Director acceptance
+
+Current outcome: technical delivery accepted, v0.1.31 released and adopted by the authorized
+pilot consumer. Real-use experience is pilot-pending. Earlier checkpoints below are historical.
 
 ## Commissioning and acceptance
 
@@ -223,3 +226,109 @@ consumer adoption are still required. Final release assets must match the review
 applicable audience; release availability and adoption cannot be inferred from this source evidence.
 User experience remains pilot-pending until observed. The Plan stays active and the whole finish
 line remains unchanged.
+
+## Published Release And Final Native CI Evidence
+
+Source PR 14 merged as `29be2378af80e58af212bbc4e652bb2a8dedeb93`. Published release
+[v0.1.31](https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/tag/v0.1.31)
+has a lightweight tag at exact validated source `9ba3ce561660f296d22e15c6e42661e402ec6d31`,
+which is contained in merged main. Product build inputs remain those validated at `be3936b`;
+the later source checkpoint only added Plan/execution evidence.
+
+Both existing current-head runs finished successfully:
+[push validation](https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/actions/runs/33992880223)
+and [PR validation](https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/actions/runs/33992883932).
+All 25 macOS and all 20 Windows job steps succeeded in each run, including release builds,
+no-Python installation, checksum rejection, old-version upgrade preview, failure preservation,
+apply and check. Git 2.43 and Ubuntu semantic checks also passed. No duplicate workflow was
+triggered to obtain this final evidence.
+
+After publication, an authenticated fresh download read back all 14 advertised assets. Their
+names, sizes, bytes and digests match the frozen reviewed candidate; all seven sidecars pass.
+Both catalog/archive/pack-manifest/payload/content-manifest/binary chains are intact. Downloaded
+macOS binary reports 0.1.31. Windows declares 0.1.31, confirms the Windows amd64 build target,
+and matches the frozen reviewed binary digest. Native Windows behavior uses the existing CI
+source-release evidence; no fresh execution of the downloaded Windows binary on macOS is claimed.
+No new build, full platform matrix or second walkthrough was needed for unchanged publication.
+
+The release body retains the explicitly accepted HTTPS-plus-SHA-256 internal/prototype boundary
+with ad-hoc macOS linker signature, no Developer ID/notarization or equivalent publisher signing.
+
+| Published asset | Bytes | SHA-256 |
+| --- | --- | --- |
+| [bootstrap.md](https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.31/bootstrap.md) | 12041 | `37d4650067b0f06a23d9f9e634784aefbb01fcf8e67c41ec2d0db41939234eed` |
+| [bootstrap.md.sha256](https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.31/bootstrap.md.sha256) | 79 | `9cbf813a968f94f85096d65f4e817b81a1ea14e55dd14d338fb3b2bf7b99936f` |
+| [codeheart-operating-kit-0.1.31-macos-universal.zip](https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.31/codeheart-operating-kit-0.1.31-macos-universal.zip) | 8186244 | `02d469078b8896b790e9e0a0b1cf33d1e483ed5215229dae8530aff5db48db64` |
+| [codeheart-operating-kit-0.1.31-macos-universal.zip.sha256](https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.31/codeheart-operating-kit-0.1.31-macos-universal.zip.sha256) | 117 | `00b47cf96b67d0109da45ea446a1e176a22a47367970b90453ff3e6f21d74d8e` |
+| [codeheart-operating-kit-0.1.31-windows-x64.zip](https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.31/codeheart-operating-kit-0.1.31-windows-x64.zip) | 4321392 | `78d487fa7ed48e6aa97f217b3e22e70e9589ef790534753f5616636920d75e2f` |
+| [codeheart-operating-kit-0.1.31-windows-x64.zip.sha256](https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.31/codeheart-operating-kit-0.1.31-windows-x64.zip.sha256) | 113 | `e68b00b3ff8b80c73462b38c93376dd1957d72166f48a15d1ac3c331e15b7550` |
+| [install.ps1](https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.31/install.ps1) | 14052 | `9930ad2541acd642f2ce3bcc7d3a3adcac8a7e60c63a6b86eb82d742aee27f68` |
+| [install.ps1.sha256](https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.31/install.ps1.sha256) | 78 | `403698b947f4d54c013e756aa622f5adbb39d63a73c77ad66c609fea02843b90` |
+| [install.sh](https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.31/install.sh) | 11501 | `eef59ccd60c8152819e8a7398f8877a451eda33211c2e240e714fe0356f56416` |
+| [install.sh.sha256](https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.31/install.sh.sha256) | 77 | `724d0696d1b38c0f506887d322a804990035336a7a2ce19b6ae0f265a483ced0` |
+| [release-catalog-0.1.31.json](https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.31/release-catalog-0.1.31.json) | 1051 | `b25e38cc10e4f64598f81c5e49060e794a56db240b8e8f726cb9060d67eae988` |
+| [release-catalog-0.1.31.json.sha256](https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.31/release-catalog-0.1.31.json.sha256) | 94 | `1ce0d726d77d335e132ee9fb815469c772f71bb7e089b6b5e1e22f93cc6d2fb6` |
+| [release-notes.md](https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.31/release-notes.md) | 78384 | `20c68b2ad1fa883e6263689db4956dd15d5255a12daecf57bea1b1c162c28b35` |
+| [release-notes.md.sha256](https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.31/release-notes.md.sha256) | 83 | `0799e959ec0178159f301926c840f889625b2994c7d61cab08f91c73b0e7b401` |
+
+
+## Shared Walkthrough AWS-Owner Follow-Up
+
+The same reviewer completed the omitted AWS-owner question as a bounded follow-up to the single
+shared installed walkthrough. The synthetic installed inventory exposes only Organization Home,
+excludes live providers, and has no AWS owner advertisement or committed provider routing state.
+Before choosing an execution tool, resolve the owning product/repository and approved change or
+runbook, then the intended effect, authoritative account/environment/region and target, sufficient
+prior authority, and applicable preflight/gates. The Kit/module delivery grant does not authorize AWS effects.
+The reviewed routes establish missing owner/context; they do not supply an AWS execution recipe
+or authorize inferred target facts. No AWS access, provider action, configuration inference or
+mutation occurred. The module owner received this evidence mapping.
+
+
+## Authorized Consumer Adoption And Technical Acceptance
+
+The Director accepted the post-publication proof and completed the named pilot-consumer upgrade
+through the published external catalog using the managed lifecycle route. Preview and approved
+apply succeeded with the reviewed catalog/archive/binary identities; final Kit check reports
+`current` / `ok`, with no drift or missing routes. Installed Kit version is 0.1.31.
+
+Consumer-owned records and local guidance, the repository-owned root-instruction section, frozen
+legacy files, unrelated installed modules and shared module-tool payload were preserved. A
+separate read of the committed consumer checkpoint verified that all three new routine/coordination
+routes exactly match released source and that the repository-owned root-instruction section is
+byte-identical to its parent. Consumer-specific locations and operational proof remain with that
+owner rather than in this public repository.
+
+The coordinated Organization Home 0.1.2 adoption also passed its owner checks. The authorized
+Program Governance clarification reconciled across 12 records and four foundations while
+preserving payload, owner, assertions and history; both existing older module bindings still
+resolve. These are companion-owner acceptance facts, not new Kit runtime features. The earlier
+module build identities in the shared walkthrough remain historical clarity evidence; they are
+not asserted as the final adopted module payload. Final module release/provenance is retained by
+its source owner. No second whole walkthrough or unrelated live provider operation occurred.
+
+The Director gave final technical acceptance after release and actual consumer adoption, then
+integrated the adoption checkpoint into the consumer main branch while preserving pre-existing
+unrelated work. Both ordered epics are complete. No product input changed in this closure: only
+this execution log and the canonical Plan status/checklist changed. Markdown timestamps, public-core
+hygiene and whitespace checks passed. The released CLI validates the configured source catalog:
+40 records, `valid=true`, with existing canonical compatibility warnings and no new Plan error.
+A complete changed-path comparison against released source proves that all product/build/release
+inputs and frozen register/config remain byte-identical. Existing native/source release proof
+remains valid; no product rebuild or deliberate full platform rerun is required.
+
+## Pilot Handoff And Retained Evidence
+
+Source completion, validated release availability and technical consumer adoption are complete.
+The consumer's coordination owner owns the next practical Program Director pilot: use the
+installed workflows on real commissioned work and route concrete usability observations to the
+appropriate source owner. Actual user experience remains explicitly pilot-pending; no successful
+real-use trial, fixed pilot duration, quota or telemetry collection is claimed or required here.
+
+Published URLs and immutable source/check identities above are the public evidence. Detailed
+non-secret download/digest proofs, original/repeat builds, installer preservation results and
+private consumer-owner proof remain retained for audit and the pilot handoff. No needed artifact,
+consumer content, worktree or active task was removed. The applicable release route has no
+mandatory disposable-root cleanup step, so no speculative deletion was introduced for closure.
+No product delivery obligation remains; the Director retains normal integration review of this
+single documentation closure and the handed-off practical pilot.
