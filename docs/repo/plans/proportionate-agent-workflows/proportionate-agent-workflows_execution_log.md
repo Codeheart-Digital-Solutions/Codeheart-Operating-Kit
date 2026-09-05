@@ -122,3 +122,9 @@ gates remain mandatory. Candidate preparation is not release availability.
 The single shared fresh-context walkthrough will use the actual isolated Kit candidate and the
 companion module's installed candidate. Source review is not substituted for installed release
 proof. Consumer locators remain outside this public log.
+
+
+Release correction: CI on candidate `f043070` exposed the standard-profile golden hash still bound
+to v0.1.30. Regenerated its exact expectation using the existing Python SHA-256 helper and verified
+all three helper fixtures plus `go test ./internal/hash -count=1`. The assertion remains exact.
+The corrected head, not the failing candidate, must supply final release/platform evidence.
