@@ -53,8 +53,8 @@ func TestMain(m *testing.M) {
 }
 
 func TestLegacyV1UpgradeDryRunAndAtomicApply(t *testing.T) {
-	if version.Version != "0.1.30" {
-		t.Fatalf("test requires release version 0.1.30, got %s", version.Version)
+	if version.Version != "0.1.31" {
+		t.Fatalf("test requires release version 0.1.31, got %s", version.Version)
 	}
 	root := materializeLegacyV119Consumer(t)
 	installed := writePreviousBinary(t)
@@ -64,7 +64,7 @@ func TestLegacyV1UpgradeDryRunAndAtomicApply(t *testing.T) {
 	treeBefore := snapshotTree(t, root)
 	binaryBefore := mustRead(t, installed)
 	var preview bytes.Buffer
-	code := RunUpgrade([]string{root, "--version", "0.1.30", "--catalog", catalog, "--installed-binary", installed, "--dry-run", "--json"}, &preview, &bytes.Buffer{})
+	code := RunUpgrade([]string{root, "--version", "0.1.31", "--catalog", catalog, "--installed-binary", installed, "--dry-run", "--json"}, &preview, &bytes.Buffer{})
 	if code != 0 {
 		t.Fatalf("legacy dry-run exit = %d; output=%s", code, preview.String())
 	}
@@ -76,14 +76,14 @@ func TestLegacyV1UpgradeDryRunAndAtomicApply(t *testing.T) {
 		t.Fatal(err)
 	}
 	result := state.Map(payload["result"])
-	if result["status"] != "planned" || payload["source_lock_schema"] != float64(1) || payload["target_lock_schema"] != float64(2) || payload["installed_version"] != "0.1.19" || payload["target_version"] != "0.1.30" || payload["migrated_lock"] != true {
+	if result["status"] != "planned" || payload["source_lock_schema"] != float64(1) || payload["target_lock_schema"] != float64(2) || payload["installed_version"] != "0.1.19" || payload["target_version"] != "0.1.31" || payload["migrated_lock"] != true {
 		t.Fatalf("legacy preview = %#v", payload)
 	}
 	if !resultHasChange(result, state.LockPath, "replace") || !resultHasValidation(result, "schema-and-version-migration") {
 		t.Fatalf("legacy preview result = %#v", result)
 	}
 
-	code, applyOutput := runApprovedUpgrade(t, []string{root, "--version", "0.1.30", "--catalog", catalog, "--installed-binary", installed, "--yes", "--json"})
+	code, applyOutput := runApprovedUpgrade(t, []string{root, "--version", "0.1.31", "--catalog", catalog, "--installed-binary", installed, "--yes", "--json"})
 	if code != 0 {
 		t.Fatalf("legacy apply exit = %d; output=%s", code, applyOutput)
 	}
@@ -96,7 +96,7 @@ func TestLegacyV1UpgradeDryRunAndAtomicApply(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if state.AsInt(lock["schema_version"]) != 2 || state.AsString(lock["kit_version"]) != "0.1.30" || state.AsInt(lock["state_generation"]) != 1 {
+	if state.AsInt(lock["schema_version"]) != 2 || state.AsString(lock["kit_version"]) != "0.1.31" || state.AsInt(lock["state_generation"]) != 1 {
 		t.Fatalf("upgraded lock identity = %#v", lock)
 	}
 	operation := state.Map(lock["last_operation"])
@@ -279,7 +279,7 @@ func TestLegacyV1UpgradeRejectsInvalidAmbiguousAndDirtySources(t *testing.T) {
 				}
 				t.Run(mode, func(t *testing.T) {
 					before := snapshotTree(t, root)
-					_, result, err := upgradeOperation(root, "0.1.30", filepath.Join(t.TempDir(), "unused-catalog.json"), writePreviousBinary(t), dryRun)
+					_, result, err := upgradeOperation(root, "0.1.31", filepath.Join(t.TempDir(), "unused-catalog.json"), writePreviousBinary(t), dryRun)
 					if err != nil || result.Status != reconcile.StatusBlocked {
 						t.Fatalf("invalid legacy source status=%s err=%v result=%#v", result.Status, err, result)
 					}
@@ -465,7 +465,7 @@ func TestLegacyV1UpgradeFailedTargetReconcileRestoresBinaryAndState(t *testing.T
 	t.Setenv("CODEHEART_UPGRADE_TEST_FAIL_RECONCILE", "1")
 	signal := filepath.Join(t.TempDir(), "target-reconcile-failed")
 	t.Setenv("CODEHEART_UPGRADE_TEST_FAILURE_SIGNAL", signal)
-	code, output := runApprovedUpgrade(t, []string{root, "--version", "0.1.30", "--catalog", catalog, "--installed-binary", installed, "--yes", "--json"})
+	code, output := runApprovedUpgrade(t, []string{root, "--version", "0.1.31", "--catalog", catalog, "--installed-binary", installed, "--yes", "--json"})
 	if runtime.GOOS == "windows" {
 		if code != 0 {
 			t.Fatalf("deferred failed reconcile scheduling exit=%d output=%s", code, output)
@@ -501,7 +501,7 @@ func TestLegacyV1UpgradeRecoveryRequiredTargetIsNotReportedRolledBack(t *testing
 	treeBefore := snapshotTree(t, root)
 	binaryBefore := mustRead(t, installed)
 	t.Setenv("CODEHEART_UPGRADE_TEST_RECOVERY_RECONCILE", "1")
-	code, output := runApprovedUpgrade(t, []string{root, "--version", "0.1.30", "--catalog", catalog, "--installed-binary", installed, "--yes", "--json"})
+	code, output := runApprovedUpgrade(t, []string{root, "--version", "0.1.31", "--catalog", catalog, "--installed-binary", installed, "--yes", "--json"})
 	if code != 1 {
 		t.Fatalf("recovery-required reconcile exit=%d output=%s", code, output)
 	}
@@ -532,12 +532,12 @@ func TestCurrentLockV2UpgradeBehaviorAndNoLegacyRepairSyncBypass(t *testing.T) {
 	configBefore := mustRead(t, filepath.Join(root, filepath.FromSlash(state.ConfigPath)))
 	installed := writePreviousBinary(t)
 	catalog, _ := writeUpgradePack(t)
-	if code, output := runApprovedUpgrade(t, []string{root, "--version", "0.1.30", "--catalog", catalog, "--installed-binary", installed, "--yes", "--json"}); code != 0 {
+	if code, output := runApprovedUpgrade(t, []string{root, "--version", "0.1.31", "--catalog", catalog, "--installed-binary", installed, "--yes", "--json"}); code != 0 {
 		t.Fatalf("v2 upgrade exit=%d output=%s", code, output)
 	}
 	waitForUpgrade(t, root, installed)
 	upgraded, _ := lockfile.ReadLock(root)
-	if state.AsInt(upgraded["schema_version"]) != 2 || state.AsString(upgraded["kit_version"]) != "0.1.30" || state.AsInt(upgraded["state_generation"]) != 2 || state.AsInt(state.Map(upgraded["last_operation"])["previous_generation"]) != 1 {
+	if state.AsInt(upgraded["schema_version"]) != 2 || state.AsString(upgraded["kit_version"]) != "0.1.31" || state.AsInt(upgraded["state_generation"]) != 2 || state.AsInt(state.Map(upgraded["last_operation"])["previous_generation"]) != 1 {
 		t.Fatalf("v2 upgraded lock = %#v", upgraded)
 	}
 	if !bytes.Equal(configBefore, mustRead(t, filepath.Join(root, filepath.FromSlash(state.ConfigPath)))) {

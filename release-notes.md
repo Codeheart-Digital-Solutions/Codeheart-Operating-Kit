@@ -1,8 +1,8 @@
-Last updated: 2026-09-05T21:04:48Z (UTC)
+Last updated: 2026-09-05T21:10:24Z (UTC)
 
 # Codeheart Operating Kit Release Notes
 
-## Unreleased — Proportionate Agent Workflows
+## v0.1.31 Release Notes
 
 Known bounded changes gain an installed routine route with existing-record evidence. Whole-plan
 assignments name ordered epics, coherent Git checkpoints, delegated review, explicit direct

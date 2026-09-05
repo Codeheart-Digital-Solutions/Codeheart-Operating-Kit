@@ -1,4 +1,4 @@
-Last updated: 2026-09-05T21:07:31Z (UTC)
+Last updated: 2026-09-05T21:09:42Z (UTC)
 Created: 2026-09-05
 
 # Proportionate Agent Workflows Execution Log
@@ -30,8 +30,8 @@ The private assignment records the commissioning and implementer task locators a
 
 | Epic | State | Acceptance |
 | --- | --- | --- |
-| EP-01 — Deliver the reusable workflow | source validated and independently reviewed; Director acceptance pending | Director reviews the coherent source result and evidence. |
-| EP-02 — Release and consumer handoff | pending EP-01 acceptance | Exact release, consumer preservation and pilot readiness required. |
+| EP-01 — Deliver the reusable workflow | accepted by Director at source commit 1ef4fe7 | Director reviews the coherent source result and evidence. |
+| EP-02 — Release and consumer handoff | candidate preparation in progress | Exact release, consumer preservation and pilot readiness required. |
 
 ## Validation and delivery evidence
 
@@ -102,3 +102,23 @@ and resource/routing suite results were supplied by the implementer. This was th
 review, not the single shared consumer walkthrough. No source changes were required by review.
 Review was useful for the changed safety doctrine and classifier boundary. Director acceptance
 and the shared walkthrough remain distinct gates.
+
+
+## EP-02 — Release and consumer handoff
+
+Director accepted EP-01 at `1ef4fe7` after review of the classifier, workflow doctrine, declared
+routes, evidence and independent review. That commit is pushed on
+`codex/proportionate-agent-workflows`; delivery PR is
+[PR 14](https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/pull/14).
+EP-02 continuation is authorized under Plan 2.4. Integration/publication/adoption remain with the
+Director until an exact candidate is explicitly delegated.
+
+Release inventory on 2026-09-05 showed latest `v0.1.30`; next candidate is `v0.1.31`. Current-version
+Go/Python, installer/bootstrap, component/profile/content identities and version-dependent fixtures
+are prepared using the existing release route. Historical release notes and compatibility baselines
+are preserved. Required macOS/real-Windows, reproducibility, catalog-to-binary and signing/audience
+gates remain mandatory. Candidate preparation is not release availability.
+
+The single shared fresh-context walkthrough will use the actual isolated Kit candidate and the
+companion module's installed candidate. Source review is not substituted for installed release
+proof. Consumer locators remain outside this public log.
