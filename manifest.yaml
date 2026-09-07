@@ -1,5 +1,5 @@
 schema_version: 1
-version: 0.1.31
+version: 0.1.32
 compatibility:
   lock_schema_versions:
     - 1
@@ -20,9 +20,9 @@ compatibility:
     - check
 components:
   - id: planning-workflows
-    version: 0.1.31
+    version: 0.1.32
     manifest_path: components/planning-workflows/component.yaml
-    checksum_sha256: d44ffbb7c08591796a52fcd607691461c3be926a0cc3598a09f1aa970c2b48c8
+    checksum_sha256: d0e832469d4c7420720ca317e62c0162f1745ac2a8307e913e0b9cf24b74a639
     consumer_impact:
       - component addition
       - instruction-only change
@@ -39,9 +39,9 @@ components:
       - instruction-only change
       - backwards-compatible scaffold addition
   - id: agent-interface
-    version: 0.1.31
+    version: 0.1.32
     manifest_path: components/agent-interface/component.yaml
-    checksum_sha256: 581e42f2b066e7ec99cdfaa03fb8bd2be1ccb98cd7524ad95e052f711b80749f
+    checksum_sha256: 200267940800a448cc8ee075cefa6c9c473b7930ca22c3fc637e67418d31f67f
     consumer_impact:
       - component addition
       - instruction-only change
@@ -73,10 +73,10 @@ components:
       - validator-only change
 profiles:
   - id: standard
-    version: 0.1.31
+    version: 0.1.32
     manifest_path: profiles/standard.yaml
-    checksum_sha256: 4a0b3c452c049240563e1a7741b88de6cb071b6f796e1dcd80b4fba1734dac42
-    graph_sha256: 8202295610ca0d1e21b4a05d79c3eec473c6e9c4f0dc9030852d5dc74034bb21
+    checksum_sha256: 5e2c2acb662fcf51ff55baf36e634afe25dded44f55e4c92fca5b776de465750
+    graph_sha256: 1776105e8a6b6c25469b5c908932de0cfb14721582ab5dd20b94714cf1c51ae7
     components:
       - planning-workflows
       - agent-memory

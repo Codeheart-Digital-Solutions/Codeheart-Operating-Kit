@@ -1,4 +1,9 @@
 from pathlib import Path
+import os
+import subprocess
+
+import pytest
+import yaml
 
 import codeheart_operating_kit.components as components
 import codeheart_operating_kit.manifest as manifest
@@ -64,6 +69,8 @@ def test_packaged_resource_fallback(monkeypatch, tmp_path):
 
 def test_changed_source_and_packaged_resources_match():
     for source in [
+        "components/agent-interface/managed/reference/runbook-to-script-promotion-standard.md",
+        "components/agent-interface/managed/runbooks/handle-tooling-readiness.md",
         "components/planning-workflows/managed/runbooks/handle-routine-change.md",
         "components/agent-interface/managed/reference/agent-task-coordination.md",
         "components/agent-interface/managed/reference/codex-task-operations.md",
@@ -171,7 +178,6 @@ def test_ubuntu_validation_is_semantic_only():
     for required in [
         "runs-on: ubuntu-latest",
         "go test ./...",
-        "go test ./internal/plancatalog ./internal/portfolio ./internal/commands ./internal/cli",
         "BenchmarkDiscoveryV2Classifier100kPaths10kMarkdown",
         "tests/test_json_schemas.py",
         "tests/test_routing.py",
@@ -183,3 +189,55 @@ def test_ubuntu_validation_is_semantic_only():
     ]:
         assert required in ubuntu
     assert "build-release-assets.py" not in ubuntu
+
+
+def validation_workflow():
+    # BaseLoader keeps GitHub's "on" key a string (YAML 1.1 treats it as bool).
+    return yaml.load((ROOT / ".github/workflows/validate.yml").read_text(), Loader=yaml.BaseLoader)
+
+
+def test_validation_lanes_preserve_candidate_boundary():
+    workflow = validation_workflow()
+    assert workflow["on"]["push"] == {"branches": ["main"]}
+    assert "pull_request" in workflow["on"]
+    inputs = workflow["on"]["workflow_dispatch"]["inputs"]
+    assert inputs["mode"]["default"] == "candidate"
+    assert inputs["mode"]["options"] == ["candidate", "released-smoke"]
+    jobs = workflow["jobs"]
+    assert jobs["feedback"]["if"] == "github.event_name != 'workflow_dispatch'"
+    feedback = str(jobs["feedback"]["steps"])
+    for expensive in ["go test", "build-release-assets", "install.sh", "backward_compatibility", "Benchmark"]:
+        assert expensive not in feedback
+    for name in ["git-2-43-proof-validation", "macos-validation", "windows-validation", "ubuntu-semantic-validation"]:
+        job = jobs[name]
+        assert job["needs"] == "dispatch-inputs"
+        assert job["if"] == "github.event_name == 'workflow_dispatch' && inputs.mode == 'candidate'"
+        assert "/releases/download/" not in str(job["steps"])
+    for name in ["macos-validation", "windows-validation", "ubuntu-semantic-validation"]:
+        runs = [step.get("run", "") for step in jobs[name]["steps"]]
+        broad = [run for run in runs if run.startswith("go test") and "-bench" not in run]
+        builders = [run for run in runs if "scripts/build-release-assets.py" in run]
+        assert len(broad) + len(builders) == 1
+        if builders:
+            assert 'run(["go", "test", "-timeout", "30m", "./..."])' in (ROOT / "scripts/build-release-assets.py").read_text()
+    for name in ["macos-public-release", "windows-public-release"]:
+        job = jobs[name]
+        assert job["needs"] == "dispatch-inputs"
+        assert job["if"] == "github.event_name == 'workflow_dispatch' && inputs.mode == 'released-smoke'"
+        steps = str(job["steps"])
+        assert "/releases/download/" in steps
+        for source_work in ["go test", "pytest", "build-release-assets", "pyproject", "setup-python"]:
+            assert source_work not in steps
+    assert workflow["concurrency"]["cancel-in-progress"] == "${{ github.event_name != 'workflow_dispatch' }}"
+    assert "github.run_id" in workflow["concurrency"]["group"]
+
+
+@pytest.mark.parametrize("mode, tag, succeeds", [
+    ("candidate", "", True), ("candidate", "v0.1.99", False),
+    ("released-smoke", "", False), ("released-smoke", "v0.1.99", True),
+    ("released-smoke", "main", False), ("unknown", "", False),
+])
+def test_dispatch_input_guard(mode, tag, succeeds):
+    guard = validation_workflow()["jobs"]["dispatch-inputs"]["steps"][0]["run"]
+    result = subprocess.run(["bash", "-c", guard], env={**os.environ, "MODE": mode, "RELEASE_VERSION": tag}, capture_output=True)
+    assert (result.returncode == 0) == succeeds

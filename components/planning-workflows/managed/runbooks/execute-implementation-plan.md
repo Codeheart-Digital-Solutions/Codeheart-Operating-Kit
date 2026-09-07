@@ -1,4 +1,4 @@
-Last updated: 2026-09-05T21:03:41Z (UTC)
+Last updated: 2026-09-07T22:40:39Z (UTC)
 
 # Execute Implementation Plan
 
@@ -200,14 +200,14 @@ For reusable script assets, also verify:
 - declared script asset role matches the planned role and the script-promotion standard;
 - runbook caller exists and does not duplicate full script internals;
 - script placement follows the owning area's convention;
-- first-script scaffolding exists when this is the first script in the owner area;
+- existing owner docs/tests are reused; add only missing first-script contract and validation;
 - workflow dependencies, phase boundaries, and blocker ownership are documented when the asset is
   a workflow script;
 - helpers are placed at the narrowest durable owner boundary and do not act as hidden runbook
   entrypoints;
 - the owner area's `scripts/README.md` has a compact role index when that improves review
   clarity;
-- output contract includes required common fields;
+- output matches its actual caller; use common structured fields only when needed by that caller;
 - output safety describes emitted-output behavior;
 - managed-runner, CI, or cloud portability constraints are satisfied when the plan requires those
   execution contexts;
@@ -218,6 +218,30 @@ For reusable script assets, also verify:
 Record recipe validation evidence in the execution log. Include fresh-agent executability review,
 non-live tests, dry-run or preflight, and approval-gated live validation only where the plan and
 approval class require them.
+
+## Coherent Batches, Validation And Recovery
+
+Accumulate a coherent implementation batch before broad validation. During iteration, inspect
+changes and use cheap affected checks that can expose useful defects. Run required broader
+native, integration, compatibility or performance coverage at the planned candidate boundary.
+Do not run a full product suite merely because a document changed, a local commit was made or
+work resumed. Unknown dependencies warrant investigation and wider checks when justified.
+
+Keep evidence while its relevant source, artifacts, configuration, environment and target remain
+applicable. Rerun checks invalidated by corrections; a plan/log-only update does not invalidate
+unrelated behavior. Explain retained evidence and its limits in the existing log. A cheap pass
+never proves an executable surface it did not exercise or substitutes for required release gates.
+
+After interruption, inspect current files, Git state, outputs and pending operations. Preserve
+usable work. Classify a failure as code, test, environment, authentication or billing before repair.
+Use tooling readiness for local prerequisites and the service owner for login/access/cost issues.
+For an uncertain external write, establish whether it happened before retrying. Continue safe
+in-scope fixes; do not blindly retry broad suites, increase budgets or invent an auth service.
+
+At a useful completed checkpoint, locally commit the task's own inspected and proportionately
+validated changes. Use `../reference/planning-document-lifecycle.md` for explicit exceptions,
+authorized pushes/PR updates and normal accepted merge. Establish publication once and reuse its
+authority. Commit, publication, lifecycle, release and adoption remain separate states.
 
 ## Safe Defaults
 
@@ -251,8 +275,8 @@ For each epic:
 5. Run the smallest validation set that proves the outcome.
 6. For routing-bearing epics, run or verify the planned fresh low-context routing probe, or record
    why the probe is not applicable.
-7. Run the per-epic review gate.
-8. Fix material findings and repeat the review gate.
+7. Run the planned meaningful review checkpoint; related epics may share one coherent review.
+8. Fix material findings and return affected corrections to the same reviewer.
 9. Update checklist state only for completed and validated tasks.
 10. Update the execution log with meaningful divergence and review evidence.
 11. Make the agreed coherent commit/normal-push/PR checkpoint, reporting each actual state accurately.
@@ -265,10 +289,12 @@ For each epic:
 14. Recap whether the epic intention and acceptance are achieved; keep the plan and any whole-plan
     goal incomplete while required release/adoption outcomes remain.
 
-## Per-Epic Review Gate
+## Meaningful Review Checkpoints
 
-Before marking an epic complete, spawn a fresh read-only reviewer agent when the active environment
-and user request permit reviewer-agent execution.
+Before accepting the planned coherent source checkpoint, use one independent read-only reviewer
+when the active environment and user request permit reviewer-agent execution. Closely related
+epics may share that checkpoint when declared in the plan. Keep those epics acceptance-pending
+until review passes. Director acceptance need not duplicate the technical review.
 
 The reviewer checks the implemented epic against:
 
@@ -285,8 +311,10 @@ The reviewer checks the implemented epic against:
 Use the same default model and reasoning mode as the implementing agent unless the user requests a
 different reviewer setup or the epic is unusually high-risk.
 
-Fix material findings and repeat with a fresh read-only reviewer until no material issues remain
-or a clear blocker is recorded. A material issue is anything that makes the epic incomplete,
+Fix material findings and use the same reviewer for focused follow-up on corrections and their
+effects. Preserve valid review evidence. Broaden review or use a different reviewer only for a
+material design/impact change, inadequate independence, a reviewer limitation or unresolved concern.
+Continue until no material issues remain or a clear blocker is recorded. A material issue is anything that makes the epic incomplete,
 misleading, out of scope, unvalidated, not reproducible, narrow, policy-only, stubbed, unusable,
 or incomplete against the intended feature capability. If the gap is within the approved epic
 scope, fix it. If fixing it requires a new high-impact decision or scope expansion, stop and
@@ -341,33 +369,11 @@ Do not log:
 
 ## Execution Log Shape
 
-Use prose and lists. Include:
-
-- header with timestamp and created date;
-- plan path;
-- mode;
-- status;
-- overall divergence;
-- summary;
-- epic delta index;
-- review gate metrics;
-- per-epic delta sections;
-- final validation when the plan is complete.
-
-Review gate metrics should include:
-
-- review gate required;
-- review gate skipped status and reason;
-- reviewer mode;
-- reviewer model or reasoning mode when known;
-- review rounds;
-- material findings status;
-- concise findings by round;
-- whether files changed because of review;
-- final accepted result;
-- approximate added time when known;
-- token usage when known;
-- worth-it assessment.
+Keep the timestamp, creation date and plan link, then summarize outcomes, meaningful divergence,
+validation and actual delivery state in prose or a compact table. Record the review scope,
+material findings, corrections, reviewer continuity and accepted result. Name residual limits and
+remaining owner decisions. Do not require separate metrics, duplicate evidence artifacts or a
+command transcript; include timing or measured cost only when useful and actually known.
 
 ## Relationship To The Plan
 

@@ -66,8 +66,8 @@ func TestLoadEmbeddedContentManifest(t *testing.T) {
 	if err != nil {
 		t.Fatalf("LoadReleaseManifest: %v", err)
 	}
-	if releaseManifest.Version != "0.1.31" {
-		t.Fatalf("release version = %q, want 0.1.31", releaseManifest.Version)
+	if releaseManifest.Version != "0.1.32" {
+		t.Fatalf("release version = %q, want 0.1.32", releaseManifest.Version)
 	}
 	if len(releaseManifest.Assets) != 0 {
 		t.Fatalf("embedded content identity must not contain release assets: %#v", releaseManifest.Assets)

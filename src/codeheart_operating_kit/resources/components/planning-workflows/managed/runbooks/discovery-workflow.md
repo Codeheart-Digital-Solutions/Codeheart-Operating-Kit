@@ -1,4 +1,4 @@
-Last updated: 2026-07-31T22:23:19Z (UTC)
+Last updated: 2026-09-07T22:40:39Z (UTC)
 
 # Discovery Workflow
 
@@ -37,7 +37,7 @@ The domain can change. The mechanics stay the same:
 1. Clarify intention.
 2. Detect candidate domains, boundaries, and decision clusters when the request is ambiguous.
 3. Gather evidence before broad questions.
-4. Build or update a decision ledger.
+4. Record consequential decisions in the existing discovery document.
 5. Work decisions in dependency order.
 6. Produce concrete recommendations or justified `No safe default` packets.
 7. Use reviewer scrutiny for important decisions.
@@ -47,6 +47,23 @@ The domain can change. The mechanics stay the same:
 Avoid special-case workflow branches. Treat "feature discovery", "business discovery",
 "repository discovery", "goal-style discovery", and "document drafting" as different input states,
 domains, or output targets inside the same lifecycle.
+
+## Proportionate Inquiry
+
+Actively elicit intention, including the outcome behind a proposed method. Preserve an explicitly
+required method as a constraint; confirm a material inference before it decides the solution.
+Ask the next useful question, with a recommendation and tradeoff when helpful. Research facts
+locally or through the owning source before asking the user to supply them.
+
+Scale depth to ambiguity, commitments and cost of reversal. Establish current platform/support
+promises, important failure behavior and costly product choices here when they shape planning.
+Do not prescribe generic product answers or assume a consumer's organizational stage.
+
+Use one existing document for decisions, evidence and handoff. IDs and the packet fields below
+help when dependencies need traceability; they do not require separate records, empty fields or
+repeated copies of the intention contract. Group related decisions into one coherent review when
+that preserves their dependency order. Routine refinements need a short rationale, not another
+research or review cycle. Add depth for unresolved consequential decisions.
 
 ## When To Use This Runbook
 
@@ -495,7 +512,7 @@ Do not ask the user questions that targeted research can answer safely.
 
 ### 8. Create Or Refresh The Ledger
 
-Use stable traceability IDs:
+Use stable traceability IDs when they help connect consequential decisions:
 
 - `FR-*`: functional requirements.
 - `NFR-*`: non-functional requirements such as security, privacy, performance, reliability,
@@ -554,12 +571,13 @@ Default decision order:
 5. profile, data model, API, integration, and scope;
 6. validation, documentation, rollout, and handoff.
 
-Work on one active decision at a time unless the decisions are independent and the user accepts
-parallel discovery.
+Work decisions in dependency order. Related decisions may be resolved as one coherent batch;
+keep material user choices explicit and do not decide a dependency from an unapproved assumption.
 
 ### 10. Work The Active Decision
 
-For each blocker or implementation-shaping decision, prepare a decision packet.
+For consequential blocker or implementation-shaping decisions, capture the relevant parts of
+this packet in the existing document. Link shared context instead of repeating it.
 
 ```text
 Decision:
@@ -702,7 +720,8 @@ specific decision.
 
 ### 13. Ask High-Impact Questions
 
-Ask only high-impact or hard-to-reverse questions. Ask in batches of no more than five.
+Ask questions that resolve meaningful intent, constraints or tradeoffs. Prefer one next useful
+question; batch only closely related questions the user can readily answer.
 
 For each question, include:
 
@@ -857,7 +876,8 @@ Default convergence loop:
 1. Main agent prepares the decision packet and recommendation.
 2. Reviewer critiques when a reviewer gate is required.
 3. Main agent revises or responds with rationale.
-4. Reviewer performs one final check when needed.
+4. The same reviewer checks affected corrections when needed. Broaden or change the reviewer
+   only for material design/impact change, inadequate independence, a limitation or unresolved risk.
 5. Main agent records convergence or bounded disagreement.
 
 A decision is ready for user action when:
@@ -1010,8 +1030,9 @@ If unresolved blockers remain by user instruction, label the handoff as one of:
 Implementation epics and checkbox tasks belong in a `*_implementation_doc.md`, not in the discovery
 document.
 
-If a closed decision changes after handoff, treat the handoff as stale and regenerate it before
-drafting or updating an implementation plan.
+If a consequential closed decision changes after handoff, update its affected capability scope
+and dependent planning inputs. Preserve unaffected decisions and evidence; ordinary in-scope
+refinement does not restart discovery.
 
 ## Catalog And Visibility Hook
 
@@ -1024,7 +1045,10 @@ When discovery creates or materially updates a formal document:
 5. explain that coordination sees the plan only after its branch is normally pushed and the home
    completes a refresh.
 
-Discovery drafting does not itself authorize commit or push. If the user requests activation or a
+Discovery drafting includes a local commit at a useful completed checkpoint after proportionate
+inspection and checks. It does not itself authorize push or PR publication. Follow
+`../reference/planning-document-lifecycle.md` for local commits, authorized publication and merge
+while preserving independent lifecycle and execution authority. If the user requests activation or a
 material update of an active implementation plan later, use the bounded plan-checkpoint
 publication contract in `draft-implementation-plan.md` and `execute-implementation-plan.md`.
 

@@ -1,4 +1,4 @@
-Last updated: 2026-09-05T21:03:41Z (UTC)
+Last updated: 2026-09-07T22:41:52Z (UTC)
 
 # Runbook Authoring Standard
 
@@ -8,6 +8,19 @@ This standard improves how agents use runbooks and how humans experience runbook
 does not require a mass retrofit of existing runbooks, and it does not turn every short maintainer
 checklist into a large template. Apply the parts that match the runbook audience, blast radius,
 repeatability, and ambiguity.
+
+## Proportionate Detail And Necessity
+
+Start with the intended outcome and the concrete failure each obligation prevents. Keep real
+identity, authority, preservation and integrity controls. Remove unjustified ceremony, duplicate
+records and checks before optimizing them or replacing them with another mechanism.
+
+Scale detail to ambiguity, actual support commitments, risk and cost of reversal. Preserve useful
+technical context and explicit consequential boundaries while allowing ordinary implementation
+judgment. Existing tools and records should suffice unless a demonstrated gap warrants more.
+Use one meaningful review with focused same-reviewer corrections; a small wording fix does not
+need another whole-runbook review. Validate affected behavior during iteration and broader
+acceptance on a coherent candidate; retain evidence whose relevant inputs remain applicable.
 
 ## Audience Classes
 
@@ -119,7 +132,8 @@ handling belongs in separate Operating Kit guidance.
 
 ## Agent-Facing Runbooks
 
-Agent-facing runbooks must be executable by a fresh agent without inventing the workflow.
+Agent-facing runbooks must be executable by a fresh agent without inventing consequential workflow or authority.
+Ordinary implementation details can remain adaptable.
 
 Required quality bar:
 

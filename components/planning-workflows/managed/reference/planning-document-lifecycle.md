@@ -1,4 +1,4 @@
-Last updated: 2026-08-09T15:24:37Z (UTC)
+Last updated: 2026-09-07T22:40:39Z (UTC)
 
 # Planning Document Lifecycle
 
@@ -70,6 +70,30 @@ implementation plan without explicit user approval.
 The lifecycle value is not a branch, push, pull-request, merge, or release state. An `active` plan
 is approved execution authority only within current user instruction, repository policy, and its
 own scope.
+
+## Git Checkpoints And Independent Lifecycle
+
+Keep in-progress edits local while forming a coherent change. At a useful completed checkpoint,
+inspect and proportionately validate the task's own changes, then save a local commit as part of
+authorized authoring or delivery. No extra independent review or approval is required per commit.
+Respect an explicit preference to leave edits uncommitted, overlapping work, or a concrete blocker;
+state the reason when a completed checkpoint remains uncommitted.
+
+Establish the publication finish line once. Push the working branch and create or update its PR
+at useful checkpoints when the request or assignment covers those effects. Drafting alone does
+not authorize external publication. Prepare the concrete change before asking for uncovered
+publication authority; reuse authority already granted.
+
+Merge accepted shared content through the normal PR route when relevant checks pass and merge
+authority is covered. Do not infer direct default-branch pushes or bypass protections. A reviewed,
+committed, pushed or merged plan can remain `Status: draft`: acceptance as shared content is
+separate from execution approval. Publication must not dispatch implementation, release or adoption.
+
+For example, finish and locally commit a draft, then publish and merge it under a publication-only
+request while leaving it draft. Later execution authority activates it. The bounded activation
+checkpoint covers its plan/log/direct-metadata commit and normal push, not PR/merge or broader
+effects; implementation may start on that active pushed branch without another main merge where
+owner rules allow it. Whole-plan authority can separately include further Git and delivery effects.
 
 ## Discovery, Catalog Modes, And Authoring
 

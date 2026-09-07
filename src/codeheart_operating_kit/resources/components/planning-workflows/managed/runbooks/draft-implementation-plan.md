@@ -1,4 +1,4 @@
-Last updated: 2026-09-05T21:03:41Z (UTC)
+Last updated: 2026-09-07T22:40:39Z (UTC)
 
 # Draft Implementation Plan
 
@@ -94,6 +94,23 @@ Discovery is still optional for straightforward work. When no discovery document
 work is simple enough to plan directly, derive capability from the user request, targeted
 repository research, and recorded assumptions.
 
+## Planning Depth And Technical Judgment
+
+A useful plan explains the problem, intended behavior, existing architecture, chosen technical
+approach, consequential constraints, dependencies and evidence that will prove completion. Keep
+requirements distinct from the chosen approach and assumptions. Preserve enough context for a
+fresh implementer to reason about the work; brevity alone is not quality.
+
+Set costly-to-reverse choices before dependent execution. Ordinary file organization, commands
+and implementation details may be refined within the approved outcome with a brief rationale.
+Return material scope, risk, cost, architecture or authority changes to the acceptance owner.
+Use concrete examples or data/flow detail where ambiguity warrants them; do not freeze every
+command or prescribe detail that research during implementation can safely resolve.
+
+Plan cheap affected checks during iteration and broader validation on a coherent candidate.
+Review at meaningful checkpoints, combining tightly related epics when useful. Use the same
+independent reviewer for focused correction follow-up. Required owner and release gates remain.
+
 ## Feature Capability Coverage
 
 Before drafting epics, identify the intended feature capability. Use the accepted discovery
@@ -106,8 +123,9 @@ not let a plan quietly narrow the capability to policy, scaffolding, gates, sche
 validation shells while the intended feature behavior remains unplanned.
 
 Use the fresh-implementer test before writing tasks: if a future implementer can only restate what
-must be true, but still has to invent the workflow, command sequence, file edits, data shape,
-permission model, or validation method, the epic is not implementation-ready.
+must be true, but still has to invent the substantive workflow, consequential data/permission
+model or acceptance method, the epic is not implementation-ready. Ordinary in-scope refinement
+is expected; include commands and exact paths where they materially reduce execution risk.
 
 ## Runbook Change Coverage
 
@@ -176,7 +194,7 @@ For reusable script asset epics, the plan must state:
 - helper placement, importing scripts, and the narrowest durable owner boundary when helpers are
   created or moved;
 - whether the owner area's `scripts/README.md` needs a compact role index update;
-- output contract, including common fields and domain-shaped `data`;
+- output contract appropriate to its caller, with structured fields only when needed;
 - output safety behavior;
 - managed-runner, CI, or cloud portability constraints when the script is expected to run outside
   a local interactive shell;
@@ -315,13 +333,9 @@ Record open questions as `OQ-<n>` entries. Each open question must include:
 - what decision the question unlocks;
 - recommended default when a safe default exists.
 
-Make strategy decisions before task drafting. For each decision include:
-
-1. problem being solved;
-2. simplest working solution;
-3. what may change in 6-12 months;
-4. rationale for the chosen approach;
-5. alternatives considered and why not chosen.
+Make consequential strategy decisions before dependent task drafting. Explain the problem,
+simplest adequate solution, rationale and serious alternatives. Discuss future change only when
+credible pressure affects the decision; do not invent a fixed forecast for every choice.
 
 If no safe choice exists, keep the question as `BLOCKER: yes` and draft only blocker-resolution
 tasks for affected epics.
@@ -390,36 +404,16 @@ should cover the concrete behavior, artifact changes, and validation needed for 
 
 ## Checklist Rules
 
-Every task line in `F) Tasks Checklist` must:
+Use `- [ ]` tasks for capability-sized implementation actions with relevant files, components or
+validation gates. State the non-negotiable details and a chosen main approach. Ordinary conditional
+preflight and safe implementation choices are legitimate; do not reject a task for words such as
+"or", "choose" or "if needed".
 
-- start with `- [ ]`;
-- contain one concrete action;
-- name concrete files, commands, components, or validation gates;
-- be executable without choosing between branches;
-- represent one capability-sized implementation slice rather than one sentence or one handoff;
-- include the non-negotiable details the executor must not invent.
-
-Do not use these words in checkbox tasks:
-
-- `either`
-- `or`
-- `choose`
-- `optionally`
-- `if needed`
-- `depending`
-- `TBD`
-
-Reject checklist tasks that only state policy intent, doctrine alignment, readiness, or gate
-validation without naming the concrete implementation action. Also reject tasks that deliver only
-scaffolding, schemas, stubs, or validation shells when the intended feature capability still lacks
-the workflow or behavior that uses them.
-
-Resolve checkable facts during planning when they can be checked safely. If execution-time
-variability is legitimate, specify the exact preflight check, expected result, remediation path,
-retry validation, and stop condition.
-
-End each epic with validation tasks that prove the epic outcome and feature capability. Use the
-smallest validation set that actually covers the changed surface.
+Do not let policy, scaffolds, schemas or tests substitute for the intended usable capability.
+Resolve safely checkable consequential facts during planning. For action-time uncertainty, name
+the check and how its result affects execution; specify exact remediation and stops when risk
+requires them. End epics with validation that proves their outcomes, with coherent shared review
+checkpoints where declared.
 
 ## Blocker Handling
 
@@ -434,6 +428,14 @@ For an affected blocked epic:
 
 Use `BLOCKER: no` for decisions that can be safely defaulted, deferred, or resolved during
 execution without changing the main path.
+
+## Authoring Git Checkpoints
+
+Save the plan's own coherent completed work in a local commit after proportionate inspection and
+checks. Follow `../reference/planning-document-lifecycle.md` for exceptions, authorized branch
+publication and normal PR integration. Drafting alone does not authorize push or PR creation.
+An accepted published or merged draft remains inactive until execution/activation is authorized.
+Local commits do not add a review or permission layer. Establish covered publication once.
 
 ## Activation And Plan-Checkpoint Publication
 
@@ -470,9 +472,9 @@ narrower authority. Report the local commit and visibility limitation; do not es
 operation. Successful normal push makes the plan observable on the next complete coordination-home
 refresh. Execution may begin on that active pushed work branch without waiting for merge.
 
-Evidence is a fresh-agent Git transcript or equivalent non-secret record containing repository,
-branch, included paths, commit identity, normal-push result, and exclusions. Static tests must prove
-both the positive plan-only authority and every negative boundary above.
+Evidence is a concise non-secret record containing repository,
+branch, included paths, commit identity, normal-push result, and exclusions. Review must verify the positive plan-only authority and negative boundaries. Use meaningful
+route/resource checks and a realistic walkthrough, without a wording-only test for every phrase.
 
 ## Catalog And Register Hook
 
@@ -502,7 +504,7 @@ Before finalizing the plan, verify:
 - top-level section order is exact;
 - every required subsection exists;
 - Section 3 is linear and non-branching;
-- every epic has a file tree;
+- affected paths are concrete enough to locate the work;
 - every epic has verifiable acceptance criteria;
 - every epic ends with validation tasks;
 - the plan covers intended feature capability or explicitly marks omitted capability areas;

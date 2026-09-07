@@ -1,4 +1,4 @@
-Last updated: 2026-09-07T22:33:32Z (UTC)
+Last updated: 2026-09-07T22:48:50Z (UTC)
 Created: 2026-09-07
 Status: active
 Execution log: docs/repo/plans/development-feedback-and-validation/development-feedback-and-validation_execution_log.md
@@ -312,13 +312,13 @@ proceed alongside prose corrections; the two epics share one final source review
 
 **F) Tasks Checklist**
 
-- [ ] Revise `discovery-workflow.md` and `draft-implementation-plan.md` to preserve intention, capability coverage and consequential decisions while scaling detail and removing rigid procedure that adds no decision value.
-- [ ] Revise `execute-implementation-plan.md`, `review-planning-document.md` and `handle-routine-change.md` for coherent batches, phase-specific review, focused correction follow-up, applicable evidence reuse and scoped recovery.
-- [ ] Align the discovery/drafting/execution/routine runbooks, `planning-document-lifecycle.md`, planning route entries and `agent-task-coordination.md` with Section 2.3's Git checkpoint defaults and independent publication/activation semantics.
-- [ ] Align `agent-task-coordination.md`, the affected planning routing entries, `runbook-authoring-standard.md` and `handle-tooling-readiness.md` with those rules, including existing-authority reuse and service-specific authentication boundaries.
-- [ ] Reconcile `operational-recipe-maturity.md` and `runbook-to-script-promotion-standard.md` so necessity and simpler existing mechanisms precede promotion; remove directly conflicting requirements and examples.
-- [ ] Synchronize the corresponding declared resource mirrors and affected navigation entries.
-- [ ] Review the combined EP-01/02 candidate against the representative scenarios in EP-02 and resolve material findings through focused reviewer follow-up.
+- [x] Revise `discovery-workflow.md` and `draft-implementation-plan.md` to preserve intention, capability coverage and consequential decisions while scaling detail and removing rigid procedure that adds no decision value.
+- [x] Revise `execute-implementation-plan.md`, `review-planning-document.md` and `handle-routine-change.md` for coherent batches, phase-specific review, focused correction follow-up, applicable evidence reuse and scoped recovery.
+- [x] Align the discovery/drafting/execution/routine runbooks, `planning-document-lifecycle.md`, planning route entries and `agent-task-coordination.md` with Section 2.3's Git checkpoint defaults and independent publication/activation semantics.
+- [x] Align `agent-task-coordination.md`, the affected planning routing entries, `runbook-authoring-standard.md` and `handle-tooling-readiness.md` with those rules, including existing-authority reuse and service-specific authentication boundaries.
+- [x] Reconcile `operational-recipe-maturity.md` and `runbook-to-script-promotion-standard.md` so necessity and simpler existing mechanisms precede promotion; remove directly conflicting requirements and examples.
+- [x] Synchronize the corresponding declared resource mirrors and affected navigation entries.
+- [x] Review the combined EP-01/02 candidate against the representative scenarios in EP-02 and resolve material findings through focused reviewer follow-up.
 
 **G) Implementation Notes:** Keep instructions concrete at consequential boundaries. Do not turn
 all prose into a schema, replace every removed requirement with a warning, or let representative
@@ -354,14 +354,14 @@ changed requirement. Existing release integrity and supported platform obligatio
 
 **F) Tasks Checklist**
 
-- [ ] Inspect current required-check configuration and map existing `validate.yml` jobs to ordinary feedback and full candidate/release acceptance in the execution log.
-- [ ] Refactor `validate.yml` to run a small ordinary PR/main feedback lane and retain expensive native/install/compatibility coverage for an explicit coherent-candidate dispatch; prevent duplicate branch-push and PR executions for the same ordinary change.
-- [ ] Separate dispatch modes in `validate.yml`: candidate validation uses the checked-out source and staged artifacts; published-release smoke requires an explicit released tag, downloads that release, and runs only the public-asset smoke jobs.
-- [ ] Remove overlapping Go/package invocations from each lane where broader coverage already proves the same behavior, preserving separately configured regression and platform cases.
-- [ ] Update `change-operating-kit.md` and `release-operating-kit.md` to document the actual lane commands, candidate timing, correction/reuse rules and retained release safeguards.
-- [ ] Update directly affected routing/resource/workflow tests to assert meaningful behavior and delivered resource equality; remove wording-only assertions for superseded ceremony without weakening identity, authority and preservation contracts.
-- [ ] Run `python -m pytest -q tests/test_routing.py tests/test_packaging_resources.py`, public-core and Markdown checks once on the coherent source candidate; run additional targeted tests for any actual changed executable behavior.
-- [ ] Complete one independent source review with representative fresh-context walkthroughs and record findings, corrections and evidence limits in the execution log.
+- [x] Inspect current required-check configuration and map existing `validate.yml` jobs to ordinary feedback and full candidate/release acceptance in the execution log.
+- [x] Refactor `validate.yml` to run a small ordinary PR/main feedback lane and retain expensive native/install/compatibility coverage for an explicit coherent-candidate dispatch; prevent duplicate branch-push and PR executions for the same ordinary change.
+- [x] Separate dispatch modes in `validate.yml`: candidate validation uses the checked-out source and staged artifacts; published-release smoke requires an explicit released tag, downloads that release, and runs only the public-asset smoke jobs.
+- [x] Remove overlapping Go/package invocations from each lane where broader coverage already proves the same behavior, preserving separately configured regression and platform cases.
+- [x] Update `change-operating-kit.md` and `release-operating-kit.md` to document the actual lane commands, candidate timing, correction/reuse rules and retained release safeguards.
+- [x] Update directly affected routing/resource/workflow tests to assert meaningful behavior and delivered resource equality; remove wording-only assertions for superseded ceremony without weakening identity, authority and preservation contracts.
+- [x] Run `python -m pytest -q tests/test_routing.py tests/test_packaging_resources.py`, public-core and Markdown checks once on the coherent source candidate; run additional targeted tests for any actual changed executable behavior.
+- [x] Complete one independent source review with representative fresh-context walkthroughs and record findings, corrections and evidence limits in the execution log.
 
 **G) Implementation Notes:** Prefer existing workflow event/branch/path controls and a simple
 candidate invocation. Do not build a generic dependency classifier, proof database or orchestration

@@ -1,4 +1,4 @@
-Last updated: 2026-09-05T19:15:20Z (UTC)
+Last updated: 2026-09-07T22:40:39Z (UTC)
 
 # Handle Routine Change
 
@@ -65,9 +65,17 @@ module system and read `docs/repo/state/<id>/` plus the module's own route befor
    Inspect a document correction; exercise changed behavior for a defect; verify materialization
    and preservation for managed content. Add a regression when it proves a breakable contract,
    rather than mechanically testing prose or every reversible edit.
-7. Review the result and complete any covered Git checkpoint. Record result, validation, remaining
+7. Review the coherent result and locally commit its own changes after proportionate checks,
+   respecting explicit user preference, overlap or a concrete blocker. Use
+   `../reference/planning-document-lifecycle.md` for authorized push/PR and accepted merge defaults.
+   A routine local commit needs no extra independent review or permission. Record validation, remaining
    limits, commit/push/PR state and the next owner. If validation fails, correct within scope or
    preserve the current state with the concrete blocker and recovery route.
+
+Retain applicable evidence after a correction or interruption; recheck only invalidated behavior
+and required owner gates. Diagnose code, test, environment, authentication and billing failures
+separately. Verify the actual effect before retrying an uncertain external write. Do not turn a
+routine fix into broad native/performance acceptance without a dependency or risk reason.
 
 ## Evidence And Handoff
 

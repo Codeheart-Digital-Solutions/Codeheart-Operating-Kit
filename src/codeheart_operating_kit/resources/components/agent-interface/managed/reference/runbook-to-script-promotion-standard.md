@@ -1,4 +1,4 @@
-Last updated: 2026-07-08T14:07:02Z (UTC)
+Last updated: 2026-09-07T22:41:52Z (UTC)
 
 # Runbook-To-Script Promotion Standard
 
@@ -192,6 +192,14 @@ Fields such as `readiness_required` or `access_required` may appear in a domain-
 only when the owning domain defines their exact meaning. This generic standard owns the pattern,
 not provider-specific readiness semantics.
 
+## Necessity Before Promotion
+
+Identify the concrete recurring failure or actual consumer need before adding machinery. Prefer
+an existing tool, short invocation or current record when adequate; remove needless steps and
+duplicate checks first. Promotion triggers are reasons to evaluate benefit and maintenance cost,
+not automatic mandates. A script, evidence file, wrapper or service must earn its complexity.
+Do not build a universal authentication or recovery layer from a local operational blocker.
+
 ## Promotion Triggers
 
 A runbook step or operational recipe becomes a reusable script asset candidate when one or more
@@ -229,10 +237,9 @@ into scripts that hide judgment from the user or agent.
 
 ## Inline Code Block Rule
 
-Inline code blocks are allowed as short invocations, examples, or temporary discovery notes. They
-are not durable execution surfaces.
-
-Promote directly to a reusable script asset when a block contains one or more of:
+Inline code blocks may remain short, clear invocations or examples where existing tools already
+handle execution safely. Evaluate a reusable script asset when repeated mechanics need tests or
+reduce demonstrated error; consider these signals rather than promoting automatically:
 
 - fragile syntax, quoting, encoding, parsing, or request construction;
 - non-trivial branching or error handling;
@@ -248,10 +255,11 @@ runbook.
 
 ## First-Script Scaffolding
 
-The first reusable script asset in a repository area, product, package, source area, or module
-should trigger basic script scaffolding. Do not wait until many scripts exist.
+Use existing owner documentation and test locations for a first reusable script. Add only the
+missing entrypoint documentation and meaningful tests. Empty fixture folders, a new hierarchy and
+a separate README are unnecessary when existing surfaces cover the contract.
 
-Default shape:
+Possible shape when the owner has no suitable existing structure:
 
 ```text
 <owner-root>/
@@ -419,7 +427,9 @@ The script fills the runtime result when executed:
 - actual `blocker`;
 - relevant output safety flags.
 
-Minimum common fields:
+Use these common fields when structured output has an actual caller that needs them. Simple
+local scripts may use a documented exit status and concise output; preserve an existing adequate
+contract instead of wrapping it in mandatory JSON:
 
 ```json
 {
@@ -455,7 +465,8 @@ provider responses by default.
 
 ## Test Expectations
 
-Tests are part of first-script scaffolding, not an optional late cleanup.
+Validate breakable behavior when introducing a durable script. Reuse existing tests where they
+cover the contract; do not require tests that merely mirror implementation or reversible prose.
 
 Testing should scale with risk:
 
@@ -482,8 +493,8 @@ Tests should prove:
 Reviewers should flag:
 
 - long inline implementation in a runbook;
-- fragile shell, API, portal, or request-construction mechanics without a script;
-- script without `scripts/README.md` in its owner area;
+- repeated fragile mechanics without an adequate existing tool or tested execution surface;
+- script whose caller, contract or test location cannot be found through owner documentation;
 - durable script without a declared primitive, workflow, or helper role when the role affects
   review;
 - workflow script with undocumented dependencies, phase boundaries, or blocker ownership;

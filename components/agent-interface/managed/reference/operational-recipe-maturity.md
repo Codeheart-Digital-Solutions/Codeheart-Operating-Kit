@@ -1,4 +1,4 @@
-Last updated: 2026-07-08T14:07:02Z (UTC)
+Last updated: 2026-09-07T22:41:52Z (UTC)
 
 # Operational Recipe Maturity
 
@@ -72,6 +72,17 @@ form.
 Recipe content with software-like behavior that still lives in prose or references without enough
 lifecycle discipline.
 
+## Necessity Before Maturity
+
+First ask what concrete failure the mechanism prevents and whether existing tooling, a short
+invocation or the current record already suffices. Remove unjustified checks and duplicate
+artifacts. Do not replace removed ceremony with a new evidence framework, wrapper or service.
+
+Promotion requires a demonstrated reliability or reuse benefit that outweighs maintenance cost.
+A trigger invites judgment; stable inputs, one external command or one structured output alone do
+not mandate a script. Keep justified identity, authorization and preservation controls. Scale
+assurance to actual consumer commitments and risk without inventing a generic stage policy.
+
 ## Threshold Test
 
 Use this question before applying recipe maturity:
@@ -126,7 +137,8 @@ Use a recipe maturity review when work includes:
 
 ## Recipe Metadata
 
-L1 recipes need a compact metadata block or equivalent section. Keep this small.
+L1 recipes need clear inputs, procedure and action/stop boundaries. Existing runbook sections
+can provide them; do not add a duplicate metadata block. This is a useful optional shape:
 
 ```text
 Recipe ID:
@@ -151,7 +163,8 @@ Non-live tests:
 Phase model: optional unless phase-specific failure localization is needed
 ```
 
-When promotion is under consideration, record the review result.
+When promotion is under consideration, briefly record why the selected existing or new surface
+is adequate. Separate fields or a new record are unnecessary. Useful prompts:
 
 ```text
 Promotion destination:
@@ -170,7 +183,8 @@ Use the smallest validation tier that proves the changed recipe behavior.
 | Dry-run or preflight | Proves local tooling, auth context, target resolution, or external readiness without the final sensitive or write action. |
 | Approval-gated live validation | Proves the recipe outcome after the correct approval and route-specific preconditions. |
 
-L1 recipes normally need fresh-agent executability review. Reusable script assets normally need
+L1 recipes normally need fresh-agent executability review at a coherent change checkpoint,
+which may cover related runbooks together. Use the same reviewer for affected corrections. Reusable script assets normally need
 non-live tests for helper logic, marker output, blocker shape, summary shape, and output-contract
 behavior. Live validation only belongs where the route, approval class, and user approval allow
 it.

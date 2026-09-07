@@ -1,4 +1,4 @@
-Last updated: 2026-09-05T19:15:20Z (UTC)
+Last updated: 2026-09-07T22:40:39Z (UTC)
 
 # Agent Task Coordination
 
@@ -57,7 +57,16 @@ the plan for a material outcome, scope, dependency, cost or authority change. A 
 routine repair follows `../../planning-workflows/runbooks/handle-routine-change.md` and retains a
 visible relationship to affected work. Do not use it to escape epic review.
 
-Use coherent validated commits at agreed review, recovery and handover boundaries. Normally keep
+Use local commits for coherent completed work after proportionate inspection and checks. Follow
+`../../planning-workflows/reference/planning-document-lifecycle.md` for exceptions, authorized
+publication and accepted PR integration; a published draft remains independent of execution
+authority. Do not create a review or approval layer per commit.
+
+Use one independent source review at the planned meaningful checkpoint, combining related epics
+when declared. The same reviewer follows corrections; broader review needs a material change,
+independence issue, limitation or unresolved concern. Director acceptance need not repeat that
+technical review. Retain applicable validation through corrections and interruptions and rerun
+invalidated checks, with full coverage at the required coherent candidate boundary. Normally keep
 one delivery PR and update it; do not create a task, release or PR per checklist item. When the
 assignment requires director acceptance, report the coherent result to that director and hand off
 for review. Do independent preparation that does not depend on the decision. Continue dependent
