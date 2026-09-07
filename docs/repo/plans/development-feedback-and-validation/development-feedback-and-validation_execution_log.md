@@ -1,4 +1,4 @@
-Last updated: 2026-09-07T23:31:17Z (UTC)
+Last updated: 2026-09-07T23:37:30Z (UTC)
 Created: 2026-09-07
 
 # Development Feedback and Proportionate Validation — Execution Log
@@ -137,16 +137,20 @@ Its affected native/semantic lanes must complete; the successful exact-Git proof
 
 ### Native source diagnostics boundary
 
-The corrected Windows run remained in the builder beyond the Go timeout without exposed output.
+The corrected Windows run remained in the builder beyond 35 minutes without exposed output.
 The builder captured its whole source-suite subprocess, preventing useful live diagnosis. Source
-validation is now an explicit visible native CI step, retaining the 30-minute Go timeout and adding
-a 35-minute step bound. The builder only builds/verifies packs. There is still one broad source
-suite per lane; no validation is waived and builder invocation alone is not release acceptance.
-This correction changes orchestration, not embedded release inputs or the pack algorithm. Existing
-successful macOS/Ubuntu/Git evidence and verified pack bytes remain applicable. Windows is pending.
+validation is now an explicit visible native CI step, retaining the 30-minute per-package Go
+timeout. There is still one broad source suite per lane; no validation is waived and builder
+invocation alone is not release acceptance. This changes orchestration, not embedded release
+inputs or the pack algorithm. Successful macOS/Ubuntu/Git evidence and verified pack bytes remain
+applicable. Windows is pending.
 
 Same-reviewer focused follow-up found no material issue in the visible-source-step correction.
-Twenty focused workflow/release tests pass. The stalled run was confirmed still in source/build
+Twenty focused workflow/release tests pass. The earlier run was confirmed still in source/build
 validation before cancellation; no staged install, release, consumer or provider operation was in
-progress. Cancellation is scoped recovery of this stalled run, not automatic candidate cancellation.
-The root cause remains unproven until visible Windows diagnostics are available.
+progress. However, subsequent historical evidence corrects the diagnosis: successful Windows run
+`33998404410`, job `101392834844`, took 38m42s for the same Go command. Its per-package timeout does
+not bound compilation plus total execution time. Duration alone did not establish a stall; the
+cancellation was premature. The unsupported new 35-minute step bound is removed. The replacement
+run is allowed to finish; no further cancellation or rerun follows merely from elapsed time.
+This correction preserves the original timeout policy and does not change account budgets.
