@@ -126,6 +126,9 @@ jobs:
           PY
       - run: python -m pip install --upgrade pip setuptools pytest PyYAML
       - run: python -m pip install -e .
+      - name: Validate native Go source
+        timeout-minutes: 35
+        run: go test -timeout 30m ./...
       - name: Validate installed plan routes, schemas, and packaged resources
         run: python -m pytest tests/test_json_schemas.py tests/test_routing.py tests/test_packaging_resources.py -q
       - name: Validate released plan-catalog compatibility boundaries
@@ -136,7 +139,7 @@ jobs:
       - run: python scripts/validate-markdown-headers.py
       - run: python scripts/validate-json-schemas.py
       - run: python scripts/validate-release-manifest.py
-      # Builder runs Go once, builds each pack twice and verifies payload identity.
+      # Source was validated above; builder only repeats pack builds and verifies identity.
       - run: python scripts/build-release-assets.py --output-dir dist
         env:
           PIP_INDEX_URL: https://example-unused.invalid/simple/
@@ -310,6 +313,9 @@ jobs:
           "version=$Version" >> $env:GITHUB_OUTPUT
       - run: python -m pip install --upgrade pip setuptools pytest PyYAML
       - run: python -m pip install -e .
+      - name: Validate native Go source
+        timeout-minutes: 35
+        run: go test -timeout 30m ./...
       - name: Validate installed plan routes, schemas, and packaged resources
         run: python -m pytest tests/test_json_schemas.py tests/test_routing.py tests/test_packaging_resources.py -q
       - name: Validate released plan-catalog compatibility boundaries

@@ -1,4 +1,4 @@
-Last updated: 2026-09-07T22:53:45Z (UTC)
+Last updated: 2026-09-07T23:31:17Z (UTC)
 Created: 2026-09-07
 
 # Development Feedback and Proportionate Validation — Execution Log
@@ -60,9 +60,9 @@ and no repository rulesets. No required check names are being silently skipped o
 | --- | --- |
 | feedback | PR and main push; routing/resources, public-core, Markdown, schemas, release manifest; feature branch push does not duplicate PR |
 | git-2-43-proof-validation | Explicit candidate only; exact pinned Git build and branch-proof regression |
-| macos-validation | Explicit candidate; compatibility/parity, twice-built native packs, install and historical upgrade preservation; builder owns broad Go invocation |
+| macos-validation | Explicit candidate; compatibility/parity, twice-built native packs, install and historical upgrade preservation; visible CI step owns broad Go invocation |
 | ubuntu-semantic-validation | Explicit candidate; broad Go, separately configured scale benchmark, schema/routing/resource/sync and compatibility |
-| windows-validation | Explicit candidate; compatibility/parity, Windows-only twice-build, native install/reparse and deferred-upgrade preservation; builder owns broad Go invocation |
+| windows-validation | Explicit candidate; compatibility/parity, Windows-only twice-build, native install/reparse and deferred-upgrade preservation; visible CI step owns broad Go invocation |
 | macos/windows-public-release | Explicit released-smoke with required versioned tag; public download/install/check only |
 
 Mode guard is exercised with valid candidate, rejected candidate tag, rejected empty/malformed
@@ -71,8 +71,8 @@ version. Public smoke does not set up Python or run source suites. Only supersed
 feedback is cancelled; each manual candidate/install dispatch has its own concurrency group.
 
 Inspection found additional overlapping full-suite calls inside the existing pack builder and
-release tests. Native workflow jobs now rely on the builder's one Go invocation and twice-built
-pack verification; CI omits equivalent full-builder Python cases. The distinct Windows-only
+release tests. The initial native workflow revision relied on the builder's one Go invocation and twice-built
+pack verification; the later diagnostic correction separates source tests from packaging; CI omits equivalent full-builder Python cases. The distinct Windows-only
 builder, oldest Git regression, benchmark and native preservation checks remain. Builder execution
 under an unused package-index URL retains evidence that packaging needs no Python package access.
 
@@ -134,3 +134,19 @@ Ubuntu's broad suite found a stale fixed Python-helper checksum for `profiles/st
 the normal patch-version update. The expected fixture digest was recomputed from the unchanged
 hash algorithm and current profile. This is release-fixture maintenance, not a product change.
 Its affected native/semantic lanes must complete; the successful exact-Git proof remains valid.
+
+### Native source diagnostics boundary
+
+The corrected Windows run remained in the builder beyond the Go timeout without exposed output.
+The builder captured its whole source-suite subprocess, preventing useful live diagnosis. Source
+validation is now an explicit visible native CI step, retaining the 30-minute Go timeout and adding
+a 35-minute step bound. The builder only builds/verifies packs. There is still one broad source
+suite per lane; no validation is waived and builder invocation alone is not release acceptance.
+This correction changes orchestration, not embedded release inputs or the pack algorithm. Existing
+successful macOS/Ubuntu/Git evidence and verified pack bytes remain applicable. Windows is pending.
+
+Same-reviewer focused follow-up found no material issue in the visible-source-step correction.
+Twenty focused workflow/release tests pass. The stalled run was confirmed still in source/build
+validation before cancellation; no staged install, release, consumer or provider operation was in
+progress. Cancellation is scoped recovery of this stalled run, not automatic candidate cancellation.
+The root cause remains unproven until visible Windows diagnostics are available.

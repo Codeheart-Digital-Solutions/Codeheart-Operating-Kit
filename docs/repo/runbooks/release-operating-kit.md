@@ -1,4 +1,4 @@
-Last updated: 2026-09-07T22:53:45Z (UTC)
+Last updated: 2026-09-07T23:31:17Z (UTC)
 
 # Release Operating Kit
 
@@ -82,7 +82,9 @@ inputs and retained results alongside the correction run. If applicability is un
 
 Record the run URL and resolved commit. Candidate jobs cover macOS and Windows native suites,
 staged installers and old-version upgrade preservation, Ubuntu semantic/performance coverage and
-exact Git 2.43 proof regression. Each native lane runs the broad Go suite once inside the pack builder; Ubuntu runs it directly.
+exact Git 2.43 proof regression. Each native lane runs the broad Go suite once as a visible CI step with its retained 30-minute
+Go timeout and a 35-minute step bound; Ubuntu runs it directly. The builder only packages and
+verifies artifacts; invoking it alone does not prove source acceptance.
 Release test cases that repeat entire builds are covered by that builder in CI; it runs under an
 unused package-index URL to prove no Python package retrieval is needed. Separately
 configured benchmark and oldest-Git cases remain distinct. The macOS builder performs two builds

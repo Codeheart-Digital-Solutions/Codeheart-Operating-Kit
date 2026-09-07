@@ -220,9 +220,11 @@ def test_validation_lanes_preserve_candidate_boundary():
         runs = [step.get("run", "") for step in jobs[name]["steps"]]
         broad = [run for run in runs if run.startswith("go test") and "-bench" not in run]
         builders = [run for run in runs if "scripts/build-release-assets.py" in run]
-        assert len(broad) + len(builders) == 1
+        assert len(broad) == 1
         if builders:
-            assert 'run(["go", "test", "-timeout", "30m", "./..."])' in (ROOT / "scripts/build-release-assets.py").read_text()
+            assert 'run(["go", "test"' not in (ROOT / "scripts/build-release-assets.py").read_text()
+            native = next(step for step in jobs[name]["steps"] if step.get("name") == "Validate native Go source")
+            assert native["timeout-minutes"] == "35"
     for name in ["macos-public-release", "windows-public-release"]:
         job = jobs[name]
         assert job["needs"] == "dispatch-inputs"
