@@ -202,6 +202,8 @@ def test_validation_lanes_preserve_candidate_boundary():
     assert "pull_request" in workflow["on"]
     inputs = workflow["on"]["workflow_dispatch"]["inputs"]
     assert inputs["mode"]["default"] == "candidate"
+    assert inputs["candidate_lane"]["default"] == "all"
+    assert inputs["candidate_lane"]["options"] == ["all", "macos", "windows", "ubuntu", "git-2-43"]
     assert inputs["mode"]["options"] == ["candidate", "released-smoke"]
     jobs = workflow["jobs"]
     assert jobs["feedback"]["if"] == "github.event_name != 'workflow_dispatch'"
@@ -211,7 +213,8 @@ def test_validation_lanes_preserve_candidate_boundary():
     for name in ["git-2-43-proof-validation", "macos-validation", "windows-validation", "ubuntu-semantic-validation"]:
         job = jobs[name]
         assert job["needs"] == "dispatch-inputs"
-        assert job["if"] == "github.event_name == 'workflow_dispatch' && inputs.mode == 'candidate'"
+        lane = {"macos-validation": "macos", "windows-validation": "windows", "ubuntu-semantic-validation": "ubuntu", "git-2-43-proof-validation": "git-2-43"}[name]
+        assert job["if"] == f"github.event_name == 'workflow_dispatch' && inputs.mode == 'candidate' && (inputs.candidate_lane == 'all' || inputs.candidate_lane == '{lane}')"
         assert "/releases/download/" not in str(job["steps"])
     for name in ["macos-validation", "windows-validation", "ubuntu-semantic-validation"]:
         runs = [step.get("run", "") for step in jobs[name]["steps"]]
@@ -232,6 +235,7 @@ def test_validation_lanes_preserve_candidate_boundary():
     assert "github.run_id" in workflow["concurrency"]["group"]
 
 
+@pytest.mark.skipif(os.name == "nt", reason="Dispatch guard runs on Ubuntu; Windows bash may be a WSL launcher")
 @pytest.mark.parametrize("mode, tag, succeeds", [
     ("candidate", "", True), ("candidate", "v0.1.99", False),
     ("released-smoke", "", False), ("released-smoke", "v0.1.99", True),
@@ -239,5 +243,13 @@ def test_validation_lanes_preserve_candidate_boundary():
 ])
 def test_dispatch_input_guard(mode, tag, succeeds):
     guard = validation_workflow()["jobs"]["dispatch-inputs"]["steps"][0]["run"]
-    result = subprocess.run(["bash", "-c", guard], env={**os.environ, "MODE": mode, "RELEASE_VERSION": tag}, capture_output=True)
+    result = subprocess.run(["bash", "-c", guard], env={**os.environ, "MODE": mode, "CANDIDATE_LANE": "all", "RELEASE_VERSION": tag}, capture_output=True)
     assert (result.returncode == 0) == succeeds
+
+
+@pytest.mark.skipif(os.name == "nt", reason="Dispatch guard runs on Ubuntu")
+@pytest.mark.parametrize("lane", ["", "unknown"])
+def test_dispatch_rejects_unknown_candidate_lane(lane):
+    guard = validation_workflow()["jobs"]["dispatch-inputs"]["steps"][0]["run"]
+    result = subprocess.run(["bash", "-c", guard], env={**os.environ, "MODE": "candidate", "CANDIDATE_LANE": lane, "RELEASE_VERSION": ""}, capture_output=True)
+    assert result.returncode != 0

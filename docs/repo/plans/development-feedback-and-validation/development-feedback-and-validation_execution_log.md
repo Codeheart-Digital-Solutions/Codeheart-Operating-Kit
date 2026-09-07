@@ -1,4 +1,4 @@
-Last updated: 2026-09-07T22:48:11Z (UTC)
+Last updated: 2026-09-07T22:53:45Z (UTC)
 Created: 2026-09-07
 
 # Development Feedback and Proportionate Validation — Execution Log
@@ -30,8 +30,8 @@ Implementation branch: `codex/development-feedback-delivery`. Planning baseline:
 
 | Epic | State | Completion evidence |
 | --- | --- | --- |
-| EP-01 — Coherent operating guidance | Implemented; combined acceptance pending | Guidance and declared mirrors updated; independent review correction addressed |
-| EP-02 — Feedback, enforcement and coherent acceptance | Implemented; combined acceptance pending | 27 focused tests pass; workflow mode guards exercised locally |
+| EP-01 — Coherent operating guidance | Accepted at 861ed11 | Guidance and declared mirrors updated; independent review correction addressed |
+| EP-02 — Feedback, enforcement and coherent acceptance | Accepted at 861ed11 | 27 focused tests pass; workflow mode guards exercised locally |
 | EP-03 — Release, adoption and owner handoff | Release inputs prepared; delivery pending | Next unused patch selected: 0.1.32; native candidate and adoption pending |
 
 EP-01/02 share one coherent independent source review with focused correction follow-up. After
@@ -108,5 +108,29 @@ mismatch guard; it is now explicitly retained. Native builders cover required pa
 not every historical Python assertion: separate-invocation Windows catalog comparison and captured
 private-index-marker omission are not replayed. Those tests remain available for builder changes.
 
-Source acceptance, hosted candidate results, integration, publication, public smoke and all assigned
-consumer adoptions remain open. Exact target paths and preservation records stay private.
+Source acceptance is complete. Hosted candidate results, integration, publication, public smoke
+and all assigned consumer adoptions remain open. Exact target paths and preservation records stay private.
+
+### Hosted candidate correction
+
+Full candidate run `34167972472` targets source `861ed11`. Windows stopped in the new dispatch-guard
+Python test: `bash` resolves to a WSL launcher with no distribution. This is a test-environment
+mismatch, not Kit native behavior. The guard actually runs on Ubuntu; its executable cases now
+run on POSIX while Windows still checks workflow structure and all native behavior. The product's
+Windows runtime remains untouched.
+
+Added a bounded `candidate_lane` choice (default all) to permit a focused hosted correction run
+without replaying valid macOS, Ubuntu or oldest-Git evidence. Partial runs never qualify a release
+alone. This uses existing workflow conditions; no proof cache or orchestration service is added.
+Source/packaged payload is unchanged by this test/dispatch correction. Retained evidence must name
+the original full run and final commit; any failed or invalidated lane remains open.
+
+Director accepted the combined EP-01/02 source checkpoint at `861ed11` in PR #17. The acceptance
+covers source outcome; hosted, publication and adoption gates remain binding. Guidance and release
+inputs are unchanged by the subsequent test-harness correction. No new user permission is needed
+for the covered final effects.
+
+Ubuntu's broad suite found a stale fixed Python-helper checksum for `profiles/standard.yaml` after
+the normal patch-version update. The expected fixture digest was recomputed from the unchanged
+hash algorithm and current profile. This is release-fixture maintenance, not a product change.
+Its affected native/semantic lanes must complete; the successful exact-Git proof remains valid.

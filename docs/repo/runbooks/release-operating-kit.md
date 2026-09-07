@@ -1,4 +1,4 @@
-Last updated: 2026-09-07T22:44:25Z (UTC)
+Last updated: 2026-09-07T22:53:45Z (UTC)
 
 # Release Operating Kit
 
@@ -74,6 +74,11 @@ downloads that candidate as a public release. Invoke on the exact intended branc
 ```sh
 gh workflow run validate.yml --ref <candidate-ref> -f mode=candidate
 ```
+
+`candidate_lane` defaults to `all`. To rerun one invalidated lane after a scoped correction, pass
+`-f candidate_lane=windows` (also `macos`, `ubuntu`, `git-2-43`). A selected-lane pass is partial
+evidence, never full release acceptance by itself. Record the previous run, unchanged relevant
+inputs and retained results alongside the correction run. If applicability is uncertain, use all.
 
 Record the run URL and resolved commit. Candidate jobs cover macOS and Windows native suites,
 staged installers and old-version upgrade preservation, Ubuntu semantic/performance coverage and
