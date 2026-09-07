@@ -1,4 +1,4 @@
-Last updated: 2026-09-05T16:59:13Z (UTC)
+Last updated: 2026-09-07T21:34:51Z (UTC)
 
 # Repo Plans
 
@@ -16,6 +16,9 @@ codeheart-operating-kit plans list --format json .
 entries after mixed cutover.
 
 ## Current Plans
+
+- Draft development feedback and proportionate validation implementation plan:
+  `development-feedback-and-validation/development-feedback-and-validation_implementation_doc.md`
 
 - Draft proportionate changes, approval reuse and agent task coordination implementation plan:
   `proportionate-agent-workflows/proportionate-agent-workflows_implementation_doc.md`
