@@ -1,6 +1,7 @@
-Last updated: 2026-09-07T22:10:14Z (UTC)
+Last updated: 2026-09-07T22:33:32Z (UTC)
 Created: 2026-09-07
-Status: draft
+Status: active
+Execution log: docs/repo/plans/development-feedback-and-validation/development-feedback-and-validation_execution_log.md
 
 # Development Feedback and Proportionate Validation
 
@@ -12,7 +13,7 @@ plan:
   kind: implementation
   purpose: Deliver coherent discovery, planning and execution guidance with useful review, proportionate validation, minimal machinery and verified consumer adoption.
   first_cataloged: 2026-09-07T21:34:51Z
-  catalog_metadata_updated: 2026-09-07T22:10:14Z
+  catalog_metadata_updated: 2026-09-07T22:33:32Z
   relations:
     - kind: related
       target: codeheart-operating-kit.implementation.proportionate-agent-workflows
@@ -27,15 +28,17 @@ accepted commissioning discovery is retained by the coordinating owner; this pub
 contains the complete reusable implementation scope. Private strategy, consumer incident details,
 account information and task assignments stay in the coordination home.
 
-This is an implementation plan, not execution authorization. Preparation of this draft does not
-activate it, change installed guidance, dispatch hosted tests or resume consumer implementations.
+The reviewed draft was merged through PR #16. The user subsequently authorized activation and
+commissioned one dedicated implementer for the complete guidance, validation, release and verified
+adoption outcome on 2026-09-07. This plan is active under the commissioning boundary below.
+Consumer product implementations remain paused; only the scoped Kit delivery/adoption is authorized.
 
 Independent planning review completed on 2026-09-07. One material sequencing finding was corrected:
 prepublication candidate validation is separate from explicit post-publication smoke. Focused
 follow-up closed the finding; no material planning findings remain. This review does not substitute
 for implementation, workflow execution, release or adoption evidence.
 The subsequently approved Git-checkpoint clarification in Section 2.3 is included in the planned
-combined source review; it does not itself publish or activate this draft.
+combined source review. The later whole-plan authorization activates this plan explicitly.
 
 ## Essential Context Reference Files
 
@@ -180,7 +183,8 @@ installed tools; never infer credentials or introduce an unrelated service login
 | OQ-03 | BLOCKER: no. Affects: EP-03. | The commissioning owner supplies exact consumer roots/worktrees and covers adoption in the execution assignment. Use the existing lifecycle route, preview changes and verify installed version/routes at each actual plan-amendment location. An inaccessible consumer stays adoption-pending; no global rollout is implied. |
 
 These are normal action-time inputs with bounded handling, not unanswered architecture choices.
-The draft is not active. Final effects remain reserved until explicitly included in commissioning.
+The full-delivery authorization now includes the final effects listed below. Current action-time
+checks, actual target bindings and the stated exceptions still apply.
 
 ## 2.3 Architectural Decisions With Reasoning
 
@@ -226,16 +230,43 @@ concrete change; do not ask again for effects already included in the assignment
 
 ### Commissioning and delivery boundary
 
-Proposed assignment: one implementer owns EP-01 through EP-03 under the commissioning owner's
-acceptance owner. One delivery PR normally contains the coherent Kit change; normal commits,
-pushes and PR updates occur at useful review/recovery boundaries. A sibling execution log is
-created on activation and records evidence and material deviations, not every command.
+**Activated 2026-09-07.** The user explicitly requested merging the two documentation PRs, then
+activating and commissioning one dedicated Kit task through guidance, proportionate checks,
+release and verified adoption. The Organizational Operating Model Improvement Program Director is
+the acceptance owner. One implementer owns EP-01 through EP-03 on
+`codex/development-feedback-delivery`, starting from the merged planning baseline
+`9e73c654aed7de161f0414e37701f8426b1cd44b` and its pushed activation checkpoint.
 
-The proposed finish line is merged source, a validated release and verified adoption in the exact
-consumer targets named by the commissioning owner. Merge, tag/publication and consumer upgrades
-are reserved until the execution assignment explicitly includes/delegates them. That assignment
-also fixes the acceptance owner and targets; do not rediscover authorization at every checkbox.
-No goal, new task, automation or message to another Director is commissioned by this draft.
+The grant covers required source changes, normal local development setup, proportionate local and
+hosted validation, coherent commits, normal branch pushes, one implementation PR with updates,
+source merge after delegated acceptance, next-patch version selection, release preparation and
+publication, public-release smoke, and supported Kit adoption at the consumer targets named in the
+private assignment. It includes scoped consumer adoption commits and normal pushes/PR integration
+where the owning route requires them. Preserve unrelated work and consumer-owned content; never
+include product implementation or bypass repository protections, authentication, approval review
+or failed acceptance. No force-push, history rewrite, destructive cleanup, credential/security
+policy change, billing increase, support expansion or unrelated provider operation is granted.
+
+The finish line is merged source, a validated versioned release under the existing approved
+distribution audience and signing boundary, successful published-asset smoke, and verified active
+version/routes at every assigned consumer worktree. The private commissioning record identifies
+the four current working locations across the coordination home and two product repositories;
+confirm their identity and current state immediately before adoption. A missing/moved target stays
+explicitly adoption-pending until the acceptance owner resolves its replacement. Never broaden
+into all repositories or treat an unverified installation as complete.
+
+The Program Director accepts the combined EP-01/02 source checkpoint and the final release/adoption
+handoff. The implementer may prepare independent release inputs while review is pending; after
+source acceptance it performs the already-authorized integration, release and adoption steps once
+their relevant gates pass. These are delegated acceptance points, not new user-approval turns per
+epic. Material scope, authority, cost or unresolved safety departures return to the Director.
+
+Send concise direct reports only to the commissioning Director at the combined source review,
+completion, genuine blocker or material exception. The private task assignment supplies its exact
+execution locator and authorizes those reports. Include outcome, evidence, Git/release/adoption
+state and the actual decision needed. The sibling execution log owns public-safe technical
+progress; private consumer paths and task identities remain in the private assignment. No goal,
+watcher, automatic monitoring or report to other organizational roles is commissioned.
 
 Apply the approved review direction to this work: EP-01 and EP-02 form one coherent source/review
 checkpoint. Independent preparation may overlap; dependent completion waits for that acceptance.
@@ -434,3 +465,7 @@ changed risks justify their cost. Preserve effective safeguards while reconsider
 - 2026-09-07: Added the user-approved local commit, authorized publication and PR-merge defaults
   to EP-01, with lifecycle clarification and focused EP-02 acceptance coverage. The Operating Kit
   owns this reusable rule; the plan remains draft and no installed guidance changes here.
+
+- 2026-09-07: Activated after the user commissioned complete delivery. The grant now fixes the
+  source branch, acceptance owner, integration/release/adoption authority, report-back and finish
+  line. Exact private consumer roots are in the commissioning assignment; product work stays held.
