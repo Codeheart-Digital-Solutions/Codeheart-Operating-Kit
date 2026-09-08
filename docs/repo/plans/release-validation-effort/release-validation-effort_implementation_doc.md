@@ -1,4 +1,4 @@
-Last updated: 2026-09-08T14:57:57Z (UTC)
+Last updated: 2026-09-08T15:12:57Z (UTC)
 Created: 2026-09-08
 Status: active
 Execution log: docs/repo/plans/release-validation-effort/release-validation-effort_execution_log.md
@@ -209,9 +209,9 @@ Use ordinary independent work during hosted waits; no duplicate matrix after met
 
 ### F) Tasks Checklist
 
-- [ ] Commit/push coherent source and open one PR; dispatch broad candidate on exact checkpoint.
-- [ ] Resolve only failed/invalidated lanes and send reviewed checkpoint for source-anchor acceptance.
-- [ ] Create controlled eligible delta from accepted anchor; exercise both guidance native lanes and cheap negative preflight.
+- [x] Commit/push coherent source and open one PR; dispatch broad candidate on exact checkpoint.
+- [x] Resolve only failed/invalidated lanes and send reviewed checkpoint for source-anchor acceptance.
+- [x] Create controlled eligible delta from accepted anchor; exercise both guidance native lanes and cheap negative preflight.
 - [ ] Record evidence, get final source acceptance, verify current checks/ref, merge PR normally.
 - [ ] Complete plan/log and report actual merged state and remaining unrelated follow-ups.
 

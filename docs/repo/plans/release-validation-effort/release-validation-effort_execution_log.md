@@ -1,4 +1,4 @@
-Last updated: 2026-09-08T15:02:25Z (UTC)
+Last updated: 2026-09-08T15:12:57Z (UTC)
 Created: 2026-09-08
 
 # Release Validation Effort Execution Log
@@ -133,3 +133,51 @@ applicable. The affected Windows smoke is rerun after same-reviewer correction r
 
 Same reviewer confirmed failure gates and requested the release runbook match the expanded
 pre-reconciliation observation boundary. That instruction is now aligned; no other findings.
+
+Corrected checkpoint `c36061f69f18b8a9aff2e018db2d5e35c6188ec8` passed scoped Windows run
+`34242213815` (2m34s total, 15:03:00–15:05:34 UTC). Both historical upgrades reached expected
+version and successful final check, including preservation assertions. PR feedback passed.
+This confirms the synchronization correction without runtime edits. Joint evidence retains the
+unchanged broad source suites from `34236648411` and replaces failed native completion evidence
+with this scoped run. Corrected exact-anchor acceptance was requested before guidance dispatch.
+
+The commissioning owner accepted `c36061f69f18b8a9aff2e018db2d5e35c6188ec8` as the corrected
+broad-source anchor, superseding the unmet conditional decision for `80e179bd`. Acceptance
+explicitly combines retained broad results with corrected Windows smoke; it does not convert the
+original failed workflow into a passing run. No new broad matrix is required.
+
+Isolated demonstration `721ebd7c62ecaa3e4bfa8ea12f4676d4743c4065` passes the actual cumulative
+Git guard and release identity check against that accepted anchor. Its only managed content
+delta is a routine-change guidance paragraph with matching resource mirror and consistent test
+identity/checksum changes. Both native guidance lanes were dispatched with published `v0.1.32`
+as the separate old-CLI upgrade input. Test identity `0.1.33` remains unpublished and outside the
+delivery branch.
+
+Initial guidance run `34242697847` passed eligibility and focused Go identity, then both native
+resource/schema test steps rejected the demonstration manifest's serializer-generated indentless
+YAML lists. This is a test-candidate preparation error; the existing parser contract was correctly
+enforced. The isolated candidate now preserves supported indentation and its source mirror.
+Corrected candidate `115e53d` passes all 86 resource/schema/routing/workflow tests locally (6.54s),
+release identity and cumulative eligibility against the same accepted source anchor. Both affected
+guidance lanes were redispatched; no producer source or accepted broad evidence changed.
+
+## Successful guidance demonstration
+
+Run `34242965649` at isolated candidate `115e53db3836216e8738a395b6dd2c2b52c4bdc8` passed
+against accepted broad-source anchor `c36061f69f18b8a9aff2e018db2d5e35c6188ec8`. Eligibility
+preflight took 8s. macOS native job took 1m11s and Windows 1m27s; both restored Go caches. These
+are observed hosted runs, not controlled speedup benchmarks. The original broad Windows Go step
+alone took 38m40s; that unchanged work was not rerun for the guidance candidate.
+
+Both native logs prove 50 fresh and 50 upgraded managed resources equal candidate source bytes,
+including the changed runbook. Matching published `v0.1.32` CLI initiated upgrade to unpublished
+test `0.1.33`; dry-run, failed verification, successful apply/check and authored preservation pass.
+Existing historical upgrade, staged install, containment and checksum-negative checks also pass.
+macOS package build took 21s and Windows 7s; fresh content/lifecycle proof took 4s and 5s.
+Broad Go, Python parity/history, Ubuntu semantic/benchmark, exact Git 2.43 and public-release jobs
+were skipped exactly as intended. Focused Go identity remained active (3s macOS, 9s Windows).
+
+The guard's earlier negative run remains valid. This positive exercise and its correctly detected
+fixture error show that eligibility permits fresh focused validation, not automatic acceptance.
+No public version/tag/release or consumer adoption occurred; delivery still carries v0.1.32.
+Final integration acceptance is the remaining planned boundary before normal PR merge.
