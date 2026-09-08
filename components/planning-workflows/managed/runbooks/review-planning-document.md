@@ -1,4 +1,4 @@
-Last updated: 2026-09-05T21:03:41Z (UTC)
+Last updated: 2026-09-07T22:40:39Z (UTC)
 
 # Review Planning Document
 
@@ -68,6 +68,23 @@ Read:
 Use targeted context. Do not perform a broad repository sweep unless the document scope requires
 it.
 
+## Phase And Checkpoint
+
+Review discovery for intention, evidence, consequential decisions and the requested handoff.
+Review a plan for substantive approach, capability coverage, dependencies, adaptable technical
+detail and proportionate validation. Review implementation against actual behavior and evidence;
+a planning review cannot prove implementation or release readiness.
+
+Use one independent review at a meaningful coherent checkpoint and the same reviewer for focused
+correction follow-up. Broaden or replace the reviewer for material design/impact change,
+inadequate independence, reviewer limitation or unresolved concern. Do not restart unchanged
+review after every finding. Label optional improvements separately from material blockers; plain
+word choice, record duplication and ordinary in-scope refinement are not defects by themselves.
+
+Check local commits, authorized publication and accepted PR integration independently from plan
+lifecycle. A merged draft is still draft; publication is not execution approval. No extra review
+or approval stage is needed per local commit.
+
 ## Review Areas
 
 ### Decision Soundness
@@ -113,7 +130,7 @@ For implementation docs, check whether:
 - each epic has clear outcome, scope, files, acceptance criteria, dependencies, tasks, notes, and
   open questions;
 - validation gates cover the changed surface;
-- checklist tasks are concrete and non-branching;
+- checklist tasks provide a chosen approach and allow safe action-time refinements;
 - release or migration authority is explicit;
 - the plan concretely implements the intended feature capability, not only surrounding policy,
   scaffolding, gates, schemas, stubs, or validation shells;

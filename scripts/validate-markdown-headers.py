@@ -28,7 +28,11 @@ def iter_markdown(paths: list[Path]) -> list[Path]:
                 result.append(root)
             continue
         for path in root.rglob("*.md"):
-            if not any(part in EXCLUDED_PARTS for part in path.parts):
+            generated_local = any(
+                pair == (".codeheart", "local")
+                for pair in zip(path.parts, path.parts[1:])
+            )
+            if not generated_local and not any(part in EXCLUDED_PARTS for part in path.parts):
                 result.append(path)
     return sorted(result)
 

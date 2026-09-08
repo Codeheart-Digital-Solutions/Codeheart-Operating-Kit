@@ -1,4 +1,4 @@
-Last updated: 2026-09-05T21:03:41Z (UTC)
+Last updated: 2026-09-07T22:40:39Z (UTC)
 
 # Planning Workflows
 
@@ -43,6 +43,11 @@ and the stable plan-register entry point.
   observations, offline limits, and strategic overlays.
 - Use `reference/plan-register-format.md` for the stable entry point, legacy evidence, frozen
   mixed-mode baseline, and no-manual-append behavior.
+
+Local commits preserve coherent completed work. Publication and normal PR integration follow the
+covered delivery authority; a merged draft remains draft until execution is authorized. Use the
+lifecycle reference for these defaults and execution guidance for coherent batches, useful review,
+focused correction follow-up and evidence reuse.
 
 ## Boundaries
 

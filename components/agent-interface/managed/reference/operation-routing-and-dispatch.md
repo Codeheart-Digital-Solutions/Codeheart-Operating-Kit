@@ -1,4 +1,4 @@
-Last updated: 2026-09-05T21:03:41Z (UTC)
+Last updated: 2026-09-07T22:41:52Z (UTC)
 
 # Operation Routing And Dispatch
 
@@ -44,6 +44,7 @@ manual register edit.
 - Approval class: only covered effects; reuse sufficient authority without duplicate prompts.
 - Stop: uncertain outcome/impact, material scope or authority change, failed binding gate.
 - Evidence: purpose, scope, authority, result, validation and delivery state in an existing record.
+  Save coherent completed work in a local commit; publish/merge only under covered authority.
 
 Work required by an active epic remains in that epic. A separate routine repair records its
 relationship to affected work and cannot bypass plan review or acceptance.
@@ -62,7 +63,9 @@ relationship to affected work and cannot bypass plan review or acceptance.
 - Approval class: covered implementation, validation, coherent commits, normal pushes and PR
   creation/updates. Merge/release/adoption proceed only when included or delegated and gates pass.
 - Stop: material scope/outcome/authority change, required acceptance pending, failed enforced gate.
-- Evidence: named epic outcome, validation, actual commit/push/PR/merge/release/adoption state and
+- Evidence: named epic outcome, proportionate checks and retained applicable evidence, one planned
+  coherent independent review with same-reviewer correction follow-up, actual
+  commit/push/PR/merge/release/adoption state and
   direct report to the commissioned director at review, completion or genuine blocker.
 
 Draft review and activation-only bookkeeping do not commission whole-plan implementation. One
@@ -81,7 +84,9 @@ step. See `agent-task-coordination.md` for assignment and best-effort report-bac
 - Default surface: discovery or implementation-planning runbook plus `plans validate/list`.
 - Preconditions: owning repository, docs-tree ownership, plan kind, discovery version, and
   catalog mode resolved; supported filename and required metadata available.
-- Approval class: requested local planning write. Drafting alone does not authorize push.
+- Approval class: requested local planning write and coherent local commit after proportionate
+  checks. Drafting alone does not authorize push or PR. Reuse separately covered publication/merge
+  authority; a published draft stays inactive until execution/activation is authorized.
 - Stop: ambiguous owner/plan, blocked discovery handoff, invalid mode, dirty overlap.
 - Evidence: canonical path/ID, filename/metadata signals, ownership, discovery version, mode,
   validation, and changed planning paths.
@@ -187,6 +192,11 @@ the mixed view.
 Activation-only authority never includes implementation code outside the approved checkpoint, PR,
 merge, release, force-push, deletion, history rewrite, or destructive Git. After a failed refresh
 or push, disclose the visibility limit rather than selecting a broader execution surface.
+
+Local commit, publication and lifecycle defaults are owned by
+`../../planning-workflows/reference/planning-document-lifecycle.md`. A local checkpoint needs no
+extra independent review or permission. Accepted shared drafts may be merged through the normal
+PR route with covered authority and passing checks; merge does not dispatch implementation.
 
 ## Dispatch Sequence
 

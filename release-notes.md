@@ -1,6 +1,32 @@
-Last updated: 2026-09-05T21:10:24Z (UTC)
+Last updated: 2026-09-07T22:47:04Z (UTC)
 
 # Codeheart Operating Kit Release Notes
+
+## v0.1.32 Release Notes
+
+Discovery, planning and execution now share coherent feedback and Git checkpoint defaults.
+Intention elicitation and substantive technical planning remain; ordinary refinements, local
+commits and review corrections no longer create needless approval or fresh-review loops.
+
+### Impact And Adoption
+
+- `instruction-only change`: coherent batches, proportionate inquiry, conditional script promotion,
+  same-reviewer correction follow-up, applicable evidence reuse and scoped interruption recovery.
+  Local commits save completed work; authorized publication and accepted PR merge remain separate
+  from plan lifecycle. A merged draft does not authorize implementation.
+- `validator-only change`: ordinary PR/main feedback is small; explicit candidate validation keeps
+  native, upgrade, compatibility and integrity coverage. Explicit released-tag smoke follows
+  publication without replaying source suites. Duplicate Go/build invocations are removed from CI.
+  Markdown validation excludes generated `.codeheart/local/` tooling while checking owned docs.
+- Upgrade through the supported Kit lifecycle, then verify installed version and active planning,
+  execution, routing and tooling guidance at the intended worktree. Preserve authored plans,
+  configuration and repository instructions. No catalog or product-plan migration is performed.
+- macOS universal and Windows x64 support, catalog-to-binary integrity and the established unsigned,
+  unnotarized HTTPS-plus-SHA-256 internal/prototype boundary remain unchanged. This release does
+  not expand distribution commitments, authentication policy or provider authority.
+
+Release availability, verified consumer adoption and future measured efficiency remain separate
+facts. Product implementation and later plan amendments need their own authority.
 
 ## v0.1.31 Release Notes
 

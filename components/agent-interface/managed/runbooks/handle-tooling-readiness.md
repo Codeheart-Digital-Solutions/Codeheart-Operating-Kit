@@ -1,4 +1,4 @@
-Last updated: 2026-06-26T15:57:38Z (UTC)
+Last updated: 2026-09-07T22:41:52Z (UTC)
 
 # Handle Tooling Readiness
 
@@ -7,7 +7,7 @@ Audience: hybrid
 Intent:
 Help an agent recover when a repository, module, or extension is blocked by missing local tooling.
 The user should receive a plain-language explanation and one concrete next decision. The agent
-should classify the blocker, run safe read-only checks, request approval before local changes,
+should classify the blocker, run safe read-only checks, verify authority before local changes,
 recheck readiness, and return to the calling runbook when the blocker is resolved.
 
 Success:
@@ -46,9 +46,19 @@ Do not use this runbook for module-owned live service blockers. The calling modu
 authentication, consent, account permissions, licenses, service availability, tenant or workspace
 state, and live external preflight.
 
+## Authority Reuse
+
+Match existing authorization to the specific local setup and impact. A delivery assignment may
+already cover necessary ordinary tooling setup through supported routes. State the intended
+change and proceed when covered; do not ask again merely because a tool is missing. Reuse
+installed suitable tools before installing more. Ask only for uncovered effects or a specific
+fresh confirmation that the actual owner contract requires; name that requirement.
+
 ## User-Facing Flow
 
-Start with the outcome, not the internal mechanism:
+When a user decision is missing, start with the outcome and concrete impact. If existing authority
+covers the setup, give a concise action update and continue to the execution path. Example for an
+uncovered choice:
 
 ```text
 I need one local tool before I can continue with this module task.
@@ -75,7 +85,8 @@ How should we continue?
 3. Stop here
 ```
 
-If the user chooses the install or repair action, ask for approval with local impact:
+Include local impact in the choice so selecting installation authorizes that stated action.
+Do not ask again after that sufficient choice. When the effect is still uncovered, ask once:
 
 ```text
 I will use the official install route for <tool>. This changes local software on this computer.
@@ -106,9 +117,10 @@ software.
 4. If it is module-owned service state, return to the calling module runbook.
 5. Map the local blocker to one baseline tooling lane.
 6. Run only read-only checks that are appropriate for the current platform and task.
-7. Explain the blocker and present concrete user choices.
-8. Ask explicit approval before local installation, repair, PATH changes, shell configuration,
-   permission prompts, or sensitive reads.
+7. Explain the blocker and intended remedy; present choices only when a decision is missing.
+8. Verify existing approval before local installation, repair, PATH changes, shell configuration,
+   permission prompts, or sensitive reads. Reuse sufficient authority; ask only for uncovered
+   effects or an actual mandatory fresh confirmation.
 9. Use an official vendor source, system package manager, or module-owned runbook for concrete
    commands.
 10. When a command requires user-entered terminal input, use visible-terminal handoff instead of
@@ -235,12 +247,13 @@ Local environment blockers handled here:
 - missing document/PDF conversion tool;
 - broken PATH or shell discovery for an installed tool.
 
-Module-owned service blockers not handled here:
+Module-owned service blockers not handled here (diagnose separately from code, tests and local
+environment failures):
 
 - external account sign-in;
 - tenant, workspace, project, or service state;
 - admin role, consent, license, permission, mailbox, site, bucket, database, or app readiness;
-- API authorization;
+- API authorization and billing or account limits;
 - live external preflight;
 - destructive remote cleanup.
 
@@ -250,6 +263,11 @@ When the blocker is service-owned, say so plainly and return to the module runbo
 This is not a local tooling blocker. The next step belongs to the <module> service preflight:
 <plain-language service blocker>.
 ```
+
+Use a suitable already-authorized connector or normal machine session when the service route
+allows it. Missing local tooling does not create a login prerequisite. Do not copy credentials,
+change session/authentication policy or increase budgets as a generic recovery step. Recheck only
+evidence invalidated by the repair, then return to the interrupted work with other valid output.
 
 ## Evidence And Validation
 
@@ -282,7 +300,7 @@ Do not record:
 - The blocker is local environment readiness, not live service preflight.
 - The user-facing explanation states the outcome before technical details.
 - The user is offered concrete choices such as install, handle another way, or stop.
-- The agent asks approval before local changes.
+- The agent verifies authority and asks only for uncovered changes or binding fresh confirmation.
 - The install or repair path uses an official source or module-owned command.
 - The readiness recheck proves the local blocker is resolved before returning to the module.
 - No durable machine-readiness state is committed.

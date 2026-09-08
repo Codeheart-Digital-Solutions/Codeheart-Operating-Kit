@@ -254,8 +254,8 @@ def main() -> int:
     output_dir = Path(args.output_dir).resolve()
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    phases = ["source-validation"]
-    run(["go", "test", "-timeout", "30m", "./..."])
+    # Source acceptance belongs to the candidate workflow/runbook, not repeated pack builds.
+    phases: list[str] = []
     platforms = ["macos-universal", "windows-x64"] if args.platform == "all" else [args.platform]
     assets: list[tuple[Path, str]] = []
     for platform in platforms:

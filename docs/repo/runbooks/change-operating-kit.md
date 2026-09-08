@@ -1,9 +1,24 @@
-Last updated: 2026-07-31T22:23:19Z (UTC)
+Last updated: 2026-09-07T22:44:25Z (UTC)
 
 # Change Operating Kit
 
 Use this runbook before changing Codeheart Operating Kit source, docs, schemas, templates,
 validators, installers, release assets, or CLI behavior.
+
+Audience: maintainer-facing
+
+Intent:
+Change producer source with proportionate checks and preserved consumer boundaries.
+
+Success:
+The intended change is verified with truthful source, validation and delivery evidence.
+
+Agent judgment boundary:
+Choose ordinary in-scope implementation details and reuse sufficient authority. Preserve required
+integrity, platform, ownership and signing/audience gates.
+
+Stop boundary:
+Stop on a failed required gate or a material scope, authority or preservation conflict.
 
 ## Procedure
 
@@ -41,3 +56,34 @@ components, profiles, templates, schemas, Go packages, and maintainer runbooks a
 Stop before editing when the change would expose private content, change release authority, alter
 consumer ownership boundaries, or require a new public repository setting that is not already
 approved.
+
+## Feedback And Candidate Timing
+
+Ordinary PRs and main pushes run the `feedback` job in `validate.yml`: routing/resource tests,
+public-core, Markdown, schema and release-manifest checks. Feature-branch pushes do not duplicate
+PR runs. No commit-message bypass is needed. This cheap result does not qualify executable changes
+or an unknown changed surface for release. Inspect dependencies and run additional affected tests
+for changed behavior; retain full acceptance at the coherent candidate boundary.
+
+Local instruction feedback (use the supported repo-local Python environment when needed):
+
+```sh
+python -m pytest -q tests/test_routing.py tests/test_packaging_resources.py
+python scripts/validate-public-core.py
+python scripts/validate-markdown-headers.py
+```
+
+The tests use pytest and PyYAML in the development environment. Missing local tooling follows
+`components/agent-interface/managed/runbooks/handle-tooling-readiness.md`; this is producer
+source development, where an editable installation is permitted.
+
+Use one meaningful independent source review for a coherent batch with the same reviewer for
+focused correction follow-up. Run broader checks after the batch is ready. Reuse evidence only
+while relevant source, artifacts, configuration, target and environment remain applicable; rerun
+invalidated checks. A metadata/log edit or a resumed task does not recreate native acceptance.
+Classify code, test, environment, authentication and billing failures separately before retrying.
+Do not increase budgets or blindly restart broad suites.
+
+Full candidate and explicit public-smoke invocation are owned by `release-operating-kit.md`.
+Inspect current branch protection and rulesets before changing check names/triggers. Required
+checks must remain reliable; resolve an enforced conflict with the owner before publication.
