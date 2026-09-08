@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import os
+import json
 from pathlib import Path
 import re
 import subprocess
@@ -47,13 +48,53 @@ def unchanged(root: Path, before: dict[str, bytes], label: str) -> None:
         raise RuntimeError(f'{label} changed installation state')
 
 
+def wait_ready(binary: Path, target: Path, version: str, timeout: float = 60) -> None:
+    """A replaced binary can precede transaction completion; observe both sides of the deferred reconciliation boundary."""
+    deadline = time.monotonic() + timeout
+    last_state = 'expected executable not yet available'
+    while True:
+        try:
+            reported = run(binary, '--version')
+        except (OSError, RuntimeError):
+            reported = ''  # Executable may be temporarily unavailable during replacement.
+        if reported == f'codeheart-operating-kit {version}':
+            result = subprocess.run([str(binary), 'check', str(target), '--json'], capture_output=True,
+                                    text=True, env={**os.environ, 'CODEHEART_OPERATING_KIT_CLI': '1'})
+            state = json.loads(result.stdout)
+            if result.returncode == 0 and state.get('ok') is True:
+                return
+            last_state = result.stdout.strip()
+            # Handoff replaces the executable BEFORE starting reconciliation. In that
+            # interval the new graph can classify the old-version tree as partial or
+            # drifted; the transaction marker does not exist yet. This is pending only
+            # while check explicitly reports a version mismatch, never success.
+            before_reconcile = state.get('stale_cli') is True and state.get('state') in {
+                'partial', 'drifted', 'stale-cli', 'legacy-v1-compatible',
+            }
+            if state.get('state') != 'transaction-in-progress' and not before_reconcile:
+                raise RuntimeError(f"upgraded installation failed check: {last_state}")
+        if time.monotonic() >= deadline:
+            raise RuntimeError(f'native upgrade transaction did not finish: {last_state}')
+        time.sleep(.25)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--fresh-target', type=Path, required=True)
-    parser.add_argument('--upgrade-version', required=True, help='Verified published vX.Y.Z input, distinct from source baseline')
-    parser.add_argument('--catalog', type=Path, required=True)
-    parser.add_argument('--work-dir', type=Path, required=True, help='New isolated directory; must not exist')
+    modes = parser.add_subparsers(dest='mode', required=True)
+    wait = modes.add_parser('wait-ready', help='Wait for expected version and a completed native check')
+    wait.add_argument('--binary', type=Path, required=True)
+    wait.add_argument('--target', type=Path, required=True)
+    wait.add_argument('--version', required=True)
+    smoke = modes.add_parser('smoke', help='Run isolated fresh/current-release upgrade proof')
+    smoke.add_argument('--fresh-target', type=Path, required=True)
+    smoke.add_argument('--upgrade-version', required=True, help='Verified published vX.Y.Z input, distinct from source baseline')
+    smoke.add_argument('--catalog', type=Path, required=True)
+    smoke.add_argument('--work-dir', type=Path, required=True, help='New isolated directory; must not exist')
     args = parser.parse_args()
+    if args.mode == 'wait-ready':
+        wait_ready(args.binary, args.target, args.version)
+        print('OK: expected version and completed installed state verified')
+        return 0
     if not re.fullmatch(r'v\d+\.\d+\.\d+', args.upgrade_version):
         parser.error('upgrade-version must be an explicit published tag')
     version = tomllib.loads((ROOT / 'pyproject.toml').read_text())['project']['version']
@@ -98,17 +139,7 @@ def main() -> int:
     if binary.read_bytes() != binary_before:
         raise RuntimeError('failed verification replaced binary')
     run(*common, '--catalog', args.catalog.resolve(), '--yes', '--json')
-    deadline = time.monotonic() + 60
-    while True:
-        try:
-            if run(binary, '--version') == f'codeheart-operating-kit {version}':
-                break
-        except (OSError, RuntimeError):
-            pass
-        if time.monotonic() >= deadline:
-            raise RuntimeError('native upgrade handoff did not finish')
-        time.sleep(.25)
-    run(binary, 'check', consumer, '--json')
+    wait_ready(binary, consumer, version)
     upgraded_count = verify_materialized(consumer)
     for relative, data in authored.items():
         if (consumer / relative).read_bytes() != data:
