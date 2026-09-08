@@ -1,6 +1,6 @@
-Last updated: 2026-09-08T00:09:06Z (UTC)
+Last updated: 2026-09-08T00:15:42Z (UTC)
 Created: 2026-09-07
-Status: active
+Status: completed
 Execution log: docs/repo/plans/development-feedback-and-validation/development-feedback-and-validation_execution_log.md
 
 # Development Feedback and Proportionate Validation
@@ -30,7 +30,7 @@ account information and task assignments stay in the coordination home.
 
 The reviewed draft was merged through PR #16. The user subsequently authorized activation and
 commissioned one dedicated implementer for the complete guidance, validation, release and verified
-adoption outcome on 2026-09-07. This plan is active under the commissioning boundary below.
+adoption outcome on 2026-09-07. Delivery completed through verified release and adoption under the commissioning boundary below.
 Consumer product implementations remain paused; only the scoped Kit delivery/adoption is authorized.
 
 Independent planning review completed on 2026-09-07. One material sequencing finding was corrected:
@@ -422,10 +422,10 @@ Do not start a second full acceptance run merely because the task resumed.
 
 - [x] Select the next unused patch version and prepare `release-notes.md` plus normal version/resource updates, classifying instruction and validation changes and documenting consumer adoption.
 - [x] Run the agreed full candidate lane once and `release-operating-kit.md` packaging gates, including reproducible macOS universal/Windows x64 artifacts and supported native install/upgrade preservation evidence.
-- [ ] Integrate and publish the exact validated candidate through normal Git/release routes under the commissioning authority; retain target commit, version, assets and actual acceptance evidence.
-- [ ] Run the published-release smoke mode against the explicit released tag, verify public asset retrieval and supported native install behavior, and retain source validation from the unchanged accepted candidate.
-- [ ] Preview and apply the released Kit through `maintain-operating-kit-installation.md` in each assigned consumer; verify installed version, changed route contents and preservation of authored work at the actual owner-plan amendment worktrees.
-- [ ] Give the acceptance owner the release/adoption results and the changed operating expectations in the existing execution record, explicitly identifying any target still pending and the later Director-onboarding boundary.
+- [x] Integrate and publish the exact validated candidate through normal Git/release routes under the commissioning authority; retain target commit, version, assets and actual acceptance evidence.
+- [x] Run the published-release smoke mode against the explicit released tag, verify public asset retrieval and supported native install behavior, and retain source validation from the unchanged accepted candidate.
+- [x] Preview and apply the released Kit through `maintain-operating-kit-installation.md` in each assigned consumer; verify installed version, changed route contents and preservation of authored work at the actual owner-plan amendment worktrees.
+- [x] Give the acceptance owner the release/adoption results and the changed operating expectations in the existing execution record, explicitly identifying any target still pending and the later Director-onboarding boundary.
 
 **G) Implementation Notes:** This managed-instruction delivery requires a Kit release/adoption,
 not Foundry or provider module releases. Preserve supported release checks without replaying
@@ -469,3 +469,7 @@ changed risks justify their cost. Preserve effective safeguards while reconsider
 - 2026-09-07: Activated after the user commissioned complete delivery. The grant now fixes the
   source branch, acceptance owner, integration/release/adoption authority, report-back and finish
   line. Exact private consumer roots are in the commissioning assignment; product work stays held.
+
+- 2026-09-08: Completed EP-01 through EP-03: source merged in PR #17, v0.1.32 published, both
+  public native smoke jobs passed and all four assigned worktrees adopted with authored content
+  preserved. Detailed evidence and diagnostic corrections are in the execution log.
