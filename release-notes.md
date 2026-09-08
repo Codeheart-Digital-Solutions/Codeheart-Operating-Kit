@@ -1,5 +1,11 @@
 Last updated: 2026-09-07T22:47:04Z (UTC)
 
+# Controlled guidance validation candidate
+
+This unpublished 0.1.33 candidate exercises the guidance validation workflow only.
+It is not a feature release and will not be merged into the producer delivery.
+
+
 # Codeheart Operating Kit Release Notes
 
 ## v0.1.32 Release Notes

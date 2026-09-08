@@ -95,3 +95,5 @@ changes and undo only this change through its owner's recovery method when appro
 
 This is an L1 structured runbook recipe, validated by fresh-context walkthrough and owner-specific
 technical checks. Do not promote it to a script, ledger or workflow engine without demonstrated need.
+
+For a scoped validation correction, record which earlier results remain applicable to the changed inputs.

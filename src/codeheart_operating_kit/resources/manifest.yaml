@@ -1,91 +1,91 @@
 schema_version: 1
-version: 0.1.32
+version: 0.1.33
 compatibility:
   lock_schema_versions:
-    - 1
-    - 2
+  - 1
+  - 2
   config_schema_versions:
-    - 1
-    - 2
+  - 1
+  - 2
   operation_result_schema_version: 1
   platforms:
-    - macos-universal
-    - windows-x64
+  - macos-universal
+  - windows-x64
   commands:
-    - init
-    - repair
-    - sync
-    - update-check
-    - upgrade
-    - check
+  - init
+  - repair
+  - sync
+  - update-check
+  - upgrade
+  - check
 components:
-  - id: planning-workflows
-    version: 0.1.32
-    manifest_path: components/planning-workflows/component.yaml
-    checksum_sha256: d0e832469d4c7420720ca317e62c0162f1745ac2a8307e913e0b9cf24b74a639
-    consumer_impact:
-      - component addition
-      - instruction-only change
-      - backwards-compatible scaffold addition
-      - validator-only change
-      - consumer migration required
-      - security or safety policy change
-  - id: agent-memory
-    version: 0.1.6
-    manifest_path: components/agent-memory/component.yaml
-    checksum_sha256: 07d92169b36ab3a2177db3ea1a591b17006d4a20c41f2f6bab814c0115b8c1f0
-    consumer_impact:
-      - component addition
-      - instruction-only change
-      - backwards-compatible scaffold addition
-  - id: agent-interface
-    version: 0.1.32
-    manifest_path: components/agent-interface/component.yaml
-    checksum_sha256: 200267940800a448cc8ee075cefa6c9c473b7930ca22c3fc637e67418d31f67f
-    consumer_impact:
-      - component addition
-      - instruction-only change
-      - validator-only change
-      - consumer migration required
-      - security or safety policy change
-  - id: structure-governance
-    version: 0.1.21
-    manifest_path: components/structure-governance/component.yaml
-    checksum_sha256: c4ea6be4c3095639d4911a4ef31169a504e91bec072b464c4f7db9f97ad3c0e2
-    consumer_impact:
-      - component addition
-      - instruction-only change
-      - backwards-compatible scaffold addition
-      - breaking placement-contract change
-  - id: native-codex-capabilities
-    version: 0.1.6
-    manifest_path: components/native-codex-capabilities/component.yaml
-    checksum_sha256: 6114b3fe4a39311cc798c56f5b3bab202db794dddd456c50785935e32ca330a4
-    consumer_impact:
-      - component addition
-      - instruction-only change
-  - id: validators
-    version: 0.1.6
-    manifest_path: components/validators/component.yaml
-    checksum_sha256: 70623ab11659d1e54c96c539643d5a85403bb522e15a382790544bb76aadcca3
-    consumer_impact:
-      - component addition
-      - validator-only change
-profiles:
-  - id: standard
-    version: 0.1.32
-    manifest_path: profiles/standard.yaml
-    checksum_sha256: 5e2c2acb662fcf51ff55baf36e634afe25dded44f55e4c92fca5b776de465750
-    graph_sha256: 1776105e8a6b6c25469b5c908932de0cfb14721582ab5dd20b94714cf1c51ae7
-    components:
-      - planning-workflows
-      - agent-memory
-      - agent-interface
-      - structure-governance
-      - native-codex-capabilities
-      - validators
-consumer_impact:
+- id: planning-workflows
+  version: 0.1.33
+  manifest_path: components/planning-workflows/component.yaml
+  checksum_sha256: e66cc921bb2848a56a6dacb417a309675bd2191d9b5efcf071dd83eb0747a38c
+  consumer_impact:
+  - component addition
+  - instruction-only change
+  - backwards-compatible scaffold addition
+  - validator-only change
+  - consumer migration required
+  - security or safety policy change
+- id: agent-memory
+  version: 0.1.6
+  manifest_path: components/agent-memory/component.yaml
+  checksum_sha256: 07d92169b36ab3a2177db3ea1a591b17006d4a20c41f2f6bab814c0115b8c1f0
+  consumer_impact:
+  - component addition
+  - instruction-only change
+  - backwards-compatible scaffold addition
+- id: agent-interface
+  version: 0.1.32
+  manifest_path: components/agent-interface/component.yaml
+  checksum_sha256: 200267940800a448cc8ee075cefa6c9c473b7930ca22c3fc637e67418d31f67f
+  consumer_impact:
+  - component addition
   - instruction-only change
   - validator-only change
   - consumer migration required
   - security or safety policy change
+- id: structure-governance
+  version: 0.1.21
+  manifest_path: components/structure-governance/component.yaml
+  checksum_sha256: c4ea6be4c3095639d4911a4ef31169a504e91bec072b464c4f7db9f97ad3c0e2
+  consumer_impact:
+  - component addition
+  - instruction-only change
+  - backwards-compatible scaffold addition
+  - breaking placement-contract change
+- id: native-codex-capabilities
+  version: 0.1.6
+  manifest_path: components/native-codex-capabilities/component.yaml
+  checksum_sha256: 6114b3fe4a39311cc798c56f5b3bab202db794dddd456c50785935e32ca330a4
+  consumer_impact:
+  - component addition
+  - instruction-only change
+- id: validators
+  version: 0.1.6
+  manifest_path: components/validators/component.yaml
+  checksum_sha256: 70623ab11659d1e54c96c539643d5a85403bb522e15a382790544bb76aadcca3
+  consumer_impact:
+  - component addition
+  - validator-only change
+profiles:
+- id: standard
+  version: 0.1.33
+  manifest_path: profiles/standard.yaml
+  checksum_sha256: 258e1ecc55ce600fa137825dd48754772eeb10a5a5cedd165613fe3c9b1b435f
+  graph_sha256: 07a64dc857c34ea175e1cc03bdec20c07d35c224562ec300153645042d9b58f6
+  components:
+  - planning-workflows
+  - agent-memory
+  - agent-interface
+  - structure-governance
+  - native-codex-capabilities
+  - validators
+consumer_impact:
+- instruction-only change
+- validator-only change
+- consumer migration required
+- security or safety policy change
