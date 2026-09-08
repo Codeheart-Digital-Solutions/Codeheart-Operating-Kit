@@ -49,8 +49,9 @@ def unchanged(root: Path, before: dict[str, bytes], label: str) -> None:
 
 
 def wait_ready(binary: Path, target: Path, version: str, timeout: float = 60) -> None:
-    """A replaced binary can precede transaction completion; retry only known pending state."""
+    """A replaced binary can precede transaction completion; observe both sides of the deferred reconciliation boundary."""
     deadline = time.monotonic() + timeout
+    last_state = 'expected executable not yet available'
     while True:
         try:
             reported = run(binary, '--version')
@@ -62,10 +63,18 @@ def wait_ready(binary: Path, target: Path, version: str, timeout: float = 60) ->
             state = json.loads(result.stdout)
             if result.returncode == 0 and state.get('ok') is True:
                 return
-            if state.get('state') != 'transaction-in-progress':
-                raise RuntimeError(f"upgraded installation failed check: {state.get('state', 'unknown')}")
+            last_state = result.stdout.strip()
+            # Handoff replaces the executable BEFORE starting reconciliation. In that
+            # interval the new graph can classify the old-version tree as partial or
+            # drifted; the transaction marker does not exist yet. This is pending only
+            # while check explicitly reports a version mismatch, never success.
+            before_reconcile = state.get('stale_cli') is True and state.get('state') in {
+                'partial', 'drifted', 'stale-cli', 'legacy-v1-compatible',
+            }
+            if state.get('state') != 'transaction-in-progress' and not before_reconcile:
+                raise RuntimeError(f"upgraded installation failed check: {last_state}")
         if time.monotonic() >= deadline:
-            raise RuntimeError('native upgrade transaction did not finish')
+            raise RuntimeError(f'native upgrade transaction did not finish: {last_state}')
         time.sleep(.25)
 
 

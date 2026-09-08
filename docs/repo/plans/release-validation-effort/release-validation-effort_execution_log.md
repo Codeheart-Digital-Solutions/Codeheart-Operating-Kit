@@ -1,4 +1,4 @@
-Last updated: 2026-09-08T14:57:57Z (UTC)
+Last updated: 2026-09-08T15:02:25Z (UTC)
 Created: 2026-09-08
 
 # Release Validation Effort Execution Log
@@ -113,3 +113,23 @@ The correction passes 39 focused workflow/lifecycle tests in 3.14s. Same-reviewe
 clear and confirms retained unchanged source evidence is sufficient alongside fresh native proof.
 The new exact source anchor requires commissioning acceptance; the original failed job alone
 does not meet its condition.
+
+## Pre-reconciliation observation correction
+
+Scoped Windows run `34241685510` at `db171fcee901a046cb074a0cd3d718eb6a866943` passed
+resource/identity/build/staged install and skipped retained broad suites, but historical upgrade
+reported `partial` before the wait completed. Source inspection of `ApplyHandoff` shows the new
+executable is copied before starting `__upgrade-reconcile`, so there is also a pre-marker interval
+in which the new graph observes an old-version repository. The previous helper handled the
+transaction-marker interval only. This does not establish a permanent historical runtime defect.
+
+The helper now observes that explicit version-mismatched old tree as pending, requires successful
+expected-version installed-state check, and never treats partial state as success. Current-version
+partial fails immediately; persistent old-version state times out with full last check diagnostics.
+Focused tests cover old-tree -> transaction -> current and both persistent partial variants,
+including retained missing-path evidence. All 44 affected lifecycle/workflow tests pass in 2.50s.
+No runtime source, package bytes or broad suite inputs changed; prior passing evidence remains
+applicable. The affected Windows smoke is rerun after same-reviewer correction review.
+
+Same reviewer confirmed failure gates and requested the release runbook match the expanded
+pre-reconciliation observation boundary. That instruction is now aligned; no other findings.

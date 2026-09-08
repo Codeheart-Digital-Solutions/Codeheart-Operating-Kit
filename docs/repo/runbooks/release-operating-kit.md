@@ -140,7 +140,10 @@ dry-run and failed catalog verification preserve consumer and binary state, succ
 preserves authored config, instructions, plans and local-user files. Native command exit codes
 are asserted, including Windows intermediate calls. Wait for both expected binary version and a
 completed installed-state check before preservation assertions; version replacement can precede
-transaction completion. Retry only the known transaction-in-progress state, not drift or corruption. Missing-catalog smoke does not claim to
+transaction completion. Retry transaction-in-progress or explicitly version-mismatched old-tree
+states before reconciliation starts. Partial or drifted state never counts as completion; a
+current-version failure stops immediately and persistent pending state times out with diagnostics.
+Missing-catalog smoke does not claim to
 retest every transaction rollback phase; retain applicable unchanged runtime fault-injection
 results and rerun them when affected.
 

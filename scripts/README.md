@@ -1,4 +1,4 @@
-Last updated: 2026-09-08T14:57:57Z (UTC)
+Last updated: 2026-09-08T15:02:25Z (UTC)
 
 # Producer Validation Scripts
 
@@ -21,6 +21,7 @@ record acceptance and applicability in the plan execution log.
 
 `verify-guidance-lifecycle.py wait-ready --binary <path> --target <consumer> --version <version>`
 is also called after historical Windows upgrade. It requires expected version plus a successful
-installed-state check, retries only transient transaction-in-progress, and fails on other state
-or bounded completion timeout. This prevents a replaced binary from being mistaken for a
+installed-state check, observes transaction-in-progress or the old-version tree before reconciliation begins,
+and fails on any other state or bounded completion timeout with the last check diagnostics.
+A partial tree never counts as successful completion. This prevents a replaced binary from being mistaken for a
 completed background transaction.

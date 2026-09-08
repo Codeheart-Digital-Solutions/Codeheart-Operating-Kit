@@ -59,7 +59,7 @@ def test_wait_ready_retries_only_transaction_pending(monkeypatch, tmp_path, stat
     if ok:
         lifecycle.wait_ready(tmp_path / "binary", tmp_path, "0.1.33")
     else:
-        with pytest.raises(RuntimeError, match="failed check: drifted"):
+        with pytest.raises(RuntimeError, match='failed check: .*drifted'):
             lifecycle.wait_ready(tmp_path / "binary", tmp_path, "0.1.33")
     assert sleeps == [.25]
 
@@ -71,4 +71,35 @@ def test_wait_ready_does_not_accept_version_alone(monkeypatch, tmp_path):
     monkeypatch.setattr(lifecycle.subprocess, "run", lambda *args, **kwargs:
         SimpleNamespace(returncode=1, stdout=json.dumps({"ok": False, "state": "transaction-in-progress"})))
     with pytest.raises(RuntimeError, match="transaction did not finish"):
+        lifecycle.wait_ready(tmp_path / "binary", tmp_path, "0.1.33", timeout=0)
+
+
+@pytest.mark.parametrize("initial", ["partial", "drifted", "stale-cli"])
+def test_wait_ready_observes_old_tree_before_reconcile(monkeypatch, tmp_path, initial):
+    import json
+    from types import SimpleNamespace
+    monkeypatch.setattr(lifecycle, "run", lambda *args: "codeheart-operating-kit 0.1.33")
+    states = iter([
+        {"ok": False, "state": initial, "stale_cli": True},
+        {"ok": False, "state": "transaction-in-progress"},
+        {"ok": True, "state": "current", "stale_cli": False},
+    ])
+    def check(*args, **kwargs):
+        state = next(states)
+        return SimpleNamespace(returncode=0 if state["ok"] else 1, stdout=json.dumps(state))
+    monkeypatch.setattr(lifecycle.subprocess, "run", check)
+    monkeypatch.setattr(lifecycle.time, "sleep", lambda _: None)
+    lifecycle.wait_ready(tmp_path / "binary", tmp_path, "0.1.33")
+
+
+@pytest.mark.parametrize("stale", [True, False])
+def test_wait_ready_partial_never_passes_and_preserves_diagnostics(monkeypatch, tmp_path, stale):
+    import json
+    from types import SimpleNamespace
+    monkeypatch.setattr(lifecycle, "run", lambda *args: "codeheart-operating-kit 0.1.33")
+    diagnostic = {"ok": False, "state": "partial", "stale_cli": stale,
+                  "drift": [{"path": "missing-resource.md", "status": "missing"}]}
+    monkeypatch.setattr(lifecycle.subprocess, "run", lambda *args, **kwargs:
+        SimpleNamespace(returncode=1, stdout=json.dumps(diagnostic)))
+    with pytest.raises(RuntimeError, match="missing-resource.md"):
         lifecycle.wait_ready(tmp_path / "binary", tmp_path, "0.1.33", timeout=0)
