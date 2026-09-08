@@ -203,7 +203,7 @@ def test_validation_lanes_preserve_candidate_boundary():
     inputs = workflow["on"]["workflow_dispatch"]["inputs"]
     assert inputs["mode"]["default"] == "candidate"
     assert inputs["candidate_lane"]["default"] == "all"
-    assert inputs["candidate_lane"]["options"] == ["all", "macos", "windows", "ubuntu", "git-2-43"]
+    assert inputs["candidate_lane"]["options"] == ["all", "macos", "windows", "windows-smoke", "ubuntu", "git-2-43"]
     assert inputs["mode"]["options"] == ["candidate", "released-smoke"]
     jobs = workflow["jobs"]
     assert jobs["feedback"]["if"] == "github.event_name != 'workflow_dispatch'"
@@ -215,7 +215,8 @@ def test_validation_lanes_preserve_candidate_boundary():
         assert job["needs"] == "dispatch-inputs"
         lane = {"macos-validation": "macos", "windows-validation": "windows", "ubuntu-semantic-validation": "ubuntu", "git-2-43-proof-validation": "git-2-43"}[name]
         scope_condition = "inputs.candidate_scope == 'broad' && " if lane in {"ubuntu", "git-2-43"} else ""
-        assert job["if"] == f"github.event_name == 'workflow_dispatch' && inputs.mode == 'candidate' && {scope_condition}(inputs.candidate_lane == 'all' || inputs.candidate_lane == '{lane}')"
+        smoke_condition = " || inputs.candidate_lane == 'windows-smoke'" if lane == "windows" else ""
+        assert job["if"] == f"github.event_name == 'workflow_dispatch' && inputs.mode == 'candidate' && {scope_condition}(inputs.candidate_lane == 'all' || inputs.candidate_lane == '{lane}'{smoke_condition})"
         assert "/releases/download/" not in str(job["steps"])
     for name in ["macos-validation", "windows-validation", "ubuntu-semantic-validation"]:
         runs = [step.get("run", "") for step in jobs[name]["steps"]]
@@ -301,7 +302,7 @@ def test_executed_candidate_steps_match_scope(scope, lane):
             assert "build-release-assets.py" in text
             assert "upgrade" in text
             assert ("go test -timeout 30m ./..." in text) == (scope == "broad")
-            assert ("verify-guidance-lifecycle.py" in text) == (scope == "guidance")
+            assert ("verify-guidance-lifecycle.py smoke" in text) == (scope == "guidance")
         if scope == "guidance":
             for unrelated in ["test_go_cli_parity", "test_plan_catalog_backward_compatibility", "-bench", "go test -timeout 30m ./..."]:
                 assert unrelated not in text
@@ -324,3 +325,17 @@ def test_windows_checksum_smoke_rejects_false_success(job_name, installer_reject
     assert replaced == 1
     result = subprocess.run([pwsh, "-NoProfile", "-NonInteractive", "-Command", "$ErrorActionPreference='Stop';\n" + block + "\nWrite-Output 'gate passed'"], capture_output=True)
     assert (result.returncode == 0) == installer_rejects
+
+
+def test_windows_smoke_retry_keeps_source_evidence_separate():
+    jobs = validation_workflow()["jobs"]
+    context = dict(mode="candidate", candidate_scope="broad", candidate_lane="windows-smoke")
+    selected = {name: job for name, job in jobs.items() if name not in {"feedback", "dispatch-inputs"}
+                and workflow_condition(job["if"], **context)}
+    assert set(selected) == {"windows-validation"}
+    steps = selected["windows-validation"]["steps"]
+    text = "\n".join(step.get("run", "") for step in steps
+        if "if" not in step or workflow_condition(step["if"], **context))
+    assert "build-release-assets.py" in text and "wait-ready" in text
+    for omitted in ["go test -timeout", "test_go_cli_parity", "test_plan_catalog_backward_compatibility"]:
+        assert omitted not in text

@@ -1,4 +1,4 @@
-Last updated: 2026-09-08T13:59:38Z (UTC)
+Last updated: 2026-09-08T14:57:57Z (UTC)
 Created: 2026-09-08
 Status: active
 Execution log: docs/repo/plans/release-validation-effort/release-validation-effort_execution_log.md
@@ -166,11 +166,11 @@ workflow integration; synchronize before focused tests and review.
 
 ### F) Tasks Checklist
 
-- [ ] Implement narrow guard with positive managed edit/addition and adversarial identity/path tests.
-- [ ] Integrate scope/preflight and focused content/native paths; preserve broad/public modes.
-- [ ] Remove incidental identity fixture churn while keeping independent golden/negative checks.
-- [ ] Align maintainer recipes and script contract; test fresh-agent route selection.
-- [ ] Run focused checks and one independent combined source review; correct with same reviewer.
+- [x] Implement narrow guard with positive managed edit/addition and adversarial identity/path tests.
+- [x] Integrate scope/preflight and focused content/native paths; preserve broad/public modes.
+- [x] Remove incidental identity fixture churn while keeping independent golden/negative checks.
+- [x] Align maintainer recipes and script contract; test fresh-agent route selection.
+- [x] Run focused checks and one independent combined source review; correct with same reviewer.
 
 ### G) Implementation Notes
 

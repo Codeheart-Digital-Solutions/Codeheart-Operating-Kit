@@ -1,4 +1,4 @@
-Last updated: 2026-09-08T14:09:59Z (UTC)
+Last updated: 2026-09-08T14:57:57Z (UTC)
 
 # Release Operating Kit
 
@@ -78,7 +78,11 @@ gh workflow run validate.yml --ref <candidate-ref> -f mode=candidate
 ```
 
 `candidate_lane` defaults to `all`. To rerun one invalidated lane after a scoped correction, pass
-`-f candidate_lane=windows` (also `macos`, `ubuntu`, `git-2-43`). A selected-lane pass is partial
+`-f candidate_lane=windows` (also `macos`, `ubuntu`, `git-2-43`).
+For a Windows packaging/native-smoke-only correction with applicable successful source evidence,
+use `candidate_scope=broad` and `candidate_lane=windows-smoke`; it omits Go/parity/history suites
+and rebuilds packages before native smoke. Record the retained source run and unchanged inputs.
+This option is partial evidence, not a new acceptance scope or an authority bypass. A selected-lane pass is partial
 evidence, never full release acceptance by itself. Record the previous run, unchanged relevant
 inputs and retained results alongside the correction run. If applicability is uncertain, use all.
 
@@ -134,7 +138,9 @@ containment smoke. They also compare all declared managed source bytes with fres
 installed targets. A verified matching published CLI initiates the current-release upgrade;
 dry-run and failed catalog verification preserve consumer and binary state, successful apply/check
 preserves authored config, instructions, plans and local-user files. Native command exit codes
-are asserted, including Windows intermediate calls. Missing-catalog smoke does not claim to
+are asserted, including Windows intermediate calls. Wait for both expected binary version and a
+completed installed-state check before preservation assertions; version replacement can precede
+transaction completion. Retry only the known transaction-in-progress state, not drift or corruption. Missing-catalog smoke does not claim to
 retest every transaction rollback phase; retain applicable unchanged runtime fault-injection
 results and rerun them when affected.
 
