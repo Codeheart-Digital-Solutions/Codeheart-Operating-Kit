@@ -1,4 +1,4 @@
-Last updated: 2026-09-07T22:48:50Z (UTC)
+Last updated: 2026-09-08T00:09:06Z (UTC)
 Created: 2026-09-07
 Status: active
 Execution log: docs/repo/plans/development-feedback-and-validation/development-feedback-and-validation_execution_log.md
@@ -420,8 +420,8 @@ Do not start a second full acceptance run merely because the task resumed.
 
 **F) Tasks Checklist**
 
-- [ ] Select the next unused patch version and prepare `release-notes.md` plus normal version/resource updates, classifying instruction and validation changes and documenting consumer adoption.
-- [ ] Run the agreed full candidate lane once and `release-operating-kit.md` packaging gates, including reproducible macOS universal/Windows x64 artifacts and supported native install/upgrade preservation evidence.
+- [x] Select the next unused patch version and prepare `release-notes.md` plus normal version/resource updates, classifying instruction and validation changes and documenting consumer adoption.
+- [x] Run the agreed full candidate lane once and `release-operating-kit.md` packaging gates, including reproducible macOS universal/Windows x64 artifacts and supported native install/upgrade preservation evidence.
 - [ ] Integrate and publish the exact validated candidate through normal Git/release routes under the commissioning authority; retain target commit, version, assets and actual acceptance evidence.
 - [ ] Run the published-release smoke mode against the explicit released tag, verify public asset retrieval and supported native install behavior, and retain source validation from the unchanged accepted candidate.
 - [ ] Preview and apply the released Kit through `maintain-operating-kit-installation.md` in each assigned consumer; verify installed version, changed route contents and preservation of authored work at the actual owner-plan amendment worktrees.

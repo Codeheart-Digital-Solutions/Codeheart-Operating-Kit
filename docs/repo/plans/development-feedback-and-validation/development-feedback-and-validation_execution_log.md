@@ -1,4 +1,4 @@
-Last updated: 2026-09-07T23:37:30Z (UTC)
+Last updated: 2026-09-08T00:09:06Z (UTC)
 Created: 2026-09-07
 
 # Development Feedback and Proportionate Validation — Execution Log
@@ -154,3 +154,32 @@ not bound compilation plus total execution time. Duration alone did not establis
 cancellation was premature. The unsupported new 35-minute step bound is removed. The replacement
 run is allowed to finish; no further cancellation or rerun follows merely from elapsed time.
 This correction preserves the original timeout policy and does not change account budgets.
+
+### Candidate acceptance
+
+All required candidate lanes now pass jointly:
+
+- macOS run `34168213234` at `bec52c4`: native validation, both reproducible packs,
+  staged install and historical upgrade preservation.
+- Ubuntu run `34168211657` at `bec52c4`: semantic, compatibility and scale validation.
+- Windows run `34170316992` at `62fba97`: native Go (34m39s), compatibility, reproducible
+  Windows pack, staged install and deferred upgrade preservation.
+- Exact Git 2.43 proof job `101882711480` in original run `34167972472` at `861ed11`.
+
+These are joint results, not acceptance from a selected lane alone. Final source `f555742`
+removes only an unsupported whole-step timeout from the Windows-tested orchestration and corrects
+its diagnostic record. The source suite, embedded payload and pack algorithm are unchanged.
+Ordinary PR feedback passes on this final source. Same-reviewer follow-up closed the timeout
+correction. No further candidate run is justified by the record update or unchanged integration.
+
+Both public packs were retrieved from the successful macOS job. Catalog/archive, pack manifest,
+payload/content manifest, binary version/digest and every public sidecar were verified. The
+verified native binary materialized all 13 changed managed resources byte for byte. Pack SHA-256:
+
+- macOS universal: `3e44ffebc3f566a83ade6b90785f4f24ad71a646c9f3ff4702e8ce26fc84c415`
+- Windows x64: `bb7db54e5507a5a864a64c7d451a0c630e1c15bc431363de0f774294f6c16468`
+
+Main protection and repository rulesets were rechecked before integration: no enforced branch
+protection or rulesets. Director source acceptance and the existing unsigned/unnotarized
+HTTPS-plus-SHA-256 internal/prototype grant cover the release. Publication and adoption remain
+the next actions, not claims inferred from candidate success.
