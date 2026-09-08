@@ -1,6 +1,6 @@
-Last updated: 2026-09-08T15:12:57Z (UTC)
+Last updated: 2026-09-08T15:15:54Z (UTC)
 Created: 2026-09-08
-Status: active
+Status: completed
 Execution log: docs/repo/plans/release-validation-effort/release-validation-effort_execution_log.md
 
 # Proportionate Producer Release Validation
@@ -13,7 +13,7 @@ plan:
   kind: implementation
   purpose: Implement and merge guarded guidance candidates with focused identity and native lifecycle validation.
   first_cataloged: 2026-09-08T13:59:38Z
-  catalog_metadata_updated: 2026-09-08T13:59:38Z
+  catalog_metadata_updated: 2026-09-08T15:15:54Z
   relations:
     - kind: related
       target: codeheart-operating-kit.discovery.release-validation-effort
@@ -212,8 +212,8 @@ Use ordinary independent work during hosted waits; no duplicate matrix after met
 - [x] Commit/push coherent source and open one PR; dispatch broad candidate on exact checkpoint.
 - [x] Resolve only failed/invalidated lanes and send reviewed checkpoint for source-anchor acceptance.
 - [x] Create controlled eligible delta from accepted anchor; exercise both guidance native lanes and cheap negative preflight.
-- [ ] Record evidence, get final source acceptance, verify current checks/ref, merge PR normally.
-- [ ] Complete plan/log and report actual merged state and remaining unrelated follow-ups.
+- [x] Record evidence, get final source acceptance, verify current checks/ref, merge PR normally.
+- [x] Complete plan/log and report actual merged state and remaining unrelated follow-ups.
 
 ### G) Implementation Notes
 
@@ -234,3 +234,9 @@ Content distribution, historical migration retirement and support changes remain
 
 2026-09-08: Activated directly under accepted discovery and whole-delivery authority. Finish line
 is producer PR merged to main; publication/adoption deliberately excluded by the commissioning grant.
+
+2026-09-08: Completed both epics. Final owner acceptance covered PR #18 at `8997b0a`;
+normal merge `8f6e73e3b8a50c271253493c6676c11822a8f46b` reached main at 15:15:10 UTC.
+The accepted broad-source anchor `c36061f69f18b8a9aff2e018db2d5e35c6188ec8` remains an
+ancestor of main; subsequent delivery changes are plan evidence only. The controlled test
+version/content is outside main. This closure updates only the authorized plan, log and index.

@@ -1,9 +1,9 @@
-Last updated: 2026-09-08T15:12:57Z (UTC)
+Last updated: 2026-09-08T15:15:54Z (UTC)
 Created: 2026-09-08
 
 # Release Validation Effort Execution Log
 
-[Active plan](release-validation-effort_implementation_doc.md) owns scope and acceptance.
+[Implementation plan](release-validation-effort_implementation_doc.md) owns scope and acceptance.
 Commissioning owner accepted discovery D-1–3 at `8c99688` and authorized this complete producer-only
 implementation, planned hosted validation, normal pushes/one PR and merge after final acceptance.
 No public release, version/tag, consumer adoption or unrelated runtime optimization is included.
@@ -15,7 +15,7 @@ was fetched again; repository has no rulesets and main protection endpoint repor
 The activation checkpoint contains only discovery acceptance, implementation plan, log and index.
 Native source implementation has not started. Canonical plan validation precedes normal push.
 
-## Progress
+## Initial progress
 
 EP-01 implementation pending; EP-02 hosted proof and integration pending. One coherent independent
 source review with same-reviewer corrections is planned. Exact broad anchor requires commissioning
@@ -181,3 +181,25 @@ The guard's earlier negative run remains valid. This positive exercise and its c
 fixture error show that eligibility permits fresh focused validation, not automatic acceptance.
 No public version/tag/release or consumer adoption occurred; delivery still carries v0.1.32.
 Final integration acceptance is the remaining planned boundary before normal PR merge.
+
+## Final acceptance and completed integration
+
+Final commissioning acceptance covered PR #18 head `8997b0ab7f1ac552f2ab75f839f2ce20408e6937`
+and its equivalent integrated source. Applicable PR feedback passed in 43s, main was fetched,
+and the exact-head normal merge completed at 2026-09-08T15:15:10Z as
+`8f6e73e3b8a50c271253493c6676c11822a8f46b`. The merge is verified on `origin/main`; no
+unrelated work was overwritten. Accepted broad-source baseline
+`c36061f69f18b8a9aff2e018db2d5e35c6188ec8` remains reachable through normal merge ancestry.
+The owner explicitly accepts the equivalent integrated main source with retained evidence.
+
+EP-01 and EP-02 are completed. Guidance candidates now retain meaningful fresh native/content
+proof without replaying unrelated accepted broad mechanisms. Producer main remains v0.1.32;
+the unpublished test identity and guidance paragraph remain solely on the demonstration branch.
+No release/tag/adoption, branch deletion or runtime repair occurred. D-4 runtime profiling and
+D-5 older-installation classification remain separate follow-ups, not unfinished delivery scope.
+
+The owner authorized a post-merge documentation-only fast-forward closure on main, restricted
+to this log, the implementation plan and `docs/repo/plans/README.md`. Completion is recorded
+after the actual merge. Canonical plan validation/list and applicable cheap document checks
+validate this closure before its normal push; current remote main is checked to avoid overwriting
+concurrent work. Final merge/closure refs and pushed-state checks are reported to the owner.
