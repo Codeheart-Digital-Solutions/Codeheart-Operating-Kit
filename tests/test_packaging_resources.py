@@ -203,7 +203,7 @@ def test_validation_lanes_preserve_candidate_boundary():
     inputs = workflow["on"]["workflow_dispatch"]["inputs"]
     assert inputs["mode"]["default"] == "candidate"
     assert inputs["candidate_lane"]["default"] == "all"
-    assert inputs["candidate_lane"]["options"] == ["all", "macos", "windows", "ubuntu", "git-2-43"]
+    assert inputs["candidate_lane"]["options"] == ["all", "macos", "windows", "windows-smoke", "ubuntu", "git-2-43"]
     assert inputs["mode"]["options"] == ["candidate", "released-smoke"]
     jobs = workflow["jobs"]
     assert jobs["feedback"]["if"] == "github.event_name != 'workflow_dispatch'"
@@ -214,11 +214,13 @@ def test_validation_lanes_preserve_candidate_boundary():
         job = jobs[name]
         assert job["needs"] == "dispatch-inputs"
         lane = {"macos-validation": "macos", "windows-validation": "windows", "ubuntu-semantic-validation": "ubuntu", "git-2-43-proof-validation": "git-2-43"}[name]
-        assert job["if"] == f"github.event_name == 'workflow_dispatch' && inputs.mode == 'candidate' && (inputs.candidate_lane == 'all' || inputs.candidate_lane == '{lane}')"
+        scope_condition = "inputs.candidate_scope == 'broad' && " if lane in {"ubuntu", "git-2-43"} else ""
+        smoke_condition = " || inputs.candidate_lane == 'windows-smoke'" if lane == "windows" else ""
+        assert job["if"] == f"github.event_name == 'workflow_dispatch' && inputs.mode == 'candidate' && {scope_condition}(inputs.candidate_lane == 'all' || inputs.candidate_lane == '{lane}'{smoke_condition})"
         assert "/releases/download/" not in str(job["steps"])
     for name in ["macos-validation", "windows-validation", "ubuntu-semantic-validation"]:
         runs = [step.get("run", "") for step in jobs[name]["steps"]]
-        broad = [run for run in runs if run.startswith("go test") and "-bench" not in run]
+        broad = [run for run in runs if run.startswith("go test") and "-bench" not in run and "./internal/hash" not in run]
         builders = [run for run in runs if "scripts/build-release-assets.py" in run]
         assert len(broad) == 1
         if builders:
@@ -245,7 +247,7 @@ def test_validation_lanes_preserve_candidate_boundary():
 ])
 def test_dispatch_input_guard(mode, tag, succeeds):
     guard = validation_workflow()["jobs"]["dispatch-inputs"]["steps"][0]["run"]
-    result = subprocess.run(["bash", "-c", guard], env={**os.environ, "MODE": mode, "CANDIDATE_LANE": "all", "RELEASE_VERSION": tag}, capture_output=True)
+    result = subprocess.run(["bash", "-c", guard], env={**os.environ, "MODE": mode, "CANDIDATE_LANE": "all", "CANDIDATE_SCOPE": "broad", "BASELINE_REF": "", "UPGRADE_VERSION": "", "RELEASE_VERSION": tag}, capture_output=True)
     assert (result.returncode == 0) == succeeds
 
 
@@ -253,5 +255,87 @@ def test_dispatch_input_guard(mode, tag, succeeds):
 @pytest.mark.parametrize("lane", ["", "unknown"])
 def test_dispatch_rejects_unknown_candidate_lane(lane):
     guard = validation_workflow()["jobs"]["dispatch-inputs"]["steps"][0]["run"]
-    result = subprocess.run(["bash", "-c", guard], env={**os.environ, "MODE": "candidate", "CANDIDATE_LANE": lane, "RELEASE_VERSION": ""}, capture_output=True)
+    result = subprocess.run(["bash", "-c", guard], env={**os.environ, "MODE": "candidate", "CANDIDATE_LANE": lane, "CANDIDATE_SCOPE": "broad", "BASELINE_REF": "", "UPGRADE_VERSION": "", "RELEASE_VERSION": ""}, capture_output=True)
     assert result.returncode != 0
+
+
+@pytest.mark.skipif(os.name == "nt", reason="Dispatch guard runs on Ubuntu")
+@pytest.mark.parametrize("scope,lane,baseline,upgrade,ok", [
+    ("guidance", "all", "a" * 40, "v0.1.32", True),
+    ("guidance", "windows", "a" * 40, "v0.1.32", True),
+    ("guidance", "ubuntu", "a" * 40, "v0.1.32", False),
+    ("guidance", "all", "main", "v0.1.32", False),
+    ("guidance", "all", "a" * 40, "latest", False),
+    ("guidance", "all", "", "", False),
+    ("broad", "all", "a" * 40, "v0.1.32", False),
+    ("unknown", "all", "", "", False),
+])
+def test_guidance_dispatch_boundary(scope, lane, baseline, upgrade, ok):
+    guard = validation_workflow()["jobs"]["dispatch-inputs"]["steps"][0]["run"]
+    result = subprocess.run(["bash", "-c", guard], env={**os.environ, "MODE": "candidate", "CANDIDATE_SCOPE": scope,
+        "CANDIDATE_LANE": lane, "BASELINE_REF": baseline, "UPGRADE_VERSION": upgrade, "RELEASE_VERSION": ""}, capture_output=True)
+    assert (result.returncode == 0) == ok
+
+
+def workflow_condition(expression, **inputs):
+    import re
+    # Evaluate the workflow's actual boolean predicates against bounded test contexts.
+    expression = expression.replace("github.event_name", repr("workflow_dispatch"))
+    expression = re.sub(r"inputs\.(\w+)", lambda match: repr(inputs[match[1]]), expression)
+    return eval(expression.replace("&&", " and ").replace("||", " or "), {"__builtins__": {}})
+
+
+@pytest.mark.parametrize("scope", ["broad", "guidance"])
+@pytest.mark.parametrize("lane", ["all", "macos", "windows"])
+def test_executed_candidate_steps_match_scope(scope, lane):
+    jobs = validation_workflow()["jobs"]
+    context = dict(mode="candidate", candidate_scope=scope, candidate_lane=lane)
+    selected = {name: job for name, job in jobs.items() if name not in {"feedback", "dispatch-inputs"}
+                and workflow_condition(job["if"], **context)}
+    if scope == "guidance":
+        assert set(selected) == ({"macos-validation", "windows-validation"} if lane == "all" else {lane + "-validation"})
+    for name, job in selected.items():
+        runs = [step.get("run", "") for step in job["steps"]
+                if "if" not in step or workflow_condition(step["if"], **context)]
+        text = "\n".join(runs)
+        if name in {"macos-validation", "windows-validation"}:
+            assert "build-release-assets.py" in text
+            assert "upgrade" in text
+            assert ("go test -timeout 30m ./..." in text) == (scope == "broad")
+            assert ("verify-guidance-lifecycle.py smoke" in text) == (scope == "guidance")
+        if scope == "guidance":
+            for unrelated in ["test_go_cli_parity", "test_plan_catalog_backward_compatibility", "-bench", "go test -timeout 30m ./..."]:
+                assert unrelated not in text
+
+
+@pytest.mark.parametrize("job_name", ["windows-validation", "windows-public-release"])
+@pytest.mark.parametrize("installer_rejects", [True, False])
+def test_windows_checksum_smoke_rejects_false_success(job_name, installer_rejects):
+    import re
+    import shutil
+    pwsh = shutil.which("pwsh")
+    if not pwsh:
+        pytest.skip("PowerShell runtime unavailable; exercised on Windows candidate")
+    steps = validation_workflow()["jobs"][job_name]["steps"]
+    native = next(step["run"] for step in steps if "Installer unexpectedly accepted" in step.get("run", ""))
+    block = re.search(r"(?ms)^([ ]*)try \{\n.*?^\1\}\n", native).group()
+    # Keep actual workflow try/catch behavior while substituting only the external installer.
+    fake = "throw 'Checksum mismatch: supplied digest is invalid'" if installer_rejects else "$null = 1"
+    block, replaced = re.subn(r"(?ms)^\s*\.\\install\.ps1 .*?^-?([ ]*)-InstallDir [^\n]+", "\n" + fake, block)
+    assert replaced == 1
+    result = subprocess.run([pwsh, "-NoProfile", "-NonInteractive", "-Command", "$ErrorActionPreference='Stop';\n" + block + "\nWrite-Output 'gate passed'"], capture_output=True)
+    assert (result.returncode == 0) == installer_rejects
+
+
+def test_windows_smoke_retry_keeps_source_evidence_separate():
+    jobs = validation_workflow()["jobs"]
+    context = dict(mode="candidate", candidate_scope="broad", candidate_lane="windows-smoke")
+    selected = {name: job for name, job in jobs.items() if name not in {"feedback", "dispatch-inputs"}
+                and workflow_condition(job["if"], **context)}
+    assert set(selected) == {"windows-validation"}
+    steps = selected["windows-validation"]["steps"]
+    text = "\n".join(step.get("run", "") for step in steps
+        if "if" not in step or workflow_condition(step["if"], **context))
+    assert "build-release-assets.py" in text and "wait-ready" in text
+    for omitted in ["go test -timeout", "test_go_cli_parity", "test_plan_catalog_backward_compatibility"]:
+        assert omitted not in text

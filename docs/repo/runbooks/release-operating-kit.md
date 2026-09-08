@@ -1,4 +1,4 @@
-Last updated: 2026-09-07T23:37:30Z (UTC)
+Last updated: 2026-09-08T14:57:57Z (UTC)
 
 # Release Operating Kit
 
@@ -26,9 +26,11 @@ Stop on a failed required gate or a material scope, authority or preservation co
 3. Read `docs/repo/reference/consumer-impact-classification.md`.
 4. Confirm the intended version and consumer-impact classification.
 5. Confirm release notes cover consumer-facing behavior and migration.
-6. Dispatch the full candidate mode below on the intended source ref. Require public-core,
-   Markdown, JSON Schema, content-identity, Go, Python compatibility, installer and release-contract
-   evidence. Ordinary feedback alone cannot qualify any candidate for release.
+6. Select broad (default) or eligible guidance candidate scope below on the intended source ref.
+   Require applicable public-core, Markdown, schema, content identity, native installer and
+   release-contract evidence. Broad source/compatibility results may be retained for eligible
+   guidance only under the explicit applicability boundary below. Ordinary feedback alone never
+   qualifies a release.
 7. Build macOS universal and Windows x64 packs twice with `scripts/build-release-assets.py`; require
    byte-identical output from both builds.
 8. Confirm each pack contains the expected binary plus `bootstrap.md`, `install.sh`, `install.ps1`,
@@ -68,7 +70,7 @@ Select the next unused patch from current source, tags and releases before freez
 Update release identity, notes and declared resource mirrors through source. Recheck current
 required-check configuration before publishing workflow changes.
 
-Default manual dispatch is `candidate` and validates checked-out source and staged packs. It never
+Default manual dispatch is `candidate` with `candidate_scope=broad` and validates checked-out source and staged packs. It never
 downloads that candidate as a public release. Invoke on the exact intended branch/ref:
 
 ```sh
@@ -76,13 +78,17 @@ gh workflow run validate.yml --ref <candidate-ref> -f mode=candidate
 ```
 
 `candidate_lane` defaults to `all`. To rerun one invalidated lane after a scoped correction, pass
-`-f candidate_lane=windows` (also `macos`, `ubuntu`, `git-2-43`). A selected-lane pass is partial
+`-f candidate_lane=windows` (also `macos`, `ubuntu`, `git-2-43`).
+For a Windows packaging/native-smoke-only correction with applicable successful source evidence,
+use `candidate_scope=broad` and `candidate_lane=windows-smoke`; it omits Go/parity/history suites
+and rebuilds packages before native smoke. Record the retained source run and unchanged inputs.
+This option is partial evidence, not a new acceptance scope or an authority bypass. A selected-lane pass is partial
 evidence, never full release acceptance by itself. Record the previous run, unchanged relevant
 inputs and retained results alongside the correction run. If applicability is uncertain, use all.
 
-Record the run URL and resolved commit. Candidate jobs cover macOS and Windows native suites,
+Record the run URL and resolved commit. Broad candidate jobs cover macOS and Windows native suites,
 staged installers and old-version upgrade preservation, Ubuntu semantic/performance coverage and
-exact Git 2.43 proof regression. Each native lane runs the broad Go suite once as a visible CI step with its retained 30-minute
+exact Git 2.43 proof regression. Each broad native lane runs the Go suite once as a visible CI step with its retained 30-minute
 per-package Go timeout; Ubuntu runs it directly. Do not mistake this for a whole-command
 wall-time limit: compilation and multiple package executions can take longer. The builder only packages and
 verifies artifacts; invoking it alone does not prove source acceptance.
@@ -91,6 +97,69 @@ unused package-index URL to prove no Python package retrieval is needed. Separat
 configured benchmark and oldest-Git cases remain distinct. The macOS builder performs two builds
 and byte comparison for both supported packs and uploads `candidate-release-assets` for reuse.
 No new platform support is implied by the Ubuntu semantic lane.
+
+## Guidance Candidate Scope
+
+Use guidance scope for reviewed managed instruction changes under existing component ownership
+and target contracts, including declared new managed files. A new component, scaffold, ownership
+mode or placement contract is not such an addition. Review policy and operational implications:
+a Markdown suffix does not waive safety-policy review or affected scenario/routing probes.
+Unknown dependencies and consequential runtime changes require broad scope.
+
+Select an exact ancestor commit whose coherent source and broad candidate evidence the owner has
+accepted. Retain that broad-source anchor across successive guidance releases until a new broad
+acceptance replaces it; do not hide cumulative executable changes behind the last guidance tag.
+The existing execution log records accepted source, run/commit evidence, semantic impact and why
+retained lanes remain applicable. The guard cannot manufacture acceptance from prose. There is
+no receipt registry or automatic authority check.
+
+The source anchor may be unpublished. Separately select an explicit verified published tag for
+the matching old CLI upgrade smoke; this release must precede the candidate version. This lets
+workflow improvements be tested before publication. A controlled demonstration candidate is
+validation evidence only and need not be published or merged as a feature release.
+
+```sh
+python scripts/validate-guidance-candidate.py --baseline-ref <accepted-broad-source-sha> --candidate-ref <candidate-sha>
+python scripts/validate-release-identity.py
+gh workflow run validate.yml --ref <candidate-ref> -f mode=candidate -f candidate_scope=guidance -f baseline_ref=<accepted-broad-source-sha> -f upgrade_version=v<published-old-version>
+```
+
+The workflow enforces cumulative committed-tree eligibility before native jobs. It admits
+known managed content and identical declared mirrors, narrowly recognized declaration additions
+and literal release identity edits, planning/log/index Markdown under `docs/repo/plans/`, and
+reviewed release-note prose. It rejects unknown paths, removals, renames, mode changes, unrelated
+code, schema/ownership/selection changes and changed validation machinery. See the script's
+explicit rules/tests for the known literal fields; an unrecognized edit uses broad scope.
+No suffix-wide exemption for executable mechanics or governing instructions exists.
+
+Both native guidance lanes run focused hash/embedded-manifest and routing/schema/resource checks,
+rebuild reproducible packages and perform existing staged installation, historical upgrade and
+containment smoke. They also compare all declared managed source bytes with fresh and upgraded
+installed targets. A verified matching published CLI initiates the current-release upgrade;
+dry-run and failed catalog verification preserve consumer and binary state, successful apply/check
+preserves authored config, instructions, plans and local-user files. Native command exit codes
+are asserted, including Windows intermediate calls. Wait for both expected binary version and a
+completed installed-state check before preservation assertions; version replacement can precede
+transaction completion. Retry transaction-in-progress or explicitly version-mismatched old-tree
+states before reconciliation starts. Partial or drifted state never counts as completion; a
+current-version failure stops immediately and persistent pending state times out with diagnostics.
+Missing-catalog smoke does not claim to
+retest every transaction rollback phase; retain applicable unchanged runtime fault-injection
+results and rerun them when affected.
+
+Guidance omits the broad Go, full Python parity/plan-history compatibility, oldest-Git and scale
+benchmark runs. These results must remain applicable to the unchanged mechanisms. Relevant
+source, toolchain, dependency, target or behavior changes invalidate affected evidence; incidental
+host/image/log differences do not automatically demand a matrix rerun. Investigate uncertainty
+and use broad scope when applicability cannot be established.
+
+`candidate_lane=macos` or `windows` can rerun an invalidated guidance lane with the same explicit
+scope/anchor/tag inputs. Ubuntu and oldest-Git are not guidance lanes. A selected-lane pass is
+partial evidence; list fresh and retained results for the exact candidate. Record scoped step
+timing and cache conditions honestly, without treating earlier warmed timings as a guarantee.
+Broad remains the default, including for changes to this route, workflow, guard or build contract.
+
+## Artifact Acceptance and Publication
 
 Retrieve the successful run's artifacts and verify their catalog/checksum/version identity before
 publication. Required gates apply to the intended source and release payload; retain valid
