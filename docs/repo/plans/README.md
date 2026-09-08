@@ -1,4 +1,4 @@
-Last updated: 2026-09-07T22:33:32Z (UTC)
+Last updated: 2026-09-08T13:48:34Z (UTC)
 
 # Repo Plans
 
@@ -16,6 +16,9 @@ codeheart-operating-kit plans list --format json .
 entries after mixed cutover.
 
 ## Current Plans
+
+- Draft release validation effort discovery and bounded proposal:
+  `release-validation-effort/release-validation-effort_discovery_doc.md`
 
 - Active development feedback and proportionate validation implementation plan:
   `development-feedback-and-validation/development-feedback-and-validation_implementation_doc.md`
