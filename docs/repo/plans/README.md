@@ -17,7 +17,11 @@ entries after mixed cutover.
 
 ## Current Plans
 
-- Draft release validation effort discovery and bounded proposal:
+- Active proportionate producer release validation plan and execution log:
+  `release-validation-effort/release-validation-effort_implementation_doc.md`
+  `release-validation-effort/release-validation-effort_execution_log.md`
+
+- Accepted release validation effort discovery:
   `release-validation-effort/release-validation-effort_discovery_doc.md`
 
 - Active development feedback and proportionate validation implementation plan:

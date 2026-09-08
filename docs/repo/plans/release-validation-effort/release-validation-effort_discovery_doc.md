@@ -1,6 +1,7 @@
 Last updated: 2026-09-08T13:53:53Z (UTC)
 Created: 2026-09-08
-Status: draft
+Status: completed
+Completed: 2026-09-08
 
 # Release Validation Effort Discovery and Proposal
 
@@ -363,3 +364,8 @@ Local Markdown and public-core checks pass. Canonical `plans validate` passes (4
 existing legacy-layout warnings outside this proposal; `plans list` includes the new draft.
 Validation used the current catalog mode without changing config or discovery version. No source
 or native suite is warranted for this proposal-only edit.
+
+Commissioning acceptance on 2026-09-08: D-1–3 and capability scope approved for the sibling active
+implementation plan. D-4–5 deferred. Finish line is producer workflow merged to main, with no
+public version, tag/release or consumer adoption. Authority and evidence applicability remain
+meaningful owner judgment in the existing log; no receipt registry or runner-image equality gate.
