@@ -75,7 +75,7 @@ in the final producer branch; controlled demonstration content stays in a separa
 ```text
 .github/workflows/validate.yml                    # modify selection and native smoke
 scripts/validate-guidance-candidate.py             # create read-only eligibility primitive
-scripts/verify-materialized-resources.py           # create only if shared native byte proof needs it
+scripts/verify-guidance-lifecycle.py                # create shared isolated native proof
 scripts/README.md                                 # create compact script contract index
 tests/test_guidance_candidate.py                   # create eligibility regression tests
 tests/test_packaging_resources.py                  # modify dispatch behavior tests

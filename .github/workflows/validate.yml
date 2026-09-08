@@ -7,11 +7,25 @@ on:
   workflow_dispatch:
     inputs:
       mode:
-        description: Full source candidate validation or published-asset smoke
+        description: Scoped source candidate validation or published-asset smoke
         type: choice
         options: [candidate, released-smoke]
         required: true
         default: candidate
+      candidate_scope:
+        description: Broad by default; guidance needs reviewed baseline and upgrade tag
+        type: choice
+        options: [broad, guidance]
+        required: true
+        default: broad
+      baseline_ref:
+        description: Exact accepted broad-source commit (guidance only)
+        type: string
+        default: ""
+      upgrade_version:
+        description: Verified published tag for matching old CLI upgrade (guidance only)
+        type: string
+        default: ""
       candidate_lane:
         description: All lanes for acceptance; select one only to rerun invalidated evidence
         type: choice
@@ -42,11 +56,12 @@ jobs:
         with:
           python-version: "3.11"
       - run: python -m pip install -e . pytest PyYAML
-      - run: python -m pytest -q tests/test_routing.py tests/test_packaging_resources.py
+      - run: python -m pytest -q tests/test_routing.py tests/test_packaging_resources.py tests/test_guidance_candidate.py tests/test_guidance_lifecycle.py tests/test_release_identity.py
       - run: python scripts/validate-public-core.py
       - run: python scripts/validate-markdown-headers.py
       - run: python scripts/validate-json-schemas.py
       - run: python scripts/validate-release-manifest.py
+      - run: python scripts/validate-release-identity.py
       - name: State evidence boundary
         run: echo "Ordinary feedback only. Executable and release acceptance requires an explicit candidate run on the intended source."
 
@@ -56,6 +71,9 @@ jobs:
     env:
       MODE: ${{ inputs.mode }}
       CANDIDATE_LANE: ${{ inputs.candidate_lane }}
+      CANDIDATE_SCOPE: ${{ inputs.candidate_scope }}
+      BASELINE_REF: ${{ inputs.baseline_ref }}
+      UPGRADE_VERSION: ${{ inputs.upgrade_version }}
       RELEASE_VERSION: ${{ inputs.release_version }}
     steps:
       - name: Validate dispatch boundary
@@ -66,6 +84,15 @@ jobs:
             all|macos|windows|ubuntu|git-2-43) ;;
             *) echo "Unsupported candidate lane" >&2; exit 1 ;;
           esac
+          case "$CANDIDATE_SCOPE" in
+            broad) test -z "$BASELINE_REF$UPGRADE_VERSION" || { echo "Broad scope does not use guidance inputs" >&2; exit 1; } ;;
+            guidance)
+              test "$MODE" = candidate || { echo "Guidance scope requires candidate mode" >&2; exit 1; }
+              [[ "$BASELINE_REF" =~ ^[0-9a-f]{40}$ ]] || { echo "Guidance needs exact broad-source commit" >&2; exit 1; }
+              [[ "$UPGRADE_VERSION" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo "Guidance needs published upgrade tag" >&2; exit 1; }
+              case "$CANDIDATE_LANE" in all|macos|windows) ;; *) echo "Guidance has only native lanes" >&2; exit 1 ;; esac ;;
+            *) echo "Unsupported candidate scope" >&2; exit 1 ;;
+          esac
           case "$MODE" in
             candidate)
               test -z "$RELEASE_VERSION" || { echo "Candidate mode does not use a published tag" >&2; exit 1; } ;;
@@ -75,9 +102,33 @@ jobs:
             *) echo "Unsupported validation mode" >&2; exit 1 ;;
           esac
 
+      - uses: actions/checkout@v4
+        if: inputs.mode == 'candidate' && inputs.candidate_scope == 'guidance'
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        if: inputs.mode == 'candidate' && inputs.candidate_scope == 'guidance'
+        with:
+          python-version: "3.11"
+      - name: Check cumulative guidance eligibility
+        if: inputs.mode == 'candidate' && inputs.candidate_scope == 'guidance'
+        run: |
+          python -m pip install PyYAML
+          python scripts/validate-guidance-candidate.py --baseline-ref "$BASELINE_REF" --candidate-ref "$GITHUB_SHA"
+          python scripts/validate-release-identity.py
+          python - <<'PYTHON'
+          import os, tomllib
+          candidate = tomllib.load(open("pyproject.toml", "rb"))["project"]["version"]
+          previous = os.environ["UPGRADE_VERSION"][1:]
+          if tuple(map(int, candidate.split("."))) <= tuple(map(int, previous.split("."))):
+              raise SystemExit("Guidance candidate must advance the published upgrade version")
+          PYTHON
+          echo "Mechanical eligibility only; owner review and the existing log establish baseline acceptance, semantic impact and retained evidence." >> "$GITHUB_STEP_SUMMARY"
+          echo "Source $GITHUB_SHA; broad anchor $BASELINE_REF; published upgrade input $UPGRADE_VERSION" >> "$GITHUB_STEP_SUMMARY"
+
   git-2-43-proof-validation:
     needs: dispatch-inputs
-    if: github.event_name == 'workflow_dispatch' && inputs.mode == 'candidate' && (inputs.candidate_lane == 'all' || inputs.candidate_lane == 'git-2-43')
+    if: github.event_name == 'workflow_dispatch' && inputs.mode == 'candidate' && inputs.candidate_scope == 'broad' && (inputs.candidate_lane == 'all' || inputs.candidate_lane == 'git-2-43')
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
@@ -127,17 +178,25 @@ jobs:
       - run: python -m pip install --upgrade pip setuptools pytest PyYAML
       - run: python -m pip install -e .
       - name: Validate native Go source
+        if: inputs.candidate_scope == 'broad'
         run: go test -timeout 30m ./...
+      - name: Validate focused guidance identity
+        if: inputs.candidate_scope == 'guidance'
+        run: go test ./internal/hash ./internal/manifest
       - name: Validate installed plan routes, schemas, and packaged resources
         run: python -m pytest tests/test_json_schemas.py tests/test_routing.py tests/test_packaging_resources.py -q
       - name: Validate released plan-catalog compatibility boundaries
+        if: inputs.candidate_scope == 'broad'
         run: python -m pytest tests/test_plan_catalog_backward_compatibility.py -q
-      - run: python -m pytest tests/test_go_cli_parity.py -q
-      - run: python -m pytest tests/test_install_metadata.py tests/test_release_assets.py -q -k "(not test_release_asset_build and not test_release_assets_contain) or test_release_asset_build_rejects_version_mismatch"
+      - if: inputs.candidate_scope == 'broad'
+        run: python -m pytest tests/test_go_cli_parity.py -q
+      - if: inputs.candidate_scope == 'broad'
+        run: python -m pytest tests/test_install_metadata.py tests/test_release_assets.py -q -k "(not test_release_asset_build and not test_release_assets_contain) or test_release_asset_build_rejects_version_mismatch"
       - run: python scripts/validate-public-core.py
       - run: python scripts/validate-markdown-headers.py
       - run: python scripts/validate-json-schemas.py
       - run: python scripts/validate-release-manifest.py
+      - run: python scripts/validate-release-identity.py
       # Source was validated above; builder only repeats pack builds and verifies identity.
       - run: python scripts/build-release-assets.py --output-dir dist
         env:
@@ -160,6 +219,7 @@ jobs:
           PACK="dist/codeheart-operating-kit-${VERSION}-macos-universal.zip"
           CHECKSUM="${PACK}.sha256"
           if PATH="$TOOL_DIR" /bin/bash install.sh \
+            --version "$VERSION" \
             --asset-file "$PACK" \
             --checksum "0000000000000000000000000000000000000000000000000000000000000000" \
             --install-dir "$RUNNER_TEMP/codeheart-ok-bad"; then
@@ -167,6 +227,7 @@ jobs:
             exit 1
           fi
           PATH="$TOOL_DIR" /bin/bash install.sh \
+            --version "$VERSION" \
             --asset-file "$PACK" \
             --checksum-file "$CHECKSUM" \
             --install-dir "$RUNNER_TEMP/codeheart-ok"
@@ -257,6 +318,12 @@ jobs:
             CODEHEART_OPERATING_KIT_CLI=1 "$OLD_HOME/bin/codeheart-operating-kit" check "$CONSUMER" --json
           done
 
+      - name: Verify guidance materialization and current published upgrade
+        if: inputs.candidate_scope == 'guidance'
+        env:
+          UPGRADE_VERSION: ${{ inputs.upgrade_version }}
+        run: python scripts/verify-guidance-lifecycle.py --fresh-target "${{ runner.temp }}/consumer" --upgrade-version "$UPGRADE_VERSION" --catalog "dist/release-catalog-${{ steps.package-version.outputs.version }}.json" --work-dir "${{ runner.temp }}/guidance-upgrade"
+
       - uses: actions/upload-artifact@v4
         with:
           name: candidate-release-assets
@@ -265,7 +332,7 @@ jobs:
 
   ubuntu-semantic-validation:
     needs: dispatch-inputs
-    if: github.event_name == 'workflow_dispatch' && inputs.mode == 'candidate' && (inputs.candidate_lane == 'all' || inputs.candidate_lane == 'ubuntu')
+    if: github.event_name == 'workflow_dispatch' && inputs.mode == 'candidate' && inputs.candidate_scope == 'broad' && (inputs.candidate_lane == 'all' || inputs.candidate_lane == 'ubuntu')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -280,16 +347,19 @@ jobs:
       - run: python -m pip install --upgrade pip setuptools pytest PyYAML
       - run: python -m pip install -e .
       - run: go test ./...
+      - run: python -m pytest -q tests/test_guidance_candidate.py tests/test_guidance_lifecycle.py tests/test_release_identity.py
       - name: Validate the repository-scale discovery classifier twice
         run: go test ./internal/plancatalog -run '^$' -bench BenchmarkDiscoveryV2Classifier100kPaths10kMarkdown -benchtime=1x -count=2
       - name: Validate installed plan routes, schemas, packaged resources, and sync parity
         run: python -m pytest tests/test_json_schemas.py tests/test_routing.py tests/test_packaging_resources.py tests/test_sync_check.py -q
       - name: Validate released plan-catalog compatibility boundaries
+        if: inputs.candidate_scope == 'broad'
         run: python -m pytest tests/test_plan_catalog_backward_compatibility.py -q
       - run: python scripts/validate-json-schemas.py
       - run: python scripts/validate-markdown-headers.py
       - run: python scripts/validate-public-core.py
       - run: python scripts/validate-release-manifest.py
+      - run: python scripts/validate-release-identity.py
 
   windows-validation:
     needs: dispatch-inputs
@@ -313,12 +383,19 @@ jobs:
       - run: python -m pip install --upgrade pip setuptools pytest PyYAML
       - run: python -m pip install -e .
       - name: Validate native Go source
+        if: inputs.candidate_scope == 'broad'
         run: go test -timeout 30m ./...
+      - name: Validate focused guidance identity
+        if: inputs.candidate_scope == 'guidance'
+        run: go test ./internal/hash ./internal/manifest
       - name: Validate installed plan routes, schemas, and packaged resources
         run: python -m pytest tests/test_json_schemas.py tests/test_routing.py tests/test_packaging_resources.py -q
       - name: Validate released plan-catalog compatibility boundaries
+        if: inputs.candidate_scope == 'broad'
         run: python -m pytest tests/test_plan_catalog_backward_compatibility.py -q
-      - run: python -m pytest tests/test_go_cli_parity.py -q
+      - if: inputs.candidate_scope == 'broad'
+        run: python -m pytest tests/test_go_cli_parity.py -q
+      - run: python scripts/validate-release-identity.py
       - run: python scripts/build-release-assets.py --platform windows-x64 --output-dir dist
       - name: Validate Windows staged install without Python on PATH
         shell: pwsh
@@ -335,26 +412,30 @@ jobs:
           $Checksum = "$Pack.sha256"
           try {
               .\install.ps1 `
+                -Version $Version `
                 -AssetFile $Pack `
                 -Checksum "0000000000000000000000000000000000000000000000000000000000000000" `
                 -InstallDir "$env:RUNNER_TEMP\codeheart-ok-bad"
-              throw "Checksum mismatch unexpectedly succeeded."
+              throw "Installer unexpectedly accepted invalid digest."
           } catch {
               if ($_.Exception.Message -notmatch "Checksum mismatch") {
                   throw
               }
           }
           .\install.ps1 `
+            -Version $Version `
             -AssetFile $Pack `
             -ChecksumFile $Checksum `
             -InstallDir "$env:RUNNER_TEMP\codeheart-ok"
           & "$env:RUNNER_TEMP\codeheart-ok\bin\codeheart-operating-kit.cmd" --help
+          if ($LASTEXITCODE -ne 0) { throw "Native command failed with exit $LASTEXITCODE" }
           & "$env:RUNNER_TEMP\codeheart-ok\bin\codeheart-operating-kit.cmd" onboard `
             --target "$env:RUNNER_TEMP\consumer" `
             --project-name Release-Smoke `
             --purpose software-product `
             --yes `
             --json | Tee-Object -FilePath "$env:RUNNER_TEMP\onboard.json"
+            if ($LASTEXITCODE -ne 0) { throw "Native command failed with exit $LASTEXITCODE" }
           if (Select-String -Path "$env:RUNNER_TEMP\onboard.json" -Pattern '"native_capabilities"' -Quiet) {
               throw "Base onboarding unexpectedly reported native_capabilities."
           }
@@ -362,11 +443,13 @@ jobs:
               throw "Base onboarding unexpectedly offered optional native capability setup."
           }
           & "$env:RUNNER_TEMP\codeheart-ok\bin\codeheart-operating-kit.cmd" check "$env:RUNNER_TEMP\consumer" --json
+          if ($LASTEXITCODE -ne 0) { throw "Native command failed with exit $LASTEXITCODE" }
 
           $ReparseConsumer = "$env:RUNNER_TEMP\reparse-consumer"
           $Outside = "$env:RUNNER_TEMP\reparse-outside"
           & "$env:RUNNER_TEMP\codeheart-ok\bin\codeheart-operating-kit.cmd" init $ReparseConsumer `
             --project-name Reparse-Smoke --json | Out-Null
+            if ($LASTEXITCODE -ne 0) { throw "Native command failed with exit $LASTEXITCODE" }
           New-Item -ItemType Directory -Force -Path $Outside | Out-Null
           Set-Content -Path "$Outside\sentinel.txt" -Value "preserve"
           Move-Item "$ReparseConsumer\.codeheart\kit" "$ReparseConsumer\.codeheart\kit-real"
@@ -402,16 +485,20 @@ jobs:
             $Consumer = "$env:RUNNER_TEMP\upgrade-consumer-$Suffix"
             New-Item -ItemType Directory -Force -Path "$OldHome\bin", $OldSource | Out-Null
             git archive --format=tar --output=$OldArchive "v$OldVersion"
+            if ($LASTEXITCODE -ne 0) { throw "Native command failed with exit $LASTEXITCODE" }
             tar -xf $OldArchive -C $OldSource
+            if ($LASTEXITCODE -ne 0) { throw "Native command failed with exit $LASTEXITCODE" }
             Push-Location $OldSource
             try {
               go build -trimpath -buildvcs=false -ldflags "-s -w -buildid=" `
                 -o "$OldHome\bin\codeheart-operating-kit.exe" ./cmd/codeheart-operating-kit
+                if ($LASTEXITCODE -ne 0) { throw "Native command failed with exit $LASTEXITCODE" }
             } finally {
               Pop-Location
             }
             & "$OldHome\bin\codeheart-operating-kit.exe" init $Consumer `
               --project-name Upgrade-Smoke --json | Out-File "$env:RUNNER_TEMP\upgrade-init-$Suffix.json"
+              if ($LASTEXITCODE -ne 0) { throw "Native command failed with exit $LASTEXITCODE" }
             $Preservation = "$Consumer\docs\repo\plans\upgrade-preservation"
             New-Item -ItemType Directory -Force -Path $Preservation | Out-Null
             Set-Content -Path "$Preservation\preserved_implementation_doc.md" -Value "Status: active`n# Preserved plan"
@@ -432,6 +519,7 @@ jobs:
               --catalog "dist\release-catalog-$Version.json" `
               --installed-binary $Binary `
               --dry-run --json | Out-File "$env:RUNNER_TEMP\upgrade-dry-run-$Suffix.json"
+              if ($LASTEXITCODE -ne 0) { throw "Native command failed with exit $LASTEXITCODE" }
             if ((Get-FileHash -Algorithm SHA256 $Binary).Hash -ne $BinaryBefore -or
                 (Get-FileHash -Algorithm SHA256 $LockPath).Hash -ne $LockBefore) {
               throw "upgrade dry-run changed installed state for $OldVersion"
@@ -452,6 +540,7 @@ jobs:
               --catalog "dist\release-catalog-$Version.json" `
               --installed-binary $Binary `
               --yes --json | Out-File "$env:RUNNER_TEMP\upgrade-apply-$Suffix.json"
+              if ($LASTEXITCODE -ne 0) { throw "Native command failed with exit $LASTEXITCODE" }
             $Upgraded = $false
             foreach ($Attempt in 1..120) {
               Start-Sleep -Milliseconds 250
@@ -474,7 +563,14 @@ jobs:
             }
             $env:CODEHEART_OPERATING_KIT_CLI = "1"
             & $Binary check $Consumer --json
+            if ($LASTEXITCODE -ne 0) { throw "Native command failed with exit $LASTEXITCODE" }
           }
+      - name: Verify guidance materialization and current published upgrade
+        if: inputs.candidate_scope == 'guidance'
+        env:
+          UPGRADE_VERSION: ${{ inputs.upgrade_version }}
+        run: python scripts/verify-guidance-lifecycle.py --fresh-target "${{ runner.temp }}/consumer" --upgrade-version "$env:UPGRADE_VERSION" --catalog "dist/release-catalog-${{ steps.package-version.outputs.version }}.json" --work-dir "${{ runner.temp }}/guidance-upgrade"
+
 
   macos-public-release:
     needs: dispatch-inputs
@@ -530,7 +626,7 @@ jobs:
                 -AssetFile "codeheart-operating-kit-$Version-windows-x64.zip" `
                 -Checksum "0000000000000000000000000000000000000000000000000000000000000000" `
                 -InstallDir "$env:RUNNER_TEMP\codeheart-ok-bad"
-              throw "Checksum mismatch unexpectedly succeeded."
+              throw "Installer unexpectedly accepted invalid digest."
           } catch {
               if ($_.Exception.Message -notmatch "Checksum mismatch") {
                   throw

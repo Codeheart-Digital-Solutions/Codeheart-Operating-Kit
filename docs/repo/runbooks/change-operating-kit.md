@@ -1,4 +1,4 @@
-Last updated: 2026-09-07T22:44:25Z (UTC)
+Last updated: 2026-09-08T14:09:59Z (UTC)
 
 # Change Operating Kit
 
@@ -63,7 +63,7 @@ Ordinary PRs and main pushes run the `feedback` job in `validate.yml`: routing/r
 public-core, Markdown, schema and release-manifest checks. Feature-branch pushes do not duplicate
 PR runs. No commit-message bypass is needed. This cheap result does not qualify executable changes
 or an unknown changed surface for release. Inspect dependencies and run additional affected tests
-for changed behavior; retain full acceptance at the coherent candidate boundary.
+for changed behavior; select the broad or eligible guidance acceptance route at the coherent candidate boundary.
 
 Local instruction feedback (use the supported repo-local Python environment when needed):
 
@@ -84,6 +84,13 @@ invalidated checks. A metadata/log edit or a resumed task does not recreate nati
 Classify code, test, environment, authentication and billing failures separately before retrying.
 Do not increase budgets or blindly restart broad suites.
 
-Full candidate and explicit public-smoke invocation are owned by `release-operating-kit.md`.
+Candidate scope and explicit public-smoke invocation are owned by `release-operating-kit.md`.
+Guidance scope retains fresh package/native lifecycle proof and applicable broad-source evidence;
+it is never an ordinary-feedback waiver. The cumulative diff guard proves mechanical eligibility
+only. Review semantic policy, routing and dependency impact separately. Runtime, ownership,
+installer behavior, schema, toolchain, workflow/guard or unknown changes default to broad scope.
+Known literal release-version updates are identity changes, not installer behavior changes.
+Use `python scripts/validate-release-identity.py` before native dispatch to catch identity drift
+without patch-specific golden-fixture edits. Preserve independent hash/corruption negatives.
 Inspect current branch protection and rulesets before changing check names/triggers. Required
 checks must remain reliable; resolve an enforced conflict with the owner before publication.
