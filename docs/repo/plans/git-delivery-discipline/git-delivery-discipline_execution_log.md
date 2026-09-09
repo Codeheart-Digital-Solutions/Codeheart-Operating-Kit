@@ -1,4 +1,4 @@
-Last updated: 2026-09-09T14:25:47Z (UTC)
+Last updated: 2026-09-09T19:57:58Z (UTC)
 Created: 2026-09-09
 Plan: git-delivery-discipline_implementation_doc.md
 
@@ -142,3 +142,65 @@ owner worktrees reconciled. The plan remains active. Remaining owner event: an a
 through the frozen target's gate, then its normal adoption merge, remote-main verification,
 owner-worktree reconciliation and final completed plan/log/index publication. The final closure
 push is not used prematurely. No watcher, automation or new coordination process was created.
+
+## Owner Recovery Update — Integration Still Held
+
+On 2026-09-09 the commissioning director reported completion of separately authorized narrow
+freeze recovery, supported by independent governance review and the adoption candidate's passing
+unchanged trusted proof and final gate. The director verified that the main revision, pinned
+policy, strict checks, administrative protections and PR requirements remained unchanged; only
+the freeze enforcement changed. This is owner-reported private operational evidence, not an
+implementer-performed governance action or completion of held product recovery.
+
+The adoption PR remains draft. The distinct remaining blocker is the target's automatic main-push
+validation cost; the director owns its bounded decision. Freeze removal alone is not an integration
+handoff. Do not merge until the director explicitly hands off AWS integration, then verify current
+refs and applicable gates. Existing source/candidate/public-smoke evidence remains applicable;
+this bookkeeping adds no review, test run or PR. Main adoption, owner-worktree reconciliation and
+final remote closure remain pending for the third target.
+
+## Completed Target Integration And Reconciliation
+
+The commissioning owner separately authorized a bounded target-governance amendment and delegated
+concrete Kit-PR coordination to its director. This implementer changed no governance rules or CI.
+Under that coordination, the adoption branch was normally refreshed from accepted policy-staging
+main and made non-draft with auto-merge off. Fresh exact required proof passed; the director then
+advanced main through its protected governance integration and captured genuine strict-behind
+blocking on the unchanged, non-draft, conflict-free Kit head. No stale merge was attempted.
+A second normal refresh preserved the exact original Kit adoption patch and obtained fresh
+required proof again. Source release review stayed applicable; no extra experiment or broad
+product suite was introduced by the Kit implementer.
+
+The target director issued final integration handoff after restoring feedback and successfully
+validating its complete paused governance range. Action-time current base/head/evaluated candidate,
+pinned successor, strict final check application, administrative protections, PR readiness and
+active feedback were verified. The old organization-owned freeze remains present but disabled;
+a repository-scoped lookup failure or omission from effective rules does not establish deletion.
+
+The third adoption PR merged normally on 2026-09-09. Its actual automatic main-push feedback passed
+for the exact before/after merge range, selecting only the maintenance target with product suite
+selection false. Fetched main is healthy at v0.1.33 and all 50 managed resources equal released
+source; its integrated tree equals the reviewed adoption head. Private exact target/run identities
+were sent to the delegated target director and commissioning director rather than public records.
+
+The fourth owner worktree then received the supported released upgrade: matching old CLI check,
+preview, apply and final check passed. Its 781 authored/local-user files and AGENTS outside the
+managed block were preserved; the Kit-only reconciliation was committed locally and the checkout
+is clean. That local commit stays on the held product-owner branch until separately authorized
+product resumption and branch/ancestry review. This exception is distinct from the other local
+reconciliation whose unpublished ancestors contain held product implementation. Neither blocks
+completed main adoption; no held product work was resumed or newly published.
+
+Final verification confirms all three named remote-main locks at v0.1.33 and all four designated
+owner checkouts clean/current, each with all 50 released managed resources. The two permitted
+owner branches are published; the two explicit local exceptions have named product owners and
+resumption triggers in the commissioning record. EP-01 through EP-03 outcomes are complete.
+
+## Final Producer Closure
+
+The plan and index are completed only after the real release, three main adoptions and four
+reconciliations. The existing grant permits a documentation-only fast-forward closure to producer
+main limited to this log, its implementation plan and the plans index. Current producer main and
+policy are checked; canonical plan validation/list, Markdown, public-core and diff hygiene verify
+this closure. No release inputs change or native evidence is invalidated. Actual remote closure
+identity is verified after the normal push and reported directly to the commissioning director.

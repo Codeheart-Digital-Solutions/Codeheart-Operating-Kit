@@ -1,6 +1,7 @@
-Last updated: 2026-09-09T14:25:47Z (UTC)
+Last updated: 2026-09-09T19:57:58Z (UTC)
 Created: 2026-09-09
-Status: active
+Status: completed
+Completed: 2026-09-09
 Execution log: git-delivery-discipline_execution_log.md
 
 # Predictable Git Delivery and Main-Branch Adoption
@@ -151,7 +152,8 @@ already implement the mechanics.
 ## 2.2 Open Questions And Assumptions Requiring Clarification
 
 - OQ-1 — BLOCKER: no. Affects EP-01 through EP-03: publication authority stays as currently defined;
-  the one assignment must explicitly include its bounded Git and final effects. Commissioning is recorded above; the plan is active. It does not infer authority from a broad user goal or a passing check.
+  the one assignment must explicitly include its bounded Git and final effects. Commissioning and
+  completion are recorded above. Neither a broad goal nor a passing check supplies extra authority.
 - OQ-2 — BLOCKER: no. Affects EP-02: choose the next unused patch and verify the published old-CLI
   upgrade input at action time. Do not reuse the isolated demonstration's unpublished test identity
   by assumption. Preferred source anchor is the accepted reachable `c36061f` while applicable.
@@ -223,10 +225,11 @@ owning service preflight. No new package-manager/auth recipe or runtime repair i
 
 # Section 3 - Execution Plan
 
-Current delivery: EP-01 and EP-02 complete; v0.1.33 is released and publicly verified. EP-03 is
-partial: two of three target main branches and three of four worktrees are verified. The remaining
-target is held by an enforced owner restriction outside this grant; its isolated adoption draft
-is prepared. Do not close the plan before that adoption, reconciliation and remote closure.
+Delivery completed: v0.1.33 is released and publicly verified; all three assigned main branches
+adopted it and all four assigned owner worktrees are verified current with authored content
+preserved. Two owner reconciliations remain intentionally local under their product-owner holds.
+The separately authorized target-governance recovery and coordination are recorded in the log;
+no held product work was resumed. Final records use the granted producer-main closure route.
 
 ## 3.0 Epic Map
 
@@ -382,12 +385,12 @@ upgrades merely to reproduce the earlier worktree-only adoption.
 - [x] Prepare isolated Kit-only adoption branches from target main. Check installed state and use
       the supported released upgrade with preview/apply; verify changed routes, installed health
       and preservation against each target's own baseline.
-- [ ] Open/update and merge the scoped target PRs under the one grant once their applicable gates
+- [x] Open/update and merge the scoped target PRs under the one grant once their applicable gates
       pass. Verify the actual remote-main lock/content and healthy checkout after integration.
-- [ ] Reconcile the released main guidance into each designated active worktree while preserving
+- [x] Reconcile the released main guidance into each designated active worktree while preserving
       product/plan work. Commit locally; publish only when the whole branch ancestry is authorized.
       Record any held-ancestry local exception and its later owner trigger.
-- [ ] Report source/release/target-main/worktree evidence to the director, close the plan/log/index
+- [x] Report source/release/target-main/worktree evidence to the director, close the plan/log/index
       after actual completion through the covered closure route, and verify final remote state.
 
 ### G) Implementation Notes
@@ -422,3 +425,7 @@ owner work. This plan creates no fleet audit, goal, watcher, approval service or
 
 - 2026-09-09: Activated under the complete delivery grant; bound acceptance, rollout and closure
   authority while retaining private target locators only in the commissioning task.
+
+- 2026-09-09: Completed release, all three main adoptions and all four owner reconciliations after
+  the separately owned target-governance prerequisite and explicit integration handoff. Preserved
+  two local owner-branch exceptions and used the authorized documentation-only remote closure.

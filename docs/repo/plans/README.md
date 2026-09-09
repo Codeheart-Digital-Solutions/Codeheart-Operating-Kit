@@ -1,4 +1,4 @@
-Last updated: 2026-09-09T14:25:47Z (UTC)
+Last updated: 2026-09-09T19:57:58Z (UTC)
 
 # Repo Plans
 
@@ -17,7 +17,7 @@ entries after mixed cutover.
 
 ## Current Plans
 
-- Active Git delivery discipline implementation plan (v0.1.33 released; rollout partially held)
+- Completed Git delivery discipline implementation plan (v0.1.33 released and fully adopted)
   and accepted discovery covering commits,
   publication, timely integration and default-branch adoption without additional ceremony:
   `git-delivery-discipline/git-delivery-discipline_implementation_doc.md`
