@@ -58,3 +58,18 @@ evidence, not actual consumer adoption. No source correction round was needed.
 Preliminary target preflight found one enforced owner-controlled integration restriction. The
 specific private evidence and narrow owner decision were sent directly to the commissioning
 director. No bypass or policy change was attempted; independent release/target preparation continues.
+
+## EP-02 Candidate Identity Correction
+
+Source PR #19 was opened at `0a58e8a175151d1027a8b899ca1b90d973616b02`; ordinary feedback
+passed. Cumulative guidance eligibility passed against accepted anchor
+`c36061f69f18b8a9aff2e018db2d5e35c6188ec8` (39 paths, nine managed resources). Its unchanged
+runtime/source mechanisms retain the accepted broad and corrected-native evidence documented in
+the release-validation-effort log; the published old CLI input is independently verified v0.1.32.
+
+Candidate run `34362007178` caught a stale profile graph digest in the embedded release manifest
+at the macOS focused identity gate. This was a candidate identity preparation error: declaration
+checksums were correct, but compiled graph identity had not been refreshed. The existing test
+correctly rejected it. The manifest and identical mirror now carry the compiled digest; local
+`go test ./internal/hash ./internal/manifest` and release identity pass. No executable/test change
+is needed. Both native lanes require corrected candidate evidence; broad suites remain applicable.
