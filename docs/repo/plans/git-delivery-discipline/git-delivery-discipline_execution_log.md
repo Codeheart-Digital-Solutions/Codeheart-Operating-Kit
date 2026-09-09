@@ -73,3 +73,28 @@ checksums were correct, but compiled graph identity had not been refreshed. The 
 correctly rejected it. The manifest and identical mirror now carry the compiled digest; local
 `go test ./internal/hash ./internal/manifest` and release identity pass. No executable/test change
 is needed. Both native lanes require corrected candidate evidence; broad suites remain applicable.
+
+## Accepted Corrected Candidate
+
+Same-reviewer correction review accepted the graph identity fix and retained semantic/scenario
+evidence. Corrected run `34362295798` at `66f515b6777ae790f8a07b56520320b0ce84eded` passed
+both native guidance lanes: macOS 1m02s and Windows 1m37s. Both prove 50 fresh and 50 upgraded
+managed resources equal source, published v0.1.32 -> v0.1.33 preview/failure/apply/check, authored
+preservation, staged/historical installation and reproducible packs. No broad suites were replayed.
+
+Retrieved catalog/archive/pack/payload/content identities were verified, including the candidate
+binary's staged release-evidence check. Archive SHA-256 values:
+
+- macOS universal: `1336f12a0307eac56f5a070d7639521d195695c1b99f6647540b138fd86338a8`
+- Windows x64: `fb627eb75e5094fbef6e171e21639693d0c5c7c0fd00a59d3d5141280a9481f5`
+
+The external publication catalog changes only archive download URLs; seven public assets and
+sidecars are prepared. Public URL retrieval is deliberately verified only after release exists.
+
+The commissioning director accepted exact source/candidate `66f515b6777ae790f8a07b56520320b0ce84eded`
+and equivalent integration on 2026-09-09, including retained broad-source applicability and the
+reported artifact verification. Covered source integration, release/public smoke and independent
+adoption may proceed without duplicate approval. One target remains held by an enforced owner
+restriction outside this grant; no governance recovery is authorized. The plan stays active until
+all targets and final remote closure are actually complete. This bookkeeping does not change
+release inputs or invalidate candidate evidence.

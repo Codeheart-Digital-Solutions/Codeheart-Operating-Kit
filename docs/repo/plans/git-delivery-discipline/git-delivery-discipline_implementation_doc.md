@@ -271,7 +271,7 @@ identity before final coherent source review so review and EP-02 candidate share
       source/resource equality and run focused routing/resource, document and identity checks.
 - [x] Complete one independent coherent source review plus a fresh low-context route probe across
       the discovery scenarios; resolve findings with the same reviewer and record retained evidence.
-- [ ] Commit and publish the coherent source PR and report its exact candidate and impact to the
+- [x] Commit and publish the coherent source PR and report its exact candidate and impact to the
       director for the planned source/candidate acceptance sequence.
 
 ### G) Implementation Notes
@@ -317,9 +317,9 @@ unlike the previous isolated demonstration. Do not create an extra demonstration
 
 ### F) Tasks Checklist
 
-- [ ] Inspect the exact cumulative diff and semantic impact, run existing guidance eligibility and
+- [x] Inspect the exact cumulative diff and semantic impact, run existing guidance eligibility and
       release-identity preflight, and select the applicable candidate route with retained evidence.
-- [ ] Run the two native guidance lanes once for the coherent candidate; retrieve and verify the
+- [x] Run the two native guidance lanes once for the coherent candidate; retrieve and verify the
       accepted packs/catalog. Retry only invalidated lanes and preserve meaningful failure output.
 - [ ] Obtain the planned director source acceptance, verify current head/checks and merge normally;
       compare relevant integrated inputs before tagging, rebuilding only if they changed.
