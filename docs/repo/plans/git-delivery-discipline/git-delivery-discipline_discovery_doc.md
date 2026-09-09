@@ -1,6 +1,7 @@
-Last updated: 2026-09-09T13:39:07Z (UTC)
+Last updated: 2026-09-09T13:58:03Z (UTC)
 Created: 2026-09-09
-Status: draft
+Status: completed
+Completed: 2026-09-09
 
 # Git Delivery Discipline Discovery
 
@@ -12,7 +13,7 @@ plan:
   kind: discovery
   purpose: Make commits, publication, timely integration and repository adoption predictable throughout agent work without adding procedural overhead or broad validation churn.
   first_cataloged: 2026-09-09T13:39:07Z
-  catalog_metadata_updated: 2026-09-09T13:39:07Z
+  catalog_metadata_updated: 2026-09-09T13:58:03Z
   relations:
     - kind: related
       target: codeheart-operating-kit.implementation.development-feedback-and-validation
@@ -23,10 +24,12 @@ plan:
 
 ## Readiness and scope
 
-This draft consolidates the user's discussion and the inspected current rules. Its target is
-draft-ready, not an approved implementation handoff. The user requested predictable Git discipline
-inside ongoing agent work and explicitly challenged the risk of reintroducing ceremony and costly
-CI. Recommendations below remain proposals where indicated. No implementation is activated.
+This discovery consolidates the user's discussion and inspected current rules. On 2026-09-09,
+the user asked to proceed with the proposed bounded implementation plan, accepting D-1 through
+D-6 as its planning direction. Readiness is implementation-handoff-ready through the capability
+blocks below. The user requested predictable Git discipline inside ongoing agent work and
+explicitly challenged the risk of reintroducing ceremony and costly CI. Planning approval does
+not activate implementation or grant publication, release or consumer effects.
 
 Producer baseline: `bbfce9b54b8e54174a58518f155be2874f310390`, fetched from `origin/main` on
 2026-09-09. The work is isolated on `codex/git-delivery-discipline-discovery`. This authoring scope
@@ -153,7 +156,9 @@ Representative scenarios for later validation:
 ## Decision ledger
 
 Decision owner: the commissioning user, with routine implementation details delegable later.
-The agreed user intention is distinguished from recommendations not yet explicitly accepted.
+The table preserves the alternatives and rationale from discussion. D-1 through D-6 are accepted
+as the implementation-planning direction by the user's subsequent request to proceed; actual
+execution effects remain subject to the one commissioning grant described below.
 
 | ID | Decision, state and class | Recommendation, alternatives and closure |
 | --- | --- | --- |
@@ -222,19 +227,70 @@ Expanding that authority instead requires explicit security/safety-policy classi
 review; a Markdown-only diff does not decide this. The eventual implementation must synchronize
 declared resource mirrors, verify useful route behavior and use the applicable release checks.
 
-## Next decision and handoff boundary
+## Implementation Capability Scope - Git work inside agent workflows
 
-Review this consolidated draft and accept or revise the proposed scope in D-2 through D-6. There
-is no unresolved technical blocker requiring another broad discovery. The next artifact is a
-bounded implementation capability handoff and implementation plan using this document. It should
-define coherent delivery outcomes,
-affected guidance/tests, applicable validation and a truthful main-branch adoption finish line.
+Capability: agents save recoverable progress, publish shared planning/work and integrate usable
+outcomes at meaningful points throughout execution, with accurate Git/lifecycle state and no
+per-operation ceremony.
 
-This is not yet implementation-handoff-ready, a new overarching program, or authorization to
-resume consumer product implementations. Those owner-plan amendments remain subsequent work.
+Primary workflow: existing discovery, drafting, execution, routine-change, review and coordination
+routes use one canonical Git policy plus concise action hooks.
+
+Must cover: FR-1 through FR-7 and FR-9; coherent commits before formal epic acceptance; publication
+under authority established once; independently usable integration outcomes; relevant divergence
+inspection; explicit exceptions; draft publication independent of execution; proportionate checks.
+
+Explicitly out of scope: new Git commands/services, automatic approval, activity quotas, repeated
+reviews, force-push defaults, fleet-wide CI changes and weaker context/technical reasoning.
+
+Deferred or blocked: no capability blocker; actual external effects need commissioning. A broader
+standing publication grant is excluded unless separately requested.
+
+Preserve decisions: D-1 through D-5 and all NFRs. Planner must not reinvent authority, turn every
+commit into an integration gate, require a whole-plan PR, or replay unaffected evidence.
+
+Feature-level success evidence: realistic agent choices across the six scenarios above, existing
+route/resource checks and one coherent independent source review with focused corrections.
+
+## Implementation Capability Scope - Released and adopted shared baseline
+
+Capability: the new workflow guidance is released and present on the designated repositories'
+default branches, with the designated active working copies reconciled and authored work intact.
+
+Primary workflow: producer release route, supported lifecycle upgrade in isolated default-branch
+adoption work, normal target PR integration, then scoped working-copy reconciliation.
+
+Must cover: FR-8; actual main-branch delivery; exact released version and target verification;
+consumer CI preflight; separation from held product branches; truthful final plan closure.
+
+Explicitly out of scope: product implementation, unrelated runtime fixes, repository security
+setting changes, unapproved consumer CI changes and indiscriminate branch publication/deletion.
+
+Deferred or blocked: exact private targets, version and external effects are bound in commissioning
+and action-time preflight. A disproportionate enforced target check is returned to its owner,
+not bypassed under the generic guidance.
+
+Preserve decisions: D-4 through D-6, NFR-2 through NFR-4. Planner must not count working-copy-only
+adoption as repository rollout, publish held product ancestry, or assume producer CI changes
+changed consumer workflows.
+
+Feature-level success evidence: applicable native candidate/public smoke, merged target adoption
+commits, healthy installed routes/content on target main and designated working copies, and
+preservation of authored files and held product work. Temporary old/new-version checks use the
+supported matching-version CLI route where needed; no runtime repair is implied.
+
+## Handoff boundary
+
+The next artifact is the sibling draft implementation plan. D-1 through D-6, FR/NFRs and the two
+capability blocks are its accepted planning inputs. OQ-1 is resolved by retaining the current
+authority boundary; OQ-2 and OQ-3 are action-time inputs, not reasons to repeat discovery.
+Consumer product-plan amendments remain subsequent work. Implementation stays inactive until
+commissioned with its explicit final effects.
 
 # Revision Notes
 
 - 2026-09-09: Consolidated the discussion of commits, pushes, timely main integration, planning
   visibility, low-ceremony operation and the working-copy/default-branch adoption gap. Separated
   existing rules, user requirements, proposed defaults and action-time authority boundaries.
+- 2026-09-09: Recorded the user's request to proceed with implementation planning, completed the
+  discovery handoff and added two capability scopes without activating implementation.
