@@ -1,4 +1,4 @@
-Last updated: 2026-09-09T14:05:47Z (UTC)
+Last updated: 2026-09-09T14:25:47Z (UTC)
 Created: 2026-09-09
 Plan: git-delivery-discipline_implementation_doc.md
 
@@ -98,3 +98,47 @@ adoption may proceed without duplicate approval. One target remains held by an e
 restriction outside this grant; no governance recovery is authorized. The plan stays active until
 all targets and final remote closure are actually complete. This bookkeeping does not change
 release inputs or invalidate candidate evidence.
+
+## EP-02 Released And Publicly Verified
+
+PR #19 merged normally on 2026-09-09 as `f8479f4f88fc70402767e4767e19c4a1f7178c11`.
+The integrated tree equals the accepted PR head; intervening changes were plan/log-only and did
+not invalidate native evidence. Tag v0.1.33 points to that integrated revision. The published
+release contains both verified packs, the external catalog, installers, notes and seven sidecars
+(14 assets), under the unchanged unsigned internal/prototype HTTPS-plus-SHA256 boundary.
+Published catalog SHA-256: `2da21c906824a72b80d94177613353d028a0f1c6947c03af99d245c95203c3ef`.
+
+Released-tag smoke run `34362937504` passed both native public retrieval/install lanes. It did
+not replay source suites. Producer integration and release are complete; consumer rollout remains
+a separate outcome.
+
+## EP-03 Partial Rollout And Preserved Hold
+
+All three isolated adoption branches started at their respective current remote main baselines.
+Verified matching published old CLIs established pristine installed state (one v0.1.31, two
+v0.1.30). Supported published-v0.1.33 preview/apply/check succeeded on all three, and each has all
+50 managed resources byte-equal to released source. Authored tracked files, config, module state,
+plans and instructions outside the managed block were preserved (319, 1,957 and 784 files on
+those main baselines). Target-specific refs and operational details remain in the private assignment.
+
+Two target adoption PRs merged normally; fetched remote-main checkouts are healthy at v0.1.33 and
+preservation remains verified. Their actual policies imposed no additional adoption checks; an
+unrelated branch-specific workflow was not dispatched. Three assigned owner worktrees were then
+reconciled and checked current, with all 50 managed resources matching and 321, 315 and 1,986
+authored/local-user files preserved. Two branches were normally published after verifying every
+unpublished commit was Kit-only. One reconciliation remains local because preceding unpublished
+product implementation is held. Its product owner may publish only on separately authorized
+product resumption after reviewing the complete ancestry; main adoption is already complete.
+
+The third target's isolated adoption commit is published as a draft PR, healthy and preservation-
+verified, but its active organization-level main update freeze permits no bypass actor. A pinned
+required workflow also remains binding. The commissioning director verified the hold and prior
+failed final-gate billing evidence; governance/billing recovery is outside this grant. No merge,
+rule change, CI rewrite, billing change or product resumption was attempted. Its owner worktree
+remains unchanged at v0.1.32 until actual main adoption, as required by the rollout sequence.
+
+Current finish line: source/release complete; two of three main branches adopted; three of four
+owner worktrees reconciled. The plan remains active. Remaining owner event: an authorized path
+through the frozen target's gate, then its normal adoption merge, remote-main verification,
+owner-worktree reconciliation and final completed plan/log/index publication. The final closure
+push is not used prematurely. No watcher, automation or new coordination process was created.

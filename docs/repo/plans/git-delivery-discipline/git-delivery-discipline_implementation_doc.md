@@ -1,4 +1,4 @@
-Last updated: 2026-09-09T14:05:47Z (UTC)
+Last updated: 2026-09-09T14:25:47Z (UTC)
 Created: 2026-09-09
 Status: active
 Execution log: git-delivery-discipline_execution_log.md
@@ -223,6 +223,11 @@ owning service preflight. No new package-manager/auth recipe or runtime repair i
 
 # Section 3 - Execution Plan
 
+Current delivery: EP-01 and EP-02 complete; v0.1.33 is released and publicly verified. EP-03 is
+partial: two of three target main branches and three of four worktrees are verified. The remaining
+target is held by an enforced owner restriction outside this grant; its isolated adoption draft
+is prepared. Do not close the plan before that adoption, reconciliation and remote closure.
+
 ## 3.0 Epic Map
 
 | Epic | Outcome | Size | Dependencies |
@@ -321,9 +326,9 @@ unlike the previous isolated demonstration. Do not create an extra demonstration
       release-identity preflight, and select the applicable candidate route with retained evidence.
 - [x] Run the two native guidance lanes once for the coherent candidate; retrieve and verify the
       accepted packs/catalog. Retry only invalidated lanes and preserve meaningful failure output.
-- [ ] Obtain the planned director source acceptance, verify current head/checks and merge normally;
+- [x] Obtain the planned director source acceptance, verify current head/checks and merge normally;
       compare relevant integrated inputs before tagging, rebuilding only if they changed.
-- [ ] Publish the exact accepted patch and artifacts under the covered audience, then run only the
+- [x] Publish the exact accepted patch and artifacts under the covered audience, then run only the
       explicit released-tag public smoke and verify retrieval/version/identity.
 
 ### G) Implementation Notes
@@ -372,9 +377,9 @@ upgrades merely to reproduce the earlier worktree-only adoption.
 
 ### F) Tasks Checklist
 
-- [ ] Confirm current main refs, target access, relevant required checks and actual CI triggers;
+- [x] Confirm current main refs, target access, relevant required checks and actual CI triggers;
       record justified checks and any material cost/overlap issue before the corresponding effect.
-- [ ] Prepare isolated Kit-only adoption branches from target main. Check installed state and use
+- [x] Prepare isolated Kit-only adoption branches from target main. Check installed state and use
       the supported released upgrade with preview/apply; verify changed routes, installed health
       and preservation against each target's own baseline.
 - [ ] Open/update and merge the scoped target PRs under the one grant once their applicable gates
