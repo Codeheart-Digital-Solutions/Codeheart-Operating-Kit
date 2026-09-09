@@ -263,13 +263,13 @@ identity before final coherent source review so review and EP-02 candidate share
 
 ### F) Tasks Checklist
 
-- [ ] Record the one grant, targets, branch and finish line; activate/commit/push the plan checkpoint.
-- [ ] Refine canonical Git policy and the existing authoring/execution/review/coordination hooks.
-- [ ] Add default-branch adoption and active-worktree reconciliation to the installation route,
+- [x] Record the one grant, targets, branch and finish line; activate/commit/push the plan checkpoint.
+- [x] Refine canonical Git policy and the existing authoring/execution/review/coordination hooks.
+- [x] Add default-branch adoption and active-worktree reconciliation to the installation route,
       including the distinction between local health, published branches and repository rollout.
-- [ ] Synchronize declared resources and prepare current unused release identity/notes; inspect
+- [x] Synchronize declared resources and prepare current unused release identity/notes; inspect
       source/resource equality and run focused routing/resource, document and identity checks.
-- [ ] Complete one independent coherent source review plus a fresh low-context route probe across
+- [x] Complete one independent coherent source review plus a fresh low-context route probe across
       the discovery scenarios; resolve findings with the same reviewer and record retained evidence.
 - [ ] Commit and publish the coherent source PR and report its exact candidate and impact to the
       director for the planned source/candidate acceptance sequence.

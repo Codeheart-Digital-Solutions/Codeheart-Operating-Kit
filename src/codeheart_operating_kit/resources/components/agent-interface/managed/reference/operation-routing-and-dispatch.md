@@ -1,4 +1,4 @@
-Last updated: 2026-09-07T22:41:52Z (UTC)
+Last updated: 2026-09-09T14:08:21Z (UTC)
 
 # Operation Routing And Dispatch
 
@@ -44,7 +44,9 @@ manual register edit.
 - Approval class: only covered effects; reuse sufficient authority without duplicate prompts.
 - Stop: uncertain outcome/impact, material scope or authority change, failed binding gate.
 - Evidence: purpose, scope, authority, result, validation and delivery state in an existing record.
-  Save coherent completed work in a local commit; publish/merge only under covered authority.
+  Apply the planning lifecycle Git action table during work: save coherent recoverable progress,
+  inspect relevant divergence, publish/merge under covered authority, and record any blocker,
+  owner and resolving event for ready work.
 
 Work required by an active epic remains in that epic. A separate routine repair records its
 relationship to affected work and cannot bypass plan review or acceptance.
@@ -55,7 +57,8 @@ relationship to affected work and cannot bypass plan review or acceptance.
 - Domain/lifecycle: planning workflows; implementation through the agreed delivery boundary.
 - Scope/action: canonical plan, owning repository/branch and specified effects at coherent checkpoints.
 - Authority source: explicit whole-plan execution request and recorded delegation/limits.
-- State/live truth: plan/log, current Git state, required checks and exact candidate/target inputs.
+- State/live truth: plan/log, current Git state including unpublished ancestry and relevant target
+  divergence, required checks and exact candidate/target inputs.
 - Default surface: `../../planning-workflows/runbooks/execute-implementation-plan.md` and
   `agent-task-coordination.md`; ordinary Git and supported task reporting after routing.
 - Preconditions: active valid plan, ordered outcomes, acceptance owner, planned Git effects and final
@@ -66,7 +69,10 @@ relationship to affected work and cannot bypass plan review or acceptance.
 - Evidence: named epic outcome, proportionate checks and retained applicable evidence, one planned
   coherent independent review with same-reviewer correction follow-up, actual
   commit/push/PR/merge/release/adoption state and
-  direct report to the commissioned director at review, completion or genuine blocker.
+  direct report to the commissioned director at review, completion or genuine blocker. Use the
+  planning lifecycle Git action table inside execution, not only after epic acceptance. For Kit
+  rollout, route to the installation runbook's repository adoption procedure; distinguish named
+  main-branch adoption from worktree health and retain held-ancestry publication exceptions.
 
 Draft review and activation-only bookkeeping do not commission whole-plan implementation. One
 implementer may execute all epics, with delegated director review instead of a new user gate per

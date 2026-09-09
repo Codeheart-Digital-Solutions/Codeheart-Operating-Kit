@@ -27,3 +27,34 @@ planned. Release notes describe the workflow and supported adoption. Existing ro
 document, identity and candidate gates apply; contextual agent scenarios prove decision quality.
 The accepted broad-source anchor and native evidence in the release-validation-effort log remain
 inputs subject to cumulative eligibility and action-time applicability checks.
+
+Activation `042b659` was normally pushed to the implementation branch. Canonical plan validation
+and listing passed (with pre-existing compatibility warnings), as did Markdown and diff hygiene.
+EP-01 now implements the nine planned source routes; L1 guidance remains appropriate because
+ordinary Git and lifecycle commands already provide the mechanics and decisions remain contextual.
+The next available patch is v0.1.33; published v0.1.32 is the separate old-CLI smoke input.
+A repository-local ignored Python development environment supplies the existing test dependencies.
+
+## EP-01 Source And Route Evidence
+
+All 44 existing routing/resource tests passed in 6.64s; public-core, Markdown timestamps, JSON
+schemas, release manifests, release identity and diff hygiene passed. Source and declared resource
+mirrors agree. Local dependency setup initially encountered an inherited private-index access
+failure; isolated public-index setup succeeded without changing persistent configuration.
+
+Independent source reviewer found no material issues across all nine docs, mirrors and identity
+changes. The six discovery scenarios produce coherent recovery before acceptance, authorized draft
+visibility without activation, isolated main adoption with held ancestry protected, usable outcome
+integration inside longer plans, owner-scoped CI handling without bypass, and preservation-safe
+resumption with only invalidated evidence rerun. FR-1 through FR-9 and NFR-1 through NFR-4 are covered.
+
+A separate fresh agent, given only a vague stale-shared-baseline scenario and producer bootstrap,
+selected routing -> installation repository adoption -> lifecycle Git policy before any execution
+surface. It identified missing target/authority inputs, isolated Kit-only main adoption, required
+gates, authored preservation and held-ancestry local exceptions. It performed no Git/provider
+operations or writes and read no plan/log/diff. No unclear route was found. This is L1 executability
+evidence, not actual consumer adoption. No source correction round was needed.
+
+Preliminary target preflight found one enforced owner-controlled integration restriction. The
+specific private evidence and narrow owner decision were sent directly to the commissioning
+director. No bypass or policy change was attempted; independent release/target preparation continues.

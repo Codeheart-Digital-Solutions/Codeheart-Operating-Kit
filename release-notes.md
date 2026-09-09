@@ -1,6 +1,31 @@
-Last updated: 2026-09-07T22:47:04Z (UTC)
+Last updated: 2026-09-09T14:11:22Z (UTC)
 
 # Codeheart Operating Kit Release Notes
+
+## v0.1.33 Release Notes
+
+Git recovery, shared visibility and usable integration now happen during ongoing work. Agents
+commit coherent progress before epic acceptance, publish useful checkpoints under existing
+authority, inspect relevant target changes at meaningful starts/resumes, and integrate accepted
+independent outcomes without waiting for unrelated plan work. Concrete exceptions stay in existing
+records with an owner and resolving event; no timer, Git wrapper or extra approval layer is added.
+
+### Impact And Adoption
+
+- `instruction-only change`: existing planning, execution, review and coordination routes use one
+  canonical Git policy. Shared draft publication and main placement remain separate from approval
+  of recommendations and execution. Push authority includes unpublished ancestry, not just a diff.
+- Repository rollout now names default/integration branches and active worktrees. Prepare Kit-only
+  adoption from each current target baseline, use supported upgrade preview/apply, verify authored
+  preservation and required target gates, merge and verify remote-main adoption, then reconcile
+  active worktrees. Held product ancestry may retain a documented local-only adoption commit.
+- A healthy local pilot or published adoption branch is not completed main-branch rollout. Target
+  CI remains owner-controlled; relevant evidence is retained without bypassing required checks.
+- Upgrade through the supported lifecycle to v0.1.33. Config, module state, plans, local-user files
+  and instructions outside the managed block remain consumer-owned. No runtime, schema, catalog
+  migration, consumer CI rewrite or provider operation is included.
+- macOS universal and Windows x64 and the unsigned, unnotarized internal/prototype
+  HTTPS-plus-SHA256 audience remain unchanged. Release and actual adoption are separate facts.
 
 ## v0.1.32 Release Notes
 

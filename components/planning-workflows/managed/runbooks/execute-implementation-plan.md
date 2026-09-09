@@ -1,4 +1,4 @@
-Last updated: 2026-09-07T22:40:39Z (UTC)
+Last updated: 2026-09-09T14:08:21Z (UTC)
 
 # Execute Implementation Plan
 
@@ -238,7 +238,7 @@ Use tooling readiness for local prerequisites and the service owner for login/ac
 For an uncertain external write, establish whether it happened before retrying. Continue safe
 in-scope fixes; do not blindly retry broad suites, increase budgets or invent an auth service.
 
-At a useful completed checkpoint, locally commit the task's own inspected and proportionately
+During implementation, at a coherent recoverable checkpoint before formal epic review, locally commit the task's own inspected and proportionately
 validated changes. Use `../reference/planning-document-lifecycle.md` for explicit exceptions,
 authorized pushes/PR updates and normal accepted merge. Establish publication once and reuse its
 authority. Commit, publication, lifecycle, release and adoption remain separate states.
@@ -270,7 +270,10 @@ For each epic:
 
 1. Restate the epic outcome in practical terms.
 2. Identify affected files, commands, and validation gates.
-3. Implement planned tasks.
+3. Implement planned tasks, applying the Git action table in
+   `../reference/planning-document-lifecycle.md` inside the loop: inspect relevant divergence at
+   substantial starts/resumes, commit coherent progress, and publish useful checkpoints under
+   covered authority. Preserve incomplete work before a planned pause; do not mark it accepted.
 4. Add required low-risk tasks omitted by the checklist.
 5. Run the smallest validation set that proves the outcome.
 6. For routing-bearing epics, run or verify the planned fresh low-context routing probe, or record
@@ -279,7 +282,9 @@ For each epic:
 8. Fix material findings and return affected corrections to the same reviewer.
 9. Update checklist state only for completed and validated tasks.
 10. Update the execution log with meaningful divergence and review evidence.
-11. Make the agreed coherent commit/normal-push/PR checkpoint, reporting each actual state accurately.
+11. Reconcile the agreed commit/normal-push/PR state; this is not the first permitted checkpoint.
+    Integrate independently usable accepted outcomes under covered authority and passing gates,
+    or record the concrete blocker, owner and next resolving event. Keep later work active.
 12. Send the named epic result, evidence, Git state and requested decision directly to the assigned
     director at required review, completion or genuine blocker. Retain the result and disclose any
     message rejection; best-effort reporting needs no watcher, heartbeat or busy polling.

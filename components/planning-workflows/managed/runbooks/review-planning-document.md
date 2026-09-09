@@ -1,4 +1,4 @@
-Last updated: 2026-09-07T22:40:39Z (UTC)
+Last updated: 2026-09-09T14:08:21Z (UTC)
 
 # Review Planning Document
 
@@ -83,7 +83,13 @@ word choice, record duplication and ordinary in-scope refinement are not defects
 
 Check local commits, authorized publication and accepted PR integration independently from plan
 lifecycle. A merged draft is still draft; publication is not execution approval. No extra review
-or approval stage is needed per local commit.
+or approval stage is needed per local commit. Check the lifecycle Git action table is reflected
+in usable integration outcomes and relevant dependencies, coherent recovery/publication during
+work, divergence checks at meaningful starts/resumes, and concrete exceptions with an owner and
+resolving event. A local-only handoff must disclose its visibility limit. Verify publication
+scope includes ancestry; held product work cannot be published merely to deliver a Kit update.
+Repository adoption names its default/integration branch and worktree reconciliation, with
+required target gates and preservation; a healthy pilot does not prove main adoption.
 
 ## Review Areas
 
