@@ -1,4 +1,4 @@
-Last updated: 2026-09-08T15:15:54Z (UTC)
+Last updated: 2026-09-09T13:39:07Z (UTC)
 
 # Repo Plans
 
@@ -16,6 +16,10 @@ codeheart-operating-kit plans list --format json .
 entries after mixed cutover.
 
 ## Current Plans
+
+- Draft Git delivery discipline discovery covering commits, publication, timely integration and
+  default-branch adoption without additional ceremony:
+  `git-delivery-discipline/git-delivery-discipline_discovery_doc.md`
 
 - Completed proportionate producer release validation plan and execution log:
   `release-validation-effort/release-validation-effort_implementation_doc.md`
