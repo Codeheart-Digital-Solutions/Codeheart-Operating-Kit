@@ -1,6 +1,7 @@
-Last updated: 2026-09-09T13:58:03Z (UTC)
+Last updated: 2026-09-09T14:05:47Z (UTC)
 Created: 2026-09-09
-Status: draft
+Status: active
+Execution log: git-delivery-discipline_execution_log.md
 
 # Predictable Git Delivery and Main-Branch Adoption
 
@@ -19,16 +20,26 @@ plan:
 ```
 <!-- END CODEHEART PLAN METADATA -->
 
-The user approved proceeding from the consolidated discovery to this bounded implementation plan
-on 2026-09-09. This authorizes planning and its local commit, not activation or external effects.
-The proposed delivery is one coherent Kit guidance change, an applicable release, adoption on
-three designated consumer default branches, and reconciliation of four designated owner worktrees.
-The exact private targets stay in the commissioning assignment. Held product work remains held.
+The accepted planning checkpoint is `e2bdc238ff8b0076f28b547d9d7c65ba3e6c34ff`.
+Independent planning review found no material issues. On 2026-09-09 the user commissioned the
+complete EP-01 through EP-03 delivery, with one dedicated Operating Kit implementer on
+`codex/git-delivery-discipline-delivery`. The commissioning Organizational Operating Program
+Director accepts the coherent source/candidate after independent review and applicable evidence.
 
-Independent planning review on 2026-09-09: Ready, no material issues found. Residual risks are
-final-diff guidance eligibility, target-specific CI/preservation conditions, and the future
-behavioral source/probe evidence. This is planning readiness, not implemented behavior or
-execution approval. No additional planning review round was needed.
+The grant covers necessary supported tooling, implementation and focused checks, coherent commits,
+normal pushes and PR work, applicable candidate/public smoke, normal source merge and next unused
+patch publication under the existing unsigned internal/prototype HTTPS-plus-SHA256 audience,
+Kit-only adoption PR merges on three named consumer main branches, and preservation-safe local
+reconciliation in four named owner worktrees. Exact private targets and the direct report-back
+locator remain in the commissioning task. Held product history is not authorized for publication.
+Material scope, authority, preservation, safety or CI-cost changes return to that director.
+
+Completion requires actual released guidance, all three main adoptions, all four reconciliations,
+and truthful completed plan/log/index on producer main. After those effects, the grant permits a
+normal documentation-only fast-forward closure push limited to this plan, its sibling log and
+`docs/repo/plans/README.md` if policy permits; otherwise one normal closure PR. Force pushes,
+provider/product work, consumer CI changes, security/billing changes and cleanup remain excluded.
+This activation is execution authority, not a second planning approval gate.
 
 | Essential context | Why it matters |
 | --- | --- |
@@ -140,8 +151,7 @@ already implement the mechanics.
 ## 2.2 Open Questions And Assumptions Requiring Clarification
 
 - OQ-1 — BLOCKER: no. Affects EP-01 through EP-03: publication authority stays as currently defined;
-  the one assignment must explicitly include its bounded Git and final effects. This plan is a
-  draft until commissioned. It does not infer authority from a broad user goal or a passing check.
+  the one assignment must explicitly include its bounded Git and final effects. Commissioning is recorded above; the plan is active. It does not infer authority from a broad user goal or a passing check.
 - OQ-2 — BLOCKER: no. Affects EP-02: choose the next unused patch and verify the published old-CLI
   upgrade input at action time. Do not reuse the isolated demonstration's unpublished test identity
   by assumption. Preferred source anchor is the accepted reachable `c36061f` while applicable.
@@ -404,3 +414,6 @@ owner work. This plan creates no fleet audit, goal, watcher, approval service or
 - 2026-09-09: Drafted from the user's accepted discovery direction and capability handoff. Planned
   source guidance, proportionate release and default-branch adoption as one bounded delivery,
   preserving inactive lifecycle and the separate commissioning authority for external effects.
+
+- 2026-09-09: Activated under the complete delivery grant; bound acceptance, rollout and closure
+  authority while retaining private target locators only in the commissioning task.
