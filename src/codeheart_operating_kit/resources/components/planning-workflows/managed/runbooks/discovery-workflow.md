@@ -1,4 +1,4 @@
-Last updated: 2026-09-07T22:40:39Z (UTC)
+Last updated: 2026-09-09T14:08:21Z (UTC)
 
 # Discovery Workflow
 
@@ -1045,7 +1045,13 @@ When discovery creates or materially updates a formal document:
 5. explain that coordination sees the plan only after its branch is normally pushed and the home
    completes a refresh.
 
-Discovery drafting includes a local commit at a useful completed checkpoint after proportionate
+For a shared planning handoff, establish bounded publication/PR/merge authority once, separately
+from execution approval. Publish coherent planning when covered, even with explicit open questions;
+report its canonical path, branch/revision and actual visibility. Accepted shared placement may
+remain draft and does not approve recommendations. State any local-only exception and visibility
+limit. Apply the lifecycle Git action table during authoring and before a planned pause.
+
+Discovery drafting includes a local commit at a coherent recoverable checkpoint after proportionate
 inspection and checks. It does not itself authorize push or PR publication. Follow
 `../reference/planning-document-lifecycle.md` for local commits, authorized publication and merge
 while preserving independent lifecycle and execution authority. If the user requests activation or a

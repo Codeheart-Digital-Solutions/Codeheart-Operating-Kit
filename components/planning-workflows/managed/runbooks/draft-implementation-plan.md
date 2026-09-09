@@ -1,4 +1,4 @@
-Last updated: 2026-09-07T22:40:39Z (UTC)
+Last updated: 2026-09-09T14:08:21Z (UTC)
 
 # Draft Implementation Plan
 
@@ -361,12 +361,18 @@ to set a better boundary.
 Before execution, settle the intended outcome, owning repository/branch, ordered epics, acceptance
 evidence, director and delegated review points in the existing plan/assignment. Include coherent
 commits, normal pushes and PR creation/updates at agreed review, recovery and handover checkpoints.
-One delivery PR normally suffices; do not leave these ordinary implementation effects as permission
-blanks to rediscover in each epic.
+Identify independently usable integration outcomes, their dependencies and relevant acceptance.
+One coherent outcome may use one PR; a longer plan may use several without a PR per checkbox.
+Do not leave ordinary covered effects as permission blanks to rediscover in each epic. Plan
+coherent commits/publication inside implementation, not only after epic review, and apply the
+Git action table in `../reference/planning-document-lifecycle.md`.
 
 State the finish line (reviewed branch, merged main, released product or adopted consumer), who
 integrates, and whether merge/release/adoption/provider effects are included, delegated or reserved.
-Name required checks and exact action-time inputs. Reuse sufficient applicable authority; success
+For repository adoption, name the intended default/integration branches and active worktrees;
+a working-copy pilot is partial unless that narrower finish line is explicit. Include final
+record publication in the grant if closure must reach the shared baseline. Name required checks
+and exact action-time inputs. Reuse sufficient applicable authority; success
 of checks alone does not authorize an unspecified effect. A draft review is not execution approval.
 
 Use `../../agent-interface/reference/agent-task-coordination.md` to commission the complete plan
@@ -435,7 +441,10 @@ Save the plan's own coherent completed work in a local commit after proportionat
 checks. Follow `../reference/planning-document-lifecycle.md` for exceptions, authorized branch
 publication and normal PR integration. Drafting alone does not authorize push or PR creation.
 An accepted published or merged draft remains inactive until execution/activation is authorized.
-Local commits do not add a review or permission layer. Establish covered publication once.
+Local commits do not add a review or permission layer. Establish covered publication once for a
+shared handoff and use it without waiting for execution approval. State the canonical path,
+branch/revision, open questions and actual visibility, or the reason/owner/resolving event for a
+local-only exception. Main placement does not approve recommendations or activate the plan.
 
 ## Activation And Plan-Checkpoint Publication
 

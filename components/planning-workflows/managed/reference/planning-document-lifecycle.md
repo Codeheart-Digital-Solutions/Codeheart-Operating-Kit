@@ -1,4 +1,4 @@
-Last updated: 2026-09-07T22:40:39Z (UTC)
+Last updated: 2026-09-09T14:08:21Z (UTC)
 
 # Planning Document Lifecycle
 
@@ -73,21 +73,39 @@ own scope.
 
 ## Git Checkpoints And Independent Lifecycle
 
-Keep in-progress edits local while forming a coherent change. At a useful completed checkpoint,
-inspect and proportionately validate the task's own changes, then save a local commit as part of
-authorized authoring or delivery. No extra independent review or approval is required per commit.
-Respect an explicit preference to leave edits uncommitted, overlapping work, or a concrete blocker;
-state the reason when a completed checkpoint remains uncommitted.
+Use ordinary Git throughout authoring and execution. A coherent recovery checkpoint can precede
+formal review or epic acceptance; a commit does not claim that the outcome is finished.
 
-Establish the publication finish line once. Push the working branch and create or update its PR
-at useful checkpoints when the request or assignment covers those effects. Drafting alone does
-not authorize external publication. Prepare the concrete change before asking for uncovered
-publication authority; reuse authority already granted.
+| Moment or need | Action and boundary |
+| --- | --- |
+| Coherent progress is worth recovering | Inspect the task's own diff, run affected checks, and commit it locally without waiting for epic review. Keep unrelated or sensitive material out. |
+| Planned pause or handoff with incomplete work | Preserve recoverable work in a clearly described incomplete checkpoint where safe. State remaining work and evidence limits; respect an explicit uncommitted preference or overlapping ownership. |
+| Useful progress needs shared recovery or coordination | Normally push under existing publication authority and update the appropriate PR. Inspect all unpublished ancestors and the destination/audience first; a bounded final diff does not authorize its history. |
+| Substantial work starts/resumes, or integration approaches | Refresh and inspect relevant default/integration-branch changes, overlap and dependencies. Resolve actual drift before building more dependent work; preserve concurrent changes. No unconditional rebase or history rewrite is implied. |
+| An independently usable outcome is accepted | Integrate through the normal owner-approved PR route once its relevant review and required checks pass. Keep remaining plan work active; do not wait for unrelated epics. |
+| A ready checkpoint cannot be committed, published or integrated | State the concrete reason, owner and next resolving event in the existing plan/log/PR or handoff, including any local-only visibility limit. Revisit at that event; no new tracker or timer is needed. |
 
-Merge accepted shared content through the normal PR route when relevant checks pass and merge
-authority is covered. Do not infer direct default-branch pushes or bypass protections. A reviewed,
-committed, pushed or merged plan can remain `Status: draft`: acceptance as shared content is
-separate from execution approval. Publication must not dispatch implementation, release or adoption.
+Establish publication and integration scope once and reuse sufficient authority. Drafting alone
+does not authorize external publication. Prepare the concrete change before asking for an
+uncovered effect. An explicit local-only request, failed gate, preservation conflict or held
+ancestry can justify an exception; do not silently leave ready work stranded.
+
+Plan PR boundaries around independently usable outcomes and real dependencies. One coherent
+change may use one PR; a longer plan may use several. Do not create a PR per edit or merge unsafe
+unfinished behavior for cadence. Each integration outcome needs appropriate acceptance, not a new
+review or permission layer per commit. Inspect the affected repository's actual CI triggers and
+required checks before promising cheap publication. Batch coherent updates if useful; bring a
+disproportionate enforced suite to its owner without bypassing it or silently rewriting CI.
+Ordinary Git events and resumes alone do not justify broad suites. Retain applicable evidence,
+rerun invalidated checks and satisfy required integration/release gates.
+
+Commit, push, PR, merge, release, installed health and adoption on named branches are separate
+facts. Do not infer direct default-branch push authority or bypass protections. A reviewed,
+committed, pushed or merged plan can remain `Status: draft`, with open questions intact:
+acceptance as shared content does not approve recommendations or dispatch implementation,
+release or adoption. Authorized branch publication makes canonical planning observable to the
+configured remote discovery scope after a successful refresh; main merge establishes shared
+placement. A local-only draft is not remotely visible.
 
 For example, finish and locally commit a draft, then publish and merge it under a publication-only
 request while leaving it draft. Later execution authority activates it. The bounded activation

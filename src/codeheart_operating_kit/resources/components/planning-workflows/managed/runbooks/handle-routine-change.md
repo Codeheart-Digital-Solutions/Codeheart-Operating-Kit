@@ -1,4 +1,4 @@
-Last updated: 2026-09-07T22:40:39Z (UTC)
+Last updated: 2026-09-09T14:08:21Z (UTC)
 
 # Handle Routine Change
 
@@ -58,7 +58,10 @@ module system and read `docs/repo/state/<id>/` plus the module's own route befor
    change can supply it. Reuse sufficient earlier approval; do not ask again for ordinary covered
    steps. A routine label grants no push, PR, release, install, sensitive-read or provider effect
    that the request and owner contract do not cover. Resolve required exact inputs before action.
-5. Make the change through the owner route. Use
+5. Make the change through the owner route. Apply the Git action table in
+   `../reference/planning-document-lifecycle.md` during work: inspect relevant branch divergence,
+   commit coherent recovery points before final review, publish useful progress when authorized,
+   and preserve incomplete work before pauses. Use
    `../../agent-interface/runbooks/handle-tooling-readiness.md` for missing local tools before
    improvising setup. Keep service preflight with the module or service owner.
 6. Run the smallest meaningful checks that prove the outcome, including mandatory owner gates.
@@ -68,7 +71,9 @@ module system and read `docs/repo/state/<id>/` plus the module's own route befor
 7. Review the coherent result and locally commit its own changes after proportionate checks,
    respecting explicit user preference, overlap or a concrete blocker. Use
    `../reference/planning-document-lifecycle.md` for authorized push/PR and accepted merge defaults.
-   A routine local commit needs no extra independent review or permission. Record validation, remaining
+   Integrate the usable accepted outcome under covered authority and required checks, or state
+   the blocker, owner and next resolving event. A routine local commit needs no extra independent
+   review or permission. Record validation, remaining
    limits, commit/push/PR state and the next owner. If validation fails, correct within scope or
    preserve the current state with the concrete blocker and recovery route.
 
