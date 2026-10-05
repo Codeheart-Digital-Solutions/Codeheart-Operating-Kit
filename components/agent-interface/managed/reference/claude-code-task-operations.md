@@ -1,4 +1,4 @@
-Last updated: 2026-10-05T09:20:49Z (UTC)
+Last updated: 2026-10-05T09:26:14Z (UTC)
 
 # Claude Code Task Operations
 
@@ -37,12 +37,13 @@ session ID locates history; it is not a role, approval or acceptance.
 ## Commissioning And Report-Back
 
 Prepare the complete assignment under the generic contract before starting anyone, including the
-commissioning session's desktop ID. In the desktop app, offer it as a task chip with a standalone
-prompt: a card the user clicks to start a new session in its own worktree. Otherwise give the user
-the brief to paste into a new session. Before editing, the implementer checks its worktree,
-branch, base commit and upstream against the assignment, normally a new branch from the fetched
-remote default branch with no upstream. Never give two implementers the same mutable branch.
-Background subagents serve bounded research, review and probes, not implementation.
+commissioning session's locator (its desktop session ID where it has one). In the desktop app,
+offer it as a task chip with a standalone prompt: a card the user clicks to start a new session in
+its own worktree. Otherwise give the user the brief to paste into a new session. Before editing,
+the implementer checks its worktree, branch, base commit and upstream against the assignment,
+normally a new branch from the fetched remote default branch with no upstream. Never give two
+implementers the same mutable branch. Background subagents serve bounded research, review and
+probes, not user-owned implementation.
 
 When the assignment authorizes report-back, send one concise message to the commissioning
 session: Plan and epic names, result, evidence, Git and pull request state, and the decision
@@ -54,11 +55,11 @@ same-named rows. To wait for a session on this machine, request one `notify_when
 A successful send proves only that the message reached that session, not that its Claude received,
 read or accepted it. The receiver's inbound setting and whether each session bypasses permission
 prompts decide whether it is delivered, held or refused there. Desktop sessions cannot show the
-approval dialog, so a held message expires after the dialog deadline unless a mode or setting
-change releases it; the sender may not be told. Sessions that exchange reports should run in modes
-their users chose for that. Report a message as sent, never as received. Keep the report in the
-execution record and final response, say when it was held, refused or undeliverable, and never
-change a destination or mode to force delivery.
+approval dialog, so a message held by default expires after the dialog deadline unless a mode or
+setting change releases it; the sender may not be told. Sessions that exchange reports should run
+in modes their users chose for that. Report a message as sent, never as received. Keep the report
+in the execution record and final response, say when it was held, refused or undeliverable, and
+never change a destination or mode to force delivery.
 
 ## Worktrees, Branches And Pull Requests
 

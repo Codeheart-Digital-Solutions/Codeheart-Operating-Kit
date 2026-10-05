@@ -1,4 +1,4 @@
-Last updated: 2026-10-05T09:20:49Z (UTC)
+Last updated: 2026-10-05T09:26:14Z (UTC)
 Created: 2026-10-05
 Plan: claude-code-operating-guide_implementation_doc.md
 
@@ -90,8 +90,9 @@ tool with side effects. Its route ran from `AGENTS.md` through the managed coord
 `agent-task-coordination.md`, then to the plan facts, then through the closing pointer to the
 companion. The routing reference, consulted later, confirmed the same route. It answered all
 seven scenarios from the installed text: naming, task-chip commission, report-back, safe archival,
-neutral memory, session citation and the `CLAUDE.md` case. Its candid gap list separated toy-setup
-artifacts (no remote, branch, exclude or plan metadata) from six genuine clarity gaps.
+neutral memory, session citation and the `CLAUDE.md` case. Its candid gap list mixed toy-setup
+artifacts (no remote, branch, exclude or plan metadata) with six genuine clarity gaps. The
+implementer separated the two kinds and the reviewer confirmed the split.
 
 The reviewer confirmed the mechanics, routing, public safety, D-2, D-5 and D-6, and the `/goal`
 correction. It judged the probe passed and the scenarios correct, and it confirmed the gap triage.
@@ -112,6 +113,19 @@ Minor findings and the genuine walkthrough gaps were corrected together:
 - pull request binding limited to the session's own or user-requested pull requests;
 - AD-2 item 4 and the revision note.
 
-The companion is now 123 lines. Plan Section 4.1 already defers routing-reference and agent-memory
-Codex wording. The reviewer judged that a focused recheck of the corrected sections is enough,
-because routing is unchanged; no second walkthrough is needed.
+The corrected companion had 123 lines; the final one has 124. Plan Section 4.1 already defers
+the routing-reference and agent-memory Codex wording. The reviewer judged that a focused recheck
+of the corrected sections is enough, because routing is unchanged; no second walkthrough is
+needed.
+
+The same reviewer rechecked correction `831c5bc` and found it ready, with five nits. Three were
+accuracy refinements to managed text, folded into the final candidate:
+
+- a commission without a desktop session uses its other locator;
+- background subagents are not user-owned implementers;
+- only messages held by default expire.
+
+The other two were log wording and the PR description. A personal `@AGENTS.md` line in
+`CLAUDE.local.md` would also work. It goes beyond the commissioned root-instruction remedy, so
+the Director decides. Native guidance run `37289526658` passed both lanes on `831c5bc`, but that
+evidence is superseded for the managed bytes the refinements changed.
