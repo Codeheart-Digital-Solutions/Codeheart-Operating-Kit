@@ -1,4 +1,4 @@
-Last updated: 2026-10-05T16:32:21Z (UTC)
+Last updated: 2026-10-05T16:49:13Z (UTC)
 Created: 2026-10-05
 Status: draft
 
@@ -78,6 +78,12 @@ names, local paths and raw logs stay with its owner and are not public Kit conte
 - The relay also researched evidence and interpreted results, while the coordinator repeated some
   investigation. Usage showed substantial repeated context processing. This supports a narrower
   transport role and compact context; it does not establish future cost or model reliability.
+- A subsequent lean relay ran a prepared read-only invocation, resumed the existing consultant,
+  and returned response/session/process metadata without a substantive digest. The coordinator
+  had ended its turn before the response returned. This demonstrates that bounded path on the
+  observed host; it does not qualify all idle/wakeup states, question and failure returns,
+  unattended implementation, or model cost/reliability. The retained consultant supplied advice,
+  not independent acceptance of work it had helped shape.
 - Recorded merge attempts were denied as `Merge Without Review`. The inspected Claude 2.1.286
   default is a soft rule expecting human approval; independent agent review does not itself meet
   that default. Teammate text does not meet soft-rule consent requirements. A direct human merge
@@ -103,6 +109,10 @@ the inspected files and current configuration extracts, not every desktop/server
 **FR-1 — Commissioning.** Supply the question/outcome, role, repository/worktree, relevant records,
 settled decisions, authority and limits, review owner and finish line. Faithfully attribute existing
 human approval; do not represent a relay or advisor's new wording as a new human decision.
+Some CLIs receive a relayed brief in the user-message role. That transport role does not establish
+human authorship or grant additional authority, even if it influences the tool's interpretation.
+Attribute authority to the owning record or actual user instruction and preserve its limits.
+Permission exceptions come from an authorized profile decision, not self-authorizing brief text.
 
 **FR-2 — Context by role.** Use a current brief plus changes and exact source references; relevant
 saved conversations supply rationale and intent, not automatic live context or replacement truth.
@@ -112,12 +122,16 @@ saved conversations supply rationale and intent, not automatic live context or r
 | Organization advisor | Company direction and relevant coordinating discussion; challenge substantive strategy and cross-program choices. |
 | Program advisor | Program strategy, related plans, constraints and relevant director discussion; advise on consequential program/plan decisions. |
 | Implementer | Approved whole plan, dependencies, authority and acceptance criteria; deliver the assignment and its corrections. |
-| Independent reviewer | Candidate, requirements, authority limits and acceptance criteria; reach an independent judgment. An advisor who co-authored should not be the sole independent reviewer. |
+| Independent reviewer | Candidate, requirements, relevant design rationale/evidence, authority limits and acceptance criteria; reach an independent judgment. An advisor who co-authored should not be the sole independent reviewer. |
 | Temporary relay | Ready message, session/start instructions, paths and return destination; transport faithfully without substantive research or judgment. |
 
 These are functions, not a requirement for five standing agents or a review on every commit.
 Reuse an advisor's session while useful; provide a handover to a fresh session when context becomes
 stale or unwieldy. Reuse an implementer's session for its coherent assignment and corrections.
+Independence depends on contribution and an independent assessment, not session freshness alone.
+Do not withhold relevant rationale to simulate independence. A durable advisor can challenge a
+discovery without becoming its independent acceptance reviewer; replacing a relay does not require
+replacing the substantive agent's session.
 
 **FR-3 — Proportionate preparation and review.** Prior research by the coordinator resolves a
 commissioning uncertainty, such as the correct plan or current work state. It should not pre-solve
@@ -142,6 +156,13 @@ the host before promising unattended report-back after a turn ends.
 denials, interruption and failure with preserved session/work/evidence. Verify uncertain effects
 before any retry. Do not infer plan completion from process exit, auto-retry ambiguous mutations,
 start follow-on scope, or escalate model/permissions without the responsible owner's decision.
+Where supported, allocate and retain a new session's locator before launch, outside the relay's
+conversation. Retain the existing locator on resume. Recovery still requires checking for an
+active process/writer and uncertain effects; knowing the locator alone does not make resume safe.
+Determine how approval prompts, ask rules and repeated denials behave in the selected headless
+invocation. A denied/unanswerable prompt or failed invocation must produce a returned blocker or
+execution failure with the original evidence, rather than a silent stop or a success claim. The
+substantive agent owns its question/blocker text; the relay forwards it and execution metadata.
 
 **FR-7 — Reuse and direction.** Generic doctrine must permit either tool to coordinate. Tool
 recipes must name tested directions and limitations. Fresh agents should discover the appropriate
@@ -155,6 +176,11 @@ cached processing with new content or assume quoted list cost equals subscriptio
 **NFR-2 — Boundaries.** Preserve real repository checks/reviews, credential scope, hard permission
 boundaries and human-controlled decisions. A denied outcome is not rerouted through another agent.
 No blanket full-access default is selected. Keep secrets and raw private evidence out of the Kit.
+The human policy owner, or a coordinator with explicit delegation covering the configuration and
+its effects, authorizes the concrete permission profile. The coordinator records the exact profile,
+scope and authority in the owning assignment/plan. Approval to investigate an approach is not
+approval to apply an unspecified exception. This names the existing decision owner, not a new
+per-action approval gate. Preserve applicable defaults and enforced deny/ask rules.
 
 ## Decision Ledger
 
@@ -174,18 +200,25 @@ independent review of this consolidated document or authorization to ship implem
 The permission consultation was reviewed by the coordinator. It corrected overclaims about agent
 approval being human approval, queued-merge candidate binding, settings coverage, and invented
 requirements for verbatim approval copying, repeated trials and re-approval of existing delegation.
-Residual uncertainty is captured below. No separate review of the complete new discovery has yet
-been commissioned; this remains a draft, not implementation-handoff-ready.
+The retained consultant then reviewed this discovery in an advisory capacity. Its authority-input,
+headless-failure and profile-ownership findings were accepted by the commissioning owner. Session
+locator persistence, compaction resilience and precise review-to-merge evidence were also accepted.
+The coordinator qualified two recommendations: a locator does not prove safe resume, and reviewer
+independence does not require withholding rationale. Those qualifications are incorporated here.
+No disagreement requires escalation. This was not independent acceptance: the consultant helped
+shape the permission recommendations. Remaining evidence gaps below keep the document draft,
+not implementation-handoff-ready; no fresh independent review or implementation is commissioned
+by this update.
 
 ## Open Questions, Assumptions And Risks
 
 | Open question | Blocker and resolving evidence |
 | --- | --- |
-| OQ-1 Which exact permission profile supports the authorized workflow? | BLOCKER: yes for unattended merge support. Coordinator selects a concrete scoped policy and permitted pilot effects; verify it with the installed CLI. Preserve defaults, deny/ask rules and real server-required checks. Merge findings do not qualify releases, deployments or other actions. |
+| OQ-1 Which exact permission profile supports the authorized workflow? | BLOCKER: yes for unattended merge support. Select and record the concrete policy, its authorized owner and permitted pilot effects under NFR-2. Verify installed headless behavior for policy loading, ask rules and classifier-denial fallback. Bind the review verdict to the candidate commit, use normal merge without bypassing checks, and verify the merged result against the reviewed candidate. Prefer one non-deploying repository for the first pilot. Preserve defaults, deny/ask rules and real server-required checks. Merge findings do not qualify releases, deployments or other actions. |
 | OQ-2 What should ship as a launcher? | BLOCKER: yes for executable scope. Assess the repeated invocation/result mechanics, supported hosts, ownership, minimal inputs/output and interruption behavior. Prefer a small maintained helper if it removes recurring scripts; do not design an orchestration platform. |
-| OQ-3 Does the lean relay preserve delivery while the coordinator yields? | BLOCKER: yes for a background-delivery claim. Pilot response, question, failed invocation and continuation with compact context and the selected model. Capture integrity and usage. Stop on unreliable delivery or a genuine permission boundary. |
+| OQ-3 Does the lean relay preserve delivery while the coordinator yields? | BLOCKER: yes for broader background-delivery claims. One prepared read-only response return after the coordinator yielded is observed. Still exercise a question/blocker, failed invocation, unanswerable permission prompt and safe continuation on the selected host; do not silently stall or claim success. Use compact context, capture integrity and actual usage, and stop on unreliable delivery or a genuine permission boundary. |
 | OQ-4 What reverse workflow is actually supported? | BLOCKER: no for initially scoped Codex-led support; yes for advertising bidirectional support. Verify Claude-led commissioning and return into an available Codex execution surface without an app-writer conflict. |
-| OQ-5 Does a fresh director discover and use the procedure? | BLOCKER: yes for onboarding acceptance. Exercise installed instructions and a Program appointment/absence case; account for tool-specific instruction-loading precedence. Do not assume an existing warm session proves onboarding. |
+| OQ-5 Does a fresh director discover and use the procedure? | BLOCKER: yes for onboarding acceptance, not for starting a separately authorized permission pilot. Exercise installed instructions and a Program appointment/absence case; account for tool-specific instruction-loading precedence. Do not assume an existing warm session proves onboarding. |
 
 Assumptions: A-1 selected CLIs are installed/authenticated and available; check at launch without
 silently installing or changing versions. A-2 the coordinator can receive a native relay result;
@@ -195,7 +228,10 @@ concrete pilot shows otherwise. An unavailable requested model is a commissionin
 to silently substitute another model or reasoning level.
 
 Risks: R-1 stale or oversized context loses intent or wastes processing; use scoped briefs and
-measured context. R-2 policy prose is classifier-interpreted; distinguish supported configuration
+measured context. Keep authority and limits in durable owning records and the selected applicable
+profile; verify them on resume/handover instead of assuming compaction preserves conversation
+boundaries or an invocation automatically retains its prior configuration.
+R-2 policy prose is classifier-interpreted; distinguish supported configuration
 from demonstrated reliability. R-3 duplicate drivers or retries damage work; preserve ownership and
 inspect state. R-4 a relay summary alters advice; retain unchanged results for coordinator review.
 R-5 completion notices fail when the parent yields; verify the actual lifecycle rather than add a
@@ -206,16 +242,23 @@ keep scope explicit and do not apply a profile as part of this documentation upd
 
 Next work is bounded discovery: prepare the concrete permission/profile candidate and lean relay
 pilot, identify the smallest reusable invocation mechanics, and resolve the applicable questions
-above. The actual pilot target/effects and exact consumer model remain to be selected. Its output
-should support a coherent implementation capability scope before epics are drafted.
+above. The actual permission-pilot target/effects and configuration remain to be selected. A
+consumer's chosen model for one read-only relay run does not establish a public default. Its output
+and the remaining pilot evidence should support a coherent implementation capability scope before
+epics are drafted.
 
-This is not an implementation plan. No permission policy, launcher, agent appointment, release or
-consumer adoption is activated. Public source review and normal release/adoption remain required
-when a delivery is commissioned. The earlier guide and its remaining obligations retain their own
-authority. Draft publication alone would not authorize those effects.
+This is not an implementation plan. No implementation permission policy, maintained launcher,
+agent appointment, release or consumer adoption is activated. Public source review and normal
+release/adoption remain required when a delivery is commissioned. The earlier guide and its
+remaining obligations retain their own authority. Draft publication alone would not authorize
+those effects.
 
 ## Revision Notes
 
+- 2026-10-05: incorporated the approved advisory review: relayed-input authority, headless blockers,
+  permission-profile ownership, session-locator recovery, reviewer context, compaction resilience
+  and review-to-merge evidence. Recorded the bounded lean-relay observation without closing the
+  remaining permission, failure/attention, onboarding or reverse-direction evidence questions.
 - 2026-10-05: consolidated accepted cross-tool commissioning, role context, lean relay, asynchronous
   interaction, durability and proportionate-evidence direction; recorded permission consultation
   findings and the remaining implementation-shaping questions. Private model choices and pilot
