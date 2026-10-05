@@ -1,4 +1,4 @@
-Last updated: 2026-10-05T09:20:49Z (UTC)
+Last updated: 2026-10-05T09:30:02Z (UTC)
 Created: 2026-10-05
 Status: active
 Execution log: claude-code-operating-guide_execution_log.md
@@ -408,9 +408,9 @@ anchor (OQ-1) before running the guard.
 - [x] Run `go test ./internal/hash ./internal/manifest`, the guidance guard, the release-identity
       check and the ordinary feedback validators locally.
 - [x] Commit coherent progress, push, and open one delivery PR.
-- [ ] Commission the independent reviewer and the separate fresh walkthrough agent per AD-6; apply
+- [x] Commission the independent reviewer and the separate fresh walkthrough agent per AD-6; apply
       corrections with the same reviewer following them; record the probe evidence in the log.
-- [ ] Dispatch the guidance candidate on the exact candidate:
+- [x] Dispatch the guidance candidate on the exact candidate:
       `gh workflow run validate.yml --ref <candidate> -f mode=candidate -f candidate_scope=guidance -f baseline_ref=<anchor> -f upgrade_version=v0.1.33`
       and record both lane results.
 - [ ] Report the validated candidate to the Director for acceptance.

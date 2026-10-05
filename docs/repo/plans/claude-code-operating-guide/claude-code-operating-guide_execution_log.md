@@ -1,4 +1,4 @@
-Last updated: 2026-10-05T09:26:14Z (UTC)
+Last updated: 2026-10-05T09:30:02Z (UTC)
 Created: 2026-10-05
 Plan: claude-code-operating-guide_implementation_doc.md
 
@@ -129,3 +129,31 @@ The other two were log wording and the PR description. A personal `@AGENTS.md` l
 `CLAUDE.local.md` would also work. It goes beyond the commissioned root-instruction remedy, so
 the Director decides. Native guidance run `37289526658` passed both lanes on `831c5bc`, but that
 evidence is superseded for the managed bytes the refinements changed.
+
+## EP-01 Validated Candidate
+
+Final candidate `1a8fef8d7ba48fa5ab1a553a5386f416a5f8033a` passed native guidance run
+`37290110971`. The eligibility preflight found 47 paths and 11 managed resources, measured
+against the accepted anchor. The macOS lane took 59s and the Windows lane 1m29s. Each proved:
+
+- 51 fresh and 51 upgraded managed resources equal candidate source;
+- the published `v0.1.33` to `0.1.34` dry-run, failed verification, apply and check, with
+  authored preservation;
+- reproducible packs, staged installation and the existing historical upgrade checks.
+
+Broad Go, parity and history, Ubuntu semantic and oldest-Git jobs were skipped, as intended. Their
+accepted anchor results remain applicable, because no executable, schema, workflow or toolchain
+input changed.
+
+The run's candidate assets were retrieved and verified locally along the full chain: catalog,
+archive, pack manifest, payload checksums, content identity, binary digest, and a macOS binary
+reporting `0.1.34`. The installers, bootstrap and notes inside the packs equal the candidate's
+files. A local staged install from those assets succeeded, and an explicit bad checksum was
+rejected. Archive SHA-256:
+
+- macOS universal: `ccaa671f1af2b28f1a4b39217be6df06c5adfdbb332cc695a8ecab17ea50cce4`
+- Windows x64: `57327fe63328397a34ee4bfdf9cea98832eee823a99a5cfe825360f09a3b9f81`
+
+The same reviewer found the final refinements ready. Director acceptance of this exact candidate
+is requested. This log entry and the checklist ticks are planning records only; they change no
+release input.
