@@ -1,6 +1,7 @@
-Last updated: 2026-10-05T07:35:11Z (UTC)
+Last updated: 2026-10-05T07:42:54Z (UTC)
 Created: 2026-10-05
-Status: draft
+Status: active
+Execution log: claude-code-operating-guide_execution_log.md
 
 # Claude Code Operating Guide
 
@@ -12,7 +13,7 @@ plan:
   kind: implementation
   purpose: Deliver an optional Claude Code companion to the generic agent task coordination contract, release it through the guidance route and verify adoption on assigned consumer default branches.
   first_cataloged: 2026-10-05T07:19:31Z
-  catalog_metadata_updated: 2026-10-05T07:35:11Z
+  catalog_metadata_updated: 2026-10-05T07:42:54Z
   relations:
     - kind: related
       target: codeheart-operating-kit.implementation.proportionate-agent-workflows
@@ -40,8 +41,8 @@ Python tests. Three material points were corrected in this revision: explicit re
 and graph-digest steps; correct root-instruction guidance; and a genuinely fresh walkthrough
 agent. Minor points were also corrected.
 
-This plan is a draft. It becomes executable only when the commissioning owner records activation
-and the delivery grant in Section 2.4.
+The accountable owner approved execution on 2026-10-05. This plan is active under the delivery
+grant in Section 2.4, with one dedicated implementer.
 
 ## Essential Context Reference Files
 
@@ -309,7 +310,9 @@ corrections. The guidance candidate and released-asset smoke prove packaging and
 
 ## 2.4 Commissioning And Delivery Boundary
 
-To be completed at activation by the commissioning owner. The intended grant covers:
+The accountable owner approved execution on 2026-10-05, in the commissioning Director's session.
+One dedicated implementer carries EP-01 and EP-02 on a delivery branch cut from the default branch
+after this activation is merged. The grant covers:
 
 - implementation and focused checks, coherent commits, normal pushes and one delivery PR with
   updates;
@@ -318,8 +321,8 @@ To be completed at activation by the commissioning owner. The intended grant cov
 - source merge after Director acceptance of that exact validated candidate;
 - publication of the next unused patch under the existing boundary, and released-asset smoke;
 - Kit-only adoption PRs merged on the assigned consumer default branches after their required
-  checks;
-- the final plan, log and index closure on producer main.
+  checks, in the order and with the holds stated in the private assignment;
+- the final plan, log and index closure on producer main through one small PR.
 
 Excluded: Go, Python, test, workflow or CLI behavior changes, beyond the literal version edits in
 AD-4; onboarding prose; the root `README.md`; `bootstrap.md` beyond its version tokens, which
@@ -328,7 +331,8 @@ cleanup; product work.
 
 The Director is the acceptance owner. The implementer reports to the Director's session at the
 EP-01 review, at completion, at a genuine blocker or at a material scope issue. Material scope,
-authority, preservation or cost changes return to the Director.
+authority, preservation or cost changes return to the Director. Exact consumer targets, their
+order and holds, and the report-back locator remain in the private assignment.
 
 # Section 3 - Execution Plan
 
@@ -490,6 +494,8 @@ contract.
 
 - 2026-10-05: Drafted from the commissioning organization's accepted discovery and its
   two-step decision (guide first).
+- 2026-10-05: Activated after the accountable owner approved execution; Section 2.4 records
+  the delivery grant.
 - 2026-10-05: Independent planning review corrections:
   - explicit release-identity and graph-digest steps, with the Go hash and manifest tests;
   - corrected root-instruction guidance (`CLAUDE.local.md`, `@AGENTS.md` import, user-level
