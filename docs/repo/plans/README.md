@@ -1,4 +1,4 @@
-Last updated: 2026-10-05T09:41:09Z (UTC)
+Last updated: 2026-10-05T16:32:21Z (UTC)
 
 # Repo Plans
 
@@ -16,6 +16,11 @@ codeheart-operating-kit plans list --format json .
 entries after mixed cutover.
 
 ## Current Plans
+
+- Draft cross-tool agent coordination discovery: reusable commissioning and context, lean relay
+  responsibilities, asynchronous interaction, permission-profile investigation and bounded pilot
+  evidence; implementation is not activated:
+  `cross-tool-agent-coordination/cross-tool-agent-coordination_discovery_doc.md`
 
 - Active Claude Code operating guide implementation plan and execution log (v0.1.34 released;
   two of four assigned default branches adopted, two pending with their owners): an optional
