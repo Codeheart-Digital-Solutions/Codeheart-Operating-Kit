@@ -1,4 +1,4 @@
-Last updated: 2026-10-05T08:01:28Z (UTC)
+Last updated: 2026-10-05T09:20:49Z (UTC)
 Created: 2026-10-05
 Status: active
 Execution log: claude-code-operating-guide_execution_log.md
@@ -117,14 +117,14 @@ the generic contract:
 - a session can offer the user a task card that starts a new session in its own worktree, and
   background subagents handle bounded research and review inside a session;
 - sessions can list peers and send them messages; a receiving session in a different permission
-  mode can hold messages for its user's approval;
+  mode can hold messages for its user's approval (corrected at authoring; see Revision Notes);
 - desktop worktrees live under `<repository>/.claude/worktrees/<name>`, and archiving offers to
   remove a session's worktree together with its branch;
 - automatic project memory is per repository and shared across its worktrees, so every session
   in the repository reads it;
 - permission modes decide what runs without asking;
-- there is no goal object; loops, scheduled tasks and routines exist but are not report-back
-  mechanisms.
+- there is no goal object (corrected at authoring; see Revision Notes); loops, scheduled tasks
+  and routines exist but are not report-back mechanisms.
 
 Official sources, checked 2026-10-05 and to be rechecked when authoring:
 
@@ -138,7 +138,7 @@ Official sources, checked 2026-10-05 and to be rechecked when authoring:
 Task cards, messages between sessions, session links and pull-request binding were observed in
 the desktop app's exposed tools rather than in public documentation. The guide must label them as
 observed app contracts with their check date and tell agents to verify the tools they actually
-have.
+have. (Corrected at authoring: several are now documented; see Revision Notes.)
 
 ## 1.3 Current State Analysis
 
@@ -239,12 +239,14 @@ Code nor this note. Cover:
    to paste into a new session. Verify the new session's worktree and branch before editing, and
    never give two implementers the same mutable branch. Background subagents serve bounded
    research and review; they are not user-owned implementers.
-4. *Report-back between sessions.* Discover peers, send one concise message with Plan and epic
-   names, result, evidence, Git and PR state and the decision needed. Use a one-shot idle notice
-   instead of polling. A successful send proves delivery, not reading or acceptance. A session in
-   a different permission mode can hold messages for its user's approval; sessions that must
-   exchange reports should run in a mode their user has chosen for that purpose. If a message is
-   held or rejected, keep the report in the execution record and say it was not delivered.
+4. *Report-back between sessions.* Address the commissioning session by its locator or discover
+   it, and send one concise message with Plan and epic names, result, evidence, Git and PR state
+   and the decision needed. Use a one-shot idle notice instead of polling. A successful send
+   proves only that the message reached the session, not delivery, reading or acceptance. The
+   receiver's inbound setting and whether each session bypasses permission prompts decide whether
+   a message is delivered, held or refused, and a held message in a desktop session expires;
+   sessions that must exchange reports should run in a mode their user has chosen for that
+   purpose. Keep the report in the execution record and say when it was not delivered.
 5. *Worktrees and branches.* Desktop worktrees live under `<repository>/.claude/worktrees/<name>`
    and are excluded from Git status locally. Fetch, branch from the remote default branch and
    create work branches without upstream tracking (`git switch --no-track -c <branch>
@@ -405,7 +407,7 @@ anchor (OQ-1) before running the guard.
 - [x] Add `v0.1.34` release notes as an `instruction-only change` with adoption guidance.
 - [x] Run `go test ./internal/hash ./internal/manifest`, the guidance guard, the release-identity
       check and the ordinary feedback validators locally.
-- [ ] Commit coherent progress, push, and open one delivery PR.
+- [x] Commit coherent progress, push, and open one delivery PR.
 - [ ] Commission the independent reviewer and the separate fresh walkthrough agent per AD-6; apply
       corrections with the same reviewer following them; record the probe evidence in the log.
 - [ ] Dispatch the guidance candidate on the exact candidate:
@@ -508,7 +510,10 @@ contract.
   - the session-ID fallback;
   - a length target;
   - clearer exclusions, sizes and open-question effects.
-- 2026-10-05: Authoring recheck (OQ-4) found cross-session messaging, task chips and pull request
-  status publicly documented, and a session-scoped Claude Code `/goal`. AD-2 item 8 is corrected
-  to match; Section 1.2 keeps its planning-time context. Pending Director acceptance with the
-  EP-01 candidate.
+- 2026-10-05: Authoring recheck (OQ-4) and independent review:
+  - cross-session messaging, task chips and pull request status are publicly documented;
+  - delivery holds follow the receiver's inbound setting and each session's bypass class, and a
+    successful send proves only arrival;
+  - Claude Code has a session-scoped `/goal`.
+  AD-2 items 4 and 8 are corrected to match; marked Section 1.2 statements keep their
+  planning-time wording. Pending Director acceptance with the EP-01 candidate.

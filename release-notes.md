@@ -1,4 +1,4 @@
-Last updated: 2026-10-05T08:01:28Z (UTC)
+Last updated: 2026-10-05T09:20:49Z (UTC)
 
 # Codeheart Operating Kit Release Notes
 
@@ -22,9 +22,9 @@ contract and the Codex companion keep their meaning.
   a `CLAUDE.md`, and the user- or organization-level setting a personal `CLAUDE.local.md` needs.
 - Upgrade through the supported lifecycle to v0.1.34, then verify the installed version, the new
   route and authored preservation. If a newer CLI reports a pristine older installation as
-  partial because this release adds a managed path, start the supported upgrade with the matching
-  verified published CLI; never hand-edit a lock. Config, module state, plans, local-user files
-  and instructions outside the managed block remain consumer-owned.
+  partial because this release adds a managed path, start the supported upgrade with the verified
+  published CLI matching the installed version; never hand-edit a lock. Config, module state,
+  plans, local-user files and instructions outside the managed block remain consumer-owned.
 - No runtime, schema, CLI, catalog migration, consumer CI or provider change is included;
   onboarding text is unchanged. macOS universal and Windows x64 and the unsigned, unnotarized
   internal/prototype HTTPS-plus-SHA256 audience remain unchanged. Release and actual adoption are
