@@ -1,4 +1,4 @@
-Last updated: 2026-10-05T09:30:02Z (UTC)
+Last updated: 2026-10-05T09:41:09Z (UTC)
 Created: 2026-10-05
 Plan: claude-code-operating-guide_implementation_doc.md
 
@@ -157,3 +157,59 @@ rejected. Archive SHA-256:
 The same reviewer found the final refinements ready. Director acceptance of this exact candidate
 is requested. This log entry and the checklist ticks are planning records only; they change no
 release input.
+
+## EP-01 Acceptance And Director Decisions
+
+The commissioning Director accepted candidate `1a8fef8d7ba48fa5ab1a553a5386f416a5f8033a` on
+2026-10-05, to be merged through PR head `4ddd89c` (which adds planning records only). Acceptance
+includes the corrections to AD-2 items 4 and 8. The Director also decided:
+
+- **Deferred refinement.** A personal `@AGENTS.md` import inside `CLAUDE.local.md` is an
+  alternative root-instruction remedy. It waits for the next guide revision, with no
+  re-validation cycle now.
+- **Owner merge timing.** For one assigned target, merging to the default branch triggers its
+  owner's development deployment. The implementer opens a Kit-only pull request and the owner
+  decides when to merge it.
+- **Held target.** One target stays local until the Director gives the go-ahead.
+
+## EP-02 Release, Smoke And Adoption
+
+PR #22 merged normally at 2026-10-05T09:33:02Z as `6eb5f1a7152a744d85387a24d859943afbcdd55e`.
+The merged tree equals the accepted head. It differs from the validated candidate only in two
+planning records, and cumulative guidance eligibility still holds. Annotated tag `v0.1.34`
+points to the merge.
+
+The release publishes 14 assets: both verified packs, the external catalog, the installers,
+bootstrap and notes, each with a SHA-256 sidecar. The unchanged unsigned internal/prototype
+HTTPS-plus-SHA-256 boundary applies. The catalog changes only download URLs from the candidate
+catalog; published catalog SHA-256 is
+`ef85adc0a578e01bdb93c937181aeaf6442833614b289a1d3d94747b5db75903`. Re-downloaded public assets
+are byte-identical to the staged ones. A public install through the published installer reports
+`0.1.34`. Released-asset smoke run `37290917668` passed both public native jobs without replaying
+source suites.
+
+Each of the four assigned default branches was upgraded in its own isolated worktree, cut from
+the current remote default branch. The upgrade used a verified matching published CLI installed
+in a temporary location; the shared CLI was not changed. Each ran `check`, a dry-run, apply, a
+completed-state wait and a final `check`. The dry-run's catalog-to-archive, pack-to-binary and
+staged-version validations passed each time. All four reached `0.1.34` with 51 managed resources
+byte-equal to source. Only Kit-managed files and the lock changed, so authored configuration,
+plans, module state, instructions and local-user files were preserved. One target upgraded
+directly from `v0.1.32`, which confirms A-1; its adoption includes the `v0.1.33` guidance. Using
+matching CLIs avoided the partial classification in OQ-2.
+
+Delivery state by target:
+
+- **Two targets merged.** Their pull requests merged normally with no required checks
+  triggered. Each fetched remote default branch equals the reviewed adoption head, reports
+  `0.1.34`, carries the new route byte-identical to source and checks healthy.
+- **One target, pull request open.** Its Kit-only pull request is open and its required source
+  check passed. Its owner merges, ideally together with the next planned push so that only one
+  deployment runs. The owner has the link and the deployment note.
+- **One target, held.** Its adoption is prepared, verified and committed locally, and not
+  pushed. Its governance gate's classification of the new Kit-managed path stays unverified
+  until the Director's go-ahead.
+
+The plan stays active until both remaining targets are adopted on their default branches. The
+Director closes those with their owners. Final completion of the plan, log and index follows
+that adoption.

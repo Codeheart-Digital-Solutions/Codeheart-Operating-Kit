@@ -1,4 +1,4 @@
-Last updated: 2026-10-05T09:30:02Z (UTC)
+Last updated: 2026-10-05T09:41:09Z (UTC)
 Created: 2026-10-05
 Status: active
 Execution log: claude-code-operating-guide_execution_log.md
@@ -413,7 +413,7 @@ anchor (OQ-1) before running the guard.
 - [x] Dispatch the guidance candidate on the exact candidate:
       `gh workflow run validate.yml --ref <candidate> -f mode=candidate -f candidate_scope=guidance -f baseline_ref=<anchor> -f upgrade_version=v0.1.33`
       and record both lane results.
-- [ ] Report the validated candidate to the Director for acceptance.
+- [x] Report the validated candidate to the Director for acceptance.
 
 ### G) Implementation Notes
 
@@ -457,9 +457,9 @@ classification through the matching-CLI route if needed (OQ-2).
 
 ### F) Tasks Checklist
 
-- [ ] Merge the delivery PR after Director acceptance; verify the merged tree equals the accepted
+- [x] Merge the delivery PR after Director acceptance; verify the merged tree equals the accepted
       candidate.
-- [ ] Build, verify and publish the release per `release-operating-kit.md`, then run
+- [x] Build, verify and publish the release per `release-operating-kit.md`, then run
       `gh workflow run validate.yml -f mode=released-smoke -f release_version=v0.1.34`.
 - [ ] For each assigned consumer, in the order the assignment gives: create a fresh worktree from
       its remote default branch, preview and apply the supported upgrade, verify version, the new
@@ -488,6 +488,8 @@ OQ-2, OQ-3 and A-1.
 - Codex-only examples elsewhere (`/goal` triggers in discovery and execution runbooks, the routing
   reference's instruction-priority example, agent-memory session paths): generalize with the
   onboarding plan.
+- Next guide revision: consider a personal `@AGENTS.md` import inside `CLAUDE.local.md` as a
+  further root-instruction remedy (Director decision at EP-01 acceptance; no re-validation now).
 
 ## 4.2 Future Considerations
 
@@ -516,4 +518,10 @@ contract.
     successful send proves only arrival;
   - Claude Code has a session-scoped `/goal`.
   AD-2 items 4 and 8 are corrected to match; marked Section 1.2 statements keep their
-  planning-time wording. Pending Director acceptance with the EP-01 candidate.
+  planning-time wording. Accepted by the Director with the EP-01 candidate.
+- 2026-10-05: Director decisions at EP-01 acceptance narrow the EP-02 delivery boundary:
+  - for one assigned target, merging triggers its owner's development deployment, so the
+    implementer opens the Kit-only pull request and the owner merges;
+  - one target stays local until the Director's go-ahead;
+  - the Director closes those two targets with their owners;
+  - the personal-import refinement is deferred to Section 4.1.
