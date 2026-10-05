@@ -1,4 +1,4 @@
-Last updated: 2026-09-09T19:57:58Z (UTC)
+Last updated: 2026-10-05T07:19:31Z (UTC)
 
 # Repo Plans
 
@@ -16,6 +16,10 @@ codeheart-operating-kit plans list --format json .
 entries after mixed cutover.
 
 ## Current Plans
+
+- Draft Claude Code operating guide implementation plan: an optional Claude Code companion to
+  the generic agent task coordination contract, released through the guidance route:
+  `claude-code-operating-guide/claude-code-operating-guide_implementation_doc.md`
 
 - Completed Git delivery discipline implementation plan (v0.1.33 released and fully adopted)
   and accepted discovery covering commits,
