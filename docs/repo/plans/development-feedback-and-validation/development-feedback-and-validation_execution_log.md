@@ -1,4 +1,4 @@
-Last updated: 2026-09-08T00:09:06Z (UTC)
+Last updated: 2026-09-08T00:15:42Z (UTC)
 Created: 2026-09-07
 
 # Development Feedback and Proportionate Validation — Execution Log
@@ -183,3 +183,33 @@ Main protection and repository rulesets were rechecked before integration: no en
 protection or rulesets. Director source acceptance and the existing unsigned/unnotarized
 HTTPS-plus-SHA-256 internal/prototype grant cover the release. Publication and adoption remain
 the next actions, not claims inferred from candidate success.
+
+### Release and adoption completion
+
+PR #17 merged at `0e7801598c9b753e5c39df36f56f4da4c112a50a`; its tree exactly matches
+accepted checkpoint `dbb581b`. Tag and release
+[v0.1.32](https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/tag/v0.1.32)
+contain the verified fourteen public assets. The established unsigned/unnotarized
+HTTPS-plus-SHA-256 internal/prototype boundary remains unchanged.
+
+[Published-asset smoke run 34172479978](https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/actions/runs/34172479978)
+passed both native public jobs against explicit tag `v0.1.32`, without replaying source suites.
+All four assigned consumer worktrees were previewed and upgraded through the supported lifecycle.
+Each now checks current at 0.1.32, with all 13 changed routes matching producer source byte for byte.
+All lock-declared managed checksums pass. Consumer configuration, authored plans and other tracked
+owned files, instructions outside the managed block and local-user content match their baselines.
+Scoped adoption commits leave all four worktrees clean. Exact roots, branches, commits and raw
+operational evidence remain in the private handoff, outside this public repository.
+
+One adoption readiness correction was necessary: the shared newer CLI classified three pristine
+0.1.30 installations as partial because newer managed paths did not exist in their old graph.
+The official 0.1.30 pack was retrieved and its catalog-to-binary chain verified. That matching CLI
+confirmed each installation current and initiated the normal explicit upgrade to 0.1.32, with the
+released target performing reconciliation and post-check. No repair, lock edit, bypass, source
+patch or provider operation was used. The shared installed CLI remains 0.1.32.
+
+The final completion record is committed and published on the delivery branch after the release;
+it changes no release input and requires no second candidate suite or implementation PR. Source
+is merged, the release and public smoke are complete, and every assigned active instruction route
+is verified. Later Director onboarding, consumer-plan amendment and product implementation remain
+separately governed work. No measured efficiency gain is claimed.
