@@ -1,4 +1,4 @@
-Last updated: 2026-10-05T16:49:13Z (UTC)
+Last updated: 2026-10-05T17:02:45Z (UTC)
 Created: 2026-10-05
 Status: draft
 
@@ -238,23 +238,54 @@ R-5 completion notices fail when the parent yields; verify the actual lifecycle 
 watcher by assumption. R-6 broad allow patterns or inaccurate human attribution weaken authority;
 keep scope explicit and do not apply a profile as part of this documentation update.
 
+## Bounded Documentation Pilot
+
+The commissioning owner authorized proceeding with a bounded pilot on 2026-10-05. Use publication
+of this discovery and its plan-index entry as the useful delivery: an ordinary pull request,
+independent review, passing validation, then a normal merge of the reviewed candidate. Confirm
+that the repository's current workflows do not deploy or release on these events. This experiment
+does not implement the proposed reusable procedure or qualify release/deployment authority.
+
+The coordinator records the exact candidate, source review, invocation profile, session locator
+and authority in the private commissioning record. A fresh execution session performs the delivery;
+the existing consultant remains an advisor. The replaceable relay launches prepared invocations
+and returns unchanged responses plus process/session evidence. It does not review or merge.
+
+Use Auto mode with the defaults retained and an invocation-only exception to the human-review
+soft rule for this independently agent-reviewed candidate. Do not describe agent review as human
+review. Preserve explicit ask/deny rules, hard rules and any server-required reviews/checks. No
+global/project policy change, bypass mode, force/admin merge, direct main push, release, adoption
+or unrelated repository effect is authorized. A small harmless command with an explicit ask rule
+exercises headless blocker return before continuing the same session on the permitted assignment.
+An expected probe denial does not authorize retrying that command by another route.
+
+Success requires an unchanged candidate through review and merge, passing applicable checks,
+verified merged contents, and original response/denial evidence returned to the coordinator.
+Stop for unexpected denial, failed checks, changed candidate/base, unavailable configuration,
+uncertain remote effects or broader authority needs. Inspect effects before any continuation.
+Record whether the exception was actually loaded and used; an allowed command alone does not
+prove classifier reliability. One outcome supports only the exercised configuration and workflow.
+No maintained launcher, reverse-direction support or complete onboarding qualification is implied.
+
 ## Next Evidence And Handoff State
 
-Next work is bounded discovery: prepare the concrete permission/profile candidate and lean relay
-pilot, identify the smallest reusable invocation mechanics, and resolve the applicable questions
-above. The actual permission-pilot target/effects and configuration remain to be selected. A
+Next work is the bounded documentation pilot above, assessment of the smallest reusable invocation
+mechanics, and resolution of the applicable questions above. Exact invocation configuration and
+execution evidence remain with the private commissioning owner. A
 consumer's chosen model for one read-only relay run does not establish a public default. Its output
 and the remaining pilot evidence should support a coherent implementation capability scope before
 epics are drafted.
 
-This is not an implementation plan. No implementation permission policy, maintained launcher,
-agent appointment, release or consumer adoption is activated. Public source review and normal
+This is not an implementation plan. The pilot grants no standing implementation policy, maintained
+launcher, agent appointment, release or consumer adoption. Public source review and normal
 release/adoption remain required when a delivery is commissioned. The earlier guide and its
 remaining obligations retain their own authority. Draft publication alone would not authorize
 those effects.
 
 ## Revision Notes
 
+- 2026-10-05: recorded the authorized, bounded documentation delivery pilot and its review,
+  permission, headless-blocker and evidence boundaries; results remain pending execution.
 - 2026-10-05: incorporated the approved advisory review: relayed-input authority, headless blockers,
   permission-profile ownership, session-locator recovery, reviewer context, compaction resilience
   and review-to-merge evidence. Recorded the bounded lean-relay observation without closing the
