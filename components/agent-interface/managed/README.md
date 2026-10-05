@@ -1,4 +1,4 @@
-Last updated: 2026-09-05T21:03:41Z (UTC)
+Last updated: 2026-10-05T07:57:44Z (UTC)
 
 # Agent Interface
 
@@ -15,6 +15,7 @@ state, and repository-owned documents, not in the managed bootstrap text.
 
 - Generic whole-plan assignments, delegated reviews and report-back: `reference/agent-task-coordination.md`
 - Optional Codex task and goal operations: `reference/codex-task-operations.md`
+- Optional Claude Code session operations: `reference/claude-code-task-operations.md`
 - Root `AGENTS.md` contract: `reference/root-agents-md-contract.md`
 - Operation routing and dispatch: `reference/operation-routing-and-dispatch.md`
 - Managed section boundaries: `reference/managed-section-boundaries.md`

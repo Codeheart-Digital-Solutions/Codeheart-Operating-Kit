@@ -1,6 +1,34 @@
-Last updated: 2026-09-09T14:11:22Z (UTC)
+Last updated: 2026-10-05T08:01:28Z (UTC)
 
 # Codeheart Operating Kit Release Notes
+
+## v0.1.34 Release Notes
+
+Agents working in Claude Code get an optional companion to the generic task coordination
+contract. It maps sessions and names, task-chip commissioning, report-back between sessions,
+worktrees and branches, permission modes, shared project memory, goals and schedules, pull request
+status, archival, session citations and root-instruction loading to Claude Code surfaces. Official
+references carry their check date; observed app contracts are labelled for recheck. The generic
+contract and the Codex companion keep their meaning.
+
+### Impact And Adoption
+
+- `instruction-only change`: one new managed reference,
+  `.codeheart/kit/docs/agent-interface/reference/claude-code-task-operations.md`, routed from the
+  agent-interface README and from the closing pointer of `agent-task-coordination.md`, which now
+  names both optional tool companions. No other managed document changes.
+- `AGENTS.md` remains the only Kit-managed root contract; no `CLAUDE.md` is installed. The note
+  explains when Claude Code reads `AGENTS.md`, the `@AGENTS.md` import for repositories that need
+  a `CLAUDE.md`, and the user- or organization-level setting a personal `CLAUDE.local.md` needs.
+- Upgrade through the supported lifecycle to v0.1.34, then verify the installed version, the new
+  route and authored preservation. If a newer CLI reports a pristine older installation as
+  partial because this release adds a managed path, start the supported upgrade with the matching
+  verified published CLI; never hand-edit a lock. Config, module state, plans, local-user files
+  and instructions outside the managed block remain consumer-owned.
+- No runtime, schema, CLI, catalog migration, consumer CI or provider change is included;
+  onboarding text is unchanged. macOS universal and Windows x64 and the unsigned, unnotarized
+  internal/prototype HTTPS-plus-SHA256 audience remain unchanged. Release and actual adoption are
+  separate facts.
 
 ## v0.1.33 Release Notes
 

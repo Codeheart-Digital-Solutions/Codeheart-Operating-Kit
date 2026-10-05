@@ -1,4 +1,4 @@
-Last updated: 2026-10-05T07:42:54Z (UTC)
+Last updated: 2026-10-05T08:01:28Z (UTC)
 Created: 2026-10-05
 Status: active
 Execution log: claude-code-operating-guide_execution_log.md
@@ -258,9 +258,11 @@ Code nor this note. Cover:
 7. *Project memory.* Automatic memory is per repository and shared by every session and worktree
    in it, including implementers. Keep entries neutral, short and durable; keep Program, plan and
    approval truth in repository records, not in memory.
-8. *Long-running work.* There is no goal object. A whole-plan assignment with report-back is
-   sufficient. Loops, scheduled tasks and routines are used only on explicit request and never as
-   watchers for report-back.
+8. *Long-running work.* A whole-plan assignment with report-back is sufficient; no goal is
+   required. Claude Code's session-scoped `/goal` completion condition is used only on explicit
+   request, aimed at the agreed finish line and verified as active; it adds no authority or
+   report-back. Loops, scheduled tasks and routines are used only on explicit request and never
+   as watchers for report-back.
 9. *Pull requests and checks.* The desktop app binds a pull request opened from a session and
    shows its checks; read that status instead of polling. Auto-fix and auto-merge only on explicit
    request.
@@ -378,18 +380,18 @@ anchor (OQ-1) before running the guard.
 
 ### F) Tasks Checklist
 
-- [ ] Fetch and create the delivery branch from the remote default branch (which contains the
+- [x] Fetch and create the delivery branch from the remote default branch (which contains the
       activated plan) without upstream tracking; create the execution log; record the anchor and
       the next unused patch.
-- [ ] Author `components/agent-interface/managed/reference/claude-code-task-operations.md` per
+- [x] Author `components/agent-interface/managed/reference/claude-code-task-operations.md` per
       AD-2, verifying each observed app contract against the implementer's own tools (OQ-4).
-- [ ] Update the closing paragraph of `agent-task-coordination.md` and the agent-interface README
+- [x] Update the closing paragraph of `agent-task-coordination.md` and the agent-interface README
       per AD-3.
-- [ ] Declare the new file in `components/agent-interface/component.yaml` after the Codex note,
+- [x] Declare the new file in `components/agent-interface/component.yaml` after the Codex note,
       with exactly `source`, target
       `.codeheart/kit/docs/agent-interface/reference/claude-code-task-operations.md` and
       `ownership: managed`.
-- [ ] Release identity:
+- [x] Release identity:
       - bump the agent-interface `component.yaml` version and `profiles/standard.yaml` version;
       - in `manifest.yaml`, set the release version, the agent-interface version and the sha256 of
         its `component.yaml`, and the profile version, sha256 and `graph_sha256`, taking the graph
@@ -398,10 +400,10 @@ anchor (OQ-1) before running the guard.
       - make the literal version edits in `pyproject.toml`, `internal/version/version.go`,
         `src/codeheart_operating_kit/__init__.py`, `install.sh`, `install.ps1` and the seven tokens
         in `bootstrap.md`.
-- [ ] Mirror every changed managed, declaration, profile and manifest file byte-identically under
+- [x] Mirror every changed managed, declaration, profile and manifest file byte-identically under
       `src/codeheart_operating_kit/resources/`.
-- [ ] Add `v0.1.34` release notes as an `instruction-only change` with adoption guidance.
-- [ ] Run `go test ./internal/hash ./internal/manifest`, the guidance guard, the release-identity
+- [x] Add `v0.1.34` release notes as an `instruction-only change` with adoption guidance.
+- [x] Run `go test ./internal/hash ./internal/manifest`, the guidance guard, the release-identity
       check and the ordinary feedback validators locally.
 - [ ] Commit coherent progress, push, and open one delivery PR.
 - [ ] Commission the independent reviewer and the separate fresh walkthrough agent per AD-6; apply
@@ -506,3 +508,7 @@ contract.
   - the session-ID fallback;
   - a length target;
   - clearer exclusions, sizes and open-question effects.
+- 2026-10-05: Authoring recheck (OQ-4) found cross-session messaging, task chips and pull request
+  status publicly documented, and a session-scoped Claude Code `/goal`. AD-2 item 8 is corrected
+  to match; Section 1.2 keeps its planning-time context. Pending Director acceptance with the
+  EP-01 candidate.
