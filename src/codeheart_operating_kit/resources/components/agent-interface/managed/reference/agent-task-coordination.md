@@ -1,4 +1,4 @@
-Last updated: 2026-09-09T14:08:21Z (UTC)
+Last updated: 2026-10-05T07:57:44Z (UTC)
 
 # Agent Task Coordination
 
@@ -120,5 +120,6 @@ unavailable acceptance owner.
 UI archival, organizational lifecycle and deletion/worktree cleanup are separate decisions, even
 when an app couples some effects. Inspect actual app behavior and preserve required work before
 archival. Archiving a conversation does not itself close a role or plan. Deletion and destructive
-cleanup require their own applicable authority and preservation checks. For optional Codex-specific
-surfaces and worktree consequences, read `codex-task-operations.md`.
+cleanup require their own applicable authority and preservation checks. For optional tool-specific
+surfaces and worktree consequences, read `codex-task-operations.md` for Codex or
+`claude-code-task-operations.md` for Claude Code.

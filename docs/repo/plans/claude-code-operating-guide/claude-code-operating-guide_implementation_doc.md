@@ -1,4 +1,4 @@
-Last updated: 2026-10-05T07:42:54Z (UTC)
+Last updated: 2026-10-05T09:30:02Z (UTC)
 Created: 2026-10-05
 Status: active
 Execution log: claude-code-operating-guide_execution_log.md
@@ -117,14 +117,14 @@ the generic contract:
 - a session can offer the user a task card that starts a new session in its own worktree, and
   background subagents handle bounded research and review inside a session;
 - sessions can list peers and send them messages; a receiving session in a different permission
-  mode can hold messages for its user's approval;
+  mode can hold messages for its user's approval (corrected at authoring; see Revision Notes);
 - desktop worktrees live under `<repository>/.claude/worktrees/<name>`, and archiving offers to
   remove a session's worktree together with its branch;
 - automatic project memory is per repository and shared across its worktrees, so every session
   in the repository reads it;
 - permission modes decide what runs without asking;
-- there is no goal object; loops, scheduled tasks and routines exist but are not report-back
-  mechanisms.
+- there is no goal object (corrected at authoring; see Revision Notes); loops, scheduled tasks
+  and routines exist but are not report-back mechanisms.
 
 Official sources, checked 2026-10-05 and to be rechecked when authoring:
 
@@ -138,7 +138,7 @@ Official sources, checked 2026-10-05 and to be rechecked when authoring:
 Task cards, messages between sessions, session links and pull-request binding were observed in
 the desktop app's exposed tools rather than in public documentation. The guide must label them as
 observed app contracts with their check date and tell agents to verify the tools they actually
-have.
+have. (Corrected at authoring: several are now documented; see Revision Notes.)
 
 ## 1.3 Current State Analysis
 
@@ -239,12 +239,14 @@ Code nor this note. Cover:
    to paste into a new session. Verify the new session's worktree and branch before editing, and
    never give two implementers the same mutable branch. Background subagents serve bounded
    research and review; they are not user-owned implementers.
-4. *Report-back between sessions.* Discover peers, send one concise message with Plan and epic
-   names, result, evidence, Git and PR state and the decision needed. Use a one-shot idle notice
-   instead of polling. A successful send proves delivery, not reading or acceptance. A session in
-   a different permission mode can hold messages for its user's approval; sessions that must
-   exchange reports should run in a mode their user has chosen for that purpose. If a message is
-   held or rejected, keep the report in the execution record and say it was not delivered.
+4. *Report-back between sessions.* Address the commissioning session by its locator or discover
+   it, and send one concise message with Plan and epic names, result, evidence, Git and PR state
+   and the decision needed. Use a one-shot idle notice instead of polling. A successful send
+   proves only that the message reached the session, not delivery, reading or acceptance. The
+   receiver's inbound setting and whether each session bypasses permission prompts decide whether
+   a message is delivered, held or refused, and a held message in a desktop session expires;
+   sessions that must exchange reports should run in a mode their user has chosen for that
+   purpose. Keep the report in the execution record and say when it was not delivered.
 5. *Worktrees and branches.* Desktop worktrees live under `<repository>/.claude/worktrees/<name>`
    and are excluded from Git status locally. Fetch, branch from the remote default branch and
    create work branches without upstream tracking (`git switch --no-track -c <branch>
@@ -258,9 +260,11 @@ Code nor this note. Cover:
 7. *Project memory.* Automatic memory is per repository and shared by every session and worktree
    in it, including implementers. Keep entries neutral, short and durable; keep Program, plan and
    approval truth in repository records, not in memory.
-8. *Long-running work.* There is no goal object. A whole-plan assignment with report-back is
-   sufficient. Loops, scheduled tasks and routines are used only on explicit request and never as
-   watchers for report-back.
+8. *Long-running work.* A whole-plan assignment with report-back is sufficient; no goal is
+   required. Claude Code's session-scoped `/goal` completion condition is used only on explicit
+   request, aimed at the agreed finish line and verified as active; it adds no authority or
+   report-back. Loops, scheduled tasks and routines are used only on explicit request and never
+   as watchers for report-back.
 9. *Pull requests and checks.* The desktop app binds a pull request opened from a session and
    shows its checks; read that status instead of polling. Auto-fix and auto-merge only on explicit
    request.
@@ -378,18 +382,18 @@ anchor (OQ-1) before running the guard.
 
 ### F) Tasks Checklist
 
-- [ ] Fetch and create the delivery branch from the remote default branch (which contains the
+- [x] Fetch and create the delivery branch from the remote default branch (which contains the
       activated plan) without upstream tracking; create the execution log; record the anchor and
       the next unused patch.
-- [ ] Author `components/agent-interface/managed/reference/claude-code-task-operations.md` per
+- [x] Author `components/agent-interface/managed/reference/claude-code-task-operations.md` per
       AD-2, verifying each observed app contract against the implementer's own tools (OQ-4).
-- [ ] Update the closing paragraph of `agent-task-coordination.md` and the agent-interface README
+- [x] Update the closing paragraph of `agent-task-coordination.md` and the agent-interface README
       per AD-3.
-- [ ] Declare the new file in `components/agent-interface/component.yaml` after the Codex note,
+- [x] Declare the new file in `components/agent-interface/component.yaml` after the Codex note,
       with exactly `source`, target
       `.codeheart/kit/docs/agent-interface/reference/claude-code-task-operations.md` and
       `ownership: managed`.
-- [ ] Release identity:
+- [x] Release identity:
       - bump the agent-interface `component.yaml` version and `profiles/standard.yaml` version;
       - in `manifest.yaml`, set the release version, the agent-interface version and the sha256 of
         its `component.yaml`, and the profile version, sha256 and `graph_sha256`, taking the graph
@@ -398,15 +402,15 @@ anchor (OQ-1) before running the guard.
       - make the literal version edits in `pyproject.toml`, `internal/version/version.go`,
         `src/codeheart_operating_kit/__init__.py`, `install.sh`, `install.ps1` and the seven tokens
         in `bootstrap.md`.
-- [ ] Mirror every changed managed, declaration, profile and manifest file byte-identically under
+- [x] Mirror every changed managed, declaration, profile and manifest file byte-identically under
       `src/codeheart_operating_kit/resources/`.
-- [ ] Add `v0.1.34` release notes as an `instruction-only change` with adoption guidance.
-- [ ] Run `go test ./internal/hash ./internal/manifest`, the guidance guard, the release-identity
+- [x] Add `v0.1.34` release notes as an `instruction-only change` with adoption guidance.
+- [x] Run `go test ./internal/hash ./internal/manifest`, the guidance guard, the release-identity
       check and the ordinary feedback validators locally.
-- [ ] Commit coherent progress, push, and open one delivery PR.
-- [ ] Commission the independent reviewer and the separate fresh walkthrough agent per AD-6; apply
+- [x] Commit coherent progress, push, and open one delivery PR.
+- [x] Commission the independent reviewer and the separate fresh walkthrough agent per AD-6; apply
       corrections with the same reviewer following them; record the probe evidence in the log.
-- [ ] Dispatch the guidance candidate on the exact candidate:
+- [x] Dispatch the guidance candidate on the exact candidate:
       `gh workflow run validate.yml --ref <candidate> -f mode=candidate -f candidate_scope=guidance -f baseline_ref=<anchor> -f upgrade_version=v0.1.33`
       and record both lane results.
 - [ ] Report the validated candidate to the Director for acceptance.
@@ -506,3 +510,10 @@ contract.
   - the session-ID fallback;
   - a length target;
   - clearer exclusions, sizes and open-question effects.
+- 2026-10-05: Authoring recheck (OQ-4) and independent review:
+  - cross-session messaging, task chips and pull request status are publicly documented;
+  - delivery holds follow the receiver's inbound setting and each session's bypass class, and a
+    successful send proves only arrival;
+  - Claude Code has a session-scoped `/goal`.
+  AD-2 items 4 and 8 are corrected to match; marked Section 1.2 statements keep their
+  planning-time wording. Pending Director acceptance with the EP-01 candidate.
