@@ -1,4 +1,4 @@
-Last updated: 2026-10-09T14:56:20Z (UTC)
+Last updated: 2026-10-09T15:16:43Z (UTC)
 Created: 2026-10-05
 Status: completed
 
@@ -204,7 +204,10 @@ its release/install path so users do not need copied scripts or another runtime.
 commissions, installed distribution and compatibility justify this narrow L3 command under the
 script-promotion standard; do not build a separate CLI, framework or general agent API.
 
-The prepared request identifies the assignment and attempt, exact ordinary return chat/host,
+The coordinator writes the complete request and brief, including approved local defaults; the
+relay passes their path unchanged. Missing fields are blockers, not relay choices. Before dispatch,
+the coordinator knows the attempt directory. The request identifies the assignment and attempt,
+exact ordinary return chat/host,
 working directory, brief file, CLI executable, model, session mode/ID, approved permission and
 tool configuration, and ignored local evidence/state root. A new session ID is allocated and
 persisted before launch; a resume requires the retained CLI-owned session. Arguments are structured
@@ -212,7 +215,8 @@ and prompts go through stdin; no shell interpolation, implicit mode changes or a
 Optional execution limits come from the assignment; the helper adds no short whole-plan deadline.
 
 The command performs deterministic validation, prevents a second participating writer to that
-session in the shared host-local state root, launches once, captures original stdout/stderr and
+session in the shared host-local state root, launches once with child stdout/stderr connected
+directly to private files (not helper-owned pipes), preserves partial output on interruption and
 the original reply, and writes a small result and native-message argument file. That file contains
 the exact approved recipient and original short reply or full-response reference; the relay
 passes it to the exposed app tool without retyping identifiers. The helper cannot authenticate to
@@ -230,7 +234,13 @@ assignments to temporary transport workers and returns control. Workers address 
 requesting ordinary chat directly, outside the worker's ancestor hierarchy. One driver per Claude
 session still applies. Without an authorized valid return target, report a blocker rather than
 guessing a similarly named chat. A failed or uncertain send preserves its result and delivery
-state; no exactly-once or eventual-delivery guarantee is claimed.
+state in the known attempt directory; the coordinator checks it on demand when a result is needed
+or the user asks. No exactly-once or eventual-delivery guarantee is claimed.
+
+The helper uses a fixed documented flag set and records CLI version, returning invocation errors
+without compatibility-matrix machinery or fallback. Whole-plan implementer use remains required.
+Validate normal tool yield/resume and interruption behavior on the host; disclose actual limits
+and unknowns without promising uninterrupted hours or silently narrowing to consultations.
 
 ## Durable Routing And Onboarding
 
@@ -245,6 +255,8 @@ the existing portfolio declaration when that membership is used. Do not infer a 
 ID, scan every chat by title, use an old Program as the routing database, or rewrite portfolio
 identity silently. A repo without portfolio membership can use its own local operational reference.
 
+Initial real adoption covers the named coordination home. The member-navigation pattern is
+fixture-proved; each actual member needs its owner's link adoption before it gains this route.
 A missing or stale relay produces a bounded owner decision/replacement procedure. Preserve advisor
 sessions and unfinished assignment references when replacing a relay. No automatic chat creation,
 standing role registry or program-lifecycle dependency is introduced.
@@ -365,6 +377,10 @@ Next review is of that coherent plan. No live relay appointment, policy installa
 release or consumer upgrade is authorized merely by this discovery checkpoint.
 
 ## Revision Notes
+
+- 2026-10-09: clarified mechanics after independent plan review without reducing whole-plan scope:
+  coordinator owns complete requests, child output survives helper interruption, known attempt
+  paths support on-demand recovery, and real-member adoption is distinct from a routing fixture.
 
 - 2026-10-09: consolidated the accepted merge/notification/overlap pilots with explicit limits;
   selected a bounded installed CLI helper under delegated planning scope; fixed durable routing,

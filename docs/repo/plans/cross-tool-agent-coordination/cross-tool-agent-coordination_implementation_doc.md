@@ -1,4 +1,4 @@
-Last updated: 2026-10-09T14:56:20Z (UTC)
+Last updated: 2026-10-09T15:16:43Z (UTC)
 Created: 2026-10-09
 Status: draft
 
@@ -42,8 +42,10 @@ implementation and its delivery grant remain for review.
 | internal/cli/cli.go, internal/commands/, components/agent-interface/component.yaml | Existing compiled command and managed-content delivery paths. |
 
 Authoring checkpoint: source placement, relative links, public-core hygiene, Markdown timestamps
-and canonical plan catalog were checked. This is an author-reviewed draft; independent plan review
-and execution approval remain outstanding. Runtime behavior is planned, not proven by these checks.
+and canonical plan catalog were checked. A fresh independent Claude review found corrections;
+the author disposition is in [the review record](attachments/independent-plan-review.md).
+Focused correction review and execution approval remain outstanding. Runtime behavior is planned,
+not proven by document checks.
 
 ## Contents
 
@@ -57,7 +59,8 @@ and execution approval remain outstanding. Runtime behavior is planned, not prov
 
 ## 1.1 Goal Of The Implementation
 
-A newly onboarded ordinary Codex director can follow installed instructions and consumer routing,
+A newly onboarded ordinary Codex director in the adopted coordination home can follow installed
+instructions and consumer routing,
 commission a Claude CLI advisor, implementer or reviewer through an independent relay, remain
 available for conversation, and receive an original question or response after yielding.
 The same Claude session can continue after clarification. Relay tasks do not research, interpret,
@@ -65,7 +68,9 @@ approve or extend the assignment.
 
 Completion requires a qualified Operating Kit release, adoption on the named consumer's default
 branch, an operational local reference, original evidence from one fresh-director flow and truthful
-delivery/host limits. A merged source PR or a working-copy pilot alone does not finish the plan.
+delivery/host limits. Member-to-home navigation is demonstrated in a configured fixture; actual
+member repositories need their owners to adopt a link before their directors gain that route.
+A merged source PR or a working-copy pilot alone does not finish the plan.
 
 ## 1.2 Project And Problem Context
 
@@ -129,18 +134,25 @@ Installed guidance remains under .codeheart/kit/docs/agent-interface/. Template 
 managed starter, copied into a consumer reference only during explicitly scoped adoption; no new
 automatic absent-file scaffold or portfolio schema field.
 
-Named consumer adoption uses its existing docs/repo/reference/agent-coordination.md, repository
+Named consumer adoption creates docs/repo/reference/agent-coordination.md and updates the repository
 AGENTS.md route, docs/repo/README.md, portfolio README link where useful, and the current Program's
 working-model cross-reference. Do not copy private operational values into the public Kit plan.
 Exact private targets and IDs belong in the companion consumer handover/activation assignment.
+The existing managed AGENTS "Whole-plan assignment and agent coordination" link leads to
+agent-task-coordination.md, which will link to the new runbook. That managed root template is
+unchanged. The consumer-owned root route separately locates local operational values.
 
 ## 2.2 Open Questions And Assumptions Requiring Clarification
 
 - OQ-1 — BLOCKER: no; Affects: Epic 3. Release version: choose the next unused patch at the coherent
   candidate boundary, not now. No obsolete preselected release number.
-- OQ-2 — BLOCKER: no for planning; Affects: Epic 3 live proof. Confirm installed host tools, CLI
-  flags/authentication and the exact authorized ordinary-chat recipient immediately before use.
-  Unavailable features stop that live step; do not improvise private endpoints or another mode.
+- OQ-2 — BLOCKER: no for planning; Affects: Epics 2–3. Confirm installed tools/authentication,
+  exact ordinary recipient and ability to pass a loaded JSON argument without ID transcription.
+  Distinguish a tool's output-yield interval from any actual process/worker lifetime limit. Record
+  applicable host limits and interruption behavior before qualifying implementer use; unknown
+  limits remain disclosed. Test across normal tool yields and a controlled interruption, not an
+  arbitrary hours-long idle run. A hard limit incompatible with the assignment blocks that live
+  use and returns to the owner; do not silently reduce delivery to consultations or add a daemon.
 - OQ-3 — BLOCKER: no; Affects: Epic 3. A known producer portfolio-home mismatch is outside this
   delivery's automatic authority. Use a verified configured home/member fixture; if a selected
   adoption route depends on the mismatch, its owner must reconcile it first through the existing
@@ -150,16 +162,21 @@ Exact private targets and IDs belong in the companion consumer handover/activati
 
 Assumptions: the supported release platforms remain macOS universal and Windows x64; the initial
 real app notification recipe is qualified only on the tested macOS host. Native command mechanics
-must work on supported release platforms; Windows desktop wakeup is not promised by packaging
-tests. Consumers do not need Claude installed to use unrelated Kit capabilities.
+must work on supported release platforms. For this new command Windows coverage is build,
+Go unit/fake-process tests and installed command availability within existing native release gates;
+live Claude/desktop wakeup on Windows is unqualified. Preserve all existing native Kit release
+checks. Consumers do not need Claude installed to use unrelated Kit capabilities.
 
 ## 2.3 Architectural Decisions With Reasoning
 
 ### Responsibilities and notification
 
-Coordinator prepares outcome, role, authority, context references, return destination and acceptance
-owner. Relay receives this compact envelope, starts/resumes the assigned session and returns the
-original response. Only the coordinator assesses results or answers substantive questions.
+Coordinator writes the complete request.json and brief, resolving executable, model, permission
+and tool settings, authority, state root and exact return destination from approved local defaults.
+It assigns the attempt ID and knows its deterministic evidence directory before dispatch.
+Relay receives only the prepared file path and transport instructions, starts/resumes the specified
+session and returns the original response. Missing/invalid fields return a blocker; relay and
+worker never choose defaults, permissions, models or substantive context on the coordinator's behalf. Only the coordinator assesses results or answers substantive questions.
 Independent review remains independent of authorship. Session reuse is distinct from role identity.
 
 Reuse a configured independent ordinary relay. For multiple active assignments, it dispatches
@@ -168,7 +185,12 @@ outside their native ancestor hierarchy. Worker/subagent recipients and native-p
 are not valid routes in the observed host. Do not invent native child wakeup guarantees.
 
 Return questions, permission denial and failures as faithfully as completion. Notification failure
-is recorded separately from successful CLI execution. No automatic send replay or queue is needed.
+is recorded separately from successful CLI execution in the known attempt directory: pending,
+sent (tool accepted, not read/accepted by the director), rejected or uncertain, with the original
+receipt/error. Persist pending before attempting the send. If a worker disappears before updating
+it, pending remains unresolved. Coordinator checks that known directory once on demand when the
+next decision depends on the result or the user asks. This recovers discoverability without a
+watcher or notification guarantee; it does not automatically resend or relaunch anything.
 The coordinator may discuss unrelated matters while work proceeds; it does not busy-wait, continually
 inspect transcripts, or duplicate the commissioned research. Active waiting is appropriate when
 the next decision genuinely depends on the result.
@@ -187,27 +209,42 @@ Settings are concrete paths/values, not shell fragments. Use the approved nonint
 JSON output and stdin for the brief. No arbitrary extra command string, bypass/full-access default,
 implicit installation, model substitution or permission escalation. Preserve default and explicit
 deny/ask behavior; unsupported interactive prompts must return a blocker instead of waiting forever.
-Validate actual installed flag support before launch. Do not claim settings validation proves a
+Use one documented fixed flag set and record the CLI version as metadata. Do not scrape --help
+on every run or maintain a version/flag compatibility matrix. Return a recognized unknown-option
+or usage error with original stderr as an unsupported-invocation blocker; other nonzero failures
+remain execution errors. No fallback flags or replay. Consult official help/docs when maintaining
+the recipe, not as a new runtime compatibility engine. Settings validation cannot prove that a
 classifier will allow an action.
 
 Use one ignored shared state root for participating launches through a relay on one host.
-Exclusive session ownership and unique attempt directories prevent accidental second launch,
-overwrite and replay. Retain session/attempt information before spawning. Refuse stale/ambiguous
+An exclusive-create session lock holding the attempt ID and unique attempt directories prevent
+accidental second launch, overwrite and replay. No automatic staleness heuristics or lock stealing. Retain session/attempt information before spawning. Refuse stale/ambiguous
 locks pending coordinator inspection; do not steal locks automatically. A participating-process
 lock cannot prove there is no independent CLI/app/other-host writer. Fresh CLI ownership and the
 runbook remain necessary.
 
-Capture original stdout JSON, stderr and final response into private evidence, with a compact
+Open attempt stdout/stderr files before spawning and connect the child directly to those files,
+not to a helper-owned pipe or an in-memory buffer. Helper/worker death must not erase bytes already
+written; it may still terminate the child under host rules. Parse the completed JSON afterwards,
+preserving incomplete output and absence of a final record as uncertainty. Keep a compact
 result record: requested/actual session, process state/exit, timestamps, model/usage if available,
 original response path, permission-denial metadata and error/status. Use atomic final record
 writes; normal stdout is only this compact metadata. Emit a native-tool message argument file
 with the exact return destination and original short reply or response reference. No semantic
 digest, fabricated completion state or task acceptance. The relay loads the file directly into
-the exposed tool; the command never connects to private app APIs.
+the exposed tool; the command never connects to private app APIs. If the send tool reports a
+recipient, compare it with the prepared recipient and retain a mismatch as failed/uncertain
+delivery. Never infer recipient confirmation from an omitted field. Cap inline original replies at
+2,000 characters; longer responses use an exact file reference without a relay-written summary.
 
 The helper launches once and waits on its child process; it is not a scheduler. It adds no
-whole-plan timeout. An explicitly configured limit/interruption records uncertain effects and
-observed process state; preserve evidence and require inspection before resume. No automatic
+whole-plan timeout. Normal host output-yield returns are resumed on the same process handle;
+they are not timeouts or reasons to restart Claude. An actual limit/interruption records uncertain
+effects and observed process state when the writer survives; if it does not, the retained attempt
+and raw files remain inspectable. On demand, the coordinator checks writer/child state, original
+session and any work effects before resuming. Never infer clean completion from a missing process.
+The initial release covers resumable whole-plan work with honest host limits; it does not promise
+uninterrupted hours-long execution or delivery while the app/host is shut down. No automatic
 child relaunch, retry, lock deletion, cleanup of task work or termination of unrelated processes.
 Private artifacts are not blindly printed, committed or sent to another recipient. Protect local
 files appropriately to the host; record portable limitations rather than claiming encryption.
@@ -348,8 +385,13 @@ must remain unchanged; new command parity is specified by its Go tests, not a Py
   auto-retry or infer semantic completion from exit zero.
 - [ ] Add focused fake-CLI tests for quoting/spaces and stdin fidelity; wrong/empty session and
   malformed/error/denial outputs; nonzero exit; two distinct concurrent assignments; same-session
-  collision/replayed attempt; interrupted/stale attempt and safe preserved evidence; no raw normal
-  output or forbidden implicit escalation. Exercise actual process behavior, not just mocked return values.
+  collision/replayed attempt; helper termination while a fake child is writing; retained partial
+  files and unresolved pending state; interrupted/stale attempt; no raw normal output or implicit
+  escalation. Use sanitized real CLI response/denial and message-rejection shapes to anchor fake
+  fixtures. Exercise actual process behavior, not just mocked return values.
+- [ ] Verify on the supported live host that a controlled harmless process continues through
+  normal tool output-yield/resume cycles and retains evidence on interruption. Record actual
+  process-limit knowledge separately from observed duration; do not burn hours testing idleness.
 - [ ] Run affected Go tests on supported platforms and one independent coherent source review
   across Epics 1–2, emphasizing authority, result fidelity and process/concurrency failure behavior.
   Address findings without restarting unchanged reviews.
@@ -399,8 +441,15 @@ publication, then the same scenario once on installed release. Do not repeatedly
 - [ ] Give a fresh ordinary director a small user-style request. Require it to discover the
   installed route/reference from a configured member fixture/home, launch one harmless consultation
   through the maintained helper/relay, yield, receive a question, resume the same session with an
-  authorized answer, yield again and read the original final response. Observe relay behavior:
-  no research/digest/acceptance, exact destination and session, coordinator remains available.
+  authorized answer, yield again and read the original final response. Do not mention the relay
+  or its path in the initial user-style request. Observe relay behavior: no research/digest/
+  acceptance, exact destination and session, coordinator remains available.
+- [ ] Within that exercise, use one harmless deliberately denied tool request in a scoped
+  read-only test profile; verify the installed helper preserves the real denial and returns it.
+  Anchor the failure fixtures to this actual CLI shape. Exercise rejected-notification persistence
+  using an injected send rejection with the already observed native rejection shape; verify the
+  coordinator can find the retained result by its known attempt path on demand. No arbitrary
+  real recipient or repeat live negative messaging is required unless actual host behavior changed.
 - [ ] Cover missing/stale route handling in the same onboarding exercise or non-live fixture.
   Retain existing accepted overlap evidence; repeat only if the new mechanics/topology invalidate it.
   Record live usage/time if exposed and distinguish cached input from new output; no invented budget threshold.
@@ -428,6 +477,9 @@ every transient failure into framework work. No AWS or product feature implement
 
 # Revision Notes
 
+- 2026-10-09: addressed independent review with coordinator-owned requests, explicit durable
+  failure lookup, direct child output files, bounded lifetime/interruption proof, narrower member
+  adoption claims, a fixed CLI flag contract and a real harmless denial within onboarding.
 - 2026-10-09: drafted from the completed discovery and accepted bounded pilots under delegated
   planning scope; selected narrow compiled invocation helper, three epics, strict relay boundary,
   stable consumer routing and one combined fresh-director acceptance. Execution remains inactive.
