@@ -415,3 +415,40 @@ def test_cross_tool_coordination_routes_are_installed_and_optional(tmp_path):
     # Discussion-stage reviews are reported before amendment.
     assert "## Coordinator Boundary" in review
     assert "is not user approval" in review
+
+
+def test_commissioning_agent_is_primary_reviewer_across_installed_routes():
+    root = ROOT / "src/codeheart_operating_kit/resources/components"
+    execute = (root / "planning-workflows/managed/runbooks/execute-implementation-plan.md").read_text(encoding="utf-8")
+    coordination = (root / "agent-interface/managed/reference/agent-task-coordination.md").read_text(encoding="utf-8")
+    contract = (root / "agent-interface/managed/reference/cross-tool-coordination-contract.md").read_text(encoding="utf-8")
+    runbook = (root / "agent-interface/managed/runbooks/coordinate-cross-tool-task.md").read_text(encoding="utf-8")
+    flat = {name: " ".join(text.split()) for name, text in {
+        "execute": execute, "coordination": coordination, "contract": contract, "runbook": runbook,
+    }.items()}
+
+    # Ordinary commissioner review: the commissioning agent examines the work and owns acceptance.
+    assert "The commissioning agent (the director or coordinator that commissioned the work) is the primary reviewer and owns acceptance." in flat["execute"]
+    assert "Forwarding another agent's verdict without examining the work does not discharge primary review." in flat["execute"]
+    assert "The commissioning agent is the primary reviewer and owns acceptance." in flat["coordination"]
+    assert "primary review of delivered work" in flat["contract"]
+    assert "You are the primary reviewer" in flat["runbook"]
+    assert "Another full technical review is not required for every task." in flat["execute"]
+
+    # Justified additional review stays available and is assessed by the commissioner.
+    assert "Add an independent reviewer when complexity or risk warrants it" in flat["execute"]
+    assert "assesses the additional reviewer's findings itself and still decides acceptance" in flat["execute"]
+
+    # Authorship conflict: self-review is never called independent.
+    assert "an agent checking its own implementation performs self-review and must call it that, never independent review" in flat["execute"]
+    assert "Checking one's own implementation is self-review, never independent review." in flat["coordination"]
+
+    # Tool-neutral and no model default imposed on the commissioner.
+    assert "This default never dictates the commissioning agent's own model." in flat["execute"]
+    assert "a Codex director can review a Claude implementer's work directly" in flat["coordination"]
+    for removed in [
+        "use one independent read-only reviewer when the active environment",
+        "Use the same default model and reasoning mode as the implementing agent unless the user requests",
+        "Use one independent source review at the planned meaningful checkpoint",
+    ]:
+        assert removed not in flat["execute"] and removed not in flat["coordination"], removed

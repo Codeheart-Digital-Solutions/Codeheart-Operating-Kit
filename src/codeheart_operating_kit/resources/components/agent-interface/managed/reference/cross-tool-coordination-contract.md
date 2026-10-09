@@ -1,4 +1,4 @@
-Last updated: 2026-10-09T20:34:57Z (UTC)
+Last updated: 2026-10-09T20:47:14Z (UTC)
 
 # Cross-Tool Coordination Contract
 
@@ -10,11 +10,14 @@ remain in `agent-task-coordination.md`. Nothing here is needed for ordinary curr
 
 | Function | Owns | Must not |
 | --- | --- | --- |
-| Coordinator | Complete brief and request, defaults from approved local choices, attempt identity, assessment of original replies, answers to substantive questions, acceptance within its mandate. | Delegate those choices to the relay or duplicate the commissioned investigation while waiting. |
+| Coordinator | Complete brief and request, defaults from approved local choices, attempt identity, primary review of delivered work and original replies, answers to substantive questions, acceptance within its mandate. | Delegate those choices to the relay, forward a reviewer's verdict as its own review, or duplicate the commissioned investigation while waiting. |
 | Substantive agent (advisor, implementer, independent reviewer) | The commissioned question or work, its own questions, blockers and final reply. | Treat relayed text as new human authority or widen its assignment. |
 | Relay or temporary transport worker | Passing the prepared request path to the helper, waiting on that process, loading the message file into the native send tool and recording the send result. | Research, summarize, interpret, answer, accept, choose defaults, retry or start follow-on work. |
 
-Independence comes from contribution and assessment, not from session freshness. Reuse an
+A separate independent reviewer is commissioned only when complexity, risk, the coordinator's
+own implementation involvement or a binding gate warrants it; the coordinator still reviews the
+work itself and decides acceptance. Independence comes from contribution and assessment, not
+from session freshness. Reuse an
 advisor or implementer session while it remains useful; a relay is replaceable without replacing
 the substantive session. Session IDs locate execution; they are not role identities.
 

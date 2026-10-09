@@ -1,4 +1,4 @@
-Last updated: 2026-10-09T19:52:39Z (UTC)
+Last updated: 2026-10-09T20:47:14Z (UTC)
 
 # Codex Task Operations
 
@@ -85,7 +85,9 @@ ancestor or to a subagent recipient were rejected. Use an independent ordinary r
 The relay dispatches temporary transport workers that run the installed helper and send the
 helper's `message.json` unchanged with `send_message_to_thread` to the requesting ordinary chat.
 Loading that file avoids retyping thread identifiers. Never bypass a rejected send or switch
-recipients; record it with `coordination record-delivery`.
+recipients; record it with `coordination record-delivery`. The Codex director reviews a Claude
+implementer's delivered work directly as the primary reviewer; reviewing needs no relay, second
+chat or model switch.
 
 ## Archival And Preservation
 

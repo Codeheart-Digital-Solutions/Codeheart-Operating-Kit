@@ -1,4 +1,4 @@
-Last updated: 2026-10-09T19:52:39Z (UTC)
+Last updated: 2026-10-09T20:47:14Z (UTC)
 
 # Execute Implementation Plan
 
@@ -297,8 +297,10 @@ For each epic:
 5. Run the smallest validation set that proves the outcome.
 6. For routing-bearing epics, run or verify the planned fresh low-context routing probe, or record
    why the probe is not applicable.
-7. Run the planned meaningful review checkpoint; related epics may share one coherent review.
-8. Fix material findings and return affected corrections to the same reviewer.
+7. Hand the coherent result to the commissioning agent's primary review at the planned
+   meaningful checkpoint; related epics may share one review. Include any additional independent
+   review the plan or commissioning agent selected.
+8. Fix material findings and return affected corrections to the same reviewers.
 9. Update checklist state only for completed and validated tasks.
 10. Update the execution log with meaningful divergence and review evidence.
 11. Reconcile the agreed commit/normal-push/PR state; this is not the first permitted checkpoint.
@@ -307,7 +309,8 @@ For each epic:
 12. Send the named epic result, evidence, Git state and requested decision directly to the assigned
     director at required review, completion or genuine blocker. Retain the result and disclose any
     message rejection; best-effort reporting needs no watcher, heartbeat or busy polling.
-13. At a required acceptance point, complete independent preparation then hand off for review.
+13. At a required acceptance point, complete independent preparation then hand off for primary
+    review.
     Continue dependent epic work once delegated acceptance arrives. Do not require a new task,
     release, PR or user authorization per epic.
 14. Recap whether the epic intention and acceptance are achieved; keep the plan and any whole-plan
@@ -315,12 +318,9 @@ For each epic:
 
 ## Meaningful Review Checkpoints
 
-Before accepting the planned coherent source checkpoint, use one independent read-only reviewer
-when the active environment and user request permit reviewer-agent execution. Closely related
-epics may share that checkpoint when declared in the plan. Keep those epics acceptance-pending
-until review passes. Director acceptance need not duplicate the technical review.
-
-The reviewer checks the implemented epic against:
+The commissioning agent (the director or coordinator that commissioned the work) is the primary
+reviewer and owns acceptance. At the planned coherent source checkpoint it examines the delivered
+work and evidence directly, in proportion to risk, against:
 
 - epic outcome and acceptance criteria;
 - completed and incomplete checklist items;
@@ -332,10 +332,23 @@ The reviewer checks the implemented epic against:
 - routing-standard adoption and probe evidence for routing-bearing epics;
 - accidental future-epic work.
 
-Use the same default model and reasoning mode as the implementing agent unless the user requests a
-different reviewer setup or the epic is unusually high-risk.
+It may rely on competent existing evidence and targeted checks; it need not re-run every check or
+repeat a complete review. Forwarding another agent's verdict without examining the work does not
+discharge primary review. Closely related epics may share the checkpoint when declared in the
+plan; keep them acceptance-pending until the review passes.
 
-Fix material findings and use the same reviewer for focused follow-up on corrections and their
+Add an independent reviewer when complexity or risk warrants it, when the commissioning agent took
+a substantive part in the implementation, or when the user, assignment or a binding repository
+gate requires it. Another full technical review is not required for every task. An authorship
+conflict needs independent scrutiny: an agent checking its own implementation performs
+self-review and must call it that, never independent review. The commissioning agent assesses the
+additional reviewer's findings itself and still decides acceptance. Any tool can review another
+tool's work directly; reviewing needs no extra account, model, relay or chat. Choose a separate
+reviewer's model and reasoning from the user's or local approved choices, otherwise the
+implementing agent's setup, unless the work is unusually high-risk. This default never dictates
+the commissioning agent's own model.
+
+Fix material findings and use the same reviewers for focused follow-up on corrections and their
 effects. Preserve valid review evidence. Broaden review or use a different reviewer only for a
 material design/impact change, inadequate independence, a reviewer limitation or unresolved concern.
 Continue until no material issues remain or a clear blocker is recorded. A material issue is anything that makes the epic incomplete,
@@ -344,8 +357,9 @@ or incomplete against the intended feature capability. If the gap is within the 
 scope, fix it. If fixing it requires a new high-impact decision or scope expansion, stop and
 amend the plan instead of improvising.
 
-When reviewer-agent execution is unavailable, record why and run the strongest practical
-main-thread review.
+When a selected independent reviewer cannot be run, record why. The commissioning agent then
+performs the strongest practical review itself, and the record says that no independent review
+took place.
 
 ## Execution Log
 
@@ -394,9 +408,9 @@ Do not log:
 ## Execution Log Shape
 
 Keep the timestamp, creation date and plan link, then summarize outcomes, meaningful divergence,
-validation and actual delivery state in prose or a compact table. Record the review scope,
-material findings, corrections, reviewer continuity and accepted result. Name residual limits and
-remaining owner decisions. Do not require separate metrics, duplicate evidence artifacts or a
+validation and actual delivery state in prose or a compact table. Record the review scope, the
+primary review and any additional review, material findings, corrections, reviewer continuity
+and accepted result. Name residual limits and remaining owner decisions. Do not require separate metrics, duplicate evidence artifacts or a
 command transcript; include timing or measured cost only when useful and actually known.
 
 ## Relationship To The Plan

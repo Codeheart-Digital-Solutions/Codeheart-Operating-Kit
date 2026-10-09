@@ -1,4 +1,4 @@
-Last updated: 2026-10-09T19:52:39Z (UTC)
+Last updated: 2026-10-09T20:47:14Z (UTC)
 
 # Review Planning Document
 
@@ -101,8 +101,10 @@ Review a plan for substantive approach, capability coverage, dependencies, adapt
 detail and proportionate validation. Review implementation against actual behavior and evidence;
 a planning review cannot prove implementation or release readiness.
 
-Use one independent review at a meaningful coherent checkpoint and the same reviewer for focused
-correction follow-up. Broaden or replace the reviewer for material design/impact change,
+The commissioning agent stays the primary reviewer of a planning document it commissioned and
+owns its acceptance. Add an independent review when the decision's risk, the commissioning
+agent's own authorship or a binding gate warrants it; use one at a meaningful coherent checkpoint
+and the same reviewer for focused correction follow-up. Self-review is never independent review. Broaden or replace the reviewer for material design/impact change,
 inadequate independence, reviewer limitation or unresolved concern. Do not restart unchanged
 review after every finding. Label optional improvements separately from material blockers; plain
 word choice, record duplication and ordinary in-scope refinement are not defects by themselves.

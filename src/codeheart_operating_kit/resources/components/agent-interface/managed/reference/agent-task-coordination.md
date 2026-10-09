@@ -1,4 +1,4 @@
-Last updated: 2026-10-09T19:52:39Z (UTC)
+Last updated: 2026-10-09T20:47:14Z (UTC)
 
 # Agent Task Coordination
 
@@ -102,10 +102,18 @@ changes on substantial starts/resumes. Follow
 publication and accepted PR integration; a published draft remains independent of execution
 authority. Do not create a review or approval layer per commit.
 
-Use one independent source review at the planned meaningful checkpoint, combining related epics
-when declared. The same reviewer follows corrections; broader review needs a material change,
-independence issue, limitation or unresolved concern. Director acceptance need not repeat that
-technical review. Retain applicable validation through corrections and interruptions and rerun
+The commissioning agent is the primary reviewer and owns acceptance. At the planned meaningful
+checkpoint, combining related epics when declared, it examines the delivered work against the
+intended outcome, scope and validation evidence, in proportion to risk. It may rely on competent
+existing evidence and targeted checks. Forwarding another agent's verdict without examining the
+work is not a review. It adds an independent reviewer when complexity or risk warrants it, when
+it took a substantive part in the implementation, or when the user, assignment or a binding gate
+requires it; another full review is not automatic. Checking one's own implementation is
+self-review, never independent review. The commissioning agent assesses any additional findings
+itself. Review is tool-neutral: a Codex director can review a Claude implementer's work directly,
+and same-tool work is equally valid, with no extra account, model, relay or chat. Keep reviewers
+the user selected and binding gates. The same reviewers follow corrections; broader review needs
+a material change, independence issue, limitation or unresolved concern. Retain applicable validation through corrections and interruptions and rerun
 invalidated checks, with full coverage at the required coherent candidate boundary. Choose PR boundaries around usable accepted outcomes: update one coherent PR or integrate several
 independent outcomes during a longer plan. Do not create a task, release or PR per checklist item.
 Integrate ready work under covered authority and passing gates, or record a concrete reason,
@@ -116,7 +124,8 @@ work when acceptance arrives. The director can request in-scope corrections and 
 epic within its delegated mandate. Escalate only a decision outside that mandate or a binding gate
 that genuinely requires the user's intervention.
 
-For consequential reviews, the coordinator reads the original response and reports its locator,
+When an additional reviewer reports on consequential work, the coordinator reads the original
+response and reports its locator,
 core findings and significance, its own assessment including disagreement, recommended
 disposition, verdict and residual uncertainty; a bare "review passed" is not enough. During
 discovery, planning or discussion, report before incorporating findings and wait for the user

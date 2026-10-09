@@ -1,4 +1,4 @@
-Last updated: 2026-10-09T20:34:57Z (UTC)
+Last updated: 2026-10-09T20:47:14Z (UTC)
 
 # Coordinate Cross-Tool Task
 
@@ -176,8 +176,11 @@ the result.
 
 1. Read the original reply (inline, or the referenced `stdout.jsonl` result field) and
    `attempt.json`. Check status, actual session, exit and permission denials.
-2. `response_captured` means a reply exists. It is not acceptance. Assess the content yourself
-   and verify consequential claims; do not re-run the whole investigation.
+2. `response_captured` means a reply exists. It is not acceptance. You are the primary reviewer:
+   examine the delivered work and evidence against the intended outcome and scope, and verify
+   consequential claims; do not re-run the whole investigation. Commission an additional
+   independent reviewer only when complexity, risk, your own implementation involvement or a
+   binding gate warrants it, and still assess its findings yourself.
 3. For a consequential review, report to the user the original locator, core findings and their
    significance, your own assessment including disagreement, recommended disposition and residual
    uncertainty. During discovery, planning or discussion, report before amending and follow
