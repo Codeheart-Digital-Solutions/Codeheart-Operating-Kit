@@ -1,4 +1,4 @@
-Last updated: 2026-10-09T20:55:54Z (UTC)
+Last updated: 2026-10-10T00:45:00Z (UTC)
 
 # Cross-Tool Coordination Contract
 
@@ -93,8 +93,8 @@ The coordinator knows the directory before dispatch:
 
 | File | Content |
 | --- | --- |
-| `attempt.json` | Compact record: status, request path and digest, requested and actual session, model, CLI version, argv, launcher and child identity, exit, response locator, denial metadata, usage, lock release. |
-| `stdout.jsonl` | Original CLI output. The final reply is the `result` field of the last `type: result` line and must be a JSON string (an empty string counts); a missing, null or non-string value is `incomplete_output`, never a captured reply. |
+| `attempt.json` | Compact record: status, request path and digest, requested and actual session, model, CLI version, argv, launcher and child identity, exit, response locator, `earlier_responses` locators, denial metadata, usage, lock release. |
+| `stdout.jsonl` | Original CLI output. The final reply is the `result` field of the last `type: result` line and must be a JSON string (an empty string counts); a missing, null or non-string value is `incomplete_output`, never a captured reply. A run can emit more than one result record, for example a substantive reply followed by a background-task completion; earlier text replies are located in `earlier_responses`. |
 | `stderr.txt` | Original CLI error output. |
 | `message.json` | Native send-message arguments: `threadId`, `hostId` and `prompt`. Load it unchanged, and only when this invocation's output names it as `message_file`. |
 | `delivery.json` | `pending`, then `sent`, `rejected` or `uncertain`, with the original receipt or error. |
@@ -105,6 +105,8 @@ Statuses: `response_captured` (a final reply was captured; not task acceptance),
 still run; lock retained), `launch_failed`, `session_locked` (no second writer launched) and
 `attempt_exists` (replay refused; the original attempt is untouched). Permission denials are
 reported separately with their count and tool names; the CLI can exit successfully after a denial.
+Denials are gathered from every result record of the invocation, so a later record without
+denials cannot hide an earlier one; a denial repeated with the same tool use ID counts once.
 
 Helper output (stdout) is compact JSON: `status`, `detail`, identifiers, `attempt_dir`,
 `attempt_file`, and `message_file` and `delivery_file` only when this invocation wrote them. Every
@@ -119,7 +121,9 @@ itself is valid), `helper_error` before an attempt record exists, a failed messa
 
 The message prompt states the assignment, attempt, status, session, denial count and attempt
 record path. It carries the original reply unchanged when it has at most 2,000 characters, and
-otherwise an exact file, line and JSON-field reference. It contains no summary or judgment.
+otherwise an exact file, line and JSON-field reference. When earlier result records hold replies,
+it names their exact lines instead of quoting them; the coordinator reads every one. It contains
+no summary or judgment.
 
 ## Delivery And Recovery Commands
 
@@ -179,11 +183,67 @@ Continue the same assignment within the original authority.
 For a later implementation phase after director acceptance, resume the same session with a new
 `/goal` condition for that phase. A goal ending at a checkpoint never completes the whole plan.
 
-## Permission Profile Example
+## Permission Profiles
 
-A profile is a separate, explicitly authorized settings file; the brief cannot authorize itself.
-This example keeps defaults and explicit ask and deny rules, and allows ordinary task-repository
-pull-request merges while the workflow still checks authority, review, CI and candidate identity:
+A profile is a separate, explicitly authorized settings file passed with the request; the brief
+cannot authorize itself. Nothing here is installed globally, and a consumer that never selects
+cross-tool delegation needs no profile. Choosing and approving one is the consumer's decision;
+its exact command list and paths stay in the consumer's ignored local layer.
+
+### Explicit command permissions (`dontAsk`)
+
+For delivery work, an explicit profile is simpler and more predictable than an AI classifier:
+`dontAsk` mode refuses anything not listed, so the agent stops instead of being judged case by
+case. List only the task's ordinary development and delivery commands, keep explicit ask and
+deny rules for destructive options, and grant file edits only inside the task's directories:
+
+```json
+{
+  "permissions": {
+    "defaultMode": "dontAsk",
+    "allow": [
+      "Read", "Glob", "Grep",
+      "Edit(//<task worktree>/**)", "Write(//<task worktree>/**)",
+      "Bash(git status *)", "Bash(git diff *)", "Bash(git log *)", "Bash(git fetch *)",
+      "Bash(git add *)", "Bash(git commit *)", "Bash(git push *)", "Bash(git switch *)",
+      "Bash(gh pr view *)", "Bash(gh pr create *)", "Bash(gh pr edit *)", "Bash(gh pr checks *)",
+      "Bash(go test *)", "Bash(<repository test command> *)",
+      "Bash(printf <allowed readiness probe>)"
+    ],
+    "ask": ["Bash(printf <ask readiness probe>)"],
+    "deny": ["Bash(git push *--force*)", "Bash(git push *--delete*)", "Bash(git branch -D *)", "Bash(gh pr merge *--admin*)"]
+  }
+}
+```
+
+Add release, merge or other public-surface commands only when the assignment includes those
+effects. Command patterns are workflow control for a trusted agent, not operating-system
+isolation: an allowed test or build command runs repository code, and `gh` and `git push` rules
+do not check repository identity, review readiness or CI. The workflow still checks authority,
+review, CI and the exact target.
+
+When setting up or changing a profile, confirm it once with harmless probes before real work:
+the allowed probe runs, the ask probe and one unlisted command (for example an interpreter
+one-liner) are refused. Any other refusal during real work is a blocker to report unchanged.
+
+Launch or resume the session with its working directory set to the repository it must change,
+and add other task directories as working directories. A command that changes directory and then
+runs Git is evaluated separately, because Git can run hooks from the new directory, and was
+refused under such a profile even with `cd` allowed. Use one session start per repository
+instead. In one run, listed file commands on staging paths outside the working directories were
+refused and the same kind of work succeeded once those paths were working directories; keep task
+files inside the session's working directories.
+
+Environment failures are not permission problems. Example: `shasum` on macOS aborted under an
+inherited `C.UTF-8` locale; setting `LC_ALL`, `LANG` and `LC_CTYPE` to a supported locale such as
+`C` for that invocation fixed it. Diagnose the actual platform error rather than adding
+permissions or switching tools.
+
+### Auto-mode allowance
+
+Auto mode keeps the default protections and lets an AI classifier decide each action. An
+`autoMode.allow` entry can describe an allowance, for example ordinary pull-request merges in
+the task repository:
 
 ```json
 {
@@ -191,11 +251,16 @@ pull-request merges while the workflow still checks authority, review, CI and ca
   "autoMode": {
     "allow": [
       "$defaults",
-      "Ordinary pull-request merges in the current task repository are allowed. The task workflow owns authorization, independent review, validation and readiness. This grants tool permission, not an instruction to merge. It does not permit bypassing required reviews or checks, --admin or --force, direct default-branch pushes, releases, deployments or unrelated operations. All other default protections and explicit ask/deny rules remain."
+      "Ordinary pull-request merges in the current task repository are allowed. The task workflow owns authorization, review, validation and readiness. This grants tool permission, not an instruction to merge. It does not permit bypassing required reviews or checks, --admin or --force, direct default-branch pushes, releases, deployments or unrelated operations. All other default protections and explicit ask/deny rules remain."
     ]
   }
 }
 ```
 
-The example is not an installed setting. Applying it requires authority covering its effects.
-A real denial returns unchanged; do not route the same action through another agent to evade it.
+In practice the classifier refused a self-authored merge and later a public tag and release,
+even when a human approval was relayed in the brief. Prefer an explicit profile for delivery
+work that includes merge or release effects.
+
+Neither example is an installed setting. Applying one requires authority covering its effects.
+A real denial returns unchanged; do not route the same action through another agent, tool or
+command spelling to evade it.

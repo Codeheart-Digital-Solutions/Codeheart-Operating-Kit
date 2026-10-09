@@ -1,4 +1,4 @@
-Last updated: 2026-10-09T20:47:14Z (UTC)
+Last updated: 2026-10-10T00:45:00Z (UTC)
 
 # Coordinate Cross-Tool Task
 
@@ -134,6 +134,10 @@ assignment can now be commissioned.
    current phase, aimed at a real handoff such as source review. Honor an explicit opt-out.
 4. Write the request JSON with every concrete value, a new `attempt_id`, the exact return chat,
    and `session.mode` `new`, or `resume` with the retained session for the same assignment.
+   Set `working_directory` to the repository this attempt changes; when work moves to another
+   repository, resume the same session in a new attempt from that repository. With an explicit
+   `dontAsk` profile, confirm a new profile once with harmless probes first; see the contract's
+   permission profiles section.
 5. Note the attempt directory `<state_root>/attempts/<assignment_id>/<attempt_id>/` in the
    assignment record before dispatch.
 
