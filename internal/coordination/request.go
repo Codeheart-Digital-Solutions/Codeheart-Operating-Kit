@@ -26,8 +26,11 @@ var (
 	modelPattern      = regexp.MustCompile(`^[A-Za-z0-9][A-Za-z0-9._:/\[\]-]{0,127}$`)
 )
 
+// permissionModes are passed through unchanged. Newer CLIs name the default mode "manual" and
+// still accept "default".
 var permissionModes = map[string]bool{
 	"default":     true,
+	"manual":      true,
 	"acceptEdits": true,
 	"auto":        true,
 	"plan":        true,
@@ -174,7 +177,7 @@ func (r Request) Validate() error {
 	if r.Permissions.Mode == "bypassPermissions" {
 		add("permissions.mode bypassPermissions is not supported by this helper")
 	} else if !permissionModes[r.Permissions.Mode] {
-		add("permissions.mode must be one of default, acceptEdits, auto, plan, dontAsk")
+		add("permissions.mode must be one of default, manual, acceptEdits, auto, plan, dontAsk")
 	}
 	if r.Permissions.PermissionPrompts != "" && !permissionPromptValues[r.Permissions.PermissionPrompts] {
 		add("permissions.permission_prompts %q is unsupported", r.Permissions.PermissionPrompts)

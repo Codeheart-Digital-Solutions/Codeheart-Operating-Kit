@@ -20,6 +20,7 @@ const (
 	envFakeReleaseFile = "CH_COORD_FAKE_RELEASE_FILE"
 	envHelperRequest   = "CH_COORD_HELPER_REQUEST"
 	envHelperExitEarly = "CH_COORD_HELPER_EXIT_AFTER_START"
+	envFakeMkdir       = "CH_COORD_FAKE_MKDIR"
 )
 
 func TestMain(m *testing.M) {
@@ -80,6 +81,9 @@ func runFakeCLI(mode string) int {
 		}
 		out, _ := json.Marshal(fields)
 		os.Stdout.Write(append(out, '\n'))
+	}
+	if dir := os.Getenv(envFakeMkdir); dir != "" {
+		_ = os.MkdirAll(dir, 0o700)
 	}
 	reply := "echo:" + string(stdin)
 	switch mode {

@@ -40,17 +40,16 @@ func runInvokeClaude(args []string, stdout io.Writer, stderr io.Writer) int {
 		return writeArgError(stderr, "coordination invoke-claude", fmt.Errorf("--request is required"))
 	}
 	outcome, err := coordination.Invoke(coordination.Options{RequestPath: expandPath(values["--request"])})
-	if err != nil {
-		var requestErr *coordination.RequestError
-		if errors.As(err, &requestErr) {
-			_ = writeJSON(stdout, map[string]any{"status": "invalid_request", "problems": requestErr.Problems})
-			return 2
-		}
-		_ = writeJSON(stdout, map[string]any{"status": "helper_error", "detail": err.Error(), "attempt_dir": outcome.AttemptDir})
-		return 1
+	var requestErr *coordination.RequestError
+	if err != nil && !errors.As(err, &requestErr) {
+		outcome.Status = coordination.StatusHelperError
+		outcome.PersistenceErrors = append(outcome.PersistenceErrors, err.Error())
 	}
 	_ = writeJSON(stdout, outcome)
-	if outcome.Status == coordination.StatusResponseCaptured {
+	if requestErr != nil {
+		return 2
+	}
+	if outcome.Status == coordination.StatusResponseCaptured && len(outcome.PersistenceErrors) == 0 {
 		return 0
 	}
 	return 1

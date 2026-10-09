@@ -26,66 +26,92 @@ type Options struct {
 }
 
 // Outcome is the compact metadata printed to stdout; it never contains the reply text.
+// MessageFile and DeliveryFile are set only when this invocation wrote them. A relay loads the
+// MessageFile named here, never a fixed path. FallbackMessage carries a diagnostic addressed to
+// the coordinator-prepared return destination when no new message file could be written.
 type Outcome struct {
-	Status            string `json:"status"`
-	Detail            string `json:"detail,omitempty"`
-	AssignmentID      string `json:"assignment_id"`
-	AttemptID         string `json:"attempt_id"`
-	SessionID         string `json:"session_id,omitempty"`
-	AttemptDir        string `json:"attempt_dir"`
-	AttemptFile       string `json:"attempt_file,omitempty"`
-	MessageFile       string `json:"message_file,omitempty"`
-	DeliveryFile      string `json:"delivery_file,omitempty"`
-	PermissionDenials int    `json:"permission_denials"`
-	ChildExitCode     *int   `json:"child_exit_code,omitempty"`
+	Status            string            `json:"status"`
+	Detail            string            `json:"detail,omitempty"`
+	Problems          []string          `json:"problems,omitempty"`
+	AssignmentID      string            `json:"assignment_id,omitempty"`
+	AttemptID         string            `json:"attempt_id,omitempty"`
+	SessionID         string            `json:"session_id,omitempty"`
+	AttemptDir        string            `json:"attempt_dir,omitempty"`
+	AttemptFile       string            `json:"attempt_file,omitempty"`
+	MessageFile       string            `json:"message_file,omitempty"`
+	DeliveryFile      string            `json:"delivery_file,omitempty"`
+	FallbackMessage   *MessageArguments `json:"fallback_message,omitempty"`
+	PersistenceErrors []string          `json:"persistence_errors,omitempty"`
+	PermissionDenials int               `json:"permission_denials"`
+	ChildExitCode     *int              `json:"child_exit_code,omitempty"`
 }
+
+// Outcome statuses that exist only in helper output, never in an attempt record.
+const (
+	StatusInvalidRequest = "invalid_request"
+	StatusAttemptExists  = "attempt_exists"
+	StatusHelperError    = "helper_error"
+)
 
 // afterStartHook lets tests simulate helper death before child identity is recorded.
 var afterStartHook func()
 
 // Invoke validates the request, launches the CLI once and records original evidence. A
-// RequestError is returned before any attempt state exists; all later problems are outcomes.
+// RequestError is returned before any attempt state exists. Every outcome after the attempt
+// directory is created passes through one finish step that writes the attempt record, message
+// arguments and a pending delivery record, except a refused replay, which changes nothing.
 func Invoke(opts Options) (Outcome, error) {
 	requestPath, err := filepath.Abs(opts.RequestPath)
 	if err != nil {
-		return Outcome{}, &RequestError{Problems: []string{err.Error()}}
+		return Outcome{Status: StatusInvalidRequest, Problems: []string{err.Error()}}, &RequestError{Problems: []string{err.Error()}}
 	}
 	request, raw, err := LoadRequest(requestPath)
 	if err != nil {
-		return Outcome{}, err
+		outcome := Outcome{Status: StatusInvalidRequest, AssignmentID: request.AssignmentID, AttemptID: request.AttemptID}
+		var requestErr *RequestError
+		if errors.As(err, &requestErr) {
+			outcome.Problems = requestErr.Problems
+		}
+		outcome.FallbackMessage = fallbackMessage(request, outcome.Status, "the request was rejected before launch: "+strings.Join(outcome.Problems, "; "))
+		return outcome, err
 	}
 	digest := sha256.Sum256(raw)
 
 	// Capture launcher identity before creating the attempt or the session lock.
 	launcher := currentIdentity()
 
+	attemptDir := AttemptDir(request.StateRoot, request.AssignmentID, request.AttemptID)
+	outcome := Outcome{AssignmentID: request.AssignmentID, AttemptID: request.AttemptID, AttemptDir: attemptDir}
+	helperError := func(detail string) (Outcome, error) {
+		outcome.Status, outcome.Detail = StatusHelperError, detail
+		outcome.FallbackMessage = fallbackMessage(request, outcome.Status, detail+"; no attempt record was written")
+		return outcome, nil
+	}
+
 	sessionID := request.Session.ID
 	if request.Session.Mode == "new" {
 		if sessionID, err = NewSessionID(); err != nil {
-			return Outcome{}, fmt.Errorf("allocate session id: %w", err)
+			return helperError(fmt.Sprintf("allocate session id: %v", err))
 		}
 	}
+	outcome.SessionID = sessionID
 
-	attemptDir := AttemptDir(request.StateRoot, request.AssignmentID, request.AttemptID)
-	outcome := Outcome{
-		AssignmentID: request.AssignmentID,
-		AttemptID:    request.AttemptID,
-		SessionID:    sessionID,
-		AttemptDir:   attemptDir,
-	}
 	if err := os.MkdirAll(filepath.Dir(attemptDir), 0o700); err != nil {
-		return Outcome{}, fmt.Errorf("create attempt parent: %w", err)
+		return helperError(fmt.Sprintf("create attempt parent: %v", err))
 	}
 	if err := os.Mkdir(attemptDir, 0o700); err != nil {
 		if errors.Is(err, os.ErrExist) {
-			outcome.Status = "attempt_exists"
-			outcome.Detail = "this attempt was already started; inspect its record instead of replaying it"
+			// A refused replay must not touch the earlier attempt, its message or its delivery.
+			outcome.Status = StatusAttemptExists
+			outcome.SessionID = ""
 			outcome.AttemptFile = filepath.Join(attemptDir, AttemptFile)
+			outcome.Detail = "this attempt was already started; nothing was launched and the existing attempt, message and delivery records were left unchanged"
+			outcome.FallbackMessage = fallbackMessage(request, outcome.Status, outcome.Detail+"; this is a new refusal notice, not the earlier result. Existing record: "+outcome.AttemptFile)
 			return outcome, nil
 		}
-		return Outcome{}, fmt.Errorf("create attempt directory: %w", err)
+		return helperError(fmt.Sprintf("create attempt directory: %v", err))
 	}
-	outcome.AttemptFile = filepath.Join(attemptDir, AttemptFile)
+	attemptFile := filepath.Join(attemptDir, AttemptFile)
 
 	record := &AttemptRecord{
 		SchemaVersion:     RequestSchemaVersion,
@@ -106,10 +132,54 @@ func Invoke(opts Options) (Outcome, error) {
 	}
 	save := func() error {
 		record.UpdatedAt = timestamp()
-		return writeJSONAtomic(outcome.AttemptFile, record)
+		return writeJSONAtomic(attemptFile, record)
 	}
 	if err := save(); err != nil {
-		return Outcome{}, fmt.Errorf("write attempt record: %w", err)
+		return helperError(fmt.Sprintf("write attempt record: %v", err))
+	}
+	outcome.AttemptFile = attemptFile
+
+	lockPath := SessionLockPath(request.StateRoot, sessionID)
+	var parsed streamResult
+	// finish writes the final record, message arguments and pending delivery for this attempt.
+	// It releases the session lock only when this launcher owns it and no child can still run.
+	finish := func(releaseLock bool) (Outcome, error) {
+		outcome.Status, outcome.Detail = record.Status, record.Detail
+		outcome.PermissionDenials = len(record.PermissionDenials)
+		if err := save(); err != nil {
+			outcome.PersistenceErrors = append(outcome.PersistenceErrors, "attempt record: "+err.Error())
+		}
+		message := MessageArguments{
+			ThreadID: request.ReturnDestination.ThreadID,
+			HostID:   request.ReturnDestination.HostID,
+			Prompt:   composeMessage(record, parsed, attemptDir, sessionID),
+		}
+		messagePath := filepath.Join(attemptDir, MessageFile)
+		if err := writeJSONAtomic(messagePath, message); err != nil {
+			outcome.PersistenceErrors = append(outcome.PersistenceErrors, "message file: "+err.Error())
+			outcome.FallbackMessage = &message
+		} else {
+			outcome.MessageFile = messagePath
+		}
+		now := timestamp()
+		deliveryPath := filepath.Join(attemptDir, DeliveryFile)
+		// Persist pending before any send is attempted.
+		if err := writeJSONAtomic(deliveryPath, DeliveryRecord{
+			Status:            DeliveryPending,
+			PreparedRecipient: request.ReturnDestination,
+			CreatedAt:         now,
+			UpdatedAt:         now,
+		}); err != nil {
+			outcome.PersistenceErrors = append(outcome.PersistenceErrors, "delivery record: "+err.Error())
+		} else {
+			outcome.DeliveryFile = deliveryPath
+		}
+		if releaseLock {
+			if err := releaseOwnLock(lockPath, launcher); err != nil {
+				outcome.PersistenceErrors = append(outcome.PersistenceErrors, "session lock not released: "+err.Error())
+			}
+		}
+		return outcome, nil
 	}
 
 	lock := SessionLock{
@@ -120,7 +190,6 @@ func Invoke(opts Options) (Outcome, error) {
 		Launcher:     launcher,
 		CreatedAt:    timestamp(),
 	}
-	lockPath := SessionLockPath(request.StateRoot, sessionID)
 	if owner, err := acquireLock(lockPath, lock); err != nil {
 		if owner != nil {
 			record.Status = StatusSessionLocked
@@ -130,20 +199,15 @@ func Invoke(opts Options) (Outcome, error) {
 			record.Status = StatusLaunchFailed
 			record.Detail = fmt.Sprintf("session lock could not be created: %v", err)
 		}
-		_ = save()
-		outcome.Status, outcome.Detail = record.Status, record.Detail
-		return outcome, nil
+		return finish(false)
 	}
 
 	stdoutPath := filepath.Join(attemptDir, StdoutFile)
 	stderrPath := filepath.Join(attemptDir, StderrFile)
 	launchFail := func(detail string) (Outcome, error) {
-		record.Status, record.Detail = StatusLaunchFailed, detail
-		_ = save()
 		// No child exists, and this launcher owns the lock: releasing it is safe.
-		_ = os.Remove(lockPath)
-		outcome.Status, outcome.Detail = record.Status, record.Detail
-		return outcome, nil
+		record.Status, record.Detail = StatusLaunchFailed, detail
+		return finish(true)
 	}
 	stdoutFile, err := os.OpenFile(stdoutPath, os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0o600)
 	if err != nil {
@@ -182,7 +246,9 @@ func Invoke(opts Options) (Outcome, error) {
 	host, _ := os.Hostname()
 	record.Child = &ChildRecord{PID: cmd.Process.Pid, Host: host, StartedAt: timestamp()}
 	record.Status = StatusRunning
-	_ = save()
+	if err := save(); err != nil {
+		outcome.PersistenceErrors = append(outcome.PersistenceErrors, "running state: "+err.Error())
+	}
 
 	interrupt := opts.Interrupt
 	if interrupt == nil {
@@ -207,9 +273,7 @@ func Invoke(opts Options) (Outcome, error) {
 		}
 		record.Status = StatusHelperInterrupted
 		record.Detail = fmt.Sprintf("helper received %v; %s; effects are uncertain and the session lock is retained", sig, state)
-		_ = save()
-		outcome.Status, outcome.Detail = record.Status, record.Detail
-		return outcome, nil
+		return finish(false)
 	}
 
 	record.Child.EndedAt = timestamp()
@@ -226,43 +290,26 @@ func Invoke(opts Options) (Outcome, error) {
 	_ = stdoutFile.Sync()
 	_ = stderrFile.Sync()
 
-	parsed := parseStream(stdoutPath)
+	parsed = parseStream(stdoutPath)
 	applyParsed(record, parsed, stdoutPath)
 	record.Status, record.Detail = classify(record, parsed, exitCode, signaled, waitErr, sessionID, stderrPath)
-	outcome.Status, outcome.Detail = record.Status, record.Detail
 	outcome.ChildExitCode = &exitCode
-	outcome.PermissionDenials = len(record.PermissionDenials)
-
-	message := MessageArguments{
-		ThreadID: request.ReturnDestination.ThreadID,
-		HostID:   request.ReturnDestination.HostID,
-		Prompt:   composeMessage(record, parsed, attemptDir, sessionID),
-	}
-	outcome.MessageFile = filepath.Join(attemptDir, MessageFile)
-	outcome.DeliveryFile = filepath.Join(attemptDir, DeliveryFile)
-	if err := writeJSONAtomic(outcome.MessageFile, message); err != nil {
-		record.Detail = strings.TrimSpace(record.Detail + "; message file not written: " + err.Error())
-		outcome.MessageFile = ""
-	}
-	now := timestamp()
-	// Persist pending before any send is attempted.
-	if err := writeJSONAtomic(outcome.DeliveryFile, DeliveryRecord{
-		Status:            DeliveryPending,
-		PreparedRecipient: request.ReturnDestination,
-		CreatedAt:         now,
-		UpdatedAt:         now,
-	}); err != nil {
-		record.Detail = strings.TrimSpace(record.Detail + "; delivery record not written: " + err.Error())
-		outcome.DeliveryFile = ""
-	}
-	if err := save(); err != nil {
-		return outcome, fmt.Errorf("write final attempt record: %w", err)
-	}
 	// The child has exited and this launcher owns the lock.
-	if err := releaseOwnLock(lockPath, launcher); err != nil {
-		outcome.Detail = strings.TrimSpace(outcome.Detail + "; lock not released: " + err.Error())
+	return finish(true)
+}
+
+// fallbackMessage addresses a diagnostic to the coordinator-prepared return destination when no
+// attempt message file exists for this invocation. It returns nil when the request supplied no
+// usable destination; the relay then reports only to its commissioning coordinator.
+func fallbackMessage(request Request, status string, detail string) *MessageArguments {
+	if !plainValue(request.ReturnDestination.ThreadID) || !plainValue(request.ReturnDestination.HostID) {
+		return nil
 	}
-	return outcome, nil
+	var b strings.Builder
+	fmt.Fprintf(&b, "Claude CLI attempt %s for assignment %s: %s.\n", request.AttemptID, request.AssignmentID, status)
+	fmt.Fprintf(&b, "Detail: %s\n", detail)
+	b.WriteString("Transport status only; no CLI reply is attached and nothing was retried.")
+	return &MessageArguments{ThreadID: request.ReturnDestination.ThreadID, HostID: request.ReturnDestination.HostID, Prompt: b.String()}
 }
 
 func acquireLock(path string, lock SessionLock) (*SessionLock, error) {
@@ -285,6 +332,8 @@ func acquireLock(path string, lock SessionLock) (*SessionLock, error) {
 	syncErr := file.Sync()
 	closeErr := file.Close()
 	if err := errors.Join(writeErr, syncErr, closeErr); err != nil {
+		// This launcher created the lock exclusively and no child exists: do not leave it behind.
+		_ = os.Remove(path)
 		return nil, err
 	}
 	return nil, nil
@@ -463,7 +512,15 @@ func composeMessage(record *AttemptRecord, parsed streamResult, attemptDir strin
 	case parsed.replyIsString:
 		fmt.Fprintf(&b, "Original reply (%d characters): %s, line %d, JSON field \"result\".", len([]rune(parsed.reply)), filepath.Join(attemptDir, StdoutFile), parsed.resultLine)
 	default:
-		fmt.Fprintf(&b, "No final reply was captured. Original output: %s; stderr: %s.", filepath.Join(attemptDir, StdoutFile), filepath.Join(attemptDir, StderrFile))
+		b.WriteString("No final reply was captured.")
+		if record.Child == nil {
+			b.WriteString(" No CLI process was recorded as started for this attempt.")
+		} else {
+			fmt.Fprintf(&b, " Original CLI output: %s; stderr: %s.", filepath.Join(attemptDir, StdoutFile), filepath.Join(attemptDir, StderrFile))
+		}
+		if record.LockOwner != nil {
+			fmt.Fprintf(&b, " Session held by attempt %s of assignment %s.", record.LockOwner.AttemptID, record.LockOwner.AssignmentID)
+		}
 	}
 	return b.String()
 }

@@ -184,7 +184,7 @@ func TestInvokeCapturesOriginalReplyWithExactArgsStdinAndRecipient(t *testing.T)
 	if err != nil {
 		t.Fatal(err)
 	}
-	if record.ActualSession != outcome.SessionID || record.RequestedSession != outcome.SessionID || record.CLIVersion != "2.1.153" || record.ActualModel != "claude-example-model" {
+	if record.ActualSession != outcome.SessionID || record.RequestedSession != outcome.SessionID || record.CLIVersion != "2.1.286" || record.ActualModel != "claude-example-model" {
 		t.Fatalf("record identity = %+v", record)
 	}
 	if record.Child == nil || record.Child.PID != fake.PID || record.Child.ExitCode == nil || *record.Child.ExitCode != 0 {
@@ -383,6 +383,102 @@ func TestReplayedAttemptIsRefusedAndOriginalPreserved(t *testing.T) {
 	}
 }
 
+func TestReplayRefusalDoesNotResendOrResetEarlierDelivery(t *testing.T) {
+	h := newHarness(t, "success")
+	path := h.request("assign-a", "attempt-1", "brief", nil)
+	first := mustInvoke(t, path)
+	if _, err := RecordDelivery(DeliveryInput{AttemptDir: first.AttemptDir, Status: DeliverySent, ReportedThreadID: "thread-assign-a"}); err != nil {
+		t.Fatal(err)
+	}
+	messageBefore, _ := os.ReadFile(first.MessageFile)
+	deliveryBefore, _ := os.ReadFile(first.DeliveryFile)
+	second := mustInvoke(t, path)
+	if second.Status != StatusAttemptExists || second.MessageFile != "" || second.DeliveryFile != "" {
+		t.Fatalf("replay outcome = %+v", second)
+	}
+	messageAfter, _ := os.ReadFile(first.MessageFile)
+	deliveryAfter, _ := os.ReadFile(first.DeliveryFile)
+	if string(messageBefore) != string(messageAfter) || string(deliveryBefore) != string(deliveryAfter) {
+		t.Fatal("replay regenerated the message or reset the delivery receipt")
+	}
+	fallback := second.FallbackMessage
+	if fallback == nil || fallback.ThreadID != "thread-assign-a" || fallback.HostID != "local" {
+		t.Fatalf("refusal notice not addressed to the prepared destination: %+v", fallback)
+	}
+	if strings.Contains(fallback.Prompt, "echo:") || !strings.Contains(fallback.Prompt, "not the earlier result") {
+		t.Fatalf("refusal notice resends or misdescribes the old result:\n%s", fallback.Prompt)
+	}
+}
+
+func assertNotificationFiles(t *testing.T, outcome Outcome, status string) MessageArguments {
+	t.Helper()
+	if outcome.Status != status {
+		t.Fatalf("status = %s (%s), want %s", outcome.Status, outcome.Detail, status)
+	}
+	if outcome.MessageFile != filepath.Join(outcome.AttemptDir, MessageFile) || outcome.DeliveryFile != filepath.Join(outcome.AttemptDir, DeliveryFile) || len(outcome.PersistenceErrors) != 0 {
+		t.Fatalf("notification files not reported: %+v", outcome)
+	}
+	message := readMessage(t, outcome)
+	if !strings.Contains(message.Prompt, status) {
+		t.Fatalf("message hides status %s:\n%s", status, message.Prompt)
+	}
+	var delivery DeliveryRecord
+	if err := readJSON(outcome.DeliveryFile, &delivery); err != nil || delivery.Status != DeliveryPending {
+		t.Fatalf("delivery = %+v, %v", delivery, err)
+	}
+	record, err := ReadAttempt(outcome.AttemptDir)
+	if err != nil || record.Status != status {
+		t.Fatalf("record = %+v, %v", record, err)
+	}
+	return message
+}
+
+func TestLaunchFailureWritesNotificationAndReleasesOwnLock(t *testing.T) {
+	h := newHarness(t, "success")
+	notExecutable := filepath.Join(h.root, "not executable.txt")
+	writeFile(t, notExecutable, "plain text")
+	outcome := mustInvoke(t, h.request("assign-a", "attempt-1", "brief", func(r map[string]any) { r["executable"] = notExecutable }))
+	message := assertNotificationFiles(t, outcome, StatusLaunchFailed)
+	if !strings.Contains(message.Prompt, "No CLI process was recorded as started") || strings.Contains(message.Prompt, StdoutFile) {
+		t.Fatalf("launch failure message:\n%s", message.Prompt)
+	}
+	if _, err := os.Stat(SessionLockPath(h.stateRoot, outcome.SessionID)); !errors.Is(err, os.ErrNotExist) {
+		t.Fatal("launch failure left its own lock")
+	}
+}
+
+func TestInvalidRequestFallbackUsesOnlyThePreparedDestination(t *testing.T) {
+	h := newHarness(t, "success")
+	outcome, err := Invoke(Options{RequestPath: h.request("assign-a", "attempt-1", "brief", func(r map[string]any) { r["model"] = "" })})
+	if err == nil || outcome.Status != StatusInvalidRequest || outcome.FallbackMessage == nil || outcome.FallbackMessage.ThreadID != "thread-assign-a" || outcome.MessageFile != "" {
+		t.Fatalf("outcome = %+v, err = %v", outcome, err)
+	}
+	outcome, _ = Invoke(Options{RequestPath: h.request("assign-b", "attempt-1", "brief", func(r map[string]any) {
+		r["model"] = ""
+		r["return_destination"] = map[string]any{"thread_id": "", "host_id": "local"}
+	})})
+	if outcome.FallbackMessage != nil {
+		t.Fatalf("fallback invented a destination: %+v", outcome.FallbackMessage)
+	}
+}
+
+func TestPersistenceFailureIsReportedNotClaimed(t *testing.T) {
+	h := newHarness(t, "success")
+	// Occupy the message path with a directory so the atomic rename fails.
+	blocked := filepath.Join(AttemptDir(h.stateRoot, "assign-a", "attempt-1"), MessageFile)
+	t.Setenv(envFakeMkdir, blocked)
+	outcome := mustInvoke(t, h.request("assign-a", "attempt-1", "brief", nil))
+	if outcome.MessageFile != "" || len(outcome.PersistenceErrors) == 0 || outcome.FallbackMessage == nil {
+		t.Fatalf("persistence failure hidden: %+v", outcome)
+	}
+	if !strings.Contains(outcome.FallbackMessage.Prompt, "Original reply (unchanged):\necho:brief") || outcome.FallbackMessage.ThreadID != "thread-assign-a" {
+		t.Fatalf("fallback does not carry the composed message:\n%+v", outcome.FallbackMessage)
+	}
+	if outcome.DeliveryFile == "" {
+		t.Fatal("pending delivery should still be recorded")
+	}
+}
+
 func TestDistinctConcurrentAssignmentsStayIsolated(t *testing.T) {
 	h := newHarness(t, "slow")
 	paths := []string{
@@ -440,6 +536,13 @@ func TestSameSessionCollisionLaunchesNoSecondWriter(t *testing.T) {
 	if len(h.fakeRecords()) != 1 {
 		t.Fatal("second writer launched")
 	}
+	message := assertNotificationFiles(t, second, StatusSessionLocked)
+	if !strings.Contains(message.Prompt, "Session held by attempt attempt-1") {
+		t.Fatalf("locked message does not name the holder:\n%s", message.Prompt)
+	}
+	if _, err := os.Stat(SessionLockPath(h.stateRoot, session)); err != nil {
+		t.Fatal("refused attempt released another attempt's lock")
+	}
 	writeFile(t, h.release, "go")
 	first := <-done
 	if first.Status != StatusResponseCaptured {
@@ -468,9 +571,10 @@ func TestHelperInterruptRetainsLockAndEvidence(t *testing.T) {
 	if _, err := os.Stat(SessionLockPath(h.stateRoot, outcome.SessionID)); err != nil {
 		t.Fatal("lock not retained after helper interruption")
 	}
-	_, err := ReleaseLock(ReleaseInput{StateRoot: h.stateRoot, SessionID: outcome.SessionID, AssignmentID: "assign-a", AttemptID: "attempt-1"})
+	assertNotificationFiles(t, outcome, StatusHelperInterrupted)
+	_, err := ReleaseLock(ReleaseInput{StateRoot: h.stateRoot, SessionID: outcome.SessionID, AssignmentID: "assign-a", AttemptID: "attempt-1", ManualVerification: "statement cannot override a live launcher"})
 	var refusal *ReleaseRefusal
-	if !errors.As(err, &refusal) {
+	if !errors.As(err, &refusal) || refusal.Reason != "launcher_alive_or_unknown" {
 		t.Fatalf("release while launcher/child alive = %v", err)
 	}
 	writeFile(t, h.release, "go")
@@ -501,7 +605,7 @@ func TestKilledHelperLeavesChildOutputAndGuardedRelease(t *testing.T) {
 		t.Fatal("child should survive helper termination in this fixture")
 	}
 	session := record.RequestedSession
-	_, err := ReleaseLock(ReleaseInput{StateRoot: h.stateRoot, SessionID: session, AssignmentID: "assign-a", AttemptID: "attempt-1"})
+	_, err := ReleaseLock(ReleaseInput{StateRoot: h.stateRoot, SessionID: session, AssignmentID: "assign-a", AttemptID: "attempt-1", ManualVerification: "statement cannot override a live child"})
 	var refusal *ReleaseRefusal
 	if !errors.As(err, &refusal) || refusal.Reason != "child_alive_or_unknown" {
 		t.Fatalf("release while child alive = %v", err)
@@ -641,4 +745,55 @@ func waitFor(t *testing.T, condition func() bool) {
 		time.Sleep(10 * time.Millisecond)
 	}
 	t.Fatal("condition not reached before deadline")
+}
+
+func TestUnreadableLockStaysRefusedEvenWithStatement(t *testing.T) {
+	stateRoot := filepath.Join(t.TempDir(), "state")
+	session := "0a1b2c3d-1111-4222-8333-444455556666"
+	lockPath := SessionLockPath(stateRoot, session)
+	if err := os.MkdirAll(filepath.Dir(lockPath), 0o700); err != nil {
+		t.Fatal(err)
+	}
+	writeFile(t, lockPath, "")
+	_, err := ReleaseLock(ReleaseInput{StateRoot: stateRoot, SessionID: session, AssignmentID: "assign-a", AttemptID: "attempt-1", ManualVerification: "statement cannot establish ownership"})
+	var refusal *ReleaseRefusal
+	if !errors.As(err, &refusal) || refusal.Reason != "owner_unknown" {
+		t.Fatalf("release of unreadable lock = %v", err)
+	}
+	if _, err := os.Stat(lockPath); err != nil {
+		t.Fatal("unreadable lock was removed")
+	}
+}
+
+func TestInvokePassesOptionalSettingsExactly(t *testing.T) {
+	h := newHarness(t, "success")
+	extra := filepath.Join(h.root, "extra dir")
+	if err := os.MkdirAll(extra, 0o700); err != nil {
+		t.Fatal(err)
+	}
+	settings := filepath.Join(h.root, "role profile.json")
+	writeFile(t, settings, "{}")
+	outcome := mustInvoke(t, h.request("assign-a", "attempt-1", "brief", func(r map[string]any) {
+		r["effort"] = "high"
+		r["permissions"] = map[string]any{
+			"mode":                "auto",
+			"permission_prompts":  "none",
+			"tools":               []string{"Read", "Write"},
+			"allowed_tools":       []string{"Read"},
+			"settings_file":       settings,
+			"add_dirs":            []string{extra},
+			"disable_mcp_servers": true,
+			"disable_chrome":      true,
+		}
+	}))
+	if outcome.Status != StatusResponseCaptured {
+		t.Fatalf("outcome = %+v", outcome)
+	}
+	want := []string{"--print", "--output-format", "stream-json", "--verbose", "--model", "claude-example-model",
+		"--session-id", outcome.SessionID, "--permission-mode", "auto", "--permission-prompts", "none",
+		"--effort", "high", "--settings", settings, "--strict-mcp-config", "--mcp-config", `{"mcpServers":{}}`,
+		"--no-chrome", "--tools", "Read,Write", "--allowedTools", "Read", "--add-dir", extra}
+	if got := h.fakeRecords()[0].Args; !reflect.DeepEqual(got, want) {
+		t.Fatalf("argv = %#v\nwant %#v", got, want)
+	}
 }
