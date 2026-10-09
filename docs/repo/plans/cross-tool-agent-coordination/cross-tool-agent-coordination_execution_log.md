@@ -1,4 +1,4 @@
-Last updated: 2026-10-09T20:59:53Z (UTC)
+Last updated: 2026-10-09T21:14:24Z (UTC)
 Created: 2026-10-09
 
 # Cross-Tool Agent Coordination Execution Log
@@ -227,6 +227,34 @@ Checks:
 
 Still pending: the director's source acceptance and the retained reviewer's focused follow-up on
 the frozen candidate. The Epic 3 gates below are unchanged.
+
+## Source Acceptance And Release Candidate
+
+The retained independent reviewer's focused follow-up on `f903045` concluded **Ready** for
+source acceptance:
+- All of M-1 to M-3 and L-1 to L-2 are closed.
+- It accepted the local-settings and fail-closed lock remedies, both parser fixes and the
+  primary-review amendment.
+- It noted one Low wording leftover.
+
+The director, as primary reviewer, read the original, inspected the changes, reran both parser
+regression tests and accepted the source outcomes of Epics 1 and 2 at `f903045`. Source
+acceptance leaves native, platform and installed-lifecycle proof to this epic.
+
+The Low wording is corrected: the execute runbook's goal-handoff example now reads "such as the
+source-review handoff". The producer's `change-operating-kit.md` independent-review requirement
+is retained deliberately as this repository's binding source gate.
+
+Release candidate `v0.1.35`, the next unused patch after published `v0.1.34`:
+- Release identity, the agent-interface and planning-workflows component versions and checksums,
+  the standard profile, the content-graph digest, mirrors and release notes are updated.
+- The release-candidate asset-name fixture is now at the current version. The release-identity
+  validator checks it, with a negative test, so this drift is caught before dispatch.
+- Permission and security wording review: the managed permission-profile example, denial
+  handling and the helper's refused `bypassPermissions` are unchanged from the accepted source.
+  Release notes describe the example as an invocation-scoped, non-installed allowance for
+  ordinary task-repository merges with defaults and ask/deny rules retained. No audience,
+  platform, signing or setting is widened.
 
 ## Current State And Remaining Evidence
 
