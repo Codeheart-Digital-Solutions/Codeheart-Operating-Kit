@@ -1,4 +1,4 @@
-Last updated: 2026-10-09T15:53:13Z (UTC)
+Last updated: 2026-10-09T15:56:45Z (UTC)
 Created: 2026-10-09
 Status: draft
 
@@ -42,12 +42,11 @@ implementation and its delivery grant remain for review.
 | internal/cli/cli.go, internal/commands/, components/agent-interface/component.yaml | Existing compiled command and managed-content delivery paths. |
 
 Authoring checkpoint: source placement, relative links, public-core hygiene, Markdown timestamps
-and canonical plan catalog were checked. The fresh independent reviewer judged corrected
-candidate 7edfde4 Ready (plan only); see [the review record](attachments/independent-plan-review.md).
-The first-use amendment candidate 40a80ab received Needs improvement: conflicting onboarding
-defaults also exist outside the runbook. The corrections and low-severity clarifications below
-are submitted for focused review; the older Ready verdict does not cover this candidate. Execution approval remains outstanding. Runtime behavior is planned, not proven
-by document checks.
+and canonical plan catalog were checked. The independent Claude reviewer judged corrected
+candidate b6132dd **Ready (plan only)** after closing all material and low-severity amendment
+findings; see [the review record](attachments/independent-plan-review.md). The coordinator read
+the original response and accepted that assessment. Execution approval remains outstanding.
+Runtime behavior is planned, not proven by document checks or this planning verdict.
 
 ## Contents
 
@@ -640,6 +639,9 @@ rules. Recheck the affected boundary, retain original failures and adapt one rec
 every transient failure into framework work. No AWS or product feature implementation is included.
 
 # Revision Notes
+
+- 2026-10-09: recorded independent Ready verdict on b6132dd and closure of the amendment findings.
+  This update records review status only; implementation remains draft and inactive.
 
 - 2026-10-09: addressed the amendment review: align all existing onboarding output/mirror/test
   surfaces, specify the oracle decision and impact, clarify uncertain-lock recovery, name behavioral

@@ -1,4 +1,4 @@
-Last updated: 2026-10-09T15:53:13Z (UTC)
+Last updated: 2026-10-09T15:56:45Z (UTC)
 Created: 2026-10-05
 Status: completed
 
@@ -422,7 +422,8 @@ failure and return to the coordinator instead of adding unattended retry infrast
 The user delegated consolidation and bounded helper design for planning on 2026-10-09. The capability
 blocks freeze the chosen first delivery while leaving safe command/file details to implementation.
 The [implementation plan](cross-tool-agent-coordination_implementation_doc.md) is draft and inactive.
-Next review is of that coherent plan. No live relay appointment, policy installation, implementation,
+The coherent plan candidate b6132dd has independent Ready review; see its review attachment.
+No live relay appointment, policy installation, implementation,
 release or consumer upgrade is authorized merely by this discovery checkpoint.
 
 ## Revision Notes

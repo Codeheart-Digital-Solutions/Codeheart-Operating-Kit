@@ -1,6 +1,10 @@
-Last updated: 2026-10-09T15:53:13Z (UTC)
+Last updated: 2026-10-09T15:56:45Z (UTC)
 
 # Independent Cross-Tool Coordination Plan Review
+
+**Current verdict: Ready (plan candidate b6132dd).** The same independent reviewer closed all
+first-use amendment findings. Coordinator read the original response and accepted the result;
+no implementation or publication authority is inferred. Earlier reviews below preserve history.
 
 Candidate reviewed: cf38d0e. Reviewer: fresh Claude Opus 5.5 CLI session, read-only, independent
 of plan authorship. The coordinator read the original response and verified process/session
@@ -39,14 +43,14 @@ The reviewer accepted all H-1/M-1 through M-5/L-1/L-2 corrections. One Low follo
 the attempt must retain process identity and describe deliberate lock release after exit. The
 plan now names launcher/child IDs plus start identities, refuses release while alive/unknown,
 checks the named lock owner and tests release after verified exit. This final clarification was
-suggested by the reviewer; no additional independent review is claimed for the final wording.
+suggested by the reviewer and subsequently checked in the amendment review below.
 
 After that review, the user requested more visible findings and questioned unnecessary artifacts.
 The plan/discovery now require the coordinator to show material findings, their significance and
 its disposition; they clarify that response.md is an optional generated view of the normal final
 reply. Runtime evidence is ignored, minimal and eligible for ordinary authorized cleanup after
-acceptance/recovery needs end. These are subsequent author-checked user clarifications, not
-findings retroactively attributed to the independent reviewer.
+acceptance/recovery needs end. These originated as user clarifications and were subsequently
+accepted by the independent reviewer; they were not findings from the original review.
 
 The draft remains inactive. Ready is a planning verdict; live host lifetime, installed helper
 behavior, failure proof, real adoption and onboarding remain implementation acceptance work.
@@ -61,9 +65,9 @@ scope. Small missing-service and preservation fixtures complement the existing r
 
 The same reviewer returned **Needs improvement** on 40a80ab, supporting the design but identifying
 one Medium scope gap. CEO read the original response and verified session, successful execution,
-no denied tools and the actual return receipt. The corrections below are submitted for focused
-review; no Ready verdict is claimed for them yet. Epic 1 remains M and the three-epic sequence
-and helper role are unchanged.
+no denied tools and the actual return receipt. Focused review of b6132dd returned **Ready**,
+closing all four findings and confirming no introduced contradiction. Epic 1 remains M and the
+three-epic sequence and helper role are unchanged.
 
 | Amendment finding | Coordinator disposition |
 | --- | --- |
@@ -77,3 +81,13 @@ Reviewer accepted human-visible findings, coordinator judgment, optional generat
 minimal ignored evidence. Its final broad phrase about Windows being unqualified is read narrowly:
 Go/build/installed command acceptance still covers supported release platforms; live Windows
 Claude/desktop wakeup is the unqualified portion. No existing native release gate is removed.
+
+## Final Amendment Acceptance
+
+Coordinator verified the original closure response, expected retained session, exit zero and no
+permission denials. All amendment findings and optional scope clarifications are closed. No new
+plan changes are required. Runtime lifetime/interruption, installed denial capture, exact argument
+passing, fresh-director wakeup, first-use probes, preservation fixtures and onboarding parity remain
+implementation acceptance obligations. Relay creation from scratch retains fixture-only coverage;
+Windows live Claude/desktop wakeup remains unqualified. Plan activation still requires the owner's
+whole-plan decision; this record is a completed review, not implementation acceptance.
