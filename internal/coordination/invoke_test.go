@@ -305,6 +305,48 @@ func TestInvokeRecordsChildKilledBySignal(t *testing.T) {
 	}
 }
 
+func TestInvokeKeepsEarlierResultDenialsAndLocations(t *testing.T) {
+	h := newHarness(t, "multi_result")
+	outcome := mustInvoke(t, h.request("assign-a", "attempt-1", "brief", nil))
+	if outcome.Status != StatusResponseCaptured || outcome.PermissionDenials != 1 {
+		t.Fatalf("outcome = %+v", outcome)
+	}
+	record, err := ReadAttempt(outcome.AttemptDir)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(record.PermissionDenials) != 1 || record.PermissionDenials[0].ToolName != "Write" {
+		t.Fatalf("earlier denial lost: %+v", record.PermissionDenials)
+	}
+	// Stream lines: 1 init, 2 first result with the substantive reply, 3 later completion.
+	if record.Response == nil || record.Response.Line != 3 {
+		t.Fatalf("final response locator = %+v", record.Response)
+	}
+	want := ResponseLocator{File: filepath.Join(outcome.AttemptDir, StdoutFile), Line: 2, JSONField: "result", Chars: len([]rune("Substantive handoff: the Write call was denied."))}
+	if len(record.EarlierResponses) != 1 || record.EarlierResponses[0] != want {
+		t.Fatalf("earlier responses = %+v, want %+v", record.EarlierResponses, want)
+	}
+	message := readMessage(t, outcome)
+	if !strings.Contains(message.Prompt, "Permission denials: 1.") || !strings.Contains(message.Prompt, "line(s) 2, JSON field \"result\"") {
+		t.Fatalf("message hides the earlier result or denial:\n%s", message.Prompt)
+	}
+	if strings.Contains(message.Prompt, "Substantive handoff") {
+		t.Fatalf("message copied an earlier reply instead of locating it:\n%s", message.Prompt)
+	}
+	if !strings.Contains(message.Prompt, "Original reply (unchanged):\nBackground task finished.") {
+		t.Fatalf("final reply not preserved:\n%s", message.Prompt)
+	}
+}
+
+func TestAppendDenialsDeduplicatesRepeatedToolUse(t *testing.T) {
+	got := appendDenials(nil, []Denial{{ToolName: "Write", ToolUseID: "a"}, {ToolName: "Bash"}})
+	got = appendDenials(got, []Denial{{ToolName: "Write", ToolUseID: "a"}, {ToolName: "Bash"}, {ToolName: "Edit", ToolUseID: "b"}})
+	want := []Denial{{ToolName: "Write", ToolUseID: "a"}, {ToolName: "Bash"}, {ToolName: "Bash"}, {ToolName: "Edit", ToolUseID: "b"}}
+	if !reflect.DeepEqual(got, want) {
+		t.Fatalf("denials = %+v, want %+v", got, want)
+	}
+}
+
 func TestInvokePreservesRealDenialMetadata(t *testing.T) {
 	h := newHarness(t, "denial")
 	outcome := mustInvoke(t, h.request("assign-a", "attempt-1", "brief", nil))

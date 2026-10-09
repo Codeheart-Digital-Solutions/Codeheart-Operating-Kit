@@ -107,18 +107,21 @@ type AttemptRecord struct {
 	Child             *ChildRecord     `json:"child,omitempty"`
 	LockOwner         *SessionLock     `json:"blocking_lock_owner,omitempty"`
 	Response          *ResponseLocator `json:"response,omitempty"`
-	ResultSubtype     string           `json:"result_subtype,omitempty"`
-	IsError           *bool            `json:"is_error,omitempty"`
-	TerminalReason    string           `json:"terminal_reason,omitempty"`
-	PermissionDenials []Denial         `json:"permission_denials"`
-	Usage             json.RawMessage  `json:"usage,omitempty"`
-	ModelUsage        json.RawMessage  `json:"model_usage,omitempty"`
-	TotalCostUSD      *float64         `json:"total_cost_usd,omitempty"`
-	DurationMS        *int64           `json:"duration_ms,omitempty"`
-	NumTurns          *int             `json:"num_turns,omitempty"`
-	UnparsedLines     int              `json:"unparsed_output_lines,omitempty"`
-	LockRelease       *LockRelease     `json:"lock_release,omitempty"`
-	UpdatedAt         string           `json:"updated_at"`
+	// EarlierResponses locates text replies in result records before the last one. Some CLI
+	// runs emit more than one result record; earlier ones can hold the substantive reply.
+	EarlierResponses  []ResponseLocator `json:"earlier_responses,omitempty"`
+	ResultSubtype     string            `json:"result_subtype,omitempty"`
+	IsError           *bool             `json:"is_error,omitempty"`
+	TerminalReason    string            `json:"terminal_reason,omitempty"`
+	PermissionDenials []Denial          `json:"permission_denials"`
+	Usage             json.RawMessage   `json:"usage,omitempty"`
+	ModelUsage        json.RawMessage   `json:"model_usage,omitempty"`
+	TotalCostUSD      *float64          `json:"total_cost_usd,omitempty"`
+	DurationMS        *int64            `json:"duration_ms,omitempty"`
+	NumTurns          *int              `json:"num_turns,omitempty"`
+	UnparsedLines     int               `json:"unparsed_output_lines,omitempty"`
+	LockRelease       *LockRelease      `json:"lock_release,omitempty"`
+	UpdatedAt         string            `json:"updated_at"`
 }
 
 // SessionLock is the exclusive-create lock content for one session.

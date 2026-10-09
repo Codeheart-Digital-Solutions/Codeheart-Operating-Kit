@@ -12,6 +12,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"regexp"
+	"strconv"
 	"strings"
 )
 
@@ -360,8 +361,17 @@ type streamResult struct {
 	result        map[string]json.RawMessage
 	reply         string
 	replyIsString bool
-	unparsed      int
-	totalBytes    int64
+	// earlier holds text replies from result records before the last one, and denials gathers
+	// permission denials from every result record, so a later record cannot hide them.
+	earlier    []earlierResult
+	denials    []Denial
+	unparsed   int
+	totalBytes int64
+}
+
+type earlierResult struct {
+	line  int
+	chars int
 }
 
 func parseStream(path string) streamResult {
@@ -395,6 +405,13 @@ func parseStream(path string) streamResult {
 						_ = json.Unmarshal(fields["claude_code_version"], &parsed.cliVersion)
 					}
 					if kind == "result" {
+						if parsed.hasResult && parsed.replyIsString {
+							parsed.earlier = append(parsed.earlier, earlierResult{line: parsed.resultLine, chars: len([]rune(parsed.reply))})
+						}
+						var denials []Denial
+						if json.Unmarshal(fields["permission_denials"], &denials) == nil {
+							parsed.denials = appendDenials(parsed.denials, denials)
+						}
 						parsed.hasResult = true
 						parsed.resultLine = line
 						parsed.result = fields
@@ -432,9 +449,16 @@ func applyParsed(record *AttemptRecord, parsed streamResult, stdoutPath string) 
 	if json.Unmarshal(fields["is_error"], &isError) == nil {
 		record.IsError = &isError
 	}
-	var denials []Denial
-	if json.Unmarshal(fields["permission_denials"], &denials) == nil && denials != nil {
-		record.PermissionDenials = denials
+	if parsed.denials != nil {
+		record.PermissionDenials = parsed.denials
+	}
+	for _, earlier := range parsed.earlier {
+		record.EarlierResponses = append(record.EarlierResponses, ResponseLocator{
+			File:      stdoutPath,
+			Line:      earlier.line,
+			JSONField: "result",
+			Chars:     earlier.chars,
+		})
 	}
 	if raw, ok := fields["usage"]; ok && string(raw) != "null" {
 		record.Usage = raw
@@ -505,6 +529,13 @@ func composeMessage(record *AttemptRecord, parsed streamResult, attemptDir strin
 		fmt.Fprintf(&b, "Detail: %s\n", record.Detail)
 	}
 	fmt.Fprintf(&b, "Attempt record: %s\n", filepath.Join(attemptDir, AttemptFile))
+	if len(parsed.earlier) > 0 {
+		lines := make([]string, 0, len(parsed.earlier))
+		for _, earlier := range parsed.earlier {
+			lines = append(lines, strconv.Itoa(earlier.line))
+		}
+		fmt.Fprintf(&b, "Earlier result records with original replies: %s, line(s) %s, JSON field \"result\". Read them too; only the last reply is quoted below.\n", filepath.Join(attemptDir, StdoutFile), strings.Join(lines, ", "))
+	}
 	b.WriteString("Transport status only; this is not task acceptance.\n")
 	switch {
 	case parsed.replyIsString && len([]rune(parsed.reply)) <= InlineReplyLimit:
@@ -524,6 +555,29 @@ func composeMessage(record *AttemptRecord, parsed streamResult, attemptDir strin
 		}
 	}
 	return b.String()
+}
+
+// appendDenials adds denials not already present; a tool use ID identifies a repeated report of
+// the same denial across result records. Denials without an ID are always kept.
+func appendDenials(existing []Denial, more []Denial) []Denial {
+	if existing == nil {
+		existing = []Denial{}
+	}
+	for _, denial := range more {
+		duplicate := false
+		if denial.ToolUseID != "" {
+			for _, known := range existing {
+				if known.ToolUseID == denial.ToolUseID && known.ToolName == denial.ToolName {
+					duplicate = true
+					break
+				}
+			}
+		}
+		if !duplicate {
+			existing = append(existing, denial)
+		}
+	}
+	return existing
 }
 
 // isJSONString reports whether raw is a JSON string value. Missing, null and other values are
