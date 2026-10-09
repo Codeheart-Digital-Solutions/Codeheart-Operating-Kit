@@ -1,12 +1,12 @@
-Last updated: 2026-10-09T16:39:13Z (UTC)
+Last updated: 2026-10-09T18:39:25Z (UTC)
 
 # Independent Cross-Tool Coordination Plan Review
 
 **Independent verdict: Ready (plan candidate b6132dd).** The same independent reviewer closed all
 first-use amendment findings. Coordinator read the original response and accepted the result;
-no implementation or publication authority is inferred. A subsequent user-approved authority
-clarification is recorded below and is not covered by that independent verdict. Earlier reviews
-preserve history.
+no implementation or publication authority is inferred. Subsequent user-approved authority
+and native-goal-default clarifications are recorded below and are not covered by that independent
+verdict. Earlier reviews preserve history.
 
 Candidate reviewed: cf38d0e. Reviewer: fresh Claude Opus 5.5 CLI session, read-only, independent
 of plan authorship. The coordinator read the original response and verified process/session
@@ -92,6 +92,11 @@ incorporating this boundary. The discovery and plan now specify the planning-rev
 coordinator behavior and a bounded authority probe; routine authorized implementation corrections
 remain autonomous. This change is author-checked, not attributed to the preceding Claude review.
 No further review or correction cycle was commissioned by this approval.
+
+The user subsequently approved default native goal execution for implementation plans, for both
+Codex and Claude. The plan now names the execution runbook, both tool guides, commissioning/
+activation proof and preserved review handoffs. This is another author-checked user decision,
+not part of the earlier independent candidate verdict; it remains in the planned release scope.
 
 ## Independent Closure Of Candidate b6132dd
 
