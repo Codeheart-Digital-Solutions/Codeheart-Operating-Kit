@@ -1,4 +1,4 @@
-Last updated: 2026-10-09T14:54:05Z (UTC)
+Last updated: 2026-10-09T19:01:13Z (UTC)
 
 # Repo Plans
 
@@ -17,11 +17,12 @@ entries after mixed cutover.
 
 ## Current Plans
 
-- Completed cross-tool agent coordination discovery and draft implementation plan: accepted
+- Completed cross-tool agent coordination discovery and active implementation plan: accepted
   bounded pilots, strict relay transport, a maintained CLI invocation helper, durable consumer
-  routing and fresh-director onboarding; implementation is not activated:
+  routing and fresh-director onboarding; whole-plan execution commissioned on 2026-10-09:
   - [Discovery](cross-tool-agent-coordination/cross-tool-agent-coordination_discovery_doc.md)
   - [Implementation plan](cross-tool-agent-coordination/cross-tool-agent-coordination_implementation_doc.md)
+  - [Execution log](cross-tool-agent-coordination/cross-tool-agent-coordination_execution_log.md)
 
 - Active Claude Code operating guide implementation plan and execution log (v0.1.34 released;
   two of four assigned default branches adopted, two pending with their owners): an optional

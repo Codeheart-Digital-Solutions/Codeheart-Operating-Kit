@@ -1,6 +1,6 @@
-Last updated: 2026-10-09T18:39:25Z (UTC)
+Last updated: 2026-10-09T19:01:13Z (UTC)
 Created: 2026-10-09
-Status: draft
+Status: active
 
 # Cross-Tool Agent Coordination Implementation Plan
 
@@ -21,11 +21,11 @@ plan:
 ```
 <!-- END CODEHEART PLAN METADATA -->
 
-The discovery has enough evidence for this bounded delivery. This draft turns that direction into
-three ordered epics. It does not activate implementation, install permissions, appoint a relay,
-create chats, publish a release or upgrade consumers. Planning scope was delegated on 2026-10-09;
-the user has since authorized implementation start. Record the exact activation assignment before
-dispatch; this planning amendment alone does not launch an implementer.
+The user commissioned this three-epic implementation on 2026-10-09 after the approved planning
+amendments merged. The [execution log](cross-tool-agent-coordination_execution_log.md) records
+activation, delivery boundaries and actual progress. One implementer owns the full plan;
+the director accepts independent source review after Epics 1 and 2 before release and adoption.
+Activation is not evidence that an epic, release, adoption or native-goal invocation has completed.
 
 ## Essential Context
 
@@ -49,7 +49,7 @@ and canonical plan catalog were checked. The independent Claude reviewer judged 
 candidate b6132dd **Ready (plan only)** after closing all material and low-severity amendment
 findings; see [the review record](attachments/independent-plan-review.md). The coordinator read
 the original response and accepted that assessment. The user subsequently authorized starting
-implementation; the exact activation assignment is still to be prepared before dispatch.
+implementation; the activation assignment now covers the whole plan as recorded in the execution log.
 Runtime behavior is planned, not proven by document checks or this planning verdict. The subsequent
 user-approved report-before-amendment and native-goal default rules below are author-checked;
 they were not part of b6132dd's
@@ -463,7 +463,7 @@ proof and release notes.
 Run cheap affected checks during edits and one coherent broad candidate gate. Reuse existing live
 pilot evidence where unchanged; do not repeat the merge experiment merely for ceremony.
 
-### Proposed whole-plan commissioning and Git boundary
+### Approved whole-plan commissioning and Git boundary
 
 Upon explicit whole-plan execution approval, one implementer can execute all three ordered epics,
 with the commissioning director owning acceptance and material decisions. Communicate the plan,
@@ -476,7 +476,8 @@ authorized release audience/signing boundary, and the named consumer default-bra
 The director may delegate integration and renew routine execution within that grant; changed
 audience, broader permissions, spending commitments, failed checks and scope expansion return to
 the human owner. Exact repositories/branches, release audience and private targets must be in the
-activation assignment before effects. Drafting now authorizes none of these external effects.
+activation assignment before effects. The 2026-10-09 activation records that grant; effects still
+require their action-time checks and delegated review acceptance.
 
 Include one temporary ordinary onboarding director chat, use of the existing approved independent
 relay, its temporary transport workers, the scoped Claude test session and report-back messages
@@ -726,6 +727,10 @@ rules. Recheck the affected boundary, retain original failures and adapt one rec
 every transient failure into framework work. No AWS or product feature implementation is included.
 
 # Revision Notes
+
+- 2026-10-09: activated the whole-plan assignment on the implementation branch after explicit
+  commissioning. Source review follows Epics 1 and 2; release, named adoption and onboarding
+  remain part of the finish line. See the execution log for actual state.
 
 - 2026-10-09: user approved native goals by default for Codex and Claude implementation-plan
   execution; added source routes, activation/handoff requirements and proportionate proof to
