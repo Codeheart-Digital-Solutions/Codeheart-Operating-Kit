@@ -1,4 +1,4 @@
-Last updated: 2026-07-31T22:23:19Z (UTC)
+Last updated: 2026-10-09T19:52:39Z (UTC)
 
 # Codeheart Operating Kit Inventory
 
@@ -30,6 +30,10 @@ state looks missing, stale, or damaged.
   `.codeheart/kit/docs/planning-workflows/runbooks/refresh-portfolio-catalog.md`
 - Reviewed plan-catalog migration:
   `.codeheart/kit/docs/planning-workflows/runbooks/migrate-plan-catalog.md`
+- Whole-plan assignment, native implementation goals and report-back:
+  `.codeheart/kit/docs/agent-interface/reference/agent-task-coordination.md`
+- Optional cross-tool commissioning through a relay:
+  `.codeheart/kit/docs/agent-interface/runbooks/coordinate-cross-tool-task.md`
 
 ## Generated State
 

@@ -41,7 +41,7 @@ components:
   - id: agent-interface
     version: 0.1.34
     manifest_path: components/agent-interface/component.yaml
-    checksum_sha256: 31eee9b9f3940534954d35558c59686586bb470a2e14a21b91ea8d9a34bf0f53
+    checksum_sha256: fa7c87e1184cd247a2068b659d681adc6faded8c6493c97c33284a11ea1c4aa0
     consumer_impact:
       - component addition
       - instruction-only change

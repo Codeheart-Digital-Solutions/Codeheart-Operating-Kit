@@ -1,4 +1,4 @@
-Last updated: 2026-09-09T14:08:21Z (UTC)
+Last updated: 2026-10-09T19:52:39Z (UTC)
 
 # Review Planning Document
 
@@ -37,6 +37,32 @@ Use this runbook when the user asks to:
 - check whether a planning document is ready for execution.
 
 Do not rewrite the source document unless the user explicitly asks for edits.
+
+## Coordinator Boundary
+
+The no-rewrite rule binds both the reviewing agent and the coordinator that commissioned the
+review. Requesting a review during discovery, planning or discussion authorizes obtaining and
+assessing it, not incorporating its findings.
+
+Before any amendment arising from a consequential review, the coordinator reads the original
+response and reports to the user:
+
+- an accessible link or precise locator for the original response;
+- the core findings and why they matter;
+- its own independent assessment, including any disagreement;
+- recommended disposition per finding, the verdict and residual uncertainty.
+
+Then wait for the user's decision unless an explicit delegation already covers the correction
+cycle. "Apply this agreed change and get a review" covers that change and its review, not new
+changes arising from the review. A reviewer recommendation, a `Ready` verdict or the
+coordinator's agreement is not user approval. Distinguish recommended, user-approved and
+implemented changes when reporting. Once the user approves specific corrections, apply them
+without another per-edit approval; a wider correction delegation applies only within its stated
+limits.
+
+During authorized implementation, routine review corrections remain covered by the existing
+execution grant and delegated director acceptance; material scope, outcome or authority changes
+return to the responsible owner. Trivial replies need no formal findings table.
 
 ## Review Stance
 
@@ -271,8 +297,9 @@ For implementation documents, verify:
   with delegated director acceptance and explicit report-back, without per-step user prompts;
 - the finish line, integration owner, included/delegated/reserved effects and required exact inputs
   are explicit; existing sufficient authority is reused without weakening binding gates;
-- work communicates its named plan/epic and actual Git/delivery state; optional goals require an
-  explicit request and verified activation, and cannot complete at an intermediate review handoff;
+- work communicates its named plan/epic and actual Git/delivery state; implementation uses the
+  native goal by default unless explicitly declined, with commissioned authority and verified
+  activation, and a phase goal ending at a review handoff does not complete the plan;
 - necessary corrections stay in their epic; genuinely separate routine repairs retain a visible
   relationship and do not evade review;
 - a meaningful plan title is used instead of the literal H1 `Document Header`;

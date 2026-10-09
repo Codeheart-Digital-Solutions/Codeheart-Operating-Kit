@@ -1,4 +1,4 @@
-Last updated: 2026-10-05T09:26:14Z (UTC)
+Last updated: 2026-10-09T19:52:39Z (UTC)
 
 # Claude Code Task Operations
 
@@ -94,12 +94,35 @@ and durable. Keep plan, approval and acceptance truth in repository records, not
 
 ## Long-Running Work
 
-A whole-plan assignment with direct report-back is sufficient; no goal is required. `/goal` sets
-a session-scoped completion condition that a small model checks after each turn; the user sets it
-with `/goal <condition>`. Use it only on explicit request, with a condition the conversation can
-demonstrate, aimed at the agreed finish line; at a review handoff it pauses but stays set. Confirm
-it from the `/goal` status or the evaluator's verdicts, not prompt text; it adds no authority or
-report-back. Loops, scheduled tasks and routines run only on explicit request, never as watchers.
+Executing an approved implementation plan uses `/goal` by default, under the generic rule in
+`agent-task-coordination.md`; reviews, discovery and routine changes do not. `/goal <condition>`
+sets a session-scoped completion condition that a small model checks after each turn. Commission
+it with the user's actual authority, with a condition the conversation can demonstrate, aimed at
+a real handoff such as source review or the agreed finish line. Confirm activation from the
+`/goal` confirmation, status or evaluator verdicts, not from prompt text. A goal ending at a
+handoff does not complete the plan; continue the next phase in the same session with a new goal
+after delegated acceptance. Honor an explicit opt-out, and if a goal cannot be activated or
+verified, say so and continue only authorized ordinary work. It adds no authority or report-back.
+Loops, scheduled tasks and routines run only on explicit request, never as watchers.
+
+## CLI-Owned Sessions For Cross-Tool Work
+
+When a Codex coordinator commissions Claude, follow `../runbooks/coordinate-cross-tool-task.md`.
+The installed helper starts or resumes one CLI-owned session in print mode with a fixed flag set,
+the brief on stdin and stream-json output kept in the attempt directory. One driver per session:
+do not resume a CLI-owned session from the desktop app or a second terminal while an attempt is
+running, and do not drive app-owned sessions through the helper.
+
+A brief that begins with `/goal <condition>` sets the goal in print mode; the coordinator reads the
+confirmation in the original output as activation evidence. Each phase is a new attempt that
+resumes the retained session with its own goal condition.
+
+Permissions come from the request: an explicit mode (never `bypassPermissions`), tool lists and an
+optional authorized settings profile. Headless runs cannot show approval dialogs; denials appear
+in the result's permission-denial metadata even when the process exits successfully, and the
+helper returns them unchanged. A profile that allows ordinary pull-request merges in the task
+repository grants tool permission only; the workflow still checks authority, review, CI and
+candidate identity, and no profile adds release or deployment authority.
 
 ## Archival And Preservation
 

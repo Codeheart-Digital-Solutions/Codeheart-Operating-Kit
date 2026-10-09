@@ -1,4 +1,4 @@
-Last updated: 2026-07-10T11:29:07Z (UTC)
+Last updated: 2026-10-09T19:52:39Z (UTC)
 
 # Onboarding Context Contract
 
@@ -71,17 +71,14 @@ in chat, and reruns the command with explicit values only when applying setup.
 Use the chat setup prompt before folder setup:
 
 ```text
-Before we set up your project folder, please adjust Codex in this chat.
+Before we set up your project folder, please check Codex in this chat.
 
-Look at the message box on the right. In the lower-right area, open the menu for model, thinking,
-and speed.
+Look at the message box on the right. In the lower-right area, you can open the menu for model,
+thinking, and speed.
 
-Set:
-- Model: GPT-5.5
-- Thinking: Extra High
-- Speed: Fast
+Keep the model, thinking, and speed you prefer. This setup does not require a specific model.
 
-Tell me when this is done.
+Tell me when you are ready.
 ```
 
 Use the settings prompt after chat setup:
@@ -95,13 +92,11 @@ The General tab should open automatically.
 
 At the very top of the main settings screen, find Work Mode and select Coding.
 
-Directly beneath that, find Permissions and turn on all three setup options:
-- Default permissions
-- Auto review
-- Full access
+Directly beneath that, Permissions shows how much Codex may do without asking. Keep the
+permission setting you or your organization chose. The Operating Kit does not require Full access,
+and I will ask before writing setup files.
 
-Then return to this chat. In the chat box area, check the lower-left control named Approve for me.
-Turn it on when it is not already selected.
+Then return to this chat.
 
 Tell me when this is done.
 ```

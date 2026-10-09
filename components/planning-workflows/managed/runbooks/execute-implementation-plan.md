@@ -1,9 +1,9 @@
-Last updated: 2026-09-09T14:08:21Z (UTC)
+Last updated: 2026-10-09T19:52:39Z (UTC)
 
 # Execute Implementation Plan
 
-Use this runbook when executing an active `*_implementation_doc.md`, including goal-style Codex
-runs.
+Use this runbook when executing an active `*_implementation_doc.md`. Approved implementation
+plans run under the implementing tool's native goal mode by default, in Codex and Claude Code.
 
 Implementation plans are authoritative, but their checklists may not be exhaustive. Complete the
 stated intention and outcome of each epic, not only the literal checkbox list.
@@ -33,7 +33,7 @@ capability.
 Use this runbook when the user asks to:
 
 - execute an implementation plan;
-- implement a plan with goal-style autonomy;
+- implement a plan, by default under a native goal;
 - continue or resume an active `*_implementation_doc.md`;
 - run the epics from an implementation document.
 
@@ -103,6 +103,25 @@ owner, exact action-time inputs and passing gates. Reuse valid authority while t
 limits still apply. A specific mandatory fresh confirmation or binding tool gate remains binding.
 Never invent approval evidence. At starts and transitions, name the phase, Plan/epic outcome and
 next actor; use readable names before IDs.
+
+## Native Goal Commissioning
+
+Commission execution of an approved implementation plan with the implementing tool's native goal
+by default, unless the user explicitly opts out. Routine changes, discovery, consultation and
+review do not get a goal by default. In the same commissioning decision, state the objective,
+finish line or phase handoff, constraints, review points and report-back, and carry the user's
+actual authority, including an accepted standing goal preference. Do not ask again per epic.
+
+Verify activation from the tool's observable goal status or evaluator evidence, not from text
+containing `/goal`. Aim a goal at a real dependency, such as independent source review, so it
+returns control with original evidence instead of crossing a review gate or spinning on a
+blocker. Keep the plan active when a phase goal ends; continue the next phase with the tool's
+supported continuation after delegated acceptance. If native goals are unavailable or cannot be
+verified, disclose that and continue only under authorized ordinary execution. Goals add no
+permissions, scheduler or notification channel. Tool-specific mechanics live in
+`../../agent-interface/reference/codex-task-operations.md` and
+`../../agent-interface/reference/claude-code-task-operations.md`; another tool's agent is
+commissioned through `../../agent-interface/runbooks/coordinate-cross-tool-task.md`.
 
 ## Activation Publication Preflight
 

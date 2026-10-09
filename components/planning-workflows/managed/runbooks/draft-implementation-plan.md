@@ -1,4 +1,4 @@
-Last updated: 2026-09-09T14:08:21Z (UTC)
+Last updated: 2026-10-09T19:52:39Z (UTC)
 
 # Draft Implementation Plan
 
@@ -379,7 +379,8 @@ Use `../../agent-interface/reference/agent-task-coordination.md` to commission t
 with explicit report-back to the director at required epic review, completion, genuine blocker or
 material scope issue. Plan delegated acceptance rather than a fresh user gate for every epic. State
 how material exceptions return to the owner and how independently useful preparation may proceed
-while a review is pending. Optional goal use requires an explicit request and verified activation.
+while a review is pending. Execution uses the implementing tool's native goal by default unless the
+user opts out; name the phase handoff each goal ends at and require verified activation.
 
 ## Section 3 - Execution Plan
 

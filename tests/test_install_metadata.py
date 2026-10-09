@@ -160,9 +160,10 @@ def test_bootstrap_documents_first_run_path():
     assert "Should I check and set up these tools now?" not in text
     assert "Do not offer optional native capability installation during base onboarding." in text
     assert "pip install" not in text
-    assert "GPT-5.5" in text
-    assert "Extra High" in text
-    assert "Fast" in text
+    assert "Keep the model, thinking, and speed you prefer." in text
+    assert "The Operating Kit does not require Full access" in text
+    for pinned in ["GPT-5.5", "Extra High", "turn on all three", "Approve for me"]:
+        assert pinned not in text
     assert "Documents > <Project-Name>" in text
     assert "Do not introduce or run a version check as part of onboarding." in text
     assert "quiet weekly update checking" not in text

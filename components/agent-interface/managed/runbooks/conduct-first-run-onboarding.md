@@ -1,4 +1,4 @@
-Last updated: 2026-07-10T11:29:07Z (UTC)
+Last updated: 2026-10-09T19:52:39Z (UTC)
 
 # Conduct First-Run Onboarding
 
@@ -12,13 +12,13 @@ context. Ask the user directly and keep the conversation visible in Codex chat.
 
 1. Ask for setup language with the three visible choices: English, Deutsch, and Chinese. Continue
    in the chosen language in chat after the user answers.
-2. Guide Codex chat setup before folder setup. Tell the user to use the menu in the lower-right
-   area of the message box and set Model to `GPT-5.5`, Thinking to `Extra High`, and Speed to
-   `Fast`.
+2. Guide Codex chat setup before folder setup. Show the user the model, thinking, and speed menu
+   in the lower-right area of the message box and tell them to keep their preferred choices; the
+   Operating Kit requires no specific model.
 3. Guide Codex Settings before folder setup. Tell the user to open Settings from the bottom-left
-   of the left sidebar, stay on the General tab, set Work Mode to Coding at the top of the main
-   settings screen, and turn on Default permissions, Auto review, and Full access directly beneath
-   it. Then ask them to check the chat-box control named Approve for me.
+   of the left sidebar, stay on the General tab, and set Work Mode to Coding at the top of the main
+   settings screen. Point out Permissions directly beneath it without asking for changes: keep the
+   user's or organization's permission choice. Full access is not required.
 4. Ask whether the user already knows the Codex project name or wants a suggestion.
 5. Ask lightweight purpose/context only when the user wants naming help.
 6. Explain why the project folder name matters in the Codex sidebar.
@@ -41,6 +41,9 @@ Ask the user before deciding:
 - Codex project name;
 - target folder;
 - setup writes.
+
+Base onboarding does not offer or set up delegation to another tool's agent. If the user later
+asks for it, follow `coordinate-cross-tool-task.md`; ordinary work continues with the current tool.
 
 Do not use non-interactive flags to fill missing user decisions. Do not use `--yes` unless the user
 already supplied the target folder, supplied the project name, and approved writing files.
