@@ -1,4 +1,4 @@
-Last updated: 2026-10-09T20:48:19Z (UTC)
+Last updated: 2026-10-09T20:59:53Z (UTC)
 Created: 2026-10-09
 
 # Cross-Tool Agent Coordination Execution Log
@@ -202,6 +202,31 @@ Proof:
 
 For this delivery, the retained independent reviewer performs the focused follow-up. The
 director's primary source review and acceptance are pending.
+
+## Primary Source Review Corrections
+
+The director's primary review of `9ddce58` reproduced two parser defects through the built helper
+with a local fake CLI. No external model was called.
+
+| Finding | Correction |
+| --- | --- |
+| A valid request followed by a closing `]` or `}` passed the trailing-data check and launched the child. The old check only scanned for further array or object elements. | The request must be exactly one JSON value followed only by whitespace; a second decode must reach end of file. Closing delimiters, a second value and other junk are rejected before any attempt state or launch; trailing whitespace stays valid. |
+| A final `result: null` was treated as a captured empty reply, giving `response_captured`, exit 0 and an empty "original reply". | A reply counts only when `result` is an actual JSON string; an empty string still counts. Missing, null and non-string values give `incomplete_output` with no response locator and no claimed reply. |
+| The Codex guide still told relays to send `message.json` and record delivery unconditionally. | It now points to the runbook's dispatch rules: only the `message_file` named by this invocation, otherwise its fallback, no stale resend, and recording delivery only when this invocation named a delivery record. The contract's file table states the same condition and the string-reply rule. |
+
+Checks:
+- New fake-process tests cover the trailing cases and the null, number, missing and empty-string
+  replies. They failed against the previous logic and pass now.
+- Go: the coordination (including `-race`), CLI, commands, manifest and state packages pass, and
+  `go vet ./...` passes. Windows test compilation for the helper succeeds.
+- Python: routing, packaging, release identity and parity tests pass.
+- Release identity, manifest, public-core and Markdown validators pass after the profile digest
+  refresh.
+- The director's reproduction cases now return `invalid_request` with no launch and no state for
+  both trailing delimiters, and `incomplete_output` for the null reply.
+
+Still pending: the director's source acceptance and the retained reviewer's focused follow-up on
+the frozen candidate. The Epic 3 gates below are unchanged.
 
 ## Current State And Remaining Evidence
 
