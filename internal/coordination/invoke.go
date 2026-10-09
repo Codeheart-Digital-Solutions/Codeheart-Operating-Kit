@@ -2,6 +2,7 @@ package coordination
 
 import (
 	"bufio"
+	"bytes"
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
@@ -398,7 +399,7 @@ func parseStream(path string) streamResult {
 						parsed.resultLine = line
 						parsed.result = fields
 						parsed.reply = ""
-						parsed.replyIsString = json.Unmarshal(fields["result"], &parsed.reply) == nil
+						parsed.replyIsString = isJSONString(fields["result"]) && json.Unmarshal(fields["result"], &parsed.reply) == nil
 					}
 				}
 			}
@@ -523,4 +524,11 @@ func composeMessage(record *AttemptRecord, parsed streamResult, attemptDir strin
 		}
 	}
 	return b.String()
+}
+
+// isJSONString reports whether raw is a JSON string value. Missing, null and other values are
+// not a captured reply; an actual empty string is.
+func isJSONString(raw json.RawMessage) bool {
+	trimmed := bytes.TrimSpace(raw)
+	return len(trimmed) > 0 && trimmed[0] == '"'
 }

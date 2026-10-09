@@ -8,6 +8,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -104,8 +105,10 @@ func LoadRequest(path string) (Request, []byte, error) {
 	if err := decoder.Decode(&request); err != nil {
 		return Request{}, raw, &RequestError{Problems: []string{fmt.Sprintf("malformed request JSON: %v", err)}}
 	}
-	if decoder.More() {
-		return Request{}, raw, &RequestError{Problems: []string{"request contains trailing data"}}
+	// The file must hold exactly one JSON value followed only by whitespace.
+	var trailing json.RawMessage
+	if err := decoder.Decode(&trailing); err != io.EOF {
+		return Request{}, raw, &RequestError{Problems: []string{"request contains trailing data after the JSON object"}}
 	}
 	if err := request.Validate(); err != nil {
 		return request, raw, err

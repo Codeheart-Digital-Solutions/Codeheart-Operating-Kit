@@ -93,6 +93,20 @@ func runFakeCLI(mode string) int {
 	case "long":
 		line("claude-stream-init.json", nil)
 		line("claude-result-success.json", func(f map[string]any) { f["result"] = strings.Repeat("x", InlineReplyLimit+500) })
+	case "null_reply", "number_reply", "missing_reply", "empty_reply":
+		line("claude-stream-init.json", nil)
+		line("claude-result-success.json", func(f map[string]any) {
+			switch mode {
+			case "null_reply":
+				f["result"] = nil
+			case "number_reply":
+				f["result"] = 42
+			case "missing_reply":
+				delete(f, "result")
+			default:
+				f["result"] = ""
+			}
+		})
 	case "denial":
 		line("claude-stream-init.json", nil)
 		line("claude-result-denial.json", nil)

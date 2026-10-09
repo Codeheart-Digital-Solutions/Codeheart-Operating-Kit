@@ -797,3 +797,65 @@ func TestInvokePassesOptionalSettingsExactly(t *testing.T) {
 		t.Fatalf("argv = %#v\nwant %#v", got, want)
 	}
 }
+
+func TestRequestMustBeOneJSONValue(t *testing.T) {
+	h := newHarness(t, "success")
+	valid, err := os.ReadFile(h.request("assign-a", "attempt-1", "brief", nil))
+	if err != nil {
+		t.Fatal(err)
+	}
+	for name, suffix := range map[string]string{
+		"closing bracket": "]",
+		"closing brace":   "}",
+		"second value":    "\n{\"schema_version\":1}",
+		"junk":            " trailing-junk",
+	} {
+		t.Run(name, func(t *testing.T) {
+			path := filepath.Join(h.root, "trailing request.json")
+			writeFile(t, path, string(valid)+suffix)
+			outcome, err := Invoke(Options{RequestPath: path})
+			var requestErr *RequestError
+			if !errors.As(err, &requestErr) || outcome.Status != StatusInvalidRequest {
+				t.Fatalf("outcome = %+v, err = %v", outcome, err)
+			}
+		})
+	}
+	if len(h.fakeRecords()) != 0 {
+		t.Fatal("trailing data launched the CLI")
+	}
+	if _, err := os.Stat(filepath.Join(h.stateRoot, "attempts")); !errors.Is(err, os.ErrNotExist) {
+		t.Fatal("trailing data created attempt state")
+	}
+	path := filepath.Join(h.root, "whitespace request.json")
+	writeFile(t, path, string(valid)+"\n\t  \r\n")
+	if outcome := mustInvoke(t, path); outcome.Status != StatusResponseCaptured {
+		t.Fatalf("trailing whitespace rejected: %+v", outcome)
+	}
+}
+
+func TestFinalReplyMustBeAJSONString(t *testing.T) {
+	for _, mode := range []string{"null_reply", "number_reply", "missing_reply"} {
+		t.Run(mode, func(t *testing.T) {
+			h := newHarness(t, mode)
+			outcome := mustInvoke(t, h.request("assign-a", "attempt-1", "brief", nil))
+			if outcome.Status != StatusIncompleteOutput {
+				t.Fatalf("status = %s (%s)", outcome.Status, outcome.Detail)
+			}
+			record, _ := ReadAttempt(outcome.AttemptDir)
+			if record.Response != nil {
+				t.Fatalf("non-string reply recorded as captured: %+v", record.Response)
+			}
+			if message := readMessage(t, outcome); strings.Contains(message.Prompt, "Original reply (unchanged)") {
+				t.Fatalf("message claims an original reply:\n%s", message.Prompt)
+			}
+		})
+	}
+	t.Run("empty string", func(t *testing.T) {
+		h := newHarness(t, "empty_reply")
+		outcome := mustInvoke(t, h.request("assign-a", "attempt-1", "brief", nil))
+		record, _ := ReadAttempt(outcome.AttemptDir)
+		if outcome.Status != StatusResponseCaptured || record.Response == nil || record.Response.Chars != 0 {
+			t.Fatalf("empty string reply = %+v, %+v", outcome, record.Response)
+		}
+	})
+}
