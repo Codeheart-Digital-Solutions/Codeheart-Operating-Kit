@@ -13,6 +13,7 @@ import (
 	"testing"
 
 	"github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/internal/state"
+	"github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/internal/version"
 )
 
 type packFixtureOptions struct {
@@ -27,7 +28,8 @@ type packFixtureOptions struct {
 	nativeBinary      bool
 }
 
-const currentReleaseFixtureVersion = "0.1.32"
+// currentReleaseFixtureVersion follows the built release identity instead of a patch literal.
+var currentReleaseFixtureVersion = version.Version
 
 func TestMain(m *testing.M) {
 	if len(os.Args) > 1 && os.Args[1] == "__upgrade-reconcile" {
