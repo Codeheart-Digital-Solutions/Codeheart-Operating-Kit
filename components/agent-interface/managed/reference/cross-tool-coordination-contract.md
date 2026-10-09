@@ -1,4 +1,4 @@
-Last updated: 2026-10-09T20:47:14Z (UTC)
+Last updated: 2026-10-09T20:55:54Z (UTC)
 
 # Cross-Tool Coordination Contract
 
@@ -94,9 +94,9 @@ The coordinator knows the directory before dispatch:
 | File | Content |
 | --- | --- |
 | `attempt.json` | Compact record: status, request path and digest, requested and actual session, model, CLI version, argv, launcher and child identity, exit, response locator, denial metadata, usage, lock release. |
-| `stdout.jsonl` | Original CLI output. The final reply is the `result` field of the last `type: result` line. |
+| `stdout.jsonl` | Original CLI output. The final reply is the `result` field of the last `type: result` line and must be a JSON string (an empty string counts); a missing, null or non-string value is `incomplete_output`, never a captured reply. |
 | `stderr.txt` | Original CLI error output. |
-| `message.json` | Native send-message arguments: `threadId`, `hostId` and `prompt`. Load it unchanged. |
+| `message.json` | Native send-message arguments: `threadId`, `hostId` and `prompt`. Load it unchanged, and only when this invocation's output names it as `message_file`. |
 | `delivery.json` | `pending`, then `sent`, `rejected` or `uncertain`, with the original receipt or error. |
 
 Statuses: `response_captured` (a final reply was captured; not task acceptance), `cli_error`,
