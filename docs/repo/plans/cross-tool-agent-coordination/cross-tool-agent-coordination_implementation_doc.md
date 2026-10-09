@@ -1,4 +1,4 @@
-Last updated: 2026-10-09T20:42:55Z (UTC)
+Last updated: 2026-10-09T20:48:19Z (UTC)
 Created: 2026-10-09
 Status: active
 
@@ -557,7 +557,7 @@ consistent across generic and tool-specific guidance without mandating another m
 are specified for Epic 2, not presented as already available.
 
 **F) Tasks Checklist:**
-- [ ] Apply the approved commissioner-as-primary-reviewer amendment across the execution and
+- [x] Apply the approved commissioner-as-primary-reviewer amendment across the execution and
   coordination routes, affected tool examples and mirrors; verify ordinary director review,
   risk-based additional review and authorship-conflict handling. Preserve this plan's existing
   focused independent correction review and required acceptance/release gates.

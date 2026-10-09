@@ -1,4 +1,4 @@
-Last updated: 2026-10-09T20:42:55Z (UTC)
+Last updated: 2026-10-09T20:48:19Z (UTC)
 Created: 2026-10-09
 
 # Cross-Tool Agent Coordination Execution Log
@@ -163,6 +163,45 @@ Validation after corrections:
 - Python: 262 pass. The remaining failure is the release-candidate asset-name fixture.
 - Release identity and manifest validators pass after refreshing the standard-profile digest.
 - Public-core and Markdown checks pass.
+
+## Primary-Review Guidance Implemented
+
+The approved rule is in the managed guidance:
+- The commissioning agent is the primary reviewer. It examines delivered work against outcome,
+  scope and evidence, in proportion to risk, and owns acceptance.
+- Forwarding another agent's verdict is not a review.
+- Additional independent review is selected for complexity, risk or the commissioner's own
+  implementation involvement, or when a user, assignment or binding gate requires it.
+- Self-review is never called independent.
+- The rule is tool-neutral and needs no extra account, model, relay or chat.
+- A separate reviewer's model follows approved choices and never dictates the commissioner's own.
+
+Changed routes:
+- `execute-implementation-plan.md`: the ordered per-epic steps, review checkpoints and log shape.
+- `agent-task-coordination.md`.
+- The cross-tool runbook and role contract.
+- One relay-review sentence in `codex-task-operations.md`.
+- Contradictory reviewer wording in `review-planning-document.md`,
+  `draft-implementation-plan.md`, `operation-routing-and-dispatch.md` and the
+  `handle-routine-change.md` example.
+- Mirrors and the standard-profile digest.
+- The discovery received a dated pointer note; its findings are unchanged.
+
+Unchanged:
+- The discovery reviewer gate for high-risk decisions.
+- The Claude guide, which had no contradiction.
+- Producer release and source-review gates.
+
+Proof:
+- A routing assertion over the packaged guidance covers ordinary commissioner review, justified
+  additional review assessed by the commissioner, and authorship-conflict self-review labeling.
+  It also checks that the old automatic-reviewer and same-model wording is gone.
+- Routing, packaging, release-identity, sync, guidance-candidate, manifest, public-core, Markdown
+  and plan validation pass.
+- Executable code is unchanged, so earlier helper and live proof are retained.
+
+For this delivery, the retained independent reviewer performs the focused follow-up. The
+director's primary source review and acceptance are pending.
 
 ## Current State And Remaining Evidence
 
