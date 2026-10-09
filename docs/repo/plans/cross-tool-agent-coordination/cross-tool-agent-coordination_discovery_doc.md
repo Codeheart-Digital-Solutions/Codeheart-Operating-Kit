@@ -1,4 +1,4 @@
-Last updated: 2026-10-09T15:43:50Z (UTC)
+Last updated: 2026-10-09T15:53:13Z (UTC)
 Created: 2026-10-05
 Status: completed
 
@@ -381,7 +381,9 @@ Must cover:
 - Coherent release and named consumer default-branch adoption; expose working-copy or host limitations.
 - Managed defaults plus opt-in consumer reference creation, update/upgrade preservation, personal
   versus shared preference scope and selected-but-unconfigured service handling.
-- Bounded alignment of older first-run model/permission prescriptions with these defaults.
+- Bounded alignment of older first-run model/permission prescriptions across runbook, context
+  contract, bootstrap, compiled onboard output and existing oracle/tests. Broader Claude-host
+  base-onboarding UI wording remains deferred.
 
 Explicitly out of scope:
 - New portfolio schema/registry, Organization Home record families, bulk unrelated adoption or identity migration.

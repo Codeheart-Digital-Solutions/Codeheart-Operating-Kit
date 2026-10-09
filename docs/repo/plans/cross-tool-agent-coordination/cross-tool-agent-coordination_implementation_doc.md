@@ -1,4 +1,4 @@
-Last updated: 2026-10-09T15:43:50Z (UTC)
+Last updated: 2026-10-09T15:53:13Z (UTC)
 Created: 2026-10-09
 Status: draft
 
@@ -44,9 +44,9 @@ implementation and its delivery grant remain for review.
 Authoring checkpoint: source placement, relative links, public-core hygiene, Markdown timestamps
 and canonical plan catalog were checked. The fresh independent reviewer judged corrected
 candidate 7edfde4 Ready (plan only); see [the review record](attachments/independent-plan-review.md).
-The later lock-recovery, transparency/retention and user-approved first-use amendment are
-recorded below. Focused review of this amended candidate is pending; the older Ready verdict does
-not cover it. Execution approval remains outstanding. Runtime behavior is planned, not proven
+The first-use amendment candidate 40a80ab received Needs improvement: conflicting onboarding
+defaults also exist outside the runbook. The corrections and low-severity clarifications below
+are submitted for focused review; the older Ready verdict does not cover this candidate. Execution approval remains outstanding. Runtime behavior is planned, not proven
 by document checks.
 
 ## Contents
@@ -95,8 +95,9 @@ documents observed merge permission behavior and independent relay topology.
 
 Missing: a reusable installed recipe, compact assignment/reference starters, maintained invocation
 and output capture, durable consumer relay route, and fresh-director adoption evidence. Current
-first-run onboarding also prescribes a specific Codex model and Full access; its touched guidance must be aligned with preserving the user's
-current tool/model/permissions rather than carrying those prescriptions into optional setup.
+first-run onboarding prescribes a specific Codex model and Full access in the runbook, context
+contract, bootstrap guide and compiled onboard output. Align those conflicting lines and their
+existing oracle/test expectations with preserving the user's tool/model/permissions.
 
 Ownership: Operating Kit owns procedure, templates, command and compatibility. Consumers own
 operational relay references, local preferences, appointments, authority and private evidence.
@@ -124,14 +125,20 @@ Expected source paths (ordinary internal factoring may change without changing t
           agent-task-coordination.md                      # modify generic boundary
           codex-task-operations.md                         # modify tested host recipe routing
           claude-code-task-operations.md                   # modify CLI-owned session/permission route
+          onboarding-context-contract.md                  # align conflicting model/access lines only
           cross-tool-coordination-contract.md             # create request/result and brief examples
         runbooks/coordinate-cross-tool-task.md             # create hybrid opt-in/setup/execution recipe
         runbooks/conduct-first-run-onboarding.md            # modify only conflicting model/access defaults
         templates/agent-coordination-reference.md          # create opt-in consumer reference starter
+    bootstrap.md                                          # align conflicting model/access lines only
     internal/
+      commands/onboard.go                                 # align existing onboard output only
       cli/cli.go, cli/*tests*                              # modify command dispatch/help
       commands/coordination.go                            # create narrow command entry
       coordination/invoke.go, invoke_test.go               # create mechanics and fake-process proof
+    src/codeheart_operating_kit/commands/onboard.py         # align existing behavior oracle output
+    src/codeheart_operating_kit/resources/components/agent-interface/ # sync touched managed mirrors
+    tests/test_onboard.py, tests/test_install_metadata.py   # replace conflicting output assertions
     tests/test_routing.py, tests/test_packaging_resources.py # modify where affected
     docs/repo/plans/cross-tool-agent-coordination/
       cross-tool-agent-coordination_execution_log.md       # create at activation
@@ -195,7 +202,9 @@ A fresh user approving implementation should not have to answer a provider quest
 configure an optional service. Explain cross-tool delegation briefly when requested or materially
 useful; do not advertise it at every plan. If declined, continue the native workflow and avoid
 repeated offers. Remember a choice only at its agreed scope: this assignment, personal preference,
-repository or coordination home. Do not turn one developer's decision into a team-wide default.
+repository or coordination home. An unscoped decline applies to the current conversation or
+assignment; do not persist a team preference without agreement. The general rule against repeated
+offers still applies. Do not turn one developer's decision into a team-wide default.
 
 Example opt-in explanation: "We can continue with Codex. If you want Claude to implement or review,
 I can guide that setup; it requires your own working access to Claude." Ask for the choice before
@@ -228,10 +237,18 @@ unless the exact change is authorized; never sync a managed template over consum
 Authentication stays in the tool's credential storage and is checked on the current machine.
 Machine paths/session artifacts stay ignored. No new global Kit-config fields or role registry.
 
-Align the existing first-run runbook's hardcoded model/access prescriptions with preserving the
-user's chosen model and permission settings. Add only a short pointer to the optional route;
-do not add a mandatory provider selection/setup stage or rework unrelated onboarding. This
-bounded alignment prevents older instructions from making Full access a hidden prerequisite.
+Align only the conflicting model/reasoning/speed/access lines across the first-run runbook,
+onboarding-context-contract.md and its packaged mirror, bootstrap.md, Go onboard output and the
+existing Python onboard behavior oracle. Replace the old output assertions in test_onboard.py
+and test_install_metadata.py with the accepted preserve-user-choice wording; retain coverage of
+the existing onboarding sequence. Use existing parity/resource checks for mirrors, not a new
+Python implementation of the coordination helper. Add only a short optional-route pointer where
+appropriate; no mandatory provider setup or unrelated onboarding redesign. This bounded alignment
+prevents the CLI itself from retaining Full access as a hidden prerequisite.
+
+Generic native implementation works with the current tool after Kit installation. Converting
+existing Codex-specific base installation/onboarding UI wording to a complete Claude-host guide
+is deferred; release notes must not imply that broader onboarding path was delivered here.
 
 ### Responsibilities and notification
 
@@ -311,14 +328,19 @@ classifier will allow an action.
 
 Use one ignored shared state root for participating launches through a relay on one host.
 An exclusive-create session lock holding the attempt ID and unique attempt directories prevent
-accidental second launch, overwrite and replay. Retain session/attempt information before spawning;
-record launcher and child process IDs with start identities as soon as known. No automatic staleness
-heuristics or lock stealing. Recovery documents a deliberate release of the named attempt's lock,
-only after verifying the same lock owner and that both recorded processes have ended. Refuse release
-while either is alive or process identity/ownership is uncertain, including a launch interrupted
-before identity capture. Preserve original outputs and session state when releasing the lock. A participating-process
-lock cannot prove there is no independent CLI/app/other-host writer. Fresh CLI ownership and the
-runbook remain necessary.
+accidental second launch, overwrite and replay. Capture launcher identity before creating the
+lock and persist it with session/attempt information before spawning; record child ID and start
+identity as soon as known. No automatic staleness heuristics or lock stealing. Recovery documents
+a deliberate release of the named attempt's lock only after verifying the same lock owner and
+that both processes have ended. Refuse automated release while either is alive or identity/ownership
+is uncertain, including interruption around child identity capture. For unresolved identity, the
+coordinator records the blocker and chooses either manual verification sufficient to establish
+exit and ownership before release, or an explicitly handed-over new session retaining the old
+uncertain attempt. Do not replay uncertain actions or permit a competing writer: resumed effects
+require reconciliation of prior process/workspace/external state, or isolated non-conflicting work.
+No indefinite wait, silent lock deletion or automatic new-session retry. Preserve outputs and
+session state. A participating-process lock cannot prove there is no independent CLI/app/other-host
+writer. Fresh CLI ownership and the runbook remain necessary.
 
 Open attempt stdout/stderr files before spawning and connect the child directly to those files,
 not to a helper-owned pipe or an in-memory buffer. Helper/worker death must not erase bytes already
@@ -373,10 +395,11 @@ A template/example is not an installed permission change. Live settings require 
 their effects; an approved whole-plan grant can cover them once. No global policy installation,
 force/admin merge, direct default-branch push or release/deployment permission is implied.
 
-Impact: managed instruction additions plus executable command behavior and security/safety-policy
-guidance and optional first-use routing; no consumer schema migration or automatically owned
+Impact: managed instruction additions, the new invocation command, changed existing onboard
+command output, security/safety-policy guidance and optional first-use routing; no consumer schema migration or automatically owned
 scaffold. The consumer reference is created by guided opt-in, not by mandatory base installation.
-Use broad candidate acceptance, explicit review of permission wording, native packaging/install proof and release notes.
+Use broad candidate acceptance, explicit review of permission wording, native packaging/install
+proof and release notes.
 Run cheap affected checks during edits and one coherent broad candidate gate. Reuse existing live
 pilot evidence where unchanged; do not repeat the merge experiment merely for ceremony.
 
@@ -430,13 +453,17 @@ Provide role brief/request examples, relay/response templates, permission exampl
 consumer reference starter.
 
 **C) Files Touched:** Agent-interface runbook/reference/template paths and component manifest from
-Section 2.1; README routers and affected packaging resources/tests. Consumer files wait for Epic 3.
+Section 2.1; README routers and affected packaging resources/tests. The bounded onboarding
+alignment also touches onboarding-context-contract.md and its packaged mirror, bootstrap.md,
+internal/commands/onboard.go, src/codeheart_operating_kit/commands/onboard.py and existing
+tests/test_onboard.py and tests/test_install_metadata.py. Consumer files wait for Epic 3.
 
 **D) Acceptance Criteria And Size:** M. Native work proceeds with no Claude install/account or
 reference file. Optional setup handles missing CLI/login, user choice, permission preservation,
 exact relay authority and consumer-owned reference creation/update. Procedure states preflight,
 authority, phases, exact return route, original evidence, blockers and recovery. Relay cannot
-research or accept work. The coordinator yields. Generic versus tested-host claims are explicit. No new portfolio fields or forced scaffold.
+research or accept work. The coordinator yields. Generic versus tested-host claims are explicit.
+No new portfolio fields or forced scaffold.
 
 **E) Dependencies And Critical-Path Notes:** The discovery is the contract. Required CLI mechanics
 are specified for Epic 2, not presented as already available.
@@ -448,7 +475,9 @@ are specified for Epic 2, not presented as already available.
   evidence, missing/stale relay handling and coordinator availability in the existing routes.
 - [ ] Add native-current-tool selection defaults to generic coordination, the paced optional setup
   flow to the hybrid runbook and a bounded first-run pointer. Replace conflicting pinned-model/
-  Full-access prescriptions without introducing mandatory provider setup or repeated offers.
+  Full-access prescriptions across every listed onboarding surface and its output assertions.
+  Preserve the existing sequence and check Go/oracle output and packaged-resource parity.
+  No mandatory provider setup, repeated offers or unrelated onboarding rewrite.
 - [ ] Add the opt-in local reference starter and explicit member-to-home navigation. Guide creation
   only after an agreed arrangement; preserve existing contents, personal/team scope, Program
   appointments and config authority. Authentication is per machine in the tool's storage.
@@ -479,14 +508,16 @@ substantive agent logic, credential manager, direct app messaging or general ada
 
 **C) Files Touched:** internal/cli/cli.go, internal/commands/coordination.go,
 internal/coordination/ implementation/tests; command help/contracts and affected Go test fixtures.
-Do not implement the new feature in the legacy Python behavior oracle merely for symmetry.
+Do not implement the new helper in the legacy Python behavior oracle merely for symmetry.
+Epic 1 deliberately updates the existing onboard output and its oracle/tests together.
 
 **D) Acceptance Criteria And Size:** M. One invocation uses the expected brief, worktree, session,
 model and settings; originals survive; session mismatch/denial/failure is truthful; notification
 payload preserves the exact recipient. Same-session overlapping attempts cannot both launch.
 
-**E) Dependencies And Critical-Path Notes:** Epic 1 fixes the contract. Existing release CLI behavior
-must remain unchanged; new command parity is specified by its Go tests, not a Python copy.
+**E) Dependencies And Critical-Path Notes:** Epic 1 fixes the contract and explicitly changes the
+existing onboard wording. Other existing CLI behavior remains unchanged; new helper behavior is
+specified by its Go tests, not a Python copy.
 
 **F) Tasks Checklist:**
 - [ ] Implement strict request/preflight, new/resume identity persistence, explicit settings and
@@ -500,8 +531,9 @@ must remain unchanged; new command parity is specified by its Go tests, not a Py
   collision/replayed attempt; helper termination while a fake child is writing; retained partial
   files and unresolved pending state; interrupted/stale attempt; deliberate lock release refused
   while the recorded process is alive or identity is unknown, permitted only after verified exit
-  and matching lock ownership; no raw normal output or implicit escalation. Use sanitized real CLI response/denial and message-rejection shapes to anchor fake
-  fixtures. Exercise actual process behavior, not just mocked return values.
+  and matching lock ownership; interruption before child identity capture retains a blocker and
+  documented owner-directed recovery. No raw normal output or implicit escalation. Use sanitized
+  real CLI response/denial and message-rejection shapes to anchor fake fixtures. Exercise actual process behavior, not just mocked return values.
 - [ ] Verify on the supported live host that a controlled harmless process continues through
   normal tool output-yield/resume cycles and retains evidence on interruption. Record actual
   process-limit knowledge separately from observed duration; do not burn hours testing idleness.
@@ -555,13 +587,16 @@ publication, then the same scenario once on installed release. Do not repeatedly
 - [ ] Create its local operational reference and links; move ongoing relay routing authority out
   of the improvement Program while retaining its history and program-specific appointments.
   Configure exact model/host/session preferences privately and reconcile the assigned checkout.
-- [ ] Check first-use scenarios with small controlled fixtures: (a) no local reference or Claude
-  binary/account and no provider preference -> native work proceeds with no Claude call or setup
-  prompt; (b) user selects Claude and CLI/login is absent -> concrete guided setup/choice without
-  silent fallback, credential copying, bypass or unapproved installation; (c) accepted native/decline
-  choice -> no repeated offers; (d) existing reference/preferences -> preserve user edits on repeat
-  setup and Kit upgrade, with correct personal versus repository/home scope. Use the real installed
-  cross-tool exercise below for positive login/preflight, not artificial account creation.
+- [ ] Use bounded fresh-agent probes in fixture repositories for behavior, not document review
+  alone: (a) no reference/Claude/account/preference -> ordinary native work proceeds with no
+  Claude call or setup prompt; (b) selected Claude with missing CLI/login -> guides the concrete
+  setup/choice without fallback, credential copying, bypass or unapproved installation; (c) feed
+  an accepted native/decline choice, then another routine request -> no renewed offer or team-wide
+  preference write. Cases (a)/(c) can share one small probe; (b) is a separate selected-provider
+  probe, with scoped readiness fixtures and no real account changes. Check intended preference
+  scope in those probes. Use an automated existing-reference fixture for (d): repeat setup and
+  Kit upgrade preserve custom reference contents and leave personal choices in the ignored layer.
+  Use the real installed cross-tool exercise below for positive login/preflight.
 - [ ] Give a fresh ordinary director a small user-style request. Require it to discover the
   installed route/reference from a configured member fixture/home, launch one harmless consultation
   through the maintained helper/relay, yield, receive a question, resume the same session with an
@@ -576,7 +611,9 @@ publication, then the same scenario once on installed release. Do not repeatedly
   real recipient or repeat live negative messaging is required unless actual host behavior changed.
 - [ ] Cover missing/stale route handling in the same onboarding exercise or non-live fixture.
   Retain existing accepted overlap evidence; repeat only if the new mechanics/topology invalidate it.
-  Record live usage/time if exposed and distinguish cached input from new output; no invented budget threshold.
+  Record live usage/time if exposed and distinguish cached input from new output; no invented
+  budget threshold. Disclose that initial real adoption reuses an existing relay: creating one
+  from scratch is fixture/procedure coverage unless independently observed, not claimed live proof.
 - [ ] Director presents material findings, accepted/challenged corrections and residual limits
   to the human, with an original-response reference. Verify generated artifacts are ignored and
   sufficient for recovery without requiring a duplicate authored report.
@@ -603,6 +640,11 @@ rules. Recheck the affected boundary, retain original failures and adapt one rec
 every transient failure into framework work. No AWS or product feature implementation is included.
 
 # Revision Notes
+
+- 2026-10-09: addressed the amendment review: align all existing onboarding output/mirror/test
+  surfaces, specify the oracle decision and impact, clarify uncertain-lock recovery, name behavioral
+  versus automated first-use proof, and bound Claude-host onboarding/relay-creation claims.
+  Same-reviewer correction check is pending; the three epics remain inactive.
 
 - 2026-10-09: added the user-approved native-default/optional-Claude first-use flow, guided tooling
   and sign-in, scoped preferences, managed defaults versus consumer-owned reference creation,

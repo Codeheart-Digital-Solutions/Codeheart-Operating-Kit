@@ -1,4 +1,4 @@
-Last updated: 2026-10-09T15:43:50Z (UTC)
+Last updated: 2026-10-09T15:53:13Z (UTC)
 
 # Independent Cross-Tool Coordination Plan Review
 
@@ -51,7 +51,7 @@ findings retroactively attributed to the independent reviewer.
 The draft remains inactive. Ready is a planning verdict; live host lifetime, installed helper
 behavior, failure proof, real adoption and onboarding remain implementation acceptance work.
 
-## First-Use Amendment Review Requested
+## First-Use Amendment Review And Corrections
 
 The user approved expanding the draft's explicit first-use flow: native operation without Claude,
 guided optional installation/sign-in and relay setup, scoped preferences, managed generic defaults
@@ -59,6 +59,21 @@ and an opt-in consumer-owned reference preserved on upgrades. A bounded correcti
 first-run pinned-model/Full-access instructions is included; unrelated onboarding remains outside
 scope. Small missing-service and preservation fixtures complement the existing real pilot.
 
-This amendment is assigned to the same independent reviewer. Previous Ready covers candidate
-7edfde4 only; review of the amended candidate is pending. The executable helper's role and the
-three-epic sequence are unchanged; Epic 1 is sized M to reflect its concrete hybrid onboarding work.
+The same reviewer returned **Needs improvement** on 40a80ab, supporting the design but identifying
+one Medium scope gap. CEO read the original response and verified session, successful execution,
+no denied tools and the actual return receipt. The corrections below are submitted for focused
+review; no Ready verdict is claimed for them yet. Epic 1 remains M and the three-epic sequence
+and helper role are unchanged.
+
+| Amendment finding | Coordinator disposition |
+| --- | --- |
+| Medium: old model/access instructions remain outside the runbook | Accept; locally verified in compiled onboard output, context contract, bootstrap, Python oracle and tests. Name all affected surfaces/mirrors, update existing oracle assertions rather than retire them, state changed CLI output as impact, preserve unrelated onboarding behavior. |
+| Low: interrupted launch can leave identity uncertain indefinitely | Accept. Capture launcher identity before locking; retain an explicit blocker for uncertain child identity. Document owner-directed manual verification or new-session handover, preserving old evidence and reconciling prior effects before overlapping work. No automatic lock steal or action replay. |
+| Low: first-use proof type unspecified | Accept. Bounded fresh-agent behavior probes for native/missing-provider/decline cases; automated repeated-setup/upgrade preservation fixture. Combine related cases and avoid real account churn. |
+| Low: broader onboarding remains Codex-oriented | Accept scope disclosure. Native implementation defaults apply after installation; a complete Claude-host base-onboarding rewrite is deferred and not advertised as delivered. |
+| Optional: decline scope and relay-creation evidence | Clarify an unscoped decline stays in the current conversation/assignment; no implicit shared preference. Existing-relay adoption does not prove creating a relay from scratch. |
+
+Reviewer accepted human-visible findings, coordinator judgment, optional generated response and
+minimal ignored evidence. Its final broad phrase about Windows being unqualified is read narrowly:
+Go/build/installed command acceptance still covers supported release platforms; live Windows
+Claude/desktop wakeup is the unqualified portion. No existing native release gate is removed.
