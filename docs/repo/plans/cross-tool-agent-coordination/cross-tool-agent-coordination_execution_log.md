@@ -1,4 +1,4 @@
-Last updated: 2026-10-09T22:01:24Z (UTC)
+Last updated: 2026-10-10T00:50:00Z (UTC)
 Created: 2026-10-09
 
 # Cross-Tool Agent Coordination Execution Log
@@ -14,12 +14,14 @@ and remains accountable for acceptance. This replaces an automatic extra-reviewe
 generic guidance; no tool/model or second chat is inherently required. Existing independent
 source findings and correction proof for this delivery remain useful and are retained.
 
-The amendment is in the active plan and pending source-guidance implementation. It adds no helper
-mechanism or release. The corrected candidate 685515578ca8c2ba7df4d77e312d320e108c695b has passed
-PR feedback. The director read the original correction report and inspected failure finalization,
-replay refusal, local-settings guidance and original selected-host new/resume/denial results;
-observed CLI version is 2.1.286. Source acceptance still awaits the guidance amendment, primary
-review and focused follow-up on the earlier independent findings. No merge or release is accepted.
+At the time, the amendment was pending source-guidance implementation. The corrected candidate
+685515578ca8c2ba7df4d77e312d320e108c695b had passed PR feedback. The director had read the
+original correction report and inspected the following:
+- failure finalization and replay refusal;
+- local-settings guidance;
+- the original selected-host new, resume and denial results, observed on CLI 2.1.286.
+
+The amendment was later implemented and accepted with the source; see the sections below.
 
 ## Activation And Assignment
 
@@ -284,16 +286,94 @@ rephrased or routed through another agent. Integration, tag, release, released-a
 consumer upgrade wait for the integration owner. This log entry is a planning record only; it
 changes no release input, so the candidate evidence above stays applicable.
 
+## Integration, Release And Adoption
+
+**Integration.** After the self-approval refusal, the user authorized one normal merge retry
+under unchanged permissions. PR 27 merged as `830aa5ab3e0521f1b694339d72526e8d754e96ff`; its tree
+equals the evidenced head, which differs from the qualified candidate only in this log.
+
+**Publication permissions.** The implementer's Auto-mode classifier refused the public tag and
+release (reason: creating a public surface) twice. The second refusal came after a user approval
+of the exact publication had been relayed in the brief. It also refused the read-only
+publication preflight as a bypass attempt.
+
+The user then approved a simpler explicit-permission profile: `dontAsk` mode with the task's
+development and GitHub commands listed, explicit ask and deny rules kept, and no sandbox. Setting
+it up ran into the following, in order:
+- Its readiness probes behaved as designed: the allowed probe ran, and the ask probe and an
+  unlisted interpreter command were refused.
+- A permitted `shasum` then aborted under the inherited `C.UTF-8` locale, which is an environment
+  failure. Listed `sha256sum` and `mkdir` commands on staging paths outside the session's
+  working directories were refused; the cause was not proven.
+- The commissioner set a supported locale and added the assigned staging directories as working
+  directories, without changing the command rules.
+
+**Release.** Annotated tag `v0.1.35` points to the merge. The release publishes 14 assets: both
+packs, the catalog, the installers, bootstrap and notes, each with a SHA-256 sidecar.
+- Before publication, the packs were byte-identical to the qualified run's artifacts, every
+  sidecar matched, and the text assets equal the tagged source.
+- The re-downloaded public assets match the staged bytes.
+- Released-asset smoke run `38005211633` passed both public native jobs.
+- The unsigned, unnotarized internal/prototype audience is unchanged.
+
+**Consumer adoption (prepared, not merged).** The named coordination home was upgraded on its
+assigned branch through the supported lifecycle, and an adoption PR awaits the director's
+primary review. It is not merged; the native onboarding exercise and first-use probes remain
+with the director. Two findings:
+- The released CLI reports a pristine v0.1.34 installation as partial. The upgrade was started
+  with the verified published CLI matching the installed version. The result is healthy and
+  current; only managed files and the lock changed, and authored and local files are
+  byte-identical.
+- A command that changed into the consumer repository and then ran Git was refused even after
+  `cd` rules were added. Starting the same session in that repository resolved it, and no
+  command was denied there.
+
+**Fixtures.** Four fixture repositories were created with the released CLI. An automated check
+against the public releases confirmed that a custom coordination reference and ignored local
+settings survive upgrade, sync and repair.
+
+## Permission Guidance And Multi-Result Capture Follow-Up
+
+**Multi-result capture.** A real implementer run emitted two result records. The first held the
+substantive handoff and a permission denial; a later background-task completion held no denials.
+The helper kept only the last record, so the earlier denial and reply location were lost from
+`attempt.json` and the message. The original output kept everything.
+
+The follow-up fixes this as follows:
+- Denials are gathered from every result record, and a repeated tool use ID counts once.
+- Earlier text replies are located in a new optional `earlier_responses` list, using the existing
+  locator shape.
+- The message names their exact lines without quoting or summarizing them.
+- The last record stays the final reply.
+- A sanitized fake-process regression reproduces the observed sequence; it fails against the
+  previous logic.
+
+**Guidance.** The follow-up documents in the contract the optional explicit-permission
+(`dontAsk`) profile, alongside the Auto-mode allowance and its observed refusals. It covers:
+- that command patterns are workflow control, not operating-system isolation;
+- one-time readiness probes;
+- starting sessions in the repository they change;
+- treating environment failures, such as the locale abort, as environment failures.
+
+Exact private profiles and paths stay with the consumer.
+
+**Not yet shipped.** These changes are not part of published v0.1.35. Shipping them needs the
+next patch release with broad candidate qualification, because the helper's executable
+behavior and record contract change. That release has not been started.
+
 ## Current State And Remaining Evidence
 
-Epics 1 and 2 are implemented, with the first correction cycle applied. They await the same
-reviewer's focused follow-up and director acceptance.
+**Done:**
+- Epics 1 and 2 accepted at source.
+- v0.1.35 published and verified.
+- Earlier gates passed: the release-candidate fixture test was green, the native macOS and Windows
+  lanes passed, and release notes and permission wording were reviewed.
 
-Required Epic 3 gates, none waived:
-- The release-candidate asset-name fixture test must be green at the release candidate.
-- Native Windows Go tests and release gates must pass.
-- Codex relay output-yield/resume must be observed with the installed helper.
-- Release notes and permission-wording review.
-- Named consumer adoption, first-use probes and the fresh-director exercise.
+**Pending:**
+- Director review and merge of the consumer adoption PR.
+- The fresh-director onboarding exercise with the installed helper through the relay, including
+  output-yield and resume.
+- The first-use probes.
+- Review of this follow-up PR and the release that will ship it.
 
 The plan stays active.
