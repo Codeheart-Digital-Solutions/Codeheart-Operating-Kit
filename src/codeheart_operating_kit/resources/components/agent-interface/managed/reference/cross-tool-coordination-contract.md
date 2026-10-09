@@ -1,4 +1,4 @@
-Last updated: 2026-10-09T19:52:39Z (UTC)
+Last updated: 2026-10-09T20:34:57Z (UTC)
 
 # Cross-Tool Coordination Contract
 
@@ -53,13 +53,17 @@ values, relative paths, unsupported modes and trailing data before creating any 
 
 - `session.mode` is `new` (the helper allocates and records a UUID before launch; omit `id`) or
   `resume` (supply the retained CLI-owned session UUID).
-- `permissions.mode` is `default`, `acceptEdits`, `auto`, `plan` or `dontAsk`.
+- `permissions.mode` is `default` (named `manual` in newer CLIs; both are passed through),
+  `acceptEdits`, `auto`, `plan` or `dontAsk`.
   `bypassPermissions` is refused. Optional fields are omitted when not approved; the helper never
   fills them in. `effort` accepts `low`, `medium`, `high`, `xhigh` or `max`.
 - `permission_prompts` is passed only when set. A CLI version without that option rejects it and
   the attempt returns `unsupported_invocation`; the helper does not retry without it.
 - Use one shared ignored `state_root` on a host for every participating launch, so the session
   lock can refuse overlapping writers.
+- `executable` and `settings_file` come from approved local settings, never from a `PATH` lookup
+  the coordinator did not approve. The executable is run directly; Windows `.cmd` or `.bat`
+  wrappers are not supported.
 
 ## Fixed Invocation
 
@@ -99,6 +103,17 @@ still run; lock retained), `launch_failed`, `session_locked` (no second writer l
 `attempt_exists` (replay refused; the original attempt is untouched). Permission denials are
 reported separately with their count and tool names; the CLI can exit successfully after a denial.
 
+Helper output (stdout) is compact JSON: `status`, `detail`, identifiers, `attempt_dir`,
+`attempt_file`, and `message_file` and `delivery_file` only when this invocation wrote them. Every
+outcome after the attempt directory exists writes all three records, including `session_locked`,
+`launch_failed` and `helper_interrupted`; the lock is released only when this launcher owns it and
+no child can still run. `fallback_message` holds send arguments for the request's own return
+destination when no message file could be written: `invalid_request` (only when the destination
+itself is valid), `helper_error` before an attempt record exists, a failed message write, and
+`attempt_exists`. A refused replay changes nothing in the earlier attempt and its notice says so.
+`persistence_errors` lists records that could not be written. Exit status is 0 only for
+`response_captured` with no persistence error, 2 for `invalid_request` and 1 otherwise.
+
 The message prompt states the assignment, attempt, status, session, denial count and attempt
 record path. It carries the original reply unchanged when it has at most 2,000 characters, and
 otherwise an exact file, line and JSON-field reference. It contains no summary or judgment.
@@ -120,7 +135,9 @@ confirmation. `sent` means the tool accepted the send, not that the coordinator 
 `release-lock` removes only the named attempt's lock, after checking the lock owner, the host and
 that the recorded launcher and CLI processes have ended. A reused process ID counts as running,
 which errs toward retaining the lock. When the CLI process was never recorded, it refuses unless
-the coordinator supplies a manual verification statement, which is kept in `attempt.json`.
+the coordinator supplies a manual verification statement, which is kept in `attempt.json`. A
+statement never overrides a live or unknown process or an empty or unreadable lock; those
+cases follow the owner-directed recovery in the runbook.
 
 ## Brief Shapes
 

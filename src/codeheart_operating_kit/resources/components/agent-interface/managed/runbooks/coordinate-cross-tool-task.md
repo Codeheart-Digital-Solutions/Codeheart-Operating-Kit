@@ -1,4 +1,4 @@
-Last updated: 2026-10-09T19:52:39Z (UTC)
+Last updated: 2026-10-09T20:34:57Z (UTC)
 
 # Coordinate Cross-Tool Task
 
@@ -47,9 +47,13 @@ shapes, and `../reference/agent-task-coordination.md` for assignment and accepta
 
 The executable recipe was qualified with a Codex desktop coordinator, an independent ordinary
 Codex relay chat with temporary transport workers, and CLI-owned Claude sessions on one macOS
-host. The helper builds and passes its process tests on macOS and Windows; live Claude and desktop
-wakeup on Windows, cross-host delivery and Claude-led reverse execution are not qualified. Host
-messaging behavior can change; recheck it when a send is rejected or does not wake the coordinator.
+host. The helper's consultation, continuation and denial paths were exercised with the app-bundled
+Claude Code CLI 2.1.286; an older 2.1.153 CLI rejects `--permission-prompts`, which the helper
+reports as `unsupported_invocation`. The helper builds for Windows, but Windows process tests,
+live Claude and desktop wakeup, cross-host delivery and Claude-led reverse execution are not
+qualified. The helper runs the executable directly; a Windows `.cmd` or `.bat` wrapper would be
+interpreted by `cmd.exe` with its own quoting rules and is not supported. Host messaging behavior
+can change; recheck it when a send is rejected or does not wake the coordinator.
 
 ## User-Facing Flow
 
@@ -96,6 +100,11 @@ assignment can now be commissioned.
 - Remember choices at the agreed scope: assignment record; personal ignored user layer
   (`.codeheart/user/`); repository reference `docs/repo/reference/agent-coordination.md`; or the
   coordination home's reference. Ordinary native operation needs no reference file.
+- Shared references record policy and role choices: which CLI distribution, model, permission
+  profile name and `permission_prompts` value each role uses, and who approved them. Exact host
+  values, such as the absolute executable path, its observed version and profile file paths, stay
+  in the ignored local layer (for example `.codeheart/user/agent-coordination.local.yaml`) or in
+  the assignment's private record. Never commit machine paths to a shared reference.
 - Create the repository reference from the installed starter
   `../templates/agent-coordination-reference.md` only when it is absent. When it exists, change
   only the specifically agreed entries. Kit repair, sync and upgrade never overwrite it.
@@ -111,14 +120,21 @@ assignment can now be commissioned.
 
 ### 1. Prepare
 
-1. Read the consumer reference for relay, host, model and evidence-root choices. Resolve missing
-   values with the owner; never let the relay choose them.
-2. Write the brief from the owning records. For an approved implementation plan, use the native
+1. Read the consumer reference for relay, host, model, permission profile and evidence-root
+   choices, then resolve them into concrete values from the assignment record or the ignored
+   local settings. Reuse values that are already approved there; ask the owner or user only for a
+   genuinely missing decision or access. Never let the relay choose them.
+2. Use the executable path that those approved settings name. Do not substitute whatever `claude`
+   a `PATH` lookup finds unless the approved setting says to. Confirm the file exists and run it
+   with `--version`; record the observed version with the attempt. If the version differs from
+   the one recorded for the approved setting, note the change; an unsupported flag will surface
+   as `unsupported_invocation`, never as a silent fallback.
+3. Write the brief from the owning records. For an approved implementation plan, use the native
    goal by default: open the brief with the supported `/goal <condition>` invocation for the
    current phase, aimed at a real handoff such as source review. Honor an explicit opt-out.
-3. Write the request JSON with every concrete value, a new `attempt_id`, the exact return chat,
+4. Write the request JSON with every concrete value, a new `attempt_id`, the exact return chat,
    and `session.mode` `new`, or `resume` with the retained session for the same assignment.
-4. Note the attempt directory `<state_root>/attempts/<assignment_id>/<attempt_id>/` in the
+5. Note the attempt directory `<state_root>/attempts/<assignment_id>/<attempt_id>/` in the
    assignment record before dispatch.
 
 ### 2. Dispatch And Yield
@@ -129,11 +145,24 @@ Send the relay one compact envelope and then yield to the user:
 Transport request for assignment <assignment_id>, attempt <attempt_id>.
 Run: codeheart-operating-kit coordination invoke-claude --request "<request path>"
 Wait on that same process through ordinary tool output yields; do not restart it.
-Then load <attempt dir>/message.json unchanged into send_message_to_thread and record the
-result with coordination record-delivery (sent, rejected or uncertain, with the original receipt).
-Authorized recipient: <coordinator chat> on <host>. Do not read, summarize or act on the reply.
-If anything fails, send the helper's original output to the same recipient.
+Then send exactly one notice to send_message_to_thread, loading its arguments unchanged:
+- if the helper output names a message_file, load that file and afterwards run
+  coordination record-delivery for that attempt (sent, rejected or uncertain, with the
+  original receipt or error);
+- otherwise, if it contains fallback_message, send that object; do not run record-delivery;
+- otherwise, send the helper's original output to the authorized recipient below.
+Never load a message file the helper did not name in this output.
+Authorized recipient: <coordinator chat> on <host>. Do not read, summarize or act on the reply,
+and do not retry the helper.
 ```
+
+The helper names a `message_file` only when this invocation wrote it, which covers every outcome
+after the attempt directory exists: replies, CLI failures, `session_locked`, `launch_failed` and
+`helper_interrupted`. A `fallback_message` covers failures before an attempt record exists, a
+message file that could not be written, and `attempt_exists`. For `attempt_exists` the notice is
+a new refusal, not the earlier result: the earlier attempt, message and delivery record stay
+unchanged and nothing is resent. A fallback send is not recorded in any attempt directory; if it
+also fails, the relay reports that in its own reply. Nothing is queued or retried.
 
 With several active assignments, the relay dispatches one temporary transport worker per
 assignment and returns control. Workers send directly to the requesting ordinary chat. Do not
@@ -165,11 +194,19 @@ the result.
   `delivery.json` shows `pending`, `sent`, `rejected` or `uncertain`. Pending can mean the worker
   stopped before sending. Do not resend or relaunch automatically.
 - `session_locked`: another attempt holds the session. Find it from the recorded lock owner.
-- `helper_interrupted` or a record left `running` or `launching`: effects are uncertain. Inspect
-  the child process, the original output, the worktree and external state before anything else.
-  When both processes have ended, run `coordination release-lock` for that exact attempt. If the
-  CLI process was never recorded, verify manually that no CLI process for the session remains and
-  pass that statement, or hand the work to a new session that keeps the old attempt as evidence.
+- `helper_interrupted` or a record left `preparing`, `launching` or `running`: effects are
+  uncertain. Inspect the child process, the original output, the worktree and external state
+  before anything else. When both recorded processes have ended, run `coordination release-lock`
+  for that exact attempt. If the CLI process was never recorded, verify manually that no CLI
+  process for the session remains and pass that statement with `--manual-verification`.
+- `release-lock` stays refused while a recorded process ID is alive, which includes a reused ID,
+  or when the lock is empty or unreadable. No statement overrides those refusals, and there is no
+  automatic recovery. The owner either establishes actual ownership and exit (for example, the
+  process ID now belongs to an unrelated program and the original CLI has ended), records that
+  verification in the assignment record and only then removes that one lock file, or hands the
+  work to an explicitly new
+  session that keeps the uncertain attempt as evidence. Before resuming overlapping work,
+  reconcile the old attempt's effects and make sure no competing writer remains.
 - `unsupported_invocation`: the installed CLI rejected the fixed flags. Report the original
   stderr; do not retry with other flags. Check official CLI documentation and update the recipe.
 - Never delete a lock silently, replay an uncertain action, or let two writers drive one session.
