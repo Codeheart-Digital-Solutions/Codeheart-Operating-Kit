@@ -1,10 +1,12 @@
-Last updated: 2026-10-09T15:56:45Z (UTC)
+Last updated: 2026-10-09T16:39:13Z (UTC)
 
 # Independent Cross-Tool Coordination Plan Review
 
-**Current verdict: Ready (plan candidate b6132dd).** The same independent reviewer closed all
+**Independent verdict: Ready (plan candidate b6132dd).** The same independent reviewer closed all
 first-use amendment findings. Coordinator read the original response and accepted the result;
-no implementation or publication authority is inferred. Earlier reviews below preserve history.
+no implementation or publication authority is inferred. A subsequent user-approved authority
+clarification is recorded below and is not covered by that independent verdict. Earlier reviews
+preserve history.
 
 Candidate reviewed: cf38d0e. Reviewer: fresh Claude Opus 5.5 CLI session, read-only, independent
 of plan authorship. The coordinator read the original response and verified process/session
@@ -82,7 +84,16 @@ minimal ignored evidence. Its final broad phrase about Windows being unqualified
 Go/build/installed command acceptance still covers supported release platforms; live Windows
 Claude/desktop wakeup is the unqualified portion. No existing native release gate is removed.
 
-## Final Amendment Acceptance
+## User-Approved Reporting Boundary
+
+After the review cycle, the user clarified that discussion-stage findings must be linked,
+summarized and independently assessed before plan amendments. The user then explicitly approved
+incorporating this boundary. The discovery and plan now specify the planning-review owner route,
+coordinator behavior and a bounded authority probe; routine authorized implementation corrections
+remain autonomous. This change is author-checked, not attributed to the preceding Claude review.
+No further review or correction cycle was commissioned by this approval.
+
+## Independent Closure Of Candidate b6132dd
 
 Coordinator verified the original closure response, expected retained session, exit zero and no
 permission denials. All amendment findings and optional scope clarifications are closed. No new

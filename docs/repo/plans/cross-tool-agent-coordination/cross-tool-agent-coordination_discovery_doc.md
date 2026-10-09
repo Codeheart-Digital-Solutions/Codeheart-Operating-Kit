@@ -1,4 +1,4 @@
-Last updated: 2026-10-09T15:56:45Z (UTC)
+Last updated: 2026-10-09T16:39:13Z (UTC)
 Created: 2026-10-05
 Status: completed
 
@@ -167,10 +167,16 @@ it does not routinely duplicate the delegated investigation while waiting.
 recipes must name tested directions and limitations. Fresh agents should discover the appropriate
 procedure and appointed advisor from normal repository/Program routes without manual coaching.
 
-**FR-8 — Human transparency.** For consequential reviews, the coordinator exposes the core
-findings, their significance and accepted/challenged/deferred corrections in readable language,
-with an original-response reference when useful. Verdict alone is not enough. This does not turn
-the relay into a summarizer or require a new report for every message.
+**FR-8 — Human transparency and discussion authority.** For consequential reviews, the coordinator
+reads the original and presents its accessible link or precise source locator, core findings,
+significance, independent assessment and recommended disposition. Verdict alone is not enough.
+During discovery, planning or discussion, requesting a review authorizes obtaining and assessing
+it, not incorporating its findings. Present recommendations before amendments, then wait for the
+user's decision unless an explicit delegation already covers the correction cycle. An approved
+edit followed by review authorizes that agreed edit, not further edits arising from the review.
+Reviewer agreement or a Ready verdict does not create user approval. Routine review corrections
+during authorized implementation continue within the agreed grant; material scope or authority
+changes return to the owner. The relay remains transport-only; no new report per message is needed.
 
 **FR-9 — Optional first use.** Normal planning/implementation continues with the current tool
 unless the assignment or applicable accepted preference selects another arrangement. Claude is
@@ -217,6 +223,7 @@ per-action approval gate. Preserve applicable defaults and enforced deny/ask rul
 | D-9 Reuse existing home identity | Preserve portfolio identity in .codeheart/kit.config.yaml. Home ID is neither a filesystem path nor a chat address. Add ordinary reference links for navigation; do not add unsupported config fields or a second registry. |
 | D-10 Explicit initial support | Generic responsibilities are direction-neutral. Initial executable recipe is Codex desktop coordinating CLI-only Claude on a verified host. Reverse direction and other hosts are deferred until qualified. |
 | D-11 Native default and guided opt-in | Approved 2026-10-09. Current-tool operation works without optional account, relay or local reference. Requested cross-tool setup handles CLI/login, non-secret scoped preferences and explicitly authorized relay creation. Managed guidance owns defaults; optional consumer-owned records retain local choices without sync overwrite. |
+| D-12 Report before discussion-stage amendments | Approved 2026-10-09. Present original review, findings, independent assessment and recommended changes before incorporating findings; wait for the user unless the correction cycle is explicitly delegated. Preserve autonomous routine corrections within authorized implementation. |
 
 ## Selected Helper And Communication Shape
 
@@ -309,13 +316,16 @@ questions/results through an existing independent relay.
 
 Primary workflow:
 Read the installed route and consumer reference; prepare role-matched brief and authority; relay
-dispatches; substantive agent works; relay returns; coordinator reads and accepts or responds.
+dispatches; substantive agent works; relay returns; coordinator reads and assesses, then reports
+recommendations or accepts/corrects only within the applicable phase and delegated authority.
 
 Must cover:
 - Advisors, implementers and independent reviewers; durable substantive sessions and role-specific context.
 - Strict relay-only mechanics, original responses, exact return destinations and one driver per session.
 - Question, denial, execution failure and failed-notification reporting; no automatic authority escalation.
 - Whole-plan assignments with delegated checkpoints and clear Git/release/adoption finish lines.
+- Discussion-stage review reporting before amendments, with explicit correction-cycle delegation
+  distinguished from a request to review or apply one already-agreed change.
 - Native operation without optional tooling/account and guided user-selected cross-tool setup;
   no provider questionnaire for normal execution, no forced fallback or blanket-access default.
 
@@ -326,7 +336,7 @@ Deferred or blocked:
 - Reverse Claude-led executable recipe: deferred pending separate evidence; not a first-release blocker.
 
 Preserve decisions:
-- D-1 through D-5, D-7, D-10 and D-11.
+- D-1 through D-5, D-7 and D-10 through D-12.
 
 Planner must not reinvent:
 - Relay judgment boundary, human-authorization attribution, coordinator availability or tested topology.
@@ -334,6 +344,8 @@ Planner must not reinvent:
 Feature-level success evidence:
 - Installed procedure lets a fresh ordinary director receive a question and final result after yielding;
   it assesses the original response and the relay performs no substantive research.
+- A bounded behavior probe shows review findings are reported before new planning edits; a covered
+  correction grant permits action without introducing per-finding approvals during implementation.
 
 ## Implementation Capability Scope - Invocation Helper
 
@@ -427,6 +439,10 @@ No live relay appointment, policy installation, implementation,
 release or consumer upgrade is authorized merely by this discovery checkpoint.
 
 ## Revision Notes
+
+- 2026-10-09: user approved reporting and assessing discussion-stage reviews before incorporating
+  findings, unless the correction cycle is explicitly delegated; routine authorized implementation
+  corrections remain autonomous. This is a user decision, not an additional reviewer finding.
 
 - 2026-10-09: user approved native-current-tool defaults and guided optional Claude first use;
   added setup/persistence boundaries and acceptance cases without creating a mandatory provider

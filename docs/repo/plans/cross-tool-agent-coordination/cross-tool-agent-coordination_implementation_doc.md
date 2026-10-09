@@ -1,4 +1,4 @@
-Last updated: 2026-10-09T15:56:45Z (UTC)
+Last updated: 2026-10-09T16:39:13Z (UTC)
 Created: 2026-10-09
 Status: draft
 
@@ -31,6 +31,7 @@ implementation and its delivery grant remain for review.
 | File | Why it matters |
 | --- | --- |
 | [Discovery](cross-tool-agent-coordination_discovery_doc.md) | Accepted requirements, pilot limits, decisions and three capability-scope groups. |
+| [Planning review](../../../../components/planning-workflows/managed/runbooks/review-planning-document.md) | Owns the review-versus-amendment boundary; coordination guidance points here. |
 | [Agent task coordination](../../../../components/agent-interface/managed/reference/agent-task-coordination.md) | Whole-plan authority, director review, report-back and lifecycle. |
 | [Codex operations](../../../../components/agent-interface/managed/reference/codex-task-operations.md) and [Claude operations](../../../../components/agent-interface/managed/reference/claude-code-task-operations.md) | Current host contracts, commissioning and tool-specific constraints. |
 | [Operation routing](../../../../components/agent-interface/managed/reference/operation-routing-and-dispatch.md) | Route before execution surface; owner, target and local-state discovery. |
@@ -46,7 +47,9 @@ and canonical plan catalog were checked. The independent Claude reviewer judged 
 candidate b6132dd **Ready (plan only)** after closing all material and low-severity amendment
 findings; see [the review record](attachments/independent-plan-review.md). The coordinator read
 the original response and accepted that assessment. Execution approval remains outstanding.
-Runtime behavior is planned, not proven by document checks or this planning verdict.
+Runtime behavior is planned, not proven by document checks or this planning verdict. The subsequent
+user-approved report-before-amendment rule below is author-checked; it was not part of b6132dd's
+independent verdict. Recording this rule does not reopen or authorize a correction cycle.
 
 ## Contents
 
@@ -129,6 +132,8 @@ Expected source paths (ordinary internal factoring may change without changing t
         runbooks/coordinate-cross-tool-task.md             # create hybrid opt-in/setup/execution recipe
         runbooks/conduct-first-run-onboarding.md            # modify only conflicting model/access defaults
         templates/agent-coordination-reference.md          # create opt-in consumer reference starter
+    components/planning-workflows/managed/runbooks/
+      review-planning-document.md                          # clarify coordinator review/amendment authority
     bootstrap.md                                          # align conflicting model/access lines only
     internal/
       commands/onboard.go                                 # align existing onboard output only
@@ -137,6 +142,7 @@ Expected source paths (ordinary internal factoring may change without changing t
       coordination/invoke.go, invoke_test.go               # create mechanics and fake-process proof
     src/codeheart_operating_kit/commands/onboard.py         # align existing behavior oracle output
     src/codeheart_operating_kit/resources/components/agent-interface/ # sync touched managed mirrors
+    src/codeheart_operating_kit/resources/components/planning-workflows/ # sync touched review mirror
     tests/test_onboard.py, tests/test_install_metadata.py   # replace conflicting output assertions
     tests/test_routing.py, tests/test_packaging_resources.py # modify where affected
     docs/repo/plans/cross-tool-agent-coordination/
@@ -278,12 +284,29 @@ the next decision genuinely depends on the result.
 
 ### Human-visible findings and proportionate records
 
-For consequential reviews, the coordinator presents the material findings in plain language:
-what was found, why it matters, the proposed correction and whether it was accepted, challenged,
-deferred or remains unresolved. State the review verdict and residual uncertainty. Link the
-original response when useful; a terse "review passed" or "findings addressed" is insufficient.
-This substantive reporting belongs to the coordinator, never the relay. Ordinary trivial replies
-do not need a formal review table or a new report.
+For consequential reviews, the coordinator reads the original and reports its accessible link
+or precise source locator, core findings and significance, an independent assessment including
+any disagreement, recommended disposition, verdict and residual uncertainty. A terse "review
+passed" or "findings addressed" is insufficient. The relay never supplies this judgment.
+
+During discovery, planning and discussion, report before incorporating findings or commissioning
+corrective edits. Wait for the user's decision unless explicit existing authority covers the
+correction cycle. "Apply this agreed change and get a review" covers that change and review, not
+new changes arising from it. A reviewer recommendation, Ready verdict or the coordinator's
+agreement is not a substitute for that decision. Distinguish recommended, user-approved and
+implemented changes in the report. Once the user approves specific corrections, carry them out
+without another per-edit approval. A wider correction-cycle delegation is reusable only within
+its stated limits.
+
+During authorized implementation, routine review fixes remain covered by the existing execution
+grant; preserve delegated director acceptance and report outcomes. Material scope, outcome or
+authority changes still return to the responsible owner. This boundary adds no user checkpoint
+per implementation finding or epic. Ordinary trivial replies need no formal review table.
+
+Put this reusable boundary in review-planning-document.md, clarifying its existing no-rewrite
+rule for both the reviewing agent and the commissioning coordinator. Generic task coordination
+and the cross-tool recipe link to that rule and carry the assignment's actual correction authority;
+do not create a second approval system or tool-specific policy copy.
 
 The agent replies normally in its CLI conversation; it is not asked to author an extra response
 document. CLI JSON contains the original final reply. A generated response.md may expose that
@@ -452,7 +475,8 @@ Provide role brief/request examples, relay/response templates, permission exampl
 consumer reference starter.
 
 **C) Files Touched:** Agent-interface runbook/reference/template paths and component manifest from
-Section 2.1; README routers and affected packaging resources/tests. The bounded onboarding
+Section 2.1; planning-workflows review-planning-document.md and its existing packaged mirror;
+README routers and affected packaging resources/tests. The bounded onboarding
 alignment also touches onboarding-context-contract.md and its packaged mirror, bootstrap.md,
 internal/commands/onboard.go, src/codeheart_operating_kit/commands/onboard.py and existing
 tests/test_onboard.py and tests/test_install_metadata.py. Consumer files wait for Epic 3.
@@ -462,7 +486,9 @@ reference file. Optional setup handles missing CLI/login, user choice, permissio
 exact relay authority and consumer-owned reference creation/update. Procedure states preflight,
 authority, phases, exact return route, original evidence, blockers and recovery. Relay cannot
 research or accept work. The coordinator yields. Generic versus tested-host claims are explicit.
-No new portfolio fields or forced scaffold.
+No new portfolio fields or forced scaffold. Review-only/discussion assignments report before
+amending; explicitly delegated correction cycles and routine authorized implementation retain
+their autonomy.
 
 **E) Dependencies And Critical-Path Notes:** The discovery is the contract. Required CLI mechanics
 are specified for Epic 2, not presented as already available.
@@ -481,6 +507,10 @@ are specified for Epic 2, not presented as already available.
   only after an agreed arrangement; preserve existing contents, personal/team scope, Program
   appointments and config authority. Authentication is per machine in the tool's storage.
 - [ ] Document the scoped ordinary-merge example and denial behavior without changing live settings.
+- [ ] Clarify the existing planning-review runbook's coordinator boundary: original response link,
+  findings, independent assessment and recommended disposition before discussion-stage amendments;
+  honor explicit correction delegation and existing implementation authority. Link from generic
+  coordination and cross-tool guidance. Include the agreed-edit-plus-review example.
 - [ ] Include human-visible review findings and coordinator disposition, optional generated
   response views, minimal ignored runtime evidence and ordinary authorized cleanup guidance.
   Keep durable conclusions in existing plan/log records rather than a new report per turn.
@@ -613,9 +643,16 @@ publication, then the same scenario once on installed release. Do not repeatedly
   Record live usage/time if exposed and distinguish cached input from new output; no invented
   budget threshold. Disclose that initial real adoption reuses an existing relay: creating one
   from scratch is fixture/procedure coverage unless independently observed, not claimed live proof.
-- [ ] Director presents material findings, accepted/challenged corrections and residual limits
-  to the human, with an original-response reference. Verify generated artifacts are ignored and
-  sufficient for recovery without requiring a duplicate authored report.
+- [ ] In a bounded fixture continuation of the existing agent exercise, request an agreed planning
+  edit plus review and provide a reviewer finding suggesting another change. Pass: coordinator
+  links the original, summarizes findings, gives its own assessment/recommendation and yields;
+  only the agreed edit exists, with no new amendment or corrective dispatch. Then supply explicit
+  correction authority: it applies covered fixes without per-finding approval. Verify the recipe
+  preserves routine corrections under an existing whole-plan execution grant. No extra live
+  external review or new production task is required solely for this probe.
+- [ ] Director presents material findings, recommended versus approved/implemented corrections and
+  residual limits to the human, with the original-response reference. Verify generated artifacts
+  are ignored and sufficient for recovery without requiring a duplicate authored report.
 - [ ] Director accepts evidence and honest support limits; archive only the temporary approved
   test chat, retain relay and original results, publish final plan/log/adoption state.
 
@@ -639,6 +676,10 @@ rules. Recheck the affected boundary, retain original failures and adapt one rec
 every transient failure into framework work. No AWS or product feature implementation is included.
 
 # Revision Notes
+
+- 2026-10-09: user approved the discussion-stage report-before-amendment boundary, its canonical
+  planning-review route and a bounded authority probe. This accepted rule is author-checked and
+  is not retrospectively covered by the earlier independent review. No implementation is activated.
 
 - 2026-10-09: recorded independent Ready verdict on b6132dd and closure of the amendment findings.
   This update records review status only; implementation remains draft and inactive.
