@@ -1,6 +1,6 @@
-Last updated: 2026-10-05T17:02:45Z (UTC)
+Last updated: 2026-10-09T14:56:20Z (UTC)
 Created: 2026-10-05
-Status: draft
+Status: completed
 
 # Cross-Tool Agent Coordination Discovery
 
@@ -12,8 +12,10 @@ plan:
   kind: discovery
   purpose: Establish proportionate commissioning, context, permission and result-return procedures for agents working across Codex and Claude CLI sessions.
   first_cataloged: 2026-10-05T16:32:21Z
-  catalog_metadata_updated: 2026-10-05T16:32:21Z
+  catalog_metadata_updated: 2026-10-09T14:56:20Z
   relations:
+    - kind: related
+      target: codeheart-operating-kit.implementation.cross-tool-agent-coordination
     - kind: related
       target: codeheart-operating-kit.implementation.claude-code-operating-guide
     - kind: related
@@ -27,9 +29,12 @@ A coordinating agent should be able to commission another tool's agent, remain a
 discussion, receive its questions and results, and resume the same assignment. Consumers should
 not have to invent scripts, restate authority at every routine step or move messages manually.
 
-This discovery consolidates accepted commissioning requirements and a bounded consultation. It
-does not activate implementation, change permissions or reopen the earlier Claude Code guide.
-Target: draft-ready, with unresolved implementation-shaping evidence explicitly retained.
+This discovery consolidates accepted commissioning requirements, consultation and bounded pilots.
+On 2026-10-09 the user approved consolidating the findings, settling the small helper's scope and
+preparing the implementation/onboarding work. That delegates the bounded capability detail below
+for planning; it does not activate implementation, change live permissions or reopen the earlier
+Claude Code guide. Readiness: implementation-handoff-ready. The related implementation plan remains
+draft for review. Completion here means discovery handoff, not shipped coordination capability.
 
 Priorities are faithful delegation and results, continued user interaction, few interruptions,
 simple reusable operation, and proportionate cost. Keep one accountable coordinator and existing
@@ -43,8 +48,9 @@ cross-tool compatibility claims. Existing assignments are not automatically rest
 ## Owners And Existing Routes
 
 The Kit owns reusable procedure, commissioning templates, tool-specific instructions and any
-subsequently justified helper. Consumer governance owns appointments, preferred models, local
-authority and private strategy. The owning plan/log records the actual implementer or reviewer,
+selected invocation helper. Consumer operational references own shared relay routing, preferred
+models and local operating choices; Program governance owns its appointments and private strategy.
+The owning plan/log records the actual implementer or reviewer,
 session locator, scoped authority, work/evidence references and accepted disposition. Session IDs
 locate execution; they are not durable role identities. Root agent instructions remain short routers.
 
@@ -58,51 +64,36 @@ Existing source routes:
 
 Future delivery is routing-bearing and recipe-bearing. This draft changes only producer planning
 documents: no managed instructions, safety policy, installation behavior or consumer paths change.
-Consumer-impact classification and release/adoption requirements must be revisited for actual
-implementation, particularly if permission guidance or executable assets are introduced.
+Implementation includes executable mechanics and permission guidance. It therefore requires broad
+candidate acceptance, explicit safety-policy review and release/adoption notes; it is not eligible
+for instruction-only release qualification.
 
 ## Evidence And Its Limits
 
-The commissioning pilot supplied these observations; private transcripts, identities, resource
-names, local paths and raw logs stay with its owner and are not public Kit content.
+Original responses, exact sessions, permissions and process/delivery records were inspected by the
+coordinator. They remain private consumer evidence. The following is the public-safe conclusion,
+not a copy of transcripts, local paths, account details or live chat identities.
 
-- A Codex relay launched a fresh Claude CLI consultation, captured its response and resumed the
-  same session for follow-up. A separate native Codex message-delivery test succeeded. It waited
-  for process output rather than repeatedly querying saved chats.
-- CLI resume of an app-owned Codex conversation failed with an active-writer conflict. Saved
-  conversation access is not a supported live desktop message channel. Use a fresh CLI-only
-  session for this pattern, with one active driver; do not override session ownership.
-- A real review and correction round trip worked. Whole-plan implementation, fresh director
-  onboarding, reverse Claude-led delivery and unattended merge under a selected profile remain
-  unproven. An available CLI in both directions does not establish symmetric notification.
-- The relay also researched evidence and interpreted results, while the coordinator repeated some
-  investigation. Usage showed substantial repeated context processing. This supports a narrower
-  transport role and compact context; it does not establish future cost or model reliability.
-- A subsequent lean relay ran a prepared read-only invocation, resumed the existing consultant,
-  and returned response/session/process metadata without a substantive digest. The coordinator
-  had ended its turn before the response returned. This demonstrates that bounded path on the
-  observed host; it does not qualify all idle/wakeup states, question and failure returns,
-  unattended implementation, or model cost/reliability. The retained consultant supplied advice,
-  not independent acceptance of work it had helped shape.
-- Recorded merge attempts were denied as `Merge Without Review`. The inspected Claude 2.1.286
-  default is a soft rule expecting human approval; independent agent review does not itself meet
-  that default. Teammate text does not meet soft-rule consent requirements. A direct human merge
-  instruction was also present in one denied case. These findings identify a concrete mismatch,
-  not a universal hard ban on delegation or proof of every historical policy input.
-- Current documented `autoMode.allow` prose can provide scoped exceptions to soft rules. Its
-  settings come from user, managed or invocation configuration, not repository project settings.
-  Actual acceptance of the intended workflow is untested. Normal command allow patterns do not
-  establish plan scope or independent review. A separate agent identity is not human approval.
-  Protected auto-merge is an alternative where suitable infrastructure already exists, but
-  enqueue-time commit matching alone does not prove the final merged candidate after updates.
+| Observation | What it establishes | Limit |
+| --- | --- | --- |
+| Fresh Claude CLI consultation and same-session follow-up | Prepared briefs and original results can be transported without the relay doing research. | Use CLI-owned sessions with one driver; app-owned sessions are not part of this recipe. |
+| Documentation PR 24 merged normally on 2026-10-06 | One reviewed candidate passed validation and merged under an invocation-scoped ordinary-merge permission profile with defaults and explicit restrictions retained. | No release, deployment or blanket bypass was qualified; one success is not classifier reliability proof. |
+| Earlier narrow merge exception was denied | Tool permission and workflow authorization are separate. A rule requiring the classifier to prove review/CI from tool output was unsuitable in the tested setup. | The replacement allows ordinary task-repository merges; workflow still checks authority, review and readiness. |
+| Native child completion after the parent ended its turn | Output was retained, but native completion did not start a new idle-parent turn in that test. | Active-parent collection is not idle notification. |
+| Native app-message restrictions | Sending to a native ancestor and sending direct app input to a native-subagent recipient were rejected. | Do not bypass these boundaries or propose native mock directors as ordinary-chat substitutes. |
+| Independent ordinary relay, tested 2026-10-09 | A completion notice started a new turn in an idle ordinary coordinator without user prompting. | Observed host/tool behavior, not a portable notification guarantee. |
+| Clarification round trip | Question and final response reached the coordinator; its answer resumed the same Claude session. | Relay forwarded; coordinator made the choice. |
+| Concurrent relay worker assignments | Separate sessions, output and ordinary return destinations stayed isolated. | Worker assignments overlapped; tiny model processes happened sequentially. This does not prove simultaneous model capacity. |
+| Two ordinary requesting chats, same active relay turn | Both incoming requests survived the overlap; each received its correct result once through a distinct worker. | One bounded interleaving, not durable queueing or exactly-once delivery. |
+| Mistyped chat identifier in an earlier fixture | Tool rejection exposed a transport-only copy error. Corrected structured identifiers worked. | Supports loading destinations from records instead of retyping them, not automatic retry of uncertain sends. |
 
-Official references checked on 2026-10-05:
-[Claude permission modes](https://code.claude.com/docs/en/permission-modes),
-[auto-mode configuration](https://code.claude.com/docs/en/auto-mode-config),
-[permission rules](https://code.claude.com/docs/en/permissions), and
-[Codex subagents](https://learn.chatgpt.com/docs/agent-configuration/subagents).
-Recheck relevant installed versions when selecting the pilot. Settings observations cover only
-the inspected files and current configuration extracts, not every desktop/server/historical policy.
+The original merge pilot's delayed notification was a real failure of timely reporting, not a
+missing result. The independent-relay tests resolve that observed topology problem for the selected
+host. Failed sends retain their response and error; no scheduler or continuous watcher was added.
+
+One-off launch scripts, repeated request/result assembly and the identifier error justify a small
+maintained invocation helper. No helper, installed reusable procedure or fresh-director adoption
+has yet shipped. Those are implementation outcomes; reverse-direction support remains unproven.
 
 ## Requirements And Working Scenarios
 
@@ -123,7 +114,7 @@ saved conversations supply rationale and intent, not automatic live context or r
 | Program advisor | Program strategy, related plans, constraints and relevant director discussion; advise on consequential program/plan decisions. |
 | Implementer | Approved whole plan, dependencies, authority and acceptance criteria; deliver the assignment and its corrections. |
 | Independent reviewer | Candidate, requirements, relevant design rationale/evidence, authority limits and acceptance criteria; reach an independent judgment. An advisor who co-authored should not be the sole independent reviewer. |
-| Temporary relay | Ready message, session/start instructions, paths and return destination; transport faithfully without substantive research or judgment. |
+| Relay or temporary transport worker | Ready message, session/start instructions, paths and exact return destination; transport faithfully without substantive research or judgment. |
 
 These are functions, not a requirement for five standing agents or a review on every commit.
 Reuse an advisor's session while useful; provide a handover to a fresh session when context becomes
@@ -164,6 +155,14 @@ invocation. A denied/unanswerable prompt or failed invocation must produce a ret
 execution failure with the original evidence, rather than a silent stop or a success claim. The
 substantive agent owns its question/blocker text; the relay forwards it and execution metadata.
 
+**FR-6a — Strict relay boundary.** A relay may check that the expected process/session ran and
+that output exists. It must not investigate the subject, prepare alternatives, answer substantive
+questions, interpret findings, summarize recommendations, accept work or start follow-on scope.
+Forward original questions and failures to the designated coordinator. Handling concurrent
+assignments does not expand this role. A relay receives a compact prepared envelope, not the whole
+coordinator conversation. The coordinator dispatches and yields, then assesses the original reply;
+it does not routinely duplicate the delegated investigation while waiting.
+
 **FR-7 — Reuse and direction.** Generic doctrine must permit either tool to coordinate. Tool
 recipes must name tested directions and limitations. Fresh agents should discover the appropriate
 procedure and appointed advisor from normal repository/Program routes without manual coaching.
@@ -184,105 +183,193 @@ per-action approval gate. Preserve applicable defaults and enforced deny/ask rul
 
 ## Decision Ledger
 
-These are accepted discovery inputs from the commissioning owner. They are not a completed
-independent review of this consolidated document or authorization to ship implementation.
-
 | Decision | State, rationale and consequence |
 | --- | --- |
-| D-1 Reusable procedure in the Kit | Approved direction. Consumer-specific appointments/preferences stay in consumer governance; execution stays with owning plans. Extends existing guides rather than inventing a registry. |
-| D-2 Distinct substantive and relay responsibilities | Approved direction. Consultant investigates, director assesses, relay transports. Some mechanical preparation is allowed; no default parallel duplicate research. |
-| D-3 Role-matched context and durable continuity | Approved direction. Brief plus relevant records/conversation evidence, stable role appointments with replaceable session locators, whole-plan implementer assignments. |
-| D-4 Main conversation remains available | Approved direction. Dispatch and yield by default; verify the host's completion/attention route. No polling watcher is selected. |
-| D-5 Permission approach | Approved investigation direction; profile unresolved. First evaluate a small supported invocation-scoped policy for approved normal merges after independent review. Existing protected auto-merge may be used if already suitable; extra identities/protection machinery are not prerequisites. |
-| D-6 Model and tooling | Approved intent for a capable but narrowly instructed relay with compact context. Exact consumer model and compatible reasoning are resolved at commissioning. A small maintained launcher is a candidate, not yet selected or implemented. |
-| D-7 Proof proportionality | Approved direction. One meaningful upcoming delivery and onboarding exercise, with relevant failure/question return. No arbitrary repeated-delivery gate or exhaustive framework. Expand evidence only for an actual unresolved risk. |
+| D-1 Reusable procedure in the Kit | Approved. Extend existing task coordination and tool guides; preserve one accountable coordinator and plan/epic acceptance. |
+| D-2 Distinct substantive and relay responsibilities | Approved and reaffirmed 2026-10-09. Substantive agent investigates, coordinator assesses, relay transports without parallel thinking. |
+| D-3 Role-matched context and durable continuity | Approved. Brief plus relevant records; advisors can persist, implementers retain coherent whole-plan sessions, relay identity is replaceable. |
+| D-4 Main conversation remains available | Approved. Dispatch and yield; use the tested independent ordinary relay and supported native messages. No watcher, cron or polling service. |
+| D-5 Permission approach | Approved direction with observed pilot. Invocation-scoped ordinary-merge allowance may support an authorized task; preserve defaults, explicit restrictions, actual checks and review. Never use blanket bypass, auto-escalate, or turn denial into a handoff to another agent to evade it. |
+| D-6 Bounded maintained helper | Selected under the user's 2026-10-09 delegation to settle precise scope. Add one invocation command to the existing Go CLI, using standard libraries. It launches/captures one assigned Claude CLI turn; it does not message Codex, schedule work or interpret results. |
+| D-7 Proportionate evidence | Approved. Reuse the bounded pilot conclusions; validate changed mechanics and one fresh-director onboarding flow. No repeated experiments merely to increase confidence. |
+| D-8 Durable local placement | Accepted direction. Consumer-owned docs/repo/reference/agent-coordination.md holds operational routing; root instructions link there. Owning Programs retain appointments and improvement history, not the sole location of a shared relay service. |
+| D-9 Reuse existing home identity | Preserve portfolio identity in .codeheart/kit.config.yaml. Home ID is neither a filesystem path nor a chat address. Add ordinary reference links for navigation; do not add unsupported config fields or a second registry. |
+| D-10 Explicit initial support | Generic responsibilities are direction-neutral. Initial executable recipe is Codex desktop coordinating CLI-only Claude on a verified host. Reverse direction and other hosts are deferred until qualified. |
 
-The permission consultation was reviewed by the coordinator. It corrected overclaims about agent
-approval being human approval, queued-merge candidate binding, settings coverage, and invented
-requirements for verbatim approval copying, repeated trials and re-approval of existing delegation.
-The retained consultant then reviewed this discovery in an advisory capacity. Its authority-input,
-headless-failure and profile-ownership findings were accepted by the commissioning owner. Session
-locator persistence, compaction resilience and precise review-to-merge evidence were also accepted.
-The coordinator qualified two recommendations: a locator does not prove safe resume, and reviewer
-independence does not require withholding rationale. Those qualifications are incorporated here.
-No disagreement requires escalation. This was not independent acceptance: the consultant helped
-shape the permission recommendations. Remaining evidence gaps below keep the document draft,
-not implementation-handoff-ready; no fresh independent review or implementation is commissioned
-by this update.
+## Selected Helper And Communication Shape
 
-## Open Questions, Assumptions And Risks
+Target command: codeheart-operating-kit coordination invoke-claude --request <request.json>.
+This is a proposed new command, not an available command. Reuse the existing compiled Go CLI and
+its release/install path so users do not need copied scripts or another runtime. Repeated
+commissions, installed distribution and compatibility justify this narrow L3 command under the
+script-promotion standard; do not build a separate CLI, framework or general agent API.
 
-| Open question | Blocker and resolving evidence |
-| --- | --- |
-| OQ-1 Which exact permission profile supports the authorized workflow? | BLOCKER: yes for unattended merge support. Select and record the concrete policy, its authorized owner and permitted pilot effects under NFR-2. Verify installed headless behavior for policy loading, ask rules and classifier-denial fallback. Bind the review verdict to the candidate commit, use normal merge without bypassing checks, and verify the merged result against the reviewed candidate. Prefer one non-deploying repository for the first pilot. Preserve defaults, deny/ask rules and real server-required checks. Merge findings do not qualify releases, deployments or other actions. |
-| OQ-2 What should ship as a launcher? | BLOCKER: yes for executable scope. Assess the repeated invocation/result mechanics, supported hosts, ownership, minimal inputs/output and interruption behavior. Prefer a small maintained helper if it removes recurring scripts; do not design an orchestration platform. |
-| OQ-3 Does the lean relay preserve delivery while the coordinator yields? | BLOCKER: yes for broader background-delivery claims. One prepared read-only response return after the coordinator yielded is observed. Still exercise a question/blocker, failed invocation, unanswerable permission prompt and safe continuation on the selected host; do not silently stall or claim success. Use compact context, capture integrity and actual usage, and stop on unreliable delivery or a genuine permission boundary. |
-| OQ-4 What reverse workflow is actually supported? | BLOCKER: no for initially scoped Codex-led support; yes for advertising bidirectional support. Verify Claude-led commissioning and return into an available Codex execution surface without an app-writer conflict. |
-| OQ-5 Does a fresh director discover and use the procedure? | BLOCKER: yes for onboarding acceptance, not for starting a separately authorized permission pilot. Exercise installed instructions and a Program appointment/absence case; account for tool-specific instruction-loading precedence. Do not assume an existing warm session proves onboarding. |
+The prepared request identifies the assignment and attempt, exact ordinary return chat/host,
+working directory, brief file, CLI executable, model, session mode/ID, approved permission and
+tool configuration, and ignored local evidence/state root. A new session ID is allocated and
+persisted before launch; a resume requires the retained CLI-owned session. Arguments are structured
+and prompts go through stdin; no shell interpolation, implicit mode changes or arbitrary retry.
+Optional execution limits come from the assignment; the helper adds no short whole-plan deadline.
 
-Assumptions: A-1 selected CLIs are installed/authenticated and available; check at launch without
-silently installing or changing versions. A-2 the coordinator can receive a native relay result;
-verify for the host and idle/active states used. A-3 generic direction can be symmetric while
-initial tested transport is asymmetric. A-4 existing Program/Plan records are sufficient unless a
-concrete pilot shows otherwise. An unavailable requested model is a commissioning gap, not license
-to silently substitute another model or reasoning level.
+The command performs deterministic validation, prevents a second participating writer to that
+session in the shared host-local state root, launches once, captures original stdout/stderr and
+the original reply, and writes a small result and native-message argument file. That file contains
+the exact approved recipient and original short reply or full-response reference; the relay
+passes it to the exposed app tool without retyping identifiers. The helper cannot authenticate to
+or call a private Codex app API. Its successful exit means response capture, not task acceptance.
 
-Risks: R-1 stale or oversized context loses intent or wastes processing; use scoped briefs and
-measured context. Keep authority and limits in durable owning records and the selected applicable
-profile; verify them on resume/handover instead of assuming compaction preserves conversation
-boundaries or an invocation automatically retains its prior configuration.
-R-2 policy prose is classifier-interpreted; distinguish supported configuration
-from demonstrated reliability. R-3 duplicate drivers or retries damage work; preserve ownership and
-inspect state. R-4 a relay summary alters advice; retain unchanged results for coordinator review.
-R-5 completion notices fail when the parent yields; verify the actual lifecycle rather than add a
-watcher by assumption. R-6 broad allow patterns or inaccurate human attribution weaken authority;
-keep scope explicit and do not apply a profile as part of this documentation update.
+Artifacts are private ignored runtime evidence. Normal output contains only status and locators,
+not raw transcripts, prompts, secrets or reasoning. Record model/usage when supplied by the CLI;
+unknown usage stays unknown. Do not scrape private internal reasoning from session storage.
+On denial, mismatched session, timeout, interrupted execution or malformed output, retain evidence
+and report uncertainty. Inspect before resuming; no automatic replay, force-unlock or mode fallback.
+A local lock does not prove that an external driver or another host is absent.
 
-## Bounded Documentation Pilot
+One independent ordinary relay chat can serve multiple ordinary directors. It dispatches compact
+assignments to temporary transport workers and returns control. Workers address the original
+requesting ordinary chat directly, outside the worker's ancestor hierarchy. One driver per Claude
+session still applies. Without an authorized valid return target, report a blocker rather than
+guessing a similarly named chat. A failed or uncertain send preserves its result and delivery
+state; no exactly-once or eventual-delivery guarantee is claimed.
 
-The commissioning owner authorized proceeding with a bounded pilot on 2026-10-05. Use publication
-of this discovery and its plan-index entry as the useful delivery: an ordinary pull request,
-independent review, passing validation, then a normal merge of the reviewed candidate. Confirm
-that the repository's current workflows do not deploy or release on these events. This experiment
-does not implement the proposed reusable procedure or qualify release/deployment authority.
+## Durable Routing And Onboarding
 
-The coordinator records the exact candidate, source review, invocation profile, session locator
-and authority in the private commissioning record. A fresh execution session performs the delivery;
-the existing consultant remains an advisor. The replaceable relay launches prepared invocations
-and returns unchanged responses plus process/session evidence. It does not review or merge.
+Consumer operational reference: current relay locator/host, maintenance owner, model preferences,
+supported local host, shared local evidence-root convention and links to the managed procedure.
+Private machine paths stay in ignored local setup; examples in the Kit use public-safe placeholders.
+Local reference data is discoverable configuration, not authority to message or create chats.
 
-Use Auto mode with the defaults retained and an invocation-only exception to the human-review
-soft rule for this independently agent-reviewed candidate. Do not describe agent review as human
-review. Preserve explicit ask/deny rules, hard rules and any server-required reviews/checks. No
-global/project policy change, bypass mode, force/admin merge, direct main push, release, adoption
-or unrelated repository effect is authorized. A small harmless command with an explicit ask rule
-exercises headless blocker return before continuing the same session on the permitted assignment.
-An expected probe denial does not authorize retrying that command by another route.
+An ordinary member's existing root/repository reference links to its coordination home's reference,
+using a repository URL plus relative path or an established local link. Verify home identity against
+the existing portfolio declaration when that membership is used. Do not infer a path from the home
+ID, scan every chat by title, use an old Program as the routing database, or rewrite portfolio
+identity silently. A repo without portfolio membership can use its own local operational reference.
 
-Success requires an unchanged candidate through review and merge, passing applicable checks,
-verified merged contents, and original response/denial evidence returned to the coordinator.
-Stop for unexpected denial, failed checks, changed candidate/base, unavailable configuration,
-uncertain remote effects or broader authority needs. Inspect effects before any continuation.
-Record whether the exception was actually loaded and used; an allowed command alone does not
-prove classifier reliability. One outcome supports only the exercised configuration and workflow.
-No maintained launcher, reverse-direction support or complete onboarding qualification is implied.
+A missing or stale relay produces a bounded owner decision/replacement procedure. Preserve advisor
+sessions and unfinished assignment references when replacing a relay. No automatic chat creation,
+standing role registry or program-lifecycle dependency is introduced.
 
-## Next Evidence And Handoff State
+## Implementation Capability Scope - Commissioning And Transport
 
-Next work is the bounded documentation pilot above, assessment of the smallest reusable invocation
-mechanics, and resolution of the applicable questions above. Exact invocation configuration and
-execution evidence remain with the private commissioning owner. A
-consumer's chosen model for one read-only relay run does not establish a public default. Its output
-and the remaining pilot evidence should support a coherent implementation capability scope before
-epics are drafted.
+Capability:
+An accountable coordinator commissions substantive work, remains available and receives original
+questions/results through an existing independent relay.
 
-This is not an implementation plan. The pilot grants no standing implementation policy, maintained
-launcher, agent appointment, release or consumer adoption. Public source review and normal
-release/adoption remain required when a delivery is commissioned. The earlier guide and its
-remaining obligations retain their own authority. Draft publication alone would not authorize
-those effects.
+Primary workflow:
+Read the installed route and consumer reference; prepare role-matched brief and authority; relay
+dispatches; substantive agent works; relay returns; coordinator reads and accepts or responds.
+
+Must cover:
+- Advisors, implementers and independent reviewers; durable substantive sessions and role-specific context.
+- Strict relay-only mechanics, original responses, exact return destinations and one driver per session.
+- Question, denial, execution failure and failed-notification reporting; no automatic authority escalation.
+- Whole-plan assignments with delegated checkpoints and clear Git/release/adoption finish lines.
+
+Explicitly out of scope:
+- Schedulers, durable queues, automatic retries, app-owned CLI resumes and internal app API injection.
+
+Deferred or blocked:
+- Reverse Claude-led executable recipe: deferred pending separate evidence; not a first-release blocker.
+
+Preserve decisions:
+- D-1 through D-5, D-7 and D-10.
+
+Planner must not reinvent:
+- Relay judgment boundary, human-authorization attribution, coordinator availability or tested topology.
+
+Feature-level success evidence:
+- Installed procedure lets a fresh ordinary director receive a question and final result after yielding;
+  it assesses the original response and the relay performs no substantive research.
+
+## Implementation Capability Scope - Invocation Helper
+
+Capability:
+One maintained, installed command replaces ad hoc invocation/result scripts.
+
+Primary workflow:
+A relay worker passes the approved structured request, awaits the process result and delivers the
+unchanged notice through the native tool.
+
+Must cover:
+- Explicit request, non-shell launch, retained session identity, one participating writer and isolated attempts.
+- Original response capture, exact message arguments, honest process/denial/error and usage metadata.
+- Safe interruption/recovery evidence, private output handling, current CLI/tooling preflight.
+
+Explicitly out of scope:
+- Tool installation, permission changes, worktree creation, background daemons, direct app messaging,
+  business-task interpretation, automatic retry or credential management.
+
+Deferred or blocked:
+- No blocker to implementing the selected path; unsupported CLI versions fail with a useful blocker.
+
+Preserve decisions:
+- D-2, D-5, D-6 and D-10.
+
+Planner must not reinvent:
+- Existing Go CLI delivery, no Python prerequisite, optional assignment-owned time limit and no bypass default.
+
+Feature-level success evidence:
+- Fake-process tests prove identity/failure/concurrency mechanics; installed command passes the bounded
+  real onboarding flow without hand-written launch scripts.
+
+## Implementation Capability Scope - Discoverability And Adoption
+
+Capability:
+A fresh director finds the operational relay without the coordinator explaining the setup manually.
+
+Primary workflow:
+Member/root routing leads to the consumer operational reference, then managed procedure and helper;
+the named consumer adopts the qualified release and records the observed result.
+
+Must cover:
+- Stable local reference independent of Program lifecycle, owning Program appointment links and private evidence.
+- Existing portfolio identity, explicit navigation link, missing/stale/mismatched route handling.
+- Coherent release and named consumer default-branch adoption; expose working-copy or host limitations.
+
+Explicitly out of scope:
+- New portfolio schema/registry, Organization Home record families, bulk unrelated adoption or identity migration.
+
+Deferred or blocked:
+- Any local membership conflict is resolved by its owner before using that route; it does not block
+  building the Kit procedure/helper or a correctly configured consumer's adoption.
+
+Preserve decisions:
+- D-7 through D-10.
+
+Planner must not reinvent:
+- Local reference placement or the distinction between home ID, chat identity and machine-local state.
+
+Feature-level success evidence:
+- One low-context director follows installed routes in a configured home/member fixture and completes
+  the real response/clarification flow; no guessed identifiers, new policy registry or manual briefing.
+
+## Remaining Questions And Risks
+
+- OQ-1 — BLOCKER: no. Exact release version is chosen from current tags at the candidate boundary.
+- OQ-2 — BLOCKER: no for planning. Action-time tool/version/host availability and delegated authority
+  are preflight checks; a missing capability blocks the affected live step, not unrelated preparation.
+- OQ-3 — BLOCKER: no. Fresh-director onboarding is delivery acceptance, not missing architectural research.
+- OQ-4 — BLOCKER: no. Reverse direction and cross-host operation remain explicitly deferred.
+
+Residual risks: host messaging behavior can change; ordinary-merge classifier behavior is not
+guaranteed; local locks only coordinate participating launchers; tool outputs can contain private
+material; uncertain sends may require manual reconciliation. Preserve evidence, name the actual
+failure and return to the coordinator instead of adding unattended retry infrastructure.
+
+## Handoff State
+
+The user delegated consolidation and bounded helper design for planning on 2026-10-09. The capability
+blocks freeze the chosen first delivery while leaving safe command/file details to implementation.
+The [implementation plan](cross-tool-agent-coordination_implementation_doc.md) is draft and inactive.
+Next review is of that coherent plan. No live relay appointment, policy installation, implementation,
+release or consumer upgrade is authorized merely by this discovery checkpoint.
 
 ## Revision Notes
+
+- 2026-10-09: consolidated the accepted merge/notification/overlap pilots with explicit limits;
+  selected a bounded installed CLI helper under delegated planning scope; fixed durable routing,
+  relay-only responsibility and fresh-director acceptance; completed discovery handoff without
+  activating implementation.
 
 - 2026-10-05: recorded the authorized, bounded documentation delivery pilot and its review,
   permission, headless-blocker and evidence boundaries; results remain pending execution.
