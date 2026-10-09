@@ -1,4 +1,4 @@
-Last updated: 2026-10-09T20:06:32Z (UTC)
+Last updated: 2026-10-09T20:40:08Z (UTC)
 Created: 2026-10-09
 
 # Cross-Tool Agent Coordination Execution Log
@@ -87,7 +87,7 @@ child keeps writing; guarded release refused while processes live or ownership d
 permitted after verified exit; interruption before child identity requiring a manual statement;
 and pending/sent/rejected/uncertain delivery with recipient comparison.
 
-Live checks on the tested macOS host with the installed-equivalent build and a real Claude CLI:
+Earlier live checks on the macOS host with the built helper and an older Claude CLI (2.1.153):
 a new consultation and same-session continuation returned the original replies; a harmless
 denied write returned its denial metadata unchanged; the older CLI rejected the optional prompt
 flag as `unsupported_invocation`. A controlled harmless child kept running across separate tool
@@ -99,11 +99,65 @@ security/safety-policy guidance (permission profile and denial handling). No sch
 or automatic scaffold; the consumer reference is created by guided opt-in. Release notes and
 explicit permission-wording review are required at the release step.
 
+## Source Review And First Correction Cycle
+
+An independent read-only reviewer judged candidate `e0433f2` **Needs improvement** for source
+acceptance. The director read the original, reported its own assessment and authorized one
+bounded correction cycle. Director source acceptance is not yet given.
+
+| Finding | Director disposition | Correction |
+| --- | --- | --- |
+| M-1: failures after the attempt existed wrote no message or delivery record; the relay envelope loaded a fixed path and could resend an earlier result on `attempt_exists` | Fix through shared finalization; never resend on replay; narrow fallback only | One finish step writes the record, message arguments and pending delivery for every post-creation outcome, including `session_locked`, `launch_failed` and `helper_interrupted`. It releases only a lock this launcher owns with no possible child. Output names `message_file` and `delivery_file` only when written. `persistence_errors` reports failed writes, and the exit status is nonzero. `fallback_message` uses the request's own return destination for failures before an attempt exists, a failed message write and `attempt_exists`. A refused replay changes nothing in the earlier attempt and its notice says it is not the earlier result. The relay envelope loads only the `message_file` named in this output. A lock whose content write failed is removed by its creator. |
+| M-2: no durable place for the approved executable and profile | Agree on discoverability; keep machine paths out of committed references | The template records the approved CLI distribution, per-role profile, mode and `permission_prompts`, plus the ignored local settings route. The runbook resolves exact values from approved local or assignment records, verifies the executable and its observed version, and forbids unapproved `PATH` substitution. It asks only for genuinely missing decisions. |
+| M-3: no proof on the selected host's CLI | Run the built helper with the assigned 2.1.286 executable and `claude-opus-5-5` | See the evidence below. Init and result fixtures are now sanitized 2.1.286 shapes. The unsupported-flag fixture remains labeled 2.1.153 evidence. |
+| L-1: `release-lock` dead ends for a reused process ID or an empty lock | No free-text bypass; document owner-directed options | Refusals stay fail-closed, and tests prove a statement cannot override a live launcher, a live child or an unreadable lock. The runbook names the owner options: record actual ownership and exit verification, then remove that one lock deliberately; or hand over to an explicitly new session that keeps the uncertain attempt and reconciles effects first. No automatic recovery is promised. An atomic link-based lock claim was not added, because hard-link support is not portable across all consumer filesystems; the remaining window is the instant between exclusive create and write. |
+| L-2: `preparing` missing from recovery | Add | Added with `launching` and `running`. |
+
+Also during this cycle, the selected 2.1.286 CLI lists permission modes as `manual`,
+`acceptEdits`, `auto`, `dontAsk`, `plan` and `bypassPermissions`. It still parses `default`.
+The helper now passes `manual` through as well, and still refuses `bypassPermissions`.
+
+Additional documentation:
+- Windows `.cmd` and `.bat` wrappers are documented as unsupported.
+- Optional effort support has an argument-fidelity test covering every optional field. The
+  2.1.286 help lists `--effort` with low, medium, high, xhigh and max. No effort override is used
+  by the current commission.
+
+Not adopted:
+- A brief digest in `attempt.json` (optional suggestion).
+- Any change to reviewer-selection policy.
+
+Selected-host evidence, retained privately in ignored state:
+- **Setup:** the built helper with the assigned app-bundled CLI, observed version 2.1.286, and
+  model `claude-opus-5-5`. Permission mode `default` with `permission_prompts` `none`, tools Read
+  and Write, Read allowed, MCP and Chrome disabled, no profile file and no effort override.
+- **New consultation:** captured the exact reply, with requested and actual session equal.
+- **Continuation:** resuming that session returned a reply that showed memory of the earlier turn.
+- **Denied write:** a deliberately denied Write to a disposable directory returned
+  `permission_denials` [Write] with exit 0 and terminal reason `completed`. The directory stayed
+  empty. The denial was not retried.
+- **Locks:** none remained after the three attempts.
+
+The commissioning session's own 2.1.286 print-mode stream showed `Goal set` for a brief opening
+with `/goal`. That was the native-goal activation evidence; it was not rerun.
+
+Validation after corrections:
+- `go vet ./...` and `go test ./...` pass on macOS, and the new package passes under `-race`.
+- Windows `go vet` and test compilation succeed for the new package.
+- Python: 262 pass. The remaining failure is the release-candidate asset-name fixture.
+- Release identity and manifest validators pass after refreshing the standard-profile digest.
+- Public-core and Markdown checks pass.
+
 ## Current State And Remaining Evidence
 
-Epics 1 and 2 are implemented and acceptance-pending: independent source review and director
-acceptance come next. Remaining before their acceptance: the review and any corrections, and
-native Windows Go coverage through the existing candidate gates. Remaining in Epic 3: Codex relay
-output-yield/resume observation with the installed helper, the release (including the
-release-candidate identity fixture and release notes), named consumer adoption, first-use probes
-and the fresh-director exercise. The plan stays active.
+Epics 1 and 2 are implemented, with the first correction cycle applied. They await the same
+reviewer's focused follow-up and director acceptance.
+
+Required Epic 3 gates, none waived:
+- The release-candidate asset-name fixture test must be green at the release candidate.
+- Native Windows Go tests and release gates must pass.
+- Codex relay output-yield/resume must be observed with the installed helper.
+- Release notes and permission-wording review.
+- Named consumer adoption, first-use probes and the fresh-director exercise.
+
+The plan stays active.
