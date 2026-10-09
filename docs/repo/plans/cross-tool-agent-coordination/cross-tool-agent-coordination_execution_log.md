@@ -1,4 +1,4 @@
-Last updated: 2026-10-09T21:14:24Z (UTC)
+Last updated: 2026-10-09T22:01:24Z (UTC)
 Created: 2026-10-09
 
 # Cross-Tool Agent Coordination Execution Log
@@ -255,6 +255,34 @@ Release candidate `v0.1.35`, the next unused patch after published `v0.1.34`:
   Release notes describe the example as an invocation-scoped, non-installed allowance for
   ordinary task-repository merges with defaults and ask/deny rules retained. No audience,
   platform, signing or setting is widened.
+
+## Broad Candidate Qualification
+
+Broad candidate run `37992723838` passed every lane on `d5282fdaa62a9a019a662ce4c6585dcd00ee8e8c`,
+with the default scope and all lanes:
+- **macOS and Windows native validation:** Go suite, staged installers and old-version upgrade
+  preservation.
+- **Ubuntu semantic validation.**
+- **Git 2.43 proof.**
+
+The Windows Go suite took its usual 35–40 minutes.
+
+The run's candidate assets were retrieved and verified locally:
+- catalog to archive digest and sidecars;
+- pack-manifest digest, then all payload checksums, then content identity;
+- the installers, bootstrap and notes inside each pack equal the candidate source;
+- no Python payload;
+- the macOS binary digest matches its pack manifest and reports `0.1.35`.
+
+Archive SHA-256:
+- macOS universal: `659d6852074edf8097d491f1d98e0ba6bb31bb4923a3654566b0fb54a8641bca`
+- Windows x64: `71974b595c127866e2cc5d815c76cc334fcedd44b9174538cec848bdc864364f`
+
+The normal merge of PR 27 at that exact head was refused by the implementer's tool permission
+classifier (reason: self-approval). Per the assignment this is a blocker: it was not retried,
+rephrased or routed through another agent. Integration, tag, release, released-asset smoke and
+consumer upgrade wait for the integration owner. This log entry is a planning record only; it
+changes no release input, so the candidate evidence above stays applicable.
 
 ## Current State And Remaining Evidence
 
