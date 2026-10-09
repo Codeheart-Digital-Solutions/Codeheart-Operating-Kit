@@ -1,9 +1,25 @@
-Last updated: 2026-10-09T20:40:08Z (UTC)
+Last updated: 2026-10-09T20:42:55Z (UTC)
 Created: 2026-10-09
 
 # Cross-Tool Agent Coordination Execution Log
 
 Plan: [Cross-Tool Agent Coordination](cross-tool-agent-coordination_implementation_doc.md).
+
+## Approved Review-Responsibility Amendment
+
+At the first correction handoff, the director recorded the user's approved bounded amendment:
+the commissioning agent performs the primary review against outcome, scope and evidence, uses
+additional independent scrutiny when complexity, risk, authorship or a binding gate warrants it,
+and remains accountable for acceptance. This replaces an automatic extra-reviewer default in
+generic guidance; no tool/model or second chat is inherently required. Existing independent
+source findings and correction proof for this delivery remain useful and are retained.
+
+The amendment is in the active plan and pending source-guidance implementation. It adds no helper
+mechanism or release. The corrected candidate 685515578ca8c2ba7df4d77e312d320e108c695b has passed
+PR feedback. The director read the original correction report and inspected failure finalization,
+replay refusal, local-settings guidance and original selected-host new/resume/denial results;
+observed CLI version is 2.1.286. Source acceptance still awaits the guidance amendment, primary
+review and focused follow-up on the earlier independent findings. No merge or release is accepted.
 
 ## Activation And Assignment
 

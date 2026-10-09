@@ -1,4 +1,4 @@
-Last updated: 2026-10-09T20:06:32Z (UTC)
+Last updated: 2026-10-09T20:42:55Z (UTC)
 Created: 2026-10-09
 Status: active
 
@@ -322,6 +322,24 @@ the next decision genuinely depends on the result.
 
 ### Human-visible findings and proportionate records
 
+The user approved a review-responsibility amendment at the first correction handoff. The
+commissioning agent (director or coordinator) is the primary reviewer: directly inspect the
+delivered work against its intended outcome, scope and validation evidence, assess any additional
+review advice, and own acceptance. Merely forwarding another agent's verdict is insufficient.
+
+Additional independent review is selected when complexity, risk or the commissioning agent's
+own implementation involvement warrants it, or when a binding assignment/gate requires it.
+Another full technical review is not automatically required for every assignment. Authorship
+conflicts need independent scrutiny; self-review is not independent review. Keep this generic
+rule tool-neutral and distinguish a director's own review from commissioning a separate reviewer.
+
+Align the existing execution runbook, generic coordination guidance, affected tool guides,
+cross-tool examples and packaged mirrors. Narrow consistency/behavior probes cover commissioner
+review, justified additional review and an authorship conflict. No new helper behavior or general
+review framework is introduced. For this delivery, retain the already commissioned source review
+and use the same reviewer for focused correction follow-up while the director performs the
+primary review; do not reset accepted evidence or waive release gates.
+
 For consequential reviews, the coordinator reads the original and reports its accessible link
 or precise source locator, core findings and significance, an independent assessment including
 any disagreement, recommended disposition, verdict and residual uncertainty. A terse "review
@@ -531,11 +549,18 @@ No new portfolio fields or forced scaffold. Review-only/discussion assignments r
 amending; explicitly delegated correction cycles and routine authorized implementation retain
 their autonomy. Native implementation goals are the default in both tool guides and the generic
 execution route, with explicit authority/activation and honest fallback behavior.
+The commissioning agent performs the primary review; an additional independent reviewer is
+selected proportionately or required by an authorship conflict/binding gate. The wording is
+consistent across generic and tool-specific guidance without mandating another model or chat.
 
 **E) Dependencies And Critical-Path Notes:** The discovery is the contract. Required CLI mechanics
 are specified for Epic 2, not presented as already available.
 
 **F) Tasks Checklist:**
+- [ ] Apply the approved commissioner-as-primary-reviewer amendment across the execution and
+  coordination routes, affected tool examples and mirrors; verify ordinary director review,
+  risk-based additional review and authorship-conflict handling. Preserve this plan's existing
+  focused independent correction review and required acceptance/release gates.
 - [x] Add runbook and compact role/relay/return templates, including one coherent whole-plan brief,
   session reuse, explicit report-back authority and a question/continuation example.
 - [x] Encode exact topology, strict relay limits, process-versus-task completion, failed-send
@@ -727,6 +752,10 @@ rules. Recheck the affected boundary, retain original failures and adapt one rec
 every transient failure into framework work. No AWS or product feature implementation is included.
 
 # Revision Notes
+
+- 2026-10-09: user approved the commissioning agent as primary reviewer, with proportionate
+  additional independent review. Fold this bounded guidance amendment in at the first correction
+  handoff before release; retain the already selected review cycle and valid source evidence.
 
 - 2026-10-09: source phase implemented Epics 1 and 2 for combined independent review; see the
   execution log for divergence, validation and remaining evidence. Review-dependent and live
