@@ -1,4 +1,4 @@
-Last updated: 2026-09-09T14:08:21Z (UTC)
+Last updated: 2026-10-09T20:47:14Z (UTC)
 
 # Review Planning Document
 
@@ -38,6 +38,32 @@ Use this runbook when the user asks to:
 
 Do not rewrite the source document unless the user explicitly asks for edits.
 
+## Coordinator Boundary
+
+The no-rewrite rule binds both the reviewing agent and the coordinator that commissioned the
+review. Requesting a review during discovery, planning or discussion authorizes obtaining and
+assessing it, not incorporating its findings.
+
+Before any amendment arising from a consequential review, the coordinator reads the original
+response and reports to the user:
+
+- an accessible link or precise locator for the original response;
+- the core findings and why they matter;
+- its own independent assessment, including any disagreement;
+- recommended disposition per finding, the verdict and residual uncertainty.
+
+Then wait for the user's decision unless an explicit delegation already covers the correction
+cycle. "Apply this agreed change and get a review" covers that change and its review, not new
+changes arising from the review. A reviewer recommendation, a `Ready` verdict or the
+coordinator's agreement is not user approval. Distinguish recommended, user-approved and
+implemented changes when reporting. Once the user approves specific corrections, apply them
+without another per-edit approval; a wider correction delegation applies only within its stated
+limits.
+
+During authorized implementation, routine review corrections remain covered by the existing
+execution grant and delegated director acceptance; material scope, outcome or authority changes
+return to the responsible owner. Trivial replies need no formal findings table.
+
 ## Review Stance
 
 Lead with findings. Put summaries and praise after issues or omit them.
@@ -75,8 +101,10 @@ Review a plan for substantive approach, capability coverage, dependencies, adapt
 detail and proportionate validation. Review implementation against actual behavior and evidence;
 a planning review cannot prove implementation or release readiness.
 
-Use one independent review at a meaningful coherent checkpoint and the same reviewer for focused
-correction follow-up. Broaden or replace the reviewer for material design/impact change,
+The commissioning agent stays the primary reviewer of a planning document it commissioned and
+owns its acceptance. Add an independent review when the decision's risk, the commissioning
+agent's own authorship or a binding gate warrants it; use one at a meaningful coherent checkpoint
+and the same reviewer for focused correction follow-up. Self-review is never independent review. Broaden or replace the reviewer for material design/impact change,
 inadequate independence, reviewer limitation or unresolved concern. Do not restart unchanged
 review after every finding. Label optional improvements separately from material blockers; plain
 word choice, record duplication and ordinary in-scope refinement are not defects by themselves.
@@ -271,8 +299,9 @@ For implementation documents, verify:
   with delegated director acceptance and explicit report-back, without per-step user prompts;
 - the finish line, integration owner, included/delegated/reserved effects and required exact inputs
   are explicit; existing sufficient authority is reused without weakening binding gates;
-- work communicates its named plan/epic and actual Git/delivery state; optional goals require an
-  explicit request and verified activation, and cannot complete at an intermediate review handoff;
+- work communicates its named plan/epic and actual Git/delivery state; implementation uses the
+  native goal by default unless explicitly declined, with commissioned authority and verified
+  activation, and a phase goal ending at a review handoff does not complete the plan;
 - necessary corrections stay in their epic; genuinely separate routine repairs retain a visible
   relationship and do not evade review;
 - a meaningful plan title is used instead of the literal H1 `Document Header`;

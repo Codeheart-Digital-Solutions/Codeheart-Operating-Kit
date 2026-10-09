@@ -353,3 +353,102 @@ def test_adversarial_branch_fixture_covers_non_execution_and_safety_cases():
     }
     assert all(entry["must_execute"] is False for entry in fixture["entries"])
     assert fixture["secret_policy"] == "placeholder-only-never-capture"
+
+
+def test_cross_tool_coordination_routes_are_installed_and_optional(tmp_path):
+    binary = tmp_path / "codeheart-operating-kit"
+    build = subprocess.run(
+        ["go", "build", "-o", str(binary), "./cmd/codeheart-operating-kit"],
+        cwd=ROOT,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    assert build.returncode == 0, build.stdout + build.stderr
+    consumer = tmp_path / "consumer"
+    init = subprocess.run(
+        [str(binary), "init", str(consumer), "--project-name", "Coordination-Probe"],
+        cwd=ROOT,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    assert init.returncode == 0, init.stdout + init.stderr
+
+    kit = consumer / ".codeheart/kit/docs"
+    agents = (consumer / "AGENTS.md").read_text(encoding="utf-8")
+    coordination = (kit / "agent-interface/reference/agent-task-coordination.md").read_text(encoding="utf-8")
+    runbook = (kit / "agent-interface/runbooks/coordinate-cross-tool-task.md").read_text(encoding="utf-8")
+    execute = (kit / "planning-workflows/runbooks/execute-implementation-plan.md").read_text(encoding="utf-8")
+    review = (kit / "planning-workflows/runbooks/review-planning-document.md").read_text(encoding="utf-8")
+    claude = (kit / "agent-interface/reference/claude-code-task-operations.md").read_text(encoding="utf-8")
+    codex = (kit / "agent-interface/reference/codex-task-operations.md").read_text(encoding="utf-8")
+
+    # Managed root route -> generic coordination -> optional cross-tool runbook.
+    assert "agent-task-coordination.md" in agents
+    assert "../runbooks/coordinate-cross-tool-task.md" in coordination
+    assert "otherwise\ncontinue with the current tool" in coordination
+    assert (kit / "agent-interface/templates/agent-coordination-reference.md").exists()
+    assert not (consumer / "docs/repo/reference/agent-coordination.md").exists()
+    assert "codeheart-operating-kit coordination invoke-claude" in runbook
+    for section in ["Audience: hybrid", "## User-Facing Flow", "## Operator Notes", "## Execution Path", "## Stop Conditions", "## Evidence And Validation"]:
+        assert section in runbook, section
+    help_result = subprocess.run([str(binary), "coordination", "invoke-claude", "--help"], text=True, capture_output=True, check=False)
+    assert help_result.returncode == 0 and "--request REQUEST" in help_result.stdout
+
+    # Native goals are the default for implementation plans in the generic route and both tools.
+    assert "## Native Goal Commissioning" in execute
+    assert "## Native Goal By Default" in coordination
+    assert "uses `/goal` by default" in claude
+    assert "uses Goal mode by default" in codex
+    assert "Use it only on explicit request" not in claude
+
+    # A consumer-owned reference created by guided opt-in survives repair and sync.
+    reference = consumer / "docs/repo/reference/agent-coordination.md"
+    reference.parent.mkdir(parents=True, exist_ok=True)
+    reference.write_text("custom coordination arrangement\n", encoding="utf-8")
+    for command in (["repair", str(consumer)], ["sync", str(consumer)]):
+        result = subprocess.run([str(binary), *command], text=True, capture_output=True, check=False)
+        assert result.returncode == 0, result.stdout + result.stderr
+    assert reference.read_text(encoding="utf-8") == "custom coordination arrangement\n"
+
+    # Discussion-stage reviews are reported before amendment.
+    assert "## Coordinator Boundary" in review
+    assert "is not user approval" in review
+
+
+def test_commissioning_agent_is_primary_reviewer_across_installed_routes():
+    root = ROOT / "src/codeheart_operating_kit/resources/components"
+    execute = (root / "planning-workflows/managed/runbooks/execute-implementation-plan.md").read_text(encoding="utf-8")
+    coordination = (root / "agent-interface/managed/reference/agent-task-coordination.md").read_text(encoding="utf-8")
+    contract = (root / "agent-interface/managed/reference/cross-tool-coordination-contract.md").read_text(encoding="utf-8")
+    runbook = (root / "agent-interface/managed/runbooks/coordinate-cross-tool-task.md").read_text(encoding="utf-8")
+    flat = {name: " ".join(text.split()) for name, text in {
+        "execute": execute, "coordination": coordination, "contract": contract, "runbook": runbook,
+    }.items()}
+
+    # Ordinary commissioner review: the commissioning agent examines the work and owns acceptance.
+    assert "The commissioning agent (the director or coordinator that commissioned the work) is the primary reviewer and owns acceptance." in flat["execute"]
+    assert "Forwarding another agent's verdict without examining the work does not discharge primary review." in flat["execute"]
+    assert "The commissioning agent is the primary reviewer and owns acceptance." in flat["coordination"]
+    assert "primary review of delivered work" in flat["contract"]
+    assert "You are the primary reviewer" in flat["runbook"]
+    assert "Another full technical review is not required for every task." in flat["execute"]
+
+    # Justified additional review stays available and is assessed by the commissioner.
+    assert "Add an independent reviewer when complexity or risk warrants it" in flat["execute"]
+    assert "assesses the additional reviewer's findings itself and still decides acceptance" in flat["execute"]
+
+    # Authorship conflict: self-review is never called independent.
+    assert "an agent checking its own implementation performs self-review and must call it that, never independent review" in flat["execute"]
+    assert "Checking one's own implementation is self-review, never independent review." in flat["coordination"]
+
+    # Tool-neutral and no model default imposed on the commissioner.
+    assert "This default never dictates the commissioning agent's own model." in flat["execute"]
+    assert "a Codex director can review a Claude implementer's work directly" in flat["coordination"]
+    for removed in [
+        "use one independent read-only reviewer when the active environment",
+        "Use the same default model and reasoning mode as the implementing agent unless the user requests",
+        "Use one independent source review at the planned meaningful checkpoint",
+    ]:
+        assert removed not in flat["execute"] and removed not in flat["coordination"], removed

@@ -7,6 +7,7 @@ from pathlib import Path
 
 import pytest
 
+from codeheart_operating_kit import __version__
 from codeheart_operating_kit.manifest import dump_yaml, load_yaml
 
 
@@ -176,7 +177,7 @@ def test_root_surface_parity(go_cli):
     py = run_python(["--version"])
     go = run_go(go_cli, ["--version"])
     assert py.returncode == go.returncode == 0
-    assert py.stdout == go.stdout == "codeheart-operating-kit 0.1.32\n"
+    assert py.stdout == go.stdout == f"codeheart-operating-kit {__version__}\n"
     assert py.stderr == go.stderr == ""
 
     py = run_python([])
@@ -341,14 +342,14 @@ def test_sync_and_check_parity(go_cli, tmp_path):
     assert run_python(["init", str(py_target), "--project-name", "Example-Automation"]).returncode == 0
     assert run_go(go_cli, ["init", str(go_target), "--project-name", "Example-Automation"]).returncode == 0
     release_manifest = tmp_path / "release-manifest.json"
-    release_url = "https://example.test/codeheart-operating-kit-0.1.32-universal.zip"
+    release_url = f"https://example.test/codeheart-operating-kit-{__version__}-universal.zip"
     release_sha = "a" * 64
     release_manifest.write_text(
         json.dumps(
             {
                 "assets": [
                     {
-                        "name": "codeheart-operating-kit-0.1.32-universal.zip",
+                        "name": f"codeheart-operating-kit-{__version__}-universal.zip",
                         "platform": "universal",
                         "url": release_url,
                         "sha256": release_sha,

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import json
 import re
 import tomllib
 from pathlib import Path
@@ -46,6 +47,14 @@ def validate_identity(root: Path) -> list[str]:
     ]:
         if re.findall(pattern, bootstrap, re.MULTILINE) != [version]:
             errors.append("bootstrap.md: known current-release reference differs or is missing")
+    fixture_path = root / "tests/fixtures/release-candidate/release-candidate-manifest.json"
+    if fixture_path.is_file():
+        fixture = json.loads(fixture_path.read_text(encoding="utf-8"))
+        names = {f"codeheart-operating-kit-{version}-macos-universal.zip", f"codeheart-operating-kit-{version}-windows-x64.zip"}
+        assets = fixture.get("assets", [])
+        if (fixture.get("version") != version or {a.get("name") for a in assets} != names
+                or any(a.get("version") != version or a.get("url") != a.get("name") for a in assets)):
+            errors.append("tests/fixtures/release-candidate/release-candidate-manifest.json: release-candidate fixture version differs from manifest.yaml")
     mirrored = ["manifest.yaml"]
     for collection, key, directory, pattern in [
         ("components", "component", "components", "*/component.yaml"),

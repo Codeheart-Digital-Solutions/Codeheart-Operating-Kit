@@ -48,6 +48,10 @@ def test_packaged_resource_fallback(monkeypatch, tmp_path):
         ".codeheart/kit/docs/planning-workflows/runbooks/handle-routine-change.md",
         ".codeheart/kit/docs/agent-interface/reference/agent-task-coordination.md",
         ".codeheart/kit/docs/agent-interface/reference/codex-task-operations.md",
+        ".codeheart/kit/docs/agent-interface/reference/claude-code-task-operations.md",
+        ".codeheart/kit/docs/agent-interface/reference/cross-tool-coordination-contract.md",
+        ".codeheart/kit/docs/agent-interface/runbooks/coordinate-cross-tool-task.md",
+        ".codeheart/kit/docs/agent-interface/templates/agent-coordination-reference.md",
         ".codeheart/kit/docs/planning-workflows/reference/plan-catalog-format.md",
         ".codeheart/kit/docs/planning-workflows/reference/portfolio-coordination-format.md",
         ".codeheart/kit/docs/planning-workflows/runbooks/configure-portfolio-coordination.md",
@@ -61,6 +65,7 @@ def test_packaged_resource_fallback(monkeypatch, tmp_path):
     assert (tmp_path / "docs/repo/portfolio/strategic-overlay.yaml").exists()
     assert not (tmp_path / "docs/repo/plans/coordination-sync-pending.md").exists()
     assert not (tmp_path / "docs/repo/state").exists()
+    assert not (tmp_path / "docs/repo/reference/agent-coordination.md").exists()
     assert not (tmp_path / ".codeheart/local").exists()
     gitignore = (tmp_path / ".gitignore").read_text(encoding="utf-8")
     assert ".codeheart/user/feedback/" in gitignore
@@ -74,6 +79,11 @@ def test_changed_source_and_packaged_resources_match():
         "components/planning-workflows/managed/runbooks/handle-routine-change.md",
         "components/agent-interface/managed/reference/agent-task-coordination.md",
         "components/agent-interface/managed/reference/codex-task-operations.md",
+        "components/agent-interface/managed/reference/claude-code-task-operations.md",
+        "components/agent-interface/managed/reference/cross-tool-coordination-contract.md",
+        "components/agent-interface/managed/reference/onboarding-context-contract.md",
+        "components/agent-interface/managed/runbooks/coordinate-cross-tool-task.md",
+        "components/agent-interface/managed/templates/agent-coordination-reference.md",
         "components/planning-workflows/component.yaml",
         "components/planning-workflows/managed/README.md",
         "components/planning-workflows/managed/reference/plan-register-format.md",

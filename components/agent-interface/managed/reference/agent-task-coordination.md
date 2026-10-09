@@ -1,10 +1,23 @@
-Last updated: 2026-10-05T07:57:44Z (UTC)
+Last updated: 2026-10-09T20:47:14Z (UTC)
 
 # Agent Task Coordination
 
 Use this generic reference to commission, review, report and hand over agent work. It applies
 without a particular app or an Organization Home installation. Durable roles and work records own
 identity; a task ID only locates an execution conversation.
+
+## Tool Selection
+
+Honor the assignment's explicit tool choice and applicable accepted preferences; otherwise
+continue with the current tool. Work in Codex continues with Codex and work in Claude Code with
+Claude Code, using that tool's own delegation and reporting surfaces. No second tool, account,
+relay or coordination reference is needed, and installing the Kit never creates a chat by itself.
+
+Mention cross-tool delegation only when the user asks or it is materially useful. A decline holds
+for the current conversation or assignment unless the user agrees a wider scope. When the user
+selects another tool's agent, follow `../runbooks/coordinate-cross-tool-task.md`; its tested
+direction is a Codex coordinator commissioning Claude CLI sessions. Reverse execution is not yet
+qualified.
 
 ## Whole-Plan Assignment
 
@@ -52,6 +65,28 @@ Preserve the result and disclose failed message delivery. Do not add a watcher.
 Fill the placeholders with real authorized scope before commissioning. Do not copy the example as
 approval evidence. Keep consumer facts out of reusable public guidance.
 
+## Native Goal By Default
+
+Executing an approved implementation plan uses the implementing tool's native goal mode by
+default, for Codex and Claude Code alike. This applies to complete implementation assignments,
+not routine changes, discovery, consultation or review. Honor an explicit user opt-out.
+
+Commission the goal together with the execution grant: concrete objective, agreed finish line or
+phase handoff, constraints, review points and report-back. Carry the actual user authority,
+including an accepted standing goal preference. Installing the Kit is not consent that overrides
+a host's explicit-authorization requirement; resolve any missing goal authority in the same
+commissioning decision, not again at every epic or routine continuation.
+
+Activate through the tool's supported mechanism and confirm it from observable status or
+evaluator evidence; a prompt mentioning `/goal` is not proof. Aim each goal at a real handoff,
+such as source review, so required review or a genuine blocker returns control with original
+evidence instead of spinning. A goal ending at a checkpoint, a process exit or an evaluator
+verdict is not plan completion. After delegated acceptance, continue with the tool's supported
+continuation for the next phase. If activation is unavailable or cannot be verified, say so and
+continue only under authorized ordinary execution; never claim a goal is active. Goals add no
+permissions, notification channel or scheduler. Tool details: `codex-task-operations.md` and
+`claude-code-task-operations.md`.
+
 ## Execute And Review
 
 Follow `../../planning-workflows/runbooks/execute-implementation-plan.md`. Every implementation
@@ -67,10 +102,18 @@ changes on substantial starts/resumes. Follow
 publication and accepted PR integration; a published draft remains independent of execution
 authority. Do not create a review or approval layer per commit.
 
-Use one independent source review at the planned meaningful checkpoint, combining related epics
-when declared. The same reviewer follows corrections; broader review needs a material change,
-independence issue, limitation or unresolved concern. Director acceptance need not repeat that
-technical review. Retain applicable validation through corrections and interruptions and rerun
+The commissioning agent is the primary reviewer and owns acceptance. At the planned meaningful
+checkpoint, combining related epics when declared, it examines the delivered work against the
+intended outcome, scope and validation evidence, in proportion to risk. It may rely on competent
+existing evidence and targeted checks. Forwarding another agent's verdict without examining the
+work is not a review. It adds an independent reviewer when complexity or risk warrants it, when
+it took a substantive part in the implementation, or when the user, assignment or a binding gate
+requires it; another full review is not automatic. Checking one's own implementation is
+self-review, never independent review. The commissioning agent assesses any additional findings
+itself. Review is tool-neutral: a Codex director can review a Claude implementer's work directly,
+and same-tool work is equally valid, with no extra account, model, relay or chat. Keep reviewers
+the user selected and binding gates. The same reviewers follow corrections; broader review needs
+a material change, independence issue, limitation or unresolved concern. Retain applicable validation through corrections and interruptions and rerun
 invalidated checks, with full coverage at the required coherent candidate boundary. Choose PR boundaries around usable accepted outcomes: update one coherent PR or integrate several
 independent outcomes during a longer plan. Do not create a task, release or PR per checklist item.
 Integrate ready work under covered authority and passing gates, or record a concrete reason,
@@ -80,6 +123,15 @@ for review. Do independent preparation that does not depend on the decision. Con
 work when acceptance arrives. The director can request in-scope corrections and authorize the next
 epic within its delegated mandate. Escalate only a decision outside that mandate or a binding gate
 that genuinely requires the user's intervention.
+
+When an additional reviewer reports on consequential work, the coordinator reads the original
+response and reports its locator,
+core findings and significance, its own assessment including disagreement, recommended
+disposition, verdict and residual uncertainty; a bare "review passed" is not enough. During
+discovery, planning or discussion, report before incorporating findings and wait for the user
+unless an explicit delegation covers the correction cycle; see
+`../../planning-workflows/runbooks/review-planning-document.md`. Routine review corrections during
+authorized implementation stay within the existing grant.
 
 ## Report And Orient
 
@@ -96,8 +148,8 @@ response and state that it was not delivered. Do not claim receipt or bypass the
 
 No continuous watching, busy polling, scheduler, cron, heartbeat, retry service or callback framework
 is required. Ordinary follow-up and a review handoff are enough. A sent review request is not
-acceptance. An explicitly requested sustained-execution goal can support the same plan but adds
-neither authority nor automatic cross-task notifications.
+acceptance. A native implementation goal supports the same plan but adds neither authority nor
+automatic cross-task notifications.
 
 Describe actual delivery facts separately: uncommitted, committed, pushed, PR opened, merged,
 released, adopted on each named branch, worktree-reconciled, and pilot-pending. Local installed
@@ -122,4 +174,5 @@ when an app couples some effects. Inspect actual app behavior and preserve requi
 archival. Archiving a conversation does not itself close a role or plan. Deletion and destructive
 cleanup require their own applicable authority and preservation checks. For optional tool-specific
 surfaces and worktree consequences, read `codex-task-operations.md` for Codex or
-`claude-code-task-operations.md` for Claude Code.
+`claude-code-task-operations.md` for Claude Code. For commissioning another tool's agent, use
+`../runbooks/coordinate-cross-tool-task.md` and `cross-tool-coordination-contract.md`.

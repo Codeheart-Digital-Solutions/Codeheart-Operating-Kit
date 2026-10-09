@@ -1,4 +1,4 @@
-Last updated: 2026-09-07T22:47:04Z (UTC)
+Last updated: 2026-10-09T19:52:39Z (UTC)
 
 # Bootstrap Codeheart Operating Kit
 
@@ -8,19 +8,19 @@ preinstalled Codeheart skills.
 Pinned release:
 
 ```text
-Version: v0.1.34
-Release URL: https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/tag/v0.1.34
+Version: v0.1.35
+Release URL: https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/tag/v0.1.35
 ```
 
 ## Install The CLI
 
 macOS installs into a user-level Operating Kit folder. The installer verifies and installs the
 self-contained platform release pack named
-`codeheart-operating-kit-0.1.34-macos-universal.zip`; the pack contains
+`codeheart-operating-kit-0.1.35-macos-universal.zip`; the pack contains
 `bin/codeheart-operating-kit`.
 
 ```sh
-curl -fsSLO https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.34/install.sh
+curl -fsSLO https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.35/install.sh
 bash install.sh
 ```
 
@@ -32,11 +32,11 @@ $HOME/.codeheart/operating-kit/bin/codeheart-operating-kit
 
 Windows installs into the current user's local application data folder. The installer verifies and
 installs the self-contained platform release pack named
-`codeheart-operating-kit-0.1.34-windows-x64.zip`; the pack contains
+`codeheart-operating-kit-0.1.35-windows-x64.zip`; the pack contains
 `bin/codeheart-operating-kit.exe` and the installer writes the `.cmd` shim.
 
 ```powershell
-Invoke-WebRequest -Uri "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.34/install.ps1" -OutFile install.ps1
+Invoke-WebRequest -Uri "https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/download/v0.1.35/install.ps1" -OutFile install.ps1
 .\install.ps1
 ```
 
@@ -101,7 +101,7 @@ Follow this contract exactly during first-run setup:
 - Do not run or introduce `update-check` during onboarding unless the user separately requests a
   version check.
 
-For `v0.1.34`, `codeheart-operating-kit onboard` is an agent-guided script and setup-plan renderer.
+For `v0.1.35`, `codeheart-operating-kit onboard` is an agent-guided script and setup-plan renderer.
 It is not a terminal stdin prompt loop. Show rendered prompts in Codex chat, collect user decisions
 in chat, and rerun the command with explicit values only when applying setup.
 
@@ -130,17 +130,14 @@ this release.
 Show this before folder setup:
 
 ```text
-Before we set up your project folder, please adjust Codex in this chat.
+Before we set up your project folder, please check Codex in this chat.
 
-Look at the message box on the right. In the lower-right area, open the menu for model, thinking,
-and speed.
+Look at the message box on the right. In the lower-right area, you can open the menu for model,
+thinking, and speed.
 
-Set:
-- Model: GPT-5.5
-- Thinking: Extra High
-- Speed: Fast
+Keep the model, thinking, and speed you prefer. This setup does not require a specific model.
 
-Tell me when this is done.
+Tell me when you are ready.
 ```
 
 Then show this settings step:
@@ -154,13 +151,11 @@ The General tab should open automatically.
 
 At the very top of the main settings screen, find Work Mode and select Coding.
 
-Directly beneath that, find Permissions and turn on all three setup options:
-- Default permissions
-- Auto review
-- Full access
+Directly beneath that, Permissions shows how much Codex may do without asking. Keep the
+permission setting you or your organization chose. The Operating Kit does not require Full access,
+and I will ask before writing setup files.
 
-Then return to this chat. In the chat box area, check the lower-left control named Approve for me.
-Turn it on when it is not already selected.
+Then return to this chat.
 
 Tell me when this is done.
 ```

@@ -1,7 +1,7 @@
 schema_version: 1
 component:
   id: agent-interface
-  version: "0.1.34"
+  version: "0.1.35"
   name: Agent Interface
   description: Managed root AGENTS contract, onboarding, optional update-check, and repair guidance.
   profiles:
@@ -94,4 +94,13 @@ component:
       ownership: managed
     - source: components/agent-interface/managed/reference/claude-code-task-operations.md
       target: .codeheart/kit/docs/agent-interface/reference/claude-code-task-operations.md
+      ownership: managed
+    - source: components/agent-interface/managed/reference/cross-tool-coordination-contract.md
+      target: .codeheart/kit/docs/agent-interface/reference/cross-tool-coordination-contract.md
+      ownership: managed
+    - source: components/agent-interface/managed/runbooks/coordinate-cross-tool-task.md
+      target: .codeheart/kit/docs/agent-interface/runbooks/coordinate-cross-tool-task.md
+      ownership: managed
+    - source: components/agent-interface/managed/templates/agent-coordination-reference.md
+      target: .codeheart/kit/docs/agent-interface/templates/agent-coordination-reference.md
       ownership: managed

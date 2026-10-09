@@ -1,4 +1,4 @@
-Last updated: 2026-09-09T14:08:21Z (UTC)
+Last updated: 2026-10-09T20:47:14Z (UTC)
 
 # Draft Implementation Plan
 
@@ -108,8 +108,10 @@ Use concrete examples or data/flow detail where ambiguity warrants them; do not 
 command or prescribe detail that research during implementation can safely resolve.
 
 Plan cheap affected checks during iteration and broader validation on a coherent candidate.
-Review at meaningful checkpoints, combining tightly related epics when useful. Use the same
-independent reviewer for focused correction follow-up. Required owner and release gates remain.
+Plan the commissioning agent's primary review at meaningful checkpoints, combining tightly
+related epics when useful. Add an independent reviewer where complexity, risk, the commissioning
+agent's own authorship or a binding gate warrants it, and keep the same reviewers for focused
+correction follow-up. Required owner and release gates remain.
 
 ## Feature Capability Coverage
 
@@ -379,7 +381,8 @@ Use `../../agent-interface/reference/agent-task-coordination.md` to commission t
 with explicit report-back to the director at required epic review, completion, genuine blocker or
 material scope issue. Plan delegated acceptance rather than a fresh user gate for every epic. State
 how material exceptions return to the owner and how independently useful preparation may proceed
-while a review is pending. Optional goal use requires an explicit request and verified activation.
+while a review is pending. Execution uses the implementing tool's native goal by default unless the
+user opts out; name the phase handoff each goal ends at and require verified activation.
 
 ## Section 3 - Execution Plan
 

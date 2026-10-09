@@ -1,4 +1,4 @@
-Last updated: 2026-10-09T18:33:11Z (UTC)
+Last updated: 2026-10-09T20:47:14Z (UTC)
 Created: 2026-10-05
 Status: completed
 
@@ -456,6 +456,10 @@ No live relay appointment, policy installation, implementation,
 release or consumer upgrade is authorized merely by this discovery checkpoint.
 
 ## Revision Notes
+
+- 2026-10-09: approved amendment after discovery: the commissioning agent is the primary reviewer
+  and owns acceptance, with additional independent review chosen for complexity, risk, its own
+  authorship or a binding gate. See the active implementation plan; findings above are unchanged.
 
 - 2026-10-09: user approved native goals as the default for implementation-plan execution by
   either Codex or Claude, with explicit commissioning, verified activation and unchanged review

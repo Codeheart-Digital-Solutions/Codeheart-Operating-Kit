@@ -1,4 +1,4 @@
-Last updated: 2026-09-09T14:08:21Z (UTC)
+Last updated: 2026-10-09T20:47:14Z (UTC)
 
 # Handle Routine Change
 
@@ -90,7 +90,7 @@ Example existing-record update:
 Purpose/scope: correct the known link in the owning component's guide.
 Authority: requested correction; normal PR update covered by the assignment.
 Result/evidence: installed link resolves; declared source and packaged bytes agree.
-Delivery: committed and pushed to the existing PR; reviewer owns acceptance.
+Delivery: committed and pushed to the existing PR; the commissioning owner reviews and accepts.
 ```
 
 For a new effect outside authority, prepare the concrete reviewable result first, then ask only

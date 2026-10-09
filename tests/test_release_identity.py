@@ -18,7 +18,8 @@ def test_current_release_identity():
 @pytest.fixture
 def source(tmp_path):
     paths = ["manifest.yaml", "pyproject.toml", "internal/version/version.go",
-             "src/codeheart_operating_kit/__init__.py", "install.sh", "install.ps1", "bootstrap.md"]
+             "src/codeheart_operating_kit/__init__.py", "install.sh", "install.ps1", "bootstrap.md",
+             "tests/fixtures/release-candidate/release-candidate-manifest.json"]
     paths += [p.relative_to(ROOT).as_posix() for p in (ROOT / "components").glob("*/component.yaml")]
     paths += [p.relative_to(ROOT).as_posix() for p in (ROOT / "profiles").glob("*.yaml")]
     paths += ["src/codeheart_operating_kit/resources/" + p for p in paths if p == "manifest.yaml" or p.startswith(("components/", "profiles/"))]
@@ -38,6 +39,7 @@ def source(tmp_path):
     ("install.sh", "Default: ", "Default: 9", "installer help version"),
     ("install.ps1", "Default: ", "Default: 9", "installer help version"),
     ("profiles/standard.yaml", 'version: "', 'version: "9', "profile version"),
+    ("tests/fixtures/release-candidate/release-candidate-manifest.json", '"version": "', '"version": "9', "release-candidate fixture"),
     ("components/agent-interface/component.yaml", 'version: "', 'version: "9', "version differs"),
     ("profiles/standard.yaml", "name: Standard", "name: Changed", "checksum differs"),
     ("manifest.yaml", "checksum_sha256: ", "checksum_sha256: bad", "checksum differs"),

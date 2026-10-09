@@ -2,6 +2,8 @@ package cli
 
 import (
 	"bytes"
+	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 )
@@ -18,7 +20,7 @@ func TestRootHelpListsCommands(t *testing.T) {
 	if code != 0 {
 		t.Fatalf("help exit code = %d, want 0; stderr: %s", code, stderr)
 	}
-	for _, command := range []string{"onboard", "inspect", "init", "repair", "sync", "check", "update-check", "upgrade", "plans", "portfolio"} {
+	for _, command := range []string{"onboard", "inspect", "init", "repair", "sync", "check", "update-check", "upgrade", "plans", "portfolio", "coordination"} {
 		if !strings.Contains(stdout, command) {
 			t.Fatalf("root help did not list %q:\n%s", command, stdout)
 		}
@@ -222,5 +224,41 @@ func TestKnownCommandDispatches(t *testing.T) {
 	}
 	if stderr != "" {
 		t.Fatalf("inspect wrote stderr: %q", stderr)
+	}
+}
+
+func TestCoordinationGroupedHelpAndInvalidRequest(t *testing.T) {
+	code, stdout, stderr := runForTest("coordination", "--help")
+	if code != 0 || stderr != "" {
+		t.Fatalf("coordination help code=%d stdout=%s stderr=%s", code, stdout, stderr)
+	}
+	for _, subcommand := range []string{"invoke-claude", "record-delivery", "release-lock"} {
+		if !strings.Contains(stdout, subcommand) {
+			t.Fatalf("coordination help missing %s:\n%s", subcommand, stdout)
+		}
+	}
+	code, stdout, stderr = runForTest("coordination", "invoke-claude", "--help")
+	if code != 0 || stderr != "" || !strings.Contains(stdout, "--request REQUEST") || !strings.Contains(stdout, "not task acceptance") {
+		t.Fatalf("invoke-claude help code=%d stdout=%s stderr=%s", code, stdout, stderr)
+	}
+	code, stdout, stderr = runForTest("coordination", "release-lock", "--help")
+	if code != 0 || !strings.Contains(stdout, "--manual-verification TEXT") {
+		t.Fatalf("release-lock help code=%d stdout=%s stderr=%s", code, stdout, stderr)
+	}
+	code, stdout, stderr = runForTest("coordination", "missing")
+	if code != 2 || stdout != "" || !strings.Contains(stderr, "invalid subcommand") {
+		t.Fatalf("coordination invalid code=%d stdout=%s stderr=%s", code, stdout, stderr)
+	}
+	code, stdout, stderr = runForTest("coordination", "invoke-claude")
+	if code != 2 || !strings.Contains(stderr, "--request is required") {
+		t.Fatalf("missing request code=%d stdout=%s stderr=%s", code, stdout, stderr)
+	}
+	request := filepath.Join(t.TempDir(), "request.json")
+	if err := os.WriteFile(request, []byte(`{"schema_version":1,"unexpected":true}`), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	code, stdout, _ = runForTest("coordination", "invoke-claude", "--request", request)
+	if code != 2 || !strings.Contains(stdout, `"status": "invalid_request"`) || !strings.Contains(stdout, "unknown field") {
+		t.Fatalf("invalid request code=%d stdout=%s", code, stdout)
 	}
 }

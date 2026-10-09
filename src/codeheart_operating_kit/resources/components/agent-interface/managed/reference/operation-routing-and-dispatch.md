@@ -1,4 +1,4 @@
-Last updated: 2026-09-09T14:08:21Z (UTC)
+Last updated: 2026-10-09T20:47:14Z (UTC)
 
 # Operation Routing And Dispatch
 
@@ -66,8 +66,9 @@ relationship to affected work and cannot bypass plan review or acceptance.
 - Approval class: covered implementation, validation, coherent commits, normal pushes and PR
   creation/updates. Merge/release/adoption proceed only when included or delegated and gates pass.
 - Stop: material scope/outcome/authority change, required acceptance pending, failed enforced gate.
-- Evidence: named epic outcome, proportionate checks and retained applicable evidence, one planned
-  coherent independent review with same-reviewer correction follow-up, actual
+- Evidence: named epic outcome, proportionate checks and retained applicable evidence, the
+  commissioning agent's primary review at the planned coherent checkpoint plus any warranted
+  independent review, same-reviewer correction follow-up, actual
   commit/push/PR/merge/release/adoption state and
   direct report to the commissioned director at review, completion or genuine blocker. Use the
   planning lifecycle Git action table inside execution, not only after epic acceptance. For Kit

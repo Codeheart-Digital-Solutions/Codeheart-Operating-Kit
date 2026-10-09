@@ -22,17 +22,18 @@ def test_onboard_prompt_order_and_copy(tmp_path, capsys):
         "Companyname-Automation",
     ])
     output = capsys.readouterr().out
-    assert output.index("Choose setup language") < output.index("GPT-5.5")
+    assert output.index("Choose setup language") < output.index("Keep the model, thinking, and speed you prefer")
+    assert output.index("Keep the model, thinking, and speed you prefer") < output.index("Now open Codex Settings")
+    assert output.index("Now open Codex Settings") < output.index("Do you already know what this Codex project should be called")
     assert output.index("Do you already know what this Codex project should be called") < output.index("What is this mainly for?")
     assert output.index("What is this mainly for?") < output.index("Selected project name")
-    assert "Extra High" in output
-    assert "Fast" in output
+    assert "This setup does not require a specific model." in output
     assert "Settings" in output
     assert "Work Mode" in output
-    assert "Default permissions" in output
-    assert "Auto review" in output
-    assert "Full access" in output
-    assert "Approve for me" in output
+    assert "Keep the permission setting you or your organization chose." in output
+    assert "does not require Full access" in output
+    for pinned in ["GPT-5.5", "Extra High", "Speed: Fast", "turn on all three", "Approve for me"]:
+        assert pinned not in output
     assert "Documents > Companyname-Automation" in output
     assert "Use a different folder" in output
     assert "Desktop > Productname-Development" in output

@@ -1,4 +1,4 @@
-Last updated: 2026-09-05T19:15:20Z (UTC)
+Last updated: 2026-10-09T20:55:42Z (UTC)
 
 # Codex Task Operations
 
@@ -49,30 +49,47 @@ rejected, keep the report in the execution log/final result and say it was not d
 switch to another destination, bypass permission review, or install a reporting framework. No
 heartbeat, cron or continuous polling is needed; ordinary task follow-up carries the decision.
 
-## One Explicit Whole-Plan Goal
+## Whole-Plan Goal By Default
 
-The user can request a goal for the entire plan, for example:
+Executing an approved implementation plan in Codex uses Goal mode by default, under the generic
+rule in `agent-task-coordination.md`. Commission it together with the execution grant, for example:
 
 ```text
 Start one goal to execute <Plan name> at <canonical path> in <owning project>,
-through all ordered epics to <the agreed finish line>. Preserve <constraints>.
-Use the plan's approved commits, normal pushes and PR checkpoints. Send required
-reviews and result reports to <commissioning task> for <Director role> acceptance.
+through <the current phase or all ordered epics> to <the agreed handoff or finish line>.
+Preserve <constraints>. Use the plan's approved commits, normal pushes and PR checkpoints.
+Send required reviews and result reports to <commissioning task> for <Director role> acceptance.
 Keep reserved merge/release/adoption effects with their named owner until delegated.
-Verify goal activation; do not infer a token budget or mark it complete at review handoff.
 ```
 
-Use the supported goal creation mechanism only after that explicit request. Where exposed,
-`create_goal` followed by `get_goal` can verify the actual objective and active state; otherwise
-inspect the supported app goal control. Do not report activation from printing `/goal` or merely
-putting it in another task's prompt. If activation cannot be verified, disclose that limit and
-continue already authorized useful work under the plan.
+Use the supported goal creation mechanism with the user's actual authority, including an
+accepted standing goal preference. Where exposed, `create_goal` followed by `get_goal` verifies
+the actual objective and active state; otherwise inspect the supported app goal control. Printing
+`/goal` or placing it in another task's prompt does not activate or prove a goal. If activation is
+unavailable or cannot be verified, disclose that limit and continue only the already authorized
+work. Honor an explicit opt-out; reviews, discovery and routine changes do not get a goal by default.
 
-Keep the goal incomplete at required review handoff. It creates no new permissions and does not
-require repeated polling. Match completion to the whole agreed finish line, including release or
-adoption when covered. Report technical completion and real-use pilot status separately. Follow the
-current goal tool's status rules; do not invent a resume API when only user progress controls can
-resume a blocked goal.
+Keep the goal incomplete at a required review handoff, or aim each goal at that handoff and start
+the next phase after delegated acceptance. It creates no new permissions and needs no polling.
+Match plan completion to the whole agreed finish line, including release or adoption when
+covered. Report technical completion and real-use pilot status separately. Follow the current
+goal tool's status rules; do not invent a resume API when only user progress controls can resume a
+blocked goal.
+
+## Commissioning Claude Through A Relay
+
+The cross-tool recipe in `../runbooks/coordinate-cross-tool-task.md` was qualified with a Codex
+desktop coordinator. Native subagents and task children are not report-back routes in that
+recipe: a native child's completion did not wake an idle parent, and app messages to a native
+ancestor or to a subagent recipient were rejected. Use an independent ordinary relay chat instead.
+The relay dispatches temporary transport workers that run the installed helper and send exactly
+one notice with `send_message_to_thread` to the requesting ordinary chat, following the runbook's
+dispatch rules: load only the `message_file` named in this invocation's helper output, otherwise
+its `fallback_message`; never resend an earlier attempt's result. Loading prepared arguments
+avoids retyping thread identifiers. Record the send with `coordination record-delivery` only when
+this invocation named a delivery record. Never bypass a rejected send or switch recipients. The Codex director reviews a Claude
+implementer's delivered work directly as the primary reviewer; reviewing needs no relay, second
+chat or model switch.
 
 ## Archival And Preservation
 

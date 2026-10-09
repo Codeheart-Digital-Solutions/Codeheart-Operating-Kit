@@ -1,6 +1,6 @@
-Last updated: 2026-10-09T18:39:25Z (UTC)
+Last updated: 2026-10-09T20:48:19Z (UTC)
 Created: 2026-10-09
-Status: draft
+Status: active
 
 # Cross-Tool Agent Coordination Implementation Plan
 
@@ -21,11 +21,11 @@ plan:
 ```
 <!-- END CODEHEART PLAN METADATA -->
 
-The discovery has enough evidence for this bounded delivery. This draft turns that direction into
-three ordered epics. It does not activate implementation, install permissions, appoint a relay,
-create chats, publish a release or upgrade consumers. Planning scope was delegated on 2026-10-09;
-the user has since authorized implementation start. Record the exact activation assignment before
-dispatch; this planning amendment alone does not launch an implementer.
+The user commissioned this three-epic implementation on 2026-10-09 after the approved planning
+amendments merged. The [execution log](cross-tool-agent-coordination_execution_log.md) records
+activation, delivery boundaries and actual progress. One implementer owns the full plan;
+the director accepts independent source review after Epics 1 and 2 before release and adoption.
+Activation is not evidence that an epic, release, adoption or native-goal invocation has completed.
 
 ## Essential Context
 
@@ -49,7 +49,7 @@ and canonical plan catalog were checked. The independent Claude reviewer judged 
 candidate b6132dd **Ready (plan only)** after closing all material and low-severity amendment
 findings; see [the review record](attachments/independent-plan-review.md). The coordinator read
 the original response and accepted that assessment. The user subsequently authorized starting
-implementation; the exact activation assignment is still to be prepared before dispatch.
+implementation; the activation assignment now covers the whole plan as recorded in the execution log.
 Runtime behavior is planned, not proven by document checks or this planning verdict. The subsequent
 user-approved report-before-amendment and native-goal default rules below are author-checked;
 they were not part of b6132dd's
@@ -322,6 +322,24 @@ the next decision genuinely depends on the result.
 
 ### Human-visible findings and proportionate records
 
+The user approved a review-responsibility amendment at the first correction handoff. The
+commissioning agent (director or coordinator) is the primary reviewer: directly inspect the
+delivered work against its intended outcome, scope and validation evidence, assess any additional
+review advice, and own acceptance. Merely forwarding another agent's verdict is insufficient.
+
+Additional independent review is selected when complexity, risk or the commissioning agent's
+own implementation involvement warrants it, or when a binding assignment/gate requires it.
+Another full technical review is not automatically required for every assignment. Authorship
+conflicts need independent scrutiny; self-review is not independent review. Keep this generic
+rule tool-neutral and distinguish a director's own review from commissioning a separate reviewer.
+
+Align the existing execution runbook, generic coordination guidance, affected tool guides,
+cross-tool examples and packaged mirrors. Narrow consistency/behavior probes cover commissioner
+review, justified additional review and an authorship conflict. No new helper behavior or general
+review framework is introduced. For this delivery, retain the already commissioned source review
+and use the same reviewer for focused correction follow-up while the director performs the
+primary review; do not reset accepted evidence or waive release gates.
+
 For consequential reviews, the coordinator reads the original and reports its accessible link
 or precise source locator, core findings and significance, an independent assessment including
 any disagreement, recommended disposition, verdict and residual uncertainty. A terse "review
@@ -463,7 +481,7 @@ proof and release notes.
 Run cheap affected checks during edits and one coherent broad candidate gate. Reuse existing live
 pilot evidence where unchanged; do not repeat the merge experiment merely for ceremony.
 
-### Proposed whole-plan commissioning and Git boundary
+### Approved whole-plan commissioning and Git boundary
 
 Upon explicit whole-plan execution approval, one implementer can execute all three ordered epics,
 with the commissioning director owning acceptance and material decisions. Communicate the plan,
@@ -476,7 +494,8 @@ authorized release audience/signing boundary, and the named consumer default-bra
 The director may delegate integration and renew routine execution within that grant; changed
 audience, broader permissions, spending commitments, failed checks and scope expansion return to
 the human owner. Exact repositories/branches, release audience and private targets must be in the
-activation assignment before effects. Drafting now authorizes none of these external effects.
+activation assignment before effects. The 2026-10-09 activation records that grant; effects still
+require their action-time checks and delegated review acceptance.
 
 Include one temporary ordinary onboarding director chat, use of the existing approved independent
 relay, its temporary transport workers, the scoped Claude test session and report-back messages
@@ -530,33 +549,40 @@ No new portfolio fields or forced scaffold. Review-only/discussion assignments r
 amending; explicitly delegated correction cycles and routine authorized implementation retain
 their autonomy. Native implementation goals are the default in both tool guides and the generic
 execution route, with explicit authority/activation and honest fallback behavior.
+The commissioning agent performs the primary review; an additional independent reviewer is
+selected proportionately or required by an authorship conflict/binding gate. The wording is
+consistent across generic and tool-specific guidance without mandating another model or chat.
 
 **E) Dependencies And Critical-Path Notes:** The discovery is the contract. Required CLI mechanics
 are specified for Epic 2, not presented as already available.
 
 **F) Tasks Checklist:**
-- [ ] Add runbook and compact role/relay/return templates, including one coherent whole-plan brief,
+- [x] Apply the approved commissioner-as-primary-reviewer amendment across the execution and
+  coordination routes, affected tool examples and mirrors; verify ordinary director review,
+  risk-based additional review and authorship-conflict handling. Preserve this plan's existing
+  focused independent correction review and required acceptance/release gates.
+- [x] Add runbook and compact role/relay/return templates, including one coherent whole-plan brief,
   session reuse, explicit report-back authority and a question/continuation example.
-- [ ] Encode exact topology, strict relay limits, process-versus-task completion, failed-send
+- [x] Encode exact topology, strict relay limits, process-versus-task completion, failed-send
   evidence, missing/stale relay handling and coordinator availability in the existing routes.
-- [ ] Add native-current-tool selection defaults to generic coordination, the paced optional setup
+- [x] Add native-current-tool selection defaults to generic coordination, the paced optional setup
   flow to the hybrid runbook and a bounded first-run pointer. Replace conflicting pinned-model/
   Full-access prescriptions across every listed onboarding surface and its output assertions.
   Preserve the existing sequence and check Go/oracle output and packaged-resource parity.
   No mandatory provider setup, repeated offers or unrelated onboarding rewrite.
-- [ ] Add the opt-in local reference starter and explicit member-to-home navigation. Guide creation
+- [x] Add the opt-in local reference starter and explicit member-to-home navigation. Guide creation
   only after an agreed arrangement; preserve existing contents, personal/team scope, Program
   appointments and config authority. Authentication is per machine in the tool's storage.
-- [ ] Document the scoped ordinary-merge example and denial behavior without changing live settings.
-- [ ] Align the execution runbook, generic coordination and Codex/Claude guides on default native
+- [x] Document the scoped ordinary-merge example and denial behavior without changing live settings.
+- [x] Align the execution runbook, generic coordination and Codex/Claude guides on default native
   goal commissioning for approved implementation plans. Include actual user authority, activation
   proof, review/blocker handoff and explicit exceptions. Replace conflicting optional-only wording;
   native current-tool execution still needs no second tool/account/relay.
-- [ ] Clarify the existing planning-review runbook's coordinator boundary: original response link,
+- [x] Clarify the existing planning-review runbook's coordinator boundary: original response link,
   findings, independent assessment and recommended disposition before discussion-stage amendments;
   honor explicit correction delegation and existing implementation authority. Link from generic
   coordination and cross-tool guidance. Include the agreed-edit-plus-review example.
-- [ ] Include human-visible review findings and coordinator disposition, optional generated
+- [x] Include human-visible review findings and coordinator disposition, optional generated
   response views, minimal ignored runtime evidence and ordinary authorized cleanup guidance.
   Keep durable conclusions in existing plan/log records rather than a new report per turn.
 - [ ] Update manifest/resource mirrors and nearest routers; run affected routing/resource and
@@ -594,13 +620,13 @@ existing onboard wording. Other existing CLI behavior remains unchanged; new hel
 specified by its Go tests, not a Python copy.
 
 **F) Tasks Checklist:**
-- [ ] Implement strict request/preflight, new/resume identity persistence, explicit settings and
+- [x] Implement strict request/preflight, new/resume identity persistence, explicit settings and
   structured argument/stdin launch; reject unsupported flags/modes without fallback.
-- [ ] Implement shared-root session exclusivity, isolated attempts, retained original output,
+- [x] Implement shared-root session exclusivity, isolated attempts, retained original output,
   atomic result metadata and exact native-message argument output.
-- [ ] Implement failure/denial/interruption reporting and coordinator-directed recovery. Do not
+- [x] Implement failure/denial/interruption reporting and coordinator-directed recovery. Do not
   auto-retry or infer semantic completion from exit zero.
-- [ ] Add focused fake-CLI tests for quoting/spaces and stdin fidelity; wrong/empty session and
+- [x] Add focused fake-CLI tests for quoting/spaces and stdin fidelity; wrong/empty session and
   malformed/error/denial outputs; nonzero exit; two distinct concurrent assignments; same-session
   collision/replayed attempt; helper termination while a fake child is writing; retained partial
   files and unresolved pending state; interrupted/stale attempt; deliberate lock release refused
@@ -726,6 +752,18 @@ rules. Recheck the affected boundary, retain original failures and adapt one rec
 every transient failure into framework work. No AWS or product feature implementation is included.
 
 # Revision Notes
+
+- 2026-10-09: user approved the commissioning agent as primary reviewer, with proportionate
+  additional independent review. Fold this bounded guidance amendment in at the first correction
+  handoff before release; retain the already selected review cycle and valid source evidence.
+
+- 2026-10-09: source phase implemented Epics 1 and 2 for combined independent review; see the
+  execution log for divergence, validation and remaining evidence. Review-dependent and live
+  relay tasks stay open.
+
+- 2026-10-09: activated the whole-plan assignment on the implementation branch after explicit
+  commissioning. Source review follows Epics 1 and 2; release, named adoption and onboarding
+  remain part of the finish line. See the execution log for actual state.
 
 - 2026-10-09: user approved native goals by default for Codex and Claude implementation-plan
   execution; added source routes, activation/handoff requirements and proportionate proof to

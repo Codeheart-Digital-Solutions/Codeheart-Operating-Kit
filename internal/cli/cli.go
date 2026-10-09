@@ -120,6 +120,12 @@ var commands = []command{
 		usage:       "{configure,scan} ...",
 		description: "Discover exactly enrolled repositories and build a complete source-derived plan catalog.",
 	},
+	{
+		name:        "coordination",
+		help:        "Launch and record one prepared cross-tool Claude CLI invocation",
+		usage:       "{invoke-claude,record-delivery,release-lock} ...",
+		description: "Narrow helper for the cross-tool coordination runbook; it launches, captures and records, but never interprets, retries or messages.",
+	},
 }
 
 var planSubcommands = []command{
@@ -133,6 +139,12 @@ var planSubcommands = []command{
 var portfolioSubcommands = []command{
 	{name: "configure", help: "Configure member or coordination-home identity and discovery scope", usage: "--role {member,coordination-home} --member-repository-id ID --coordination-home-id ID [--github-owner OWNER]... [--local-root ROOT]... (--dry-run | --yes) [--json] [path]", options: []option{{flag: "path"}, {flag: "--role {member,coordination-home}"}, {flag: "--member-repository-id ID"}, {flag: "--coordination-home-id ID"}, {flag: "--github-owner OWNER"}, {flag: "--local-root ROOT"}, {flag: "--dry-run"}, {flag: "--yes"}, {flag: "--json"}}},
 	{name: "scan", help: "Refresh the complete source-derived portfolio catalog", usage: "[--format {text,json}] [--json] [path]", options: []option{{flag: "path"}, {flag: "--format {text,json}"}, {flag: "--json"}}},
+}
+
+var coordinationSubcommands = []command{
+	{name: "invoke-claude", help: "Launch one coordinator-prepared Claude CLI request and capture its original result", usage: "--request REQUEST [--json]", description: "Validate the request, refuse a second participating writer for the session, launch once with the brief on stdin and output written directly to the attempt directory, then write the attempt record, native message arguments and a pending delivery record. Exit 0 only when a final reply was captured; that is not task acceptance.", options: []option{{flag: "--request REQUEST", help: "Coordinator-authored request JSON (schema_version 1)"}, {flag: "--json", help: "Accepted for symmetry; output is always compact JSON"}}},
+	{name: "record-delivery", help: "Record the native send result for one attempt", usage: "--attempt-dir DIR --status {sent,rejected,uncertain} [--receipt-file FILE] [--reported-thread-id ID] [--reported-host-id ID] [--json]", description: "Move a pending delivery record to its observed state once. A reported recipient that differs from the prepared one is retained as uncertain; an omitted one never confirms the recipient.", options: []option{{flag: "--attempt-dir DIR"}, {flag: "--status {sent,rejected,uncertain}"}, {flag: "--receipt-file FILE", help: "Original tool receipt or error text to retain"}, {flag: "--reported-thread-id ID"}, {flag: "--reported-host-id ID"}, {flag: "--json"}}},
+	{name: "release-lock", help: "Deliberately release a retained session lock after verified exit", usage: "--state-root ROOT --session-id ID --assignment-id ID --attempt-id ID [--manual-verification TEXT] [--json]", description: "Release only the named attempt's lock after verifying its owner and that the recorded launcher and CLI processes have ended. Without a recorded CLI process it refuses unless a manual verification statement is supplied.", options: []option{{flag: "--state-root ROOT"}, {flag: "--session-id ID"}, {flag: "--assignment-id ID"}, {flag: "--attempt-id ID"}, {flag: "--manual-verification TEXT", help: "Coordinator statement recorded when the CLI process identity was never captured"}, {flag: "--json"}}},
 }
 
 type command struct {
@@ -184,7 +196,7 @@ func Run(args []string, stdout io.Writer, stderr io.Writer) int {
 	cmd, ok := findCommand(args[0])
 	if !ok {
 		printRootHelp(stderr)
-		fmt.Fprintf(stderr, "%s: error: argument command: invalid choice: '%s' (choose from onboard, inspect, init, repair, sync, check, update-check, upgrade, plans, portfolio)\n", prog, args[0])
+		fmt.Fprintf(stderr, "%s: error: argument command: invalid choice: '%s' (choose from onboard, inspect, init, repair, sync, check, update-check, upgrade, plans, portfolio, coordination)\n", prog, args[0])
 		return 2
 	}
 	if cmd.name == "plans" {
@@ -192,6 +204,9 @@ func Run(args []string, stdout io.Writer, stderr io.Writer) int {
 	}
 	if cmd.name == "portfolio" {
 		return runPortfolioGroup(args[1:], stdout, stderr)
+	}
+	if cmd.name == "coordination" {
+		return runCoordinationGroup(args[1:], stdout, stderr)
 	}
 
 	if containsCallableHelp(cmd, args[1:]) {
@@ -268,9 +283,9 @@ func findCommand(name string) (command, bool) {
 }
 
 func printRootHelp(w io.Writer) {
-	fmt.Fprintf(w, "usage: %s [-h] [--version] {onboard,inspect,init,repair,sync,check,update-check,upgrade,plans,portfolio} ...\n\n", prog)
+	fmt.Fprintf(w, "usage: %s [-h] [--version] {onboard,inspect,init,repair,sync,check,update-check,upgrade,plans,portfolio,coordination} ...\n\n", prog)
 	fmt.Fprintln(w, "positional arguments:")
-	fmt.Fprintln(w, "  {onboard,inspect,init,repair,sync,check,update-check,upgrade,plans,portfolio}")
+	fmt.Fprintln(w, "  {onboard,inspect,init,repair,sync,check,update-check,upgrade,plans,portfolio,coordination}")
 	for _, cmd := range commands {
 		fmt.Fprintf(w, "    %-12s %s\n", cmd.name, cmd.help)
 	}
@@ -362,6 +377,50 @@ func printPortfolioHelp(w io.Writer) {
 	fmt.Fprintln(w, "  {configure,scan}")
 	for _, cmd := range portfolioSubcommands {
 		fmt.Fprintf(w, "    %-12s %s\n", cmd.name, cmd.help)
+	}
+	fmt.Fprintln(w)
+	fmt.Fprintln(w, "options:")
+	fmt.Fprintln(w, "  -h, --help            show this help message and exit")
+}
+
+func runCoordinationGroup(args []string, stdout io.Writer, stderr io.Writer) int {
+	if len(args) == 0 {
+		printCoordinationHelp(stderr)
+		fmt.Fprintf(stderr, "%s coordination: error: the following arguments are required: subcommand\n", prog)
+		return 2
+	}
+	if args[0] == "-h" || args[0] == "--help" {
+		printCoordinationHelp(stdout)
+		return 0
+	}
+	subcommand, ok := findCoordinationSubcommand(args[0])
+	if !ok {
+		printCoordinationHelp(stderr)
+		fmt.Fprintf(stderr, "%s coordination: error: invalid subcommand %q (choose from invoke-claude, record-delivery, release-lock)\n", prog, args[0])
+		return 2
+	}
+	if containsCallableHelp(subcommand, args[1:]) {
+		printCommandHelp(stdout, command{name: "coordination " + subcommand.name, help: subcommand.help, usage: subcommand.usage, description: subcommand.description, options: subcommand.options, epilog: subcommand.epilog})
+		return 0
+	}
+	return commandimpl.RunCoordination(args, stdout, stderr)
+}
+
+func findCoordinationSubcommand(name string) (command, bool) {
+	for _, cmd := range coordinationSubcommands {
+		if cmd.name == name {
+			return cmd, true
+		}
+	}
+	return command{}, false
+}
+
+func printCoordinationHelp(w io.Writer) {
+	fmt.Fprintf(w, "usage: %s coordination [-h] {invoke-claude,record-delivery,release-lock} ...\n\n", prog)
+	fmt.Fprintln(w, "positional arguments:")
+	fmt.Fprintln(w, "  {invoke-claude,record-delivery,release-lock}")
+	for _, cmd := range coordinationSubcommands {
+		fmt.Fprintf(w, "    %-16s %s\n", cmd.name, cmd.help)
 	}
 	fmt.Fprintln(w)
 	fmt.Fprintln(w, "options:")
