@@ -1,4 +1,4 @@
-Last updated: 2026-10-09T16:39:13Z (UTC)
+Last updated: 2026-10-09T18:33:11Z (UTC)
 Created: 2026-10-05
 Status: completed
 
@@ -186,6 +186,17 @@ explicit native alternative or pause when unavailable. No silent substitution, r
 blanket-access requirement or credentials in repository records. Generic defaults are managed;
 agreed consumer choices are created from an opt-in starter and preserved on Kit upgrades.
 
+**FR-10 — Implementation goals by default.** Executing an approved implementation plan defaults
+to the implementing tool's native goal mode, for both Codex and Claude. The coordinator explicitly
+commissions the objective, constraints, acceptance/review handoffs and report-back, carries actual
+user authority including an accepted standing preference, and verifies goal activation. A Kit
+default alone never overrides a host requirement for explicit user authorization. Resolve any
+missing authority in commissioning, not through a separate approval at every epic. Honor an
+explicit opt-out; if native goals are unavailable or unverifiable, disclose the limitation and
+use only an authorized continuation approach, without claiming a goal is active. Goals add no
+permissions, notification channel or completion proof. Reviews, discovery and routine small changes
+do not acquire goals by default. Preserve checkpoints and unfinished plan status at handoff.
+
 **NFR-0 — Minimal records.** The CLI's original final reply is sufficient review material, whether
 read from its conversation or captured invocation result. A generated response.md is an optional
 convenience view, not an extra authored deliverable. Keep minimum request/session/process/delivery
@@ -217,13 +228,14 @@ per-action approval gate. Preserve applicable defaults and enforced deny/ask rul
 | D-3 Role-matched context and durable continuity | Approved. Brief plus relevant records; advisors can persist, implementers retain coherent whole-plan sessions, relay identity is replaceable. |
 | D-4 Main conversation remains available | Approved. Dispatch and yield; use the tested independent ordinary relay and supported native messages. No watcher, cron or polling service. |
 | D-5 Permission approach | Approved direction with observed pilot. Invocation-scoped ordinary-merge allowance may support an authorized task; preserve defaults, explicit restrictions, actual checks and review. Never use blanket bypass, auto-escalate, or turn denial into a handoff to another agent to evade it. |
-| D-6 Bounded maintained helper | Selected under the user's 2026-10-09 delegation to settle precise scope. Add one invocation command to the existing Go CLI, using standard libraries. It launches/captures one assigned Claude CLI turn; it does not message Codex, schedule work or interpret results. |
+| D-6 Bounded maintained helper | Selected under the user's 2026-10-09 delegation to settle precise scope. Add one invocation command to the existing Go CLI, using standard libraries. It launches/captures one assigned Claude CLI invocation; it does not message Codex, schedule work or interpret results. |
 | D-7 Proportionate evidence | Approved. Reuse the bounded pilot conclusions; validate changed mechanics and one fresh-director onboarding flow. No repeated experiments merely to increase confidence. |
 | D-8 Durable local placement | Accepted direction. Consumer-owned docs/repo/reference/agent-coordination.md holds operational routing; root instructions link there. Owning Programs retain appointments and improvement history, not the sole location of a shared relay service. |
 | D-9 Reuse existing home identity | Preserve portfolio identity in .codeheart/kit.config.yaml. Home ID is neither a filesystem path nor a chat address. Add ordinary reference links for navigation; do not add unsupported config fields or a second registry. |
 | D-10 Explicit initial support | Generic responsibilities are direction-neutral. Initial executable recipe is Codex desktop coordinating CLI-only Claude on a verified host. Reverse direction and other hosts are deferred until qualified. |
 | D-11 Native default and guided opt-in | Approved 2026-10-09. Current-tool operation works without optional account, relay or local reference. Requested cross-tool setup handles CLI/login, non-secret scoped preferences and explicitly authorized relay creation. Managed guidance owns defaults; optional consumer-owned records retain local choices without sync overwrite. |
 | D-12 Report before discussion-stage amendments | Approved 2026-10-09. Present original review, findings, independent assessment and recommended changes before incorporating findings; wait for the user unless the correction cycle is explicitly delegated. Preserve autonomous routine corrections within authorized implementation. |
+| D-13 Native goal default for plan implementation | Approved 2026-10-09. Use the implementing tool's supported goal mechanism by default for approved implementation plans, including Codex and Claude. Commission explicitly, verify activation, preserve host authority and review gates, and disclose unavailable capability. Ship in the already-planned Kit release. |
 
 ## Selected Helper And Communication Shape
 
@@ -242,6 +254,8 @@ tool configuration, and ignored local evidence/state root. A new session ID is a
 persisted before launch; a resume requires the retained CLI-owned session. Arguments are structured
 and prompts go through stdin; no shell interpolation, implicit mode changes or arbitrary retry.
 Optional execution limits come from the assignment; the helper adds no short whole-plan deadline.
+A prepared implementation brief carries the documented native goal invocation when selected;
+the helper passes it faithfully and does not add a goal evaluator or continuation scheduler.
 
 The command performs deterministic validation, prevents a second participating writer to that
 session in the shared host-local state root, launches once with child stdout/stderr connected
@@ -324,6 +338,8 @@ Must cover:
 - Strict relay-only mechanics, original responses, exact return destinations and one driver per session.
 - Question, denial, execution failure and failed-notification reporting; no automatic authority escalation.
 - Whole-plan assignments with delegated checkpoints and clear Git/release/adoption finish lines.
+- Native goal default for implementation, explicit commissioning and activation verification for
+  both tools, preserved review handoffs and honest unsupported-host handling.
 - Discussion-stage review reporting before amendments, with explicit correction-cycle delegation
   distinguished from a request to review or apply one already-agreed change.
 - Native operation without optional tooling/account and guided user-selected cross-tool setup;
@@ -336,7 +352,7 @@ Deferred or blocked:
 - Reverse Claude-led executable recipe: deferred pending separate evidence; not a first-release blocker.
 
 Preserve decisions:
-- D-1 through D-5, D-7 and D-10 through D-12.
+- D-1 through D-5, D-7 and D-10 through D-13.
 
 Planner must not reinvent:
 - Relay judgment boundary, human-authorization attribution, coordinator availability or tested topology.
@@ -360,6 +376,7 @@ Must cover:
 - Explicit request, non-shell launch, retained session identity, one participating writer and isolated attempts.
 - Original response capture, exact message arguments, honest process/denial/error and usage metadata.
 - Safe interruption/recovery evidence, private output handling, current CLI/tooling preflight.
+- Faithful supported native-goal invocation; no helper-owned goal loop or semantic evaluator.
 
 Explicitly out of scope:
 - Tool installation, permission changes, worktree creation, background daemons, direct app messaging,
@@ -439,6 +456,10 @@ No live relay appointment, policy installation, implementation,
 release or consumer upgrade is authorized merely by this discovery checkpoint.
 
 ## Revision Notes
+
+- 2026-10-09: user approved native goals as the default for implementation-plan execution by
+  either Codex or Claude, with explicit commissioning, verified activation and unchanged review
+  and permission boundaries. Include this in the planned release; no prerequisite release.
 
 - 2026-10-09: user approved reporting and assessing discussion-stage reviews before incorporating
   findings, unless the correction cycle is explicitly delegated; routine authorized implementation

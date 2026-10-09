@@ -1,4 +1,4 @@
-Last updated: 2026-10-09T16:39:13Z (UTC)
+Last updated: 2026-10-09T18:33:11Z (UTC)
 Created: 2026-10-09
 Status: draft
 
@@ -24,13 +24,15 @@ plan:
 The discovery has enough evidence for this bounded delivery. This draft turns that direction into
 three ordered epics. It does not activate implementation, install permissions, appoint a relay,
 create chats, publish a release or upgrade consumers. Planning scope was delegated on 2026-10-09;
-implementation and its delivery grant remain for review.
+the user has since authorized implementation start. Record the exact activation assignment before
+dispatch; this planning amendment alone does not launch an implementer.
 
 ## Essential Context
 
 | File | Why it matters |
 | --- | --- |
 | [Discovery](cross-tool-agent-coordination_discovery_doc.md) | Accepted requirements, pilot limits, decisions and three capability-scope groups. |
+| [Plan execution](../../../../components/planning-workflows/managed/runbooks/execute-implementation-plan.md) | Owns the native-goal default during implementation commissioning. |
 | [Planning review](../../../../components/planning-workflows/managed/runbooks/review-planning-document.md) | Owns the review-versus-amendment boundary; coordination guidance points here. |
 | [Agent task coordination](../../../../components/agent-interface/managed/reference/agent-task-coordination.md) | Whole-plan authority, director review, report-back and lifecycle. |
 | [Codex operations](../../../../components/agent-interface/managed/reference/codex-task-operations.md) and [Claude operations](../../../../components/agent-interface/managed/reference/claude-code-task-operations.md) | Current host contracts, commissioning and tool-specific constraints. |
@@ -46,10 +48,11 @@ Authoring checkpoint: source placement, relative links, public-core hygiene, Mar
 and canonical plan catalog were checked. The independent Claude reviewer judged corrected
 candidate b6132dd **Ready (plan only)** after closing all material and low-severity amendment
 findings; see [the review record](attachments/independent-plan-review.md). The coordinator read
-the original response and accepted that assessment. Execution approval remains outstanding.
+the original response and accepted that assessment. The user subsequently authorized starting
+implementation; the exact activation assignment is still to be prepared before dispatch.
 Runtime behavior is planned, not proven by document checks or this planning verdict. The subsequent
-user-approved report-before-amendment rule below is author-checked; it was not part of b6132dd's
-independent verdict. Recording this rule does not reopen or authorize a correction cycle.
+user-approved report-before-amendment and native-goal default rules below are author-checked; it was not part of b6132dd's
+independent verdict. Recording these approved rules does not commission another review cycle.
 
 ## Contents
 
@@ -114,7 +117,7 @@ One hybrid runbook separates a short optional setup dialogue from agent executio
 topology. Existing generic guidance supplies the native-tool default. The cross-tool runbook calls one
 new command in the installed Go CLI; no Python dependency, copied executable, service or separate
 CLI package. This narrow L3 command is justified by repeated invocations and installed distribution.
-It launches one CLI turn and returns evidence; the runbook and native tools retain communication,
+It launches one CLI invocation and returns evidence; the runbook and native tools retain communication,
 authority, target selection and judgment.
 
 Expected source paths (ordinary internal factoring may change without changing the contract):
@@ -134,6 +137,7 @@ Expected source paths (ordinary internal factoring may change without changing t
         templates/agent-coordination-reference.md          # create opt-in consumer reference starter
     components/planning-workflows/managed/runbooks/
       review-planning-document.md                          # clarify coordinator review/amendment authority
+      execute-implementation-plan.md                       # default to verified native goal commissioning
     bootstrap.md                                          # align conflicting model/access lines only
     internal/
       commands/onboard.go                                 # align existing onboard output only
@@ -142,7 +146,7 @@ Expected source paths (ordinary internal factoring may change without changing t
       coordination/invoke.go, invoke_test.go               # create mechanics and fake-process proof
     src/codeheart_operating_kit/commands/onboard.py         # align existing behavior oracle output
     src/codeheart_operating_kit/resources/components/agent-interface/ # sync touched managed mirrors
-    src/codeheart_operating_kit/resources/components/planning-workflows/ # sync touched review mirror
+    src/codeheart_operating_kit/resources/components/planning-workflows/ # sync touched workflow mirrors
     tests/test_onboard.py, tests/test_install_metadata.py   # replace conflicting output assertions
     tests/test_routing.py, tests/test_packaging_resources.py # modify where affected
     docs/repo/plans/cross-tool-agent-coordination/
@@ -180,8 +184,9 @@ unchanged. The consumer-owned root route separately locates local operational va
   delivery's automatic authority. Use a verified configured home/member fixture; if a selected
   adoption route depends on the mismatch, its owner must reconcile it first through the existing
   configuration route. Do not silently change membership or broaden into portfolio cleanup.
-- OQ-4 — BLOCKER: no; Affects: all. This draft needs execution approval. The commissioning section
-  below supplies the proposed complete grant so routine steps need not be reapproved individually.
+- OQ-4 — BLOCKER: no; Affects: all. Implementation start is authorized. Record the exact targets,
+  goal authority and delivery grant in the activation assignment before dispatch; routine covered
+  steps do not need repeated approval.
 
 Assumptions: the supported release platforms remain macOS universal and Windows x64; the initial
 real app notification recipe is qualified only on the tested macOS host. Native command mechanics
@@ -254,6 +259,38 @@ prevents the CLI itself from retaining Full access as a hidden prerequisite.
 Generic native implementation works with the current tool after Kit installation. Converting
 existing Codex-specific base installation/onboarding UI wording to a complete Claude-host guide
 is deferred; release notes must not imply that broader onboarding path was delivered here.
+
+### Native goals for implementation-plan execution
+
+Executing an approved implementation plan defaults to the implementing tool's native goal mode,
+for Codex and Claude alike. This applies to complete implementation assignments, not routine edits,
+discovery, consultation or review. Preserve the user's explicitly selected exception.
+
+Commission the concrete objective, agreed finish line, constraints, review handoffs and reporting
+route together with the existing execution grant. Carry actual user authority, including an
+accepted standing goal preference; never treat installing the Kit as consent that overrides an
+explicit-authorization requirement in the host. Where a further explicit goal choice is required,
+resolve it in the same commissioning decision. Do not ask again per epic or routine continuation.
+
+Use each tool's supported activation and status mechanisms and retain observable activation
+proof. A prompt mentioning /goal is not proof. For Claude CLI, pass the supported native goal
+invocation in the prepared request/brief; the existing helper transports it rather than becoming
+a goal engine. Codex uses its own exposed goal mechanism. Do not add a scheduler, automatic
+permission escalation, invented token budget or separate continuation framework.
+
+Required review or genuine blockers must return control and original evidence to the coordinator,
+without spinning or advancing dependent work. Verify the selected host's goal/handoff behavior
+before claiming unattended continuation; state any limitation. Keep overall plan completion
+separate from process exit, evaluator verdict or an intermediate checkpoint. Use supported native
+continuation after delegated acceptance. If activation cannot be verified or is unsupported,
+disclose that fact and continue only under an authorized alternative; do not silently claim goal
+mode or change tools. The review/reporting boundary remains unchanged.
+
+Update the existing execution runbook, generic coordination reference and both per-tool guides
+together, replacing contradictory optional-only wording. Apply matching packaged mirrors and
+examples. Include the change in the already-planned patch release and named consumer adoption;
+there is no separate prerequisite release. The current assignment can explicitly use this
+user-approved default before the reusable guidance ships.
 
 ### Responsibilities and notification
 
@@ -450,8 +487,9 @@ supply human approval. This is a planned single approval boundary, not hidden au
 Record adoption on the default branch and reconcile the explicitly assigned active worktree
 without overwriting unrelated work. A dirty checkout or independent in-flight task is preserved;
 use a clean adoption branch and record any remaining reconciliation owner. No repo cleanup,
-bulk upgrades, history rewriting, AWS effects or unrelated product work. /goal activation occurs
-only if explicitly requested and verified.
+bulk upgrades, history rewriting, AWS effects or unrelated product work. Native goal execution is
+the approved default; the assignment explicitly carries its authority and objective, and verifies
+activation under the selected host contract before claiming that it is active.
 
 # Section 3 - Execution Plan
 
@@ -459,7 +497,7 @@ only if explicitly requested and verified.
 
 | Epic | Outcome | Size | Dependencies |
 | --- | --- | --- | --- |
-| Epic 1 — Reusable coordination contract | Native defaults, guided optional setup and compact templates make coordination usable with or without Claude. | M | Execution approval |
+| Epic 1 — Reusable coordination contract | Native defaults, guided optional setup and compact templates make coordination usable with or without Claude. | M | Recorded activation assignment |
 | Epic 2 — Maintained invocation helper | One installed command launches/captures assigned Claude CLI work with isolated identities and honest failure evidence. | M | Epic 1 contract |
 | Epic 3 — Release, adoption and onboarding | Qualified release is adopted and a fresh director uses it without manual setup coaching. | M | Reviewed Epics 1–2 |
 
@@ -475,7 +513,8 @@ Provide role brief/request examples, relay/response templates, permission exampl
 consumer reference starter.
 
 **C) Files Touched:** Agent-interface runbook/reference/template paths and component manifest from
-Section 2.1; planning-workflows review-planning-document.md and its existing packaged mirror;
+Section 2.1; planning-workflows review-planning-document.md, execute-implementation-plan.md and
+their existing packaged mirrors;
 README routers and affected packaging resources/tests. The bounded onboarding
 alignment also touches onboarding-context-contract.md and its packaged mirror, bootstrap.md,
 internal/commands/onboard.go, src/codeheart_operating_kit/commands/onboard.py and existing
@@ -488,7 +527,8 @@ authority, phases, exact return route, original evidence, blockers and recovery.
 research or accept work. The coordinator yields. Generic versus tested-host claims are explicit.
 No new portfolio fields or forced scaffold. Review-only/discussion assignments report before
 amending; explicitly delegated correction cycles and routine authorized implementation retain
-their autonomy.
+their autonomy. Native implementation goals are the default in both tool guides and the generic
+execution route, with explicit authority/activation and honest fallback behavior.
 
 **E) Dependencies And Critical-Path Notes:** The discovery is the contract. Required CLI mechanics
 are specified for Epic 2, not presented as already available.
@@ -507,6 +547,10 @@ are specified for Epic 2, not presented as already available.
   only after an agreed arrangement; preserve existing contents, personal/team scope, Program
   appointments and config authority. Authentication is per machine in the tool's storage.
 - [ ] Document the scoped ordinary-merge example and denial behavior without changing live settings.
+- [ ] Align the execution runbook, generic coordination and Codex/Claude guides on default native
+  goal commissioning for approved implementation plans. Include actual user authority, activation
+  proof, review/blocker handoff and explicit exceptions. Replace conflicting optional-only wording;
+  native current-tool execution still needs no second tool/account/relay.
 - [ ] Clarify the existing planning-review runbook's coordinator boundary: original response link,
   findings, independent assessment and recommended disposition before discussion-stage amendments;
   honor explicit correction delegation and existing implementation authority. Link from generic
@@ -650,6 +694,11 @@ publication, then the same scenario once on installed release. Do not repeatedly
   correction authority: it applies covered fixes without per-finding approval. Verify the recipe
   preserves routine corrections under an existing whole-plan execution grant. No extra live
   external review or new production task is required solely for this probe.
+- [ ] Extend the bounded commissioning fixture to cover default-goal selection, an explicit opt-out
+  and unavailable/unverifiable activation without false claims or host-authority bypass. Qualify
+  the selected Claude native-goal invocation and review/blocker handoff within the installed live
+  exercise; the director reads the activation/evaluator evidence. Check Codex's native instruction
+  path against exposed goal tools, without claiming the deferred reverse cross-tool recipe.
 - [ ] Director presents material findings, recommended versus approved/implemented corrections and
   residual limits to the human, with the original-response reference. Verify generated artifacts
   are ignored and sufficient for recovery without requiring a duplicate authored report.
@@ -676,6 +725,10 @@ rules. Recheck the affected boundary, retain original failures and adapt one rec
 every transient failure into framework work. No AWS or product feature implementation is included.
 
 # Revision Notes
+
+- 2026-10-09: user approved native goals by default for Codex and Claude implementation-plan
+  execution; added source routes, activation/handoff requirements and proportionate proof to
+  the existing delivery. This author-checked amendment ships in its planned release.
 
 - 2026-10-09: user approved the discussion-stage report-before-amendment boundary, its canonical
   planning-review route and a bounded authority probe. This accepted rule is author-checked and
