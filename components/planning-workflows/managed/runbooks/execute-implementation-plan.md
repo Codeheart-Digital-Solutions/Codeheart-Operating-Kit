@@ -113,7 +113,7 @@ finish line or phase handoff, constraints, review points and report-back, and ca
 actual authority, including an accepted standing goal preference. Do not ask again per epic.
 
 Verify activation from the tool's observable goal status or evaluator evidence, not from text
-containing `/goal`. Aim a goal at a real dependency, such as independent source review, so it
+containing `/goal`. Aim a goal at a real dependency, such as the source-review handoff, so it
 returns control with original evidence instead of crossing a review gate or spinning on a
 blocker. Keep the plan active when a phase goal ends; continue the next phase with the tool's
 supported continuation after delegated acceptance. If native goals are unavailable or cannot be

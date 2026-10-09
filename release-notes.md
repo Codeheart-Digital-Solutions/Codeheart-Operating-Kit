@@ -1,6 +1,53 @@
-Last updated: 2026-10-05T09:20:49Z (UTC)
+Last updated: 2026-10-09T21:14:03Z (UTC)
 
 # Codeheart Operating Kit Release Notes
+
+## v0.1.35 Release Notes
+
+A Codex coordinator can now commission Claude CLI advisors, implementers or reviewers through an
+independent relay, stay available to the user and receive the original question or reply after
+yielding. Native current-tool work stays the default: no second tool, account, relay or
+coordination reference is needed. Approved implementation plans now run under the implementing
+tool's native goal by default, the commissioning agent is the primary reviewer, and first-run
+onboarding no longer prescribes a model or Full access.
+
+### Impact And Adoption
+
+- `instruction-only change`: new managed `runbooks/coordinate-cross-tool-task.md`,
+  `reference/cross-tool-coordination-contract.md` and the opt-in starter
+  `templates/agent-coordination-reference.md` under `.codeheart/kit/docs/agent-interface/`.
+  Generic task coordination, both tool guides and the planning execute, draft and review runbooks
+  carry the native-tool default, native implementation goals by default, report-before-amendment
+  for discussion-stage reviews, and the commissioning agent as primary reviewer. Additional
+  independent review is selected for complexity, risk, authorship or a binding gate.
+- Additive CLI: `codeheart-operating-kit coordination invoke-claude | record-delivery |
+  release-lock`.
+  - Launches one coordinator-prepared Claude CLI request without a shell, with the brief on
+    stdin and output written directly to an ignored attempt directory.
+  - Refuses replays and a second writer on the same session, and records truthful outcomes and
+    permission denials.
+  - Writes native send-message arguments and a pending delivery record for every outcome after
+    an attempt is created.
+  - Releases a retained session lock only after verified process exit.
+  - It never retries, interprets results, messages another tool or changes permissions.
+- Changed `onboard` output: chat and settings setup keep the user's model, reasoning, speed and
+  permission choices. The Operating Kit does not require Full access.
+- `security or safety policy change`: the guidance includes an example invocation-scoped
+  permission profile allowing ordinary task-repository pull-request merges. Defaults and
+  explicit ask/deny rules remain; workflow still checks authority, review, CI and candidate
+  identity. The helper refuses `bypassPermissions`. A real denial is returned unchanged and is
+  never routed through another agent. The example is not an installed setting.
+- The consumer reference `docs/repo/reference/agent-coordination.md` is created only by guided
+  opt-in from the starter and is preserved by repair, sync and upgrade. Exact machine paths stay
+  in the ignored user or local layer. No schema migration or automatic scaffold is added.
+- Upgrade through the supported lifecycle to v0.1.35, then verify the installed version, routes
+  and authored preservation. If a newer CLI reports a pristine older installation as partial,
+  start the upgrade with the verified published CLI matching the installed version.
+- The recipe is qualified for a Codex desktop coordinator, an ordinary relay and CLI-owned Claude
+  sessions on macOS with Claude Code CLI 2.1.286. Not qualified: Windows live Claude or desktop
+  wakeup, cross-host delivery, Claude-led reverse execution, and `.cmd` or `.bat` wrappers.
+  macOS universal and Windows x64 and the unsigned, unnotarized internal/prototype
+  HTTPS-plus-SHA256 audience remain unchanged. Release and actual adoption are separate facts.
 
 ## v0.1.34 Release Notes
 
