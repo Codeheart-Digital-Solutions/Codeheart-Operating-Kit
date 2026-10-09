@@ -1,4 +1,4 @@
-Last updated: 2026-10-09T15:22:56Z (UTC)
+Last updated: 2026-10-09T15:43:50Z (UTC)
 
 # Independent Cross-Tool Coordination Plan Review
 
@@ -33,7 +33,6 @@ Review limits remain: no production implementation, no universal host lifetime p
 Windows app notification qualification. Corrections are planning text only; implementation stays
 draft and inactive.
 
-
 ## Focused Review Closure And Final Clarifications
 
 The reviewer accepted all H-1/M-1 through M-5/L-1/L-2 corrections. One Low follow-up noted that
@@ -51,3 +50,15 @@ findings retroactively attributed to the independent reviewer.
 
 The draft remains inactive. Ready is a planning verdict; live host lifetime, installed helper
 behavior, failure proof, real adoption and onboarding remain implementation acceptance work.
+
+## First-Use Amendment Review Requested
+
+The user approved expanding the draft's explicit first-use flow: native operation without Claude,
+guided optional installation/sign-in and relay setup, scoped preferences, managed generic defaults
+and an opt-in consumer-owned reference preserved on upgrades. A bounded correction to conflicting
+first-run pinned-model/Full-access instructions is included; unrelated onboarding remains outside
+scope. Small missing-service and preservation fixtures complement the existing real pilot.
+
+This amendment is assigned to the same independent reviewer. Previous Ready covers candidate
+7edfde4 only; review of the amended candidate is pending. The executable helper's role and the
+three-epic sequence are unchanged; Epic 1 is sized M to reflect its concrete hybrid onboarding work.

@@ -1,4 +1,4 @@
-Last updated: 2026-10-09T15:22:56Z (UTC)
+Last updated: 2026-10-09T15:43:50Z (UTC)
 Created: 2026-10-05
 Status: completed
 
@@ -172,6 +172,14 @@ findings, their significance and accepted/challenged/deferred corrections in rea
 with an original-response reference when useful. Verdict alone is not enough. This does not turn
 the relay into a summarizer or require a new report for every message.
 
+**FR-9 — Optional first use.** Normal planning/implementation continues with the current tool
+unless the assignment or applicable accepted preference selects another arrangement. Claude is
+optional, not a Kit prerequisite. The coordinator guides requested CLI installation/sign-in and
+explicit relay setup before commissioning, explains account/usage requirements, and offers an
+explicit native alternative or pause when unavailable. No silent substitution, repeated offers,
+blanket-access requirement or credentials in repository records. Generic defaults are managed;
+agreed consumer choices are created from an opt-in starter and preserved on Kit upgrades.
+
 **NFR-0 — Minimal records.** The CLI's original final reply is sufficient review material, whether
 read from its conversation or captured invocation result. A generated response.md is an optional
 convenience view, not an extra authored deliverable. Keep minimum request/session/process/delivery
@@ -208,6 +216,7 @@ per-action approval gate. Preserve applicable defaults and enforced deny/ask rul
 | D-8 Durable local placement | Accepted direction. Consumer-owned docs/repo/reference/agent-coordination.md holds operational routing; root instructions link there. Owning Programs retain appointments and improvement history, not the sole location of a shared relay service. |
 | D-9 Reuse existing home identity | Preserve portfolio identity in .codeheart/kit.config.yaml. Home ID is neither a filesystem path nor a chat address. Add ordinary reference links for navigation; do not add unsupported config fields or a second registry. |
 | D-10 Explicit initial support | Generic responsibilities are direction-neutral. Initial executable recipe is Codex desktop coordinating CLI-only Claude on a verified host. Reverse direction and other hosts are deferred until qualified. |
+| D-11 Native default and guided opt-in | Approved 2026-10-09. Current-tool operation works without optional account, relay or local reference. Requested cross-tool setup handles CLI/login, non-secret scoped preferences and explicitly authorized relay creation. Managed guidance owns defaults; optional consumer-owned records retain local choices without sync overwrite. |
 
 ## Selected Helper And Communication Shape
 
@@ -257,6 +266,24 @@ and unknowns without promising uninterrupted hours or silently narrowing to cons
 
 ## Durable Routing And Onboarding
 
+Base installation provides reusable native-current-tool defaults through managed guidance. It
+does not create a Claude account, install an optional CLI, change permissions or create a relay.
+The coordinator consults explicit user choice and accepted local preferences before defaulting
+to native operation. Offer cross-tool setup only when requested or materially relevant, not at
+every plan; a declined offer does not block native work.
+
+Requested setup is a hybrid workflow: explain service/account/usage implications, route missing
+CLI through tooling readiness, guide the user through native sign-in, verify readiness and
+record the agreed non-secret preference at its intended scope. User credentials stay in the
+tool's credential storage. Shared preference is not proof of authentication on another machine.
+Reuse sufficient scoped setup authority; honor explicit chat-creation/message requirements.
+
+When needed, create docs/repo/reference/agent-coordination.md from the installed starter only
+if absent, preserving existing consumer content on repeat setup and Kit upgrades. No empty
+record is needed for the native default. A shared home reference is reused by member routing;
+personal preferences use the existing ignored user layer. Missing selected Claude access prompts
+a clear choice to configure it, explicitly use the native tool for that assignment or pause.
+
 Consumer operational reference: current relay locator/host, maintenance owner, model preferences,
 supported local host, shared local evidence-root convention and links to the managed procedure.
 Private machine paths stay in ignored local setup; examples in the Kit use public-safe placeholders.
@@ -289,6 +316,8 @@ Must cover:
 - Strict relay-only mechanics, original responses, exact return destinations and one driver per session.
 - Question, denial, execution failure and failed-notification reporting; no automatic authority escalation.
 - Whole-plan assignments with delegated checkpoints and clear Git/release/adoption finish lines.
+- Native operation without optional tooling/account and guided user-selected cross-tool setup;
+  no provider questionnaire for normal execution, no forced fallback or blanket-access default.
 
 Explicitly out of scope:
 - Schedulers, durable queues, automatic retries, app-owned CLI resumes and internal app API injection.
@@ -297,7 +326,7 @@ Deferred or blocked:
 - Reverse Claude-led executable recipe: deferred pending separate evidence; not a first-release blocker.
 
 Preserve decisions:
-- D-1 through D-5, D-7 and D-10.
+- D-1 through D-5, D-7, D-10 and D-11.
 
 Planner must not reinvent:
 - Relay judgment boundary, human-authorization attribution, coordinator availability or tested topology.
@@ -350,6 +379,9 @@ Must cover:
 - Stable local reference independent of Program lifecycle, owning Program appointment links and private evidence.
 - Existing portfolio identity, explicit navigation link, missing/stale/mismatched route handling.
 - Coherent release and named consumer default-branch adoption; expose working-copy or host limitations.
+- Managed defaults plus opt-in consumer reference creation, update/upgrade preservation, personal
+  versus shared preference scope and selected-but-unconfigured service handling.
+- Bounded alignment of older first-run model/permission prescriptions with these defaults.
 
 Explicitly out of scope:
 - New portfolio schema/registry, Organization Home record families, bulk unrelated adoption or identity migration.
@@ -359,7 +391,7 @@ Deferred or blocked:
   building the Kit procedure/helper or a correctly configured consumer's adoption.
 
 Preserve decisions:
-- D-7 through D-10.
+- D-7 through D-11.
 
 Planner must not reinvent:
 - Local reference placement or the distinction between home ID, chat identity and machine-local state.
@@ -367,6 +399,8 @@ Planner must not reinvent:
 Feature-level success evidence:
 - One low-context director follows installed routes in a configured home/member fixture and completes
   the real response/clarification flow; no guessed identifiers, new policy registry or manual briefing.
+- Small fixtures prove absent-Claude native operation, guided opt-in with missing login/tooling,
+  no repeated declined offers and preserved existing references; no real account churn for tests.
 
 ## Remaining Questions And Risks
 
@@ -390,6 +424,10 @@ Next review is of that coherent plan. No live relay appointment, policy installa
 release or consumer upgrade is authorized merely by this discovery checkpoint.
 
 ## Revision Notes
+
+- 2026-10-09: user approved native-current-tool defaults and guided optional Claude first use;
+  added setup/persistence boundaries and acceptance cases without creating a mandatory provider
+  questionnaire, new config schema or consumer record on every install.
 
 - 2026-10-09: included the user's human-transparency and minimal-record requirements: material
   findings plus coordinator disposition, optional response view, ignored recovery evidence and

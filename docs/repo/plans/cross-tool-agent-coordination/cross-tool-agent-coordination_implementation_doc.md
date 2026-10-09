@@ -1,4 +1,4 @@
-Last updated: 2026-10-09T15:22:56Z (UTC)
+Last updated: 2026-10-09T15:43:50Z (UTC)
 Created: 2026-10-09
 Status: draft
 
@@ -44,9 +44,10 @@ implementation and its delivery grant remain for review.
 Authoring checkpoint: source placement, relative links, public-core hygiene, Markdown timestamps
 and canonical plan catalog were checked. The fresh independent reviewer judged corrected
 candidate 7edfde4 Ready (plan only); see [the review record](attachments/independent-plan-review.md).
-The final low-severity lock-recovery clarification and the user's later transparency/retention
-requirements are recorded below and were not part of that reviewed candidate. Execution approval
-remains outstanding. Runtime behavior is planned, not proven by document checks.
+The later lock-recovery, transparency/retention and user-approved first-use amendment are
+recorded below. Focused review of this amended candidate is pending; the older Ready verdict does
+not cover it. Execution approval remains outstanding. Runtime behavior is planned, not proven
+by document checks.
 
 ## Contents
 
@@ -60,8 +61,9 @@ remains outstanding. Runtime behavior is planned, not proven by document checks.
 
 ## 1.1 Goal Of The Implementation
 
-A newly onboarded ordinary Codex director in the adopted coordination home can follow installed
-instructions and consumer routing,
+A fresh Kit consumer can implement with the current tool without a Claude account, a relay or
+a coordination reference. When the user selects cross-tool delegation, an ordinary Codex director
+in the adopted coordination home can follow guided setup and installed consumer routing,
 commission a Claude CLI advisor, implementer or reviewer through an independent relay, remain
 available for conversation, and receive an original question or response after yielding.
 The same Claude session can continue after clarification. Relay tasks do not research, interpret,
@@ -92,7 +94,9 @@ validation, portfolio identity/configuration and accepted private pilot evidence
 documents observed merge permission behavior and independent relay topology.
 
 Missing: a reusable installed recipe, compact assignment/reference starters, maintained invocation
-and output capture, durable consumer relay route, and fresh-director adoption evidence.
+and output capture, durable consumer relay route, and fresh-director adoption evidence. Current
+first-run onboarding also prescribes a specific Codex model and Full access; its touched guidance must be aligned with preserving the user's
+current tool/model/permissions rather than carrying those prescriptions into optional setup.
 
 Ownership: Operating Kit owns procedure, templates, command and compatibility. Consumers own
 operational relay references, local preferences, appointments, authority and private evidence.
@@ -103,7 +107,8 @@ neither a role identity nor authorization. No Organization Home schema change is
 
 ## 2.1 Implementation Strategy With Visual File/Folder Hierarchy
 
-One agent-facing runbook composes existing responsibilities with the tested topology. It calls one
+One hybrid runbook separates a short optional setup dialogue from agent execution of the tested
+topology. Existing generic guidance supplies the native-tool default. The cross-tool runbook calls one
 new command in the installed Go CLI; no Python dependency, copied executable, service or separate
 CLI package. This narrow L3 command is justified by repeated invocations and installed distribution.
 It launches one CLI turn and returns evidence; the runbook and native tools retain communication,
@@ -120,7 +125,8 @@ Expected source paths (ordinary internal factoring may change without changing t
           codex-task-operations.md                         # modify tested host recipe routing
           claude-code-task-operations.md                   # modify CLI-owned session/permission route
           cross-tool-coordination-contract.md             # create request/result and brief examples
-        runbooks/coordinate-cross-tool-task.md             # create agent-facing recipe
+        runbooks/coordinate-cross-tool-task.md             # create hybrid opt-in/setup/execution recipe
+        runbooks/conduct-first-run-onboarding.md            # modify only conflicting model/access defaults
         templates/agent-coordination-reference.md          # create opt-in consumer reference starter
     internal/
       cli/cli.go, cli/*tests*                              # modify command dispatch/help
@@ -133,7 +139,11 @@ Expected source paths (ordinary internal factoring may change without changing t
 
 Installed guidance remains under .codeheart/kit/docs/agent-interface/. Template content is a
 managed starter, copied into a consumer reference only during explicitly scoped adoption; no new
-automatic absent-file scaffold or portfolio schema field.
+automatic absent-file scaffold or portfolio schema field. Every installation gets the managed
+native-tool default through generic guidance; no empty consumer reference is required for that.
+After the user configures a custom coordination arrangement, the runbook creates the consumer-owned
+reference from the managed starter only if absent, or makes the specifically authorized change to
+an existing one. Kit repair/upgrade must preserve its contents.
 
 Named consumer adoption creates docs/repo/reference/agent-coordination.md and updates the repository
 AGENTS.md route, docs/repo/README.md, portfolio README link where useful, and the current Program's
@@ -166,9 +176,62 @@ real app notification recipe is qualified only on the tested macOS host. Native 
 must work on supported release platforms. For this new command Windows coverage is build,
 Go unit/fake-process tests and installed command availability within existing native release gates;
 live Claude/desktop wakeup on Windows is unqualified. Preserve all existing native Kit release
-checks. Consumers do not need Claude installed to use unrelated Kit capabilities.
+checks. Consumers do not need Claude installed for normal planning, implementation or native
+agent delegation. Choosing a provider does not create an account or prove that another developer
+on another machine is signed in.
 
 ## 2.3 Architectural Decisions With Reasoning
+
+### Native default and optional first use
+
+The generic installed rule is: honor the explicit assignment choice and applicable local
+preferences; otherwise continue with the current tool. A user working in Codex can use normal
+Codex implementation, and a user working in Claude can use its normal native workflow. This does
+not qualify reverse cross-tool execution. Native work uses its own supported delegation/reporting
+surface, not the Claude invocation helper or a relay. Usual chat-creation and execution authority
+still applies; installing the Kit never creates an implementation chat by itself.
+
+A fresh user approving implementation should not have to answer a provider questionnaire or
+configure an optional service. Explain cross-tool delegation briefly when requested or materially
+useful; do not advertise it at every plan. If declined, continue the native workflow and avoid
+repeated offers. Remember a choice only at its agreed scope: this assignment, personal preference,
+repository or coordination home. Do not turn one developer's decision into a team-wide default.
+
+Example opt-in explanation: "We can continue with Codex. If you want Claude to implement or review,
+I can guide that setup; it requires your own working access to Claude." Ask for the choice before
+starting optional installation, authentication or relay creation. Existing clear choice and
+sufficient setup authority are reused; no new approval per routine setup step.
+
+For the selected Claude route, the coordinator performs this order:
+1. Resolve existing local/home preferences and the requested role/model. Check local CLI presence
+   through the existing tooling-readiness route; do not install or upgrade merely because it is absent.
+2. Explain the applicable account/access and potentially chargeable use requirements from current
+   official service guidance. Guide an authorized installation if needed. Existing base Kit setup
+   is not rerun and no new account, purchase or usage commitment is created implicitly.
+3. Check authentication through the tool's supported status/preflight. If missing, guide the user
+   through the tool's own sign-in flow. Passwords, tokens and MFA stay there, never in chat prompts,
+   the consumer reference, invocation request or Git. Recheck success before commissioning.
+4. If unavailable, explain the concrete blocker and offer native execution for this assignment,
+   completing the requested setup, or pausing. Never silently replace an explicitly selected
+   provider/model. Do not interpret a shared preference as proof of personal machine readiness.
+5. Record the agreed non-secret arrangement at the agreed scope. Prefer the existing home
+   reference when shared; use the repository reference for repo-local choices; personal preferences
+   use the existing ignored user layer. Ordinary native operation needs no new reference file.
+6. Reuse an authorized existing relay. If none is usable, include the exact proposed ordinary relay
+   chat and report-back recipient/effects in the user's setup choice; create only with sufficient
+   explicit chat/message authorization, then record its actual locator. No user needs to know or
+   transcribe a chat ID. A launcher/request cannot run before this route and authority are ready.
+
+Managed defaults and setup procedure live under .codeheart/kit/; the generated local reference is
+consumer-owned even though the Kit-guided workflow creates it. Preserve edits on reconfiguration
+unless the exact change is authorized; never sync a managed template over consumer choices.
+Authentication stays in the tool's credential storage and is checked on the current machine.
+Machine paths/session artifacts stay ignored. No new global Kit-config fields or role registry.
+
+Align the existing first-run runbook's hardcoded model/access prescriptions with preserving the
+user's chosen model and permission settings. Add only a short pointer to the optional route;
+do not add a mandatory provider selection/setup stage or rework unrelated onboarding. This
+bounded alignment prevents older instructions from making Full access a hidden prerequisite.
 
 ### Responsibilities and notification
 
@@ -311,8 +374,9 @@ their effects; an approved whole-plan grant can cover them once. No global polic
 force/admin merge, direct default-branch push or release/deployment permission is implied.
 
 Impact: managed instruction additions plus executable command behavior and security/safety-policy
-guidance; no consumer schema migration or automatically owned scaffold. Use broad candidate
-acceptance, explicit review of permission wording, native packaging/install proof and release notes.
+guidance and optional first-use routing; no consumer schema migration or automatically owned
+scaffold. The consumer reference is created by guided opt-in, not by mandatory base installation.
+Use broad candidate acceptance, explicit review of permission wording, native packaging/install proof and release notes.
 Run cheap affected checks during edits and one coherent broad candidate gate. Reuse existing live
 pilot evidence where unchanged; do not repeat the merge experiment merely for ceremony.
 
@@ -350,25 +414,29 @@ only if explicitly requested and verified.
 
 | Epic | Outcome | Size | Dependencies |
 | --- | --- | --- | --- |
-| Epic 1 — Reusable coordination contract | Installed routes and compact templates describe faithful delegation, authority, relay-only transport and durable local routing. | S | Execution approval |
+| Epic 1 — Reusable coordination contract | Native defaults, guided optional setup and compact templates make coordination usable with or without Claude. | M | Execution approval |
 | Epic 2 — Maintained invocation helper | One installed command launches/captures assigned Claude CLI work with isolated identities and honest failure evidence. | M | Epic 1 contract |
 | Epic 3 — Release, adoption and onboarding | Qualified release is adopted and a fresh director uses it without manual setup coaching. | M | Reviewed Epics 1–2 |
 
 ## Epic 1 — Reusable Coordination Contract
 
 **A) Epic ID, Title, And Outcome:** Epic 1. A new director can identify the correct roles, prepare a
-complete brief, find its local relay and execute the documented transport workflow.
+complete brief and use the native default immediately, or select guided optional setup, find its
+local relay and execute the documented cross-tool workflow.
 
-**B) Scope:** One agent-facing L1 runbook with a compact intent block; update existing generic and
-tool references instead of duplicating them. Provide role brief/request examples, relay assignment
-and response templates, permission example and consumer reference starter.
+**B) Scope:** One hybrid L1 runbook with a compact intent block, paced opt-in dialogue and separate
+agent execution path. Update existing generic/tool references and conflicting first-run defaults.
+Provide role brief/request examples, relay/response templates, permission example and opt-in
+consumer reference starter.
 
 **C) Files Touched:** Agent-interface runbook/reference/template paths and component manifest from
 Section 2.1; README routers and affected packaging resources/tests. Consumer files wait for Epic 3.
 
-**D) Acceptance Criteria And Size:** S. Procedure states preflight, authority, phases, exact return
-route, original evidence, blockers and recovery. Relay cannot research or accept work. The coordinator
-yields. Generic versus tested-host claims are explicit. No new portfolio fields or forced scaffold.
+**D) Acceptance Criteria And Size:** M. Native work proceeds with no Claude install/account or
+reference file. Optional setup handles missing CLI/login, user choice, permission preservation,
+exact relay authority and consumer-owned reference creation/update. Procedure states preflight,
+authority, phases, exact return route, original evidence, blockers and recovery. Relay cannot
+research or accept work. The coordinator yields. Generic versus tested-host claims are explicit. No new portfolio fields or forced scaffold.
 
 **E) Dependencies And Critical-Path Notes:** The discovery is the contract. Required CLI mechanics
 are specified for Epic 2, not presented as already available.
@@ -378,8 +446,12 @@ are specified for Epic 2, not presented as already available.
   session reuse, explicit report-back authority and a question/continuation example.
 - [ ] Encode exact topology, strict relay limits, process-versus-task completion, failed-send
   evidence, missing/stale relay handling and coordinator availability in the existing routes.
-- [ ] Add the optional local reference starter and explicit member-to-home navigation guidance.
-  Preserve Program appointments and existing config authority.
+- [ ] Add native-current-tool selection defaults to generic coordination, the paced optional setup
+  flow to the hybrid runbook and a bounded first-run pointer. Replace conflicting pinned-model/
+  Full-access prescriptions without introducing mandatory provider setup or repeated offers.
+- [ ] Add the opt-in local reference starter and explicit member-to-home navigation. Guide creation
+  only after an agreed arrangement; preserve existing contents, personal/team scope, Program
+  appointments and config authority. Authentication is per machine in the tool's storage.
 - [ ] Document the scoped ordinary-merge example and denial behavior without changing live settings.
 - [ ] Include human-visible review findings and coordinator disposition, optional generated
   response views, minimal ignored runtime evidence and ordinary authorized cleanup guidance.
@@ -389,7 +461,9 @@ are specified for Epic 2, not presented as already available.
 
 **G) Implementation Notes:** Missing binary/runtime -> existing tooling-readiness route; missing
 login, mode capability or app message tools -> service/host preflight, not package installation.
-No new runtime is required. The runbook separates technical execution from user-facing decisions,
+No new runtime is required. Initial missing authentication is an expected guided setup state,
+not a helper capability failure. The coordinator handles it before constructing a launch request.
+The hybrid runbook separates technical execution from user-facing decisions,
 with plain plan/epic names and no invented per-step approval. Producer owner maintains the route.
 Use the final low-context Epic 3 exercise as the fresh routing probe; avoid a duplicate warm test.
 
@@ -451,8 +525,10 @@ let a fresh ordinary director use the arrangement without conversation-history c
 
 **B) Scope:** One patch release, one named coordination-home consumer default-branch adoption,
 reconciliation of the assigned active checkout and one combined real onboarding/routing proof.
-Use a temporary member fixture for member-to-home navigation rather than changing another live
-program repository merely for a test.
+Add small absent-service/opt-in/preservation fixtures around that same recipe; do not install or
+uninstall tools or sign out a real account to manufacture these states. Use a temporary member
+fixture for member-to-home navigation rather than changing another live program repository merely
+for a test.
 
 **C) Files Touched:** Release identity/notes and affected mirrors under the release runbook;
 execution log; consumer kit config/lock/managed content only through upgrade, local operational
@@ -461,7 +537,9 @@ reference and its existing root/index/Program routes. Private identities/evidenc
 **D) Acceptance Criteria And Size:** M. Broad release checks pass; assets match accepted source;
 consumer default branch adopts that release; original question and final response reach the fresh
 director after yielding; it reads originals and assesses them. Stale/missing routes fail clearly.
-Record host support and any outstanding working-copy reconciliation separately from adoption.
+Native-only and selected-but-unconfigured cases pass the scoped first-use checks; an existing
+custom reference survives setup repetition and Kit upgrade. Record host support and any
+outstanding working-copy reconciliation separately from adoption.
 
 **E) Dependencies And Critical-Path Notes:** Source review and authority precede release. Release
 precedes live installed-use acceptance. Use candidate fixtures for cheap routing checks before
@@ -477,6 +555,13 @@ publication, then the same scenario once on installed release. Do not repeatedly
 - [ ] Create its local operational reference and links; move ongoing relay routing authority out
   of the improvement Program while retaining its history and program-specific appointments.
   Configure exact model/host/session preferences privately and reconcile the assigned checkout.
+- [ ] Check first-use scenarios with small controlled fixtures: (a) no local reference or Claude
+  binary/account and no provider preference -> native work proceeds with no Claude call or setup
+  prompt; (b) user selects Claude and CLI/login is absent -> concrete guided setup/choice without
+  silent fallback, credential copying, bypass or unapproved installation; (c) accepted native/decline
+  choice -> no repeated offers; (d) existing reference/preferences -> preserve user edits on repeat
+  setup and Kit upgrade, with correct personal versus repository/home scope. Use the real installed
+  cross-tool exercise below for positive login/preflight, not artificial account creation.
 - [ ] Give a fresh ordinary director a small user-style request. Require it to discover the
   installed route/reference from a configured member fixture/home, launch one harmless consultation
   through the maintained helper/relay, yield, receive a question, resume the same session with an
@@ -518,6 +603,11 @@ rules. Recheck the affected boundary, retain original failures and adapt one rec
 every transient failure into framework work. No AWS or product feature implementation is included.
 
 # Revision Notes
+
+- 2026-10-09: added the user-approved native-default/optional-Claude first-use flow, guided tooling
+  and sign-in, scoped preferences, managed defaults versus consumer-owned reference creation,
+  bounded conflicting onboarding-default alignment and first-use/preservation acceptance cases.
+  Same-reviewer amendment review is pending; execution remains inactive.
 
 - 2026-10-09: recorded independent Ready verdict on 7edfde4; added the reviewer's remaining
   low-severity deliberate lock-release clarification and the user's requirement for transparent
