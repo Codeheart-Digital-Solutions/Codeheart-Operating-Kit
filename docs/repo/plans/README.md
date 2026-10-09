@@ -1,4 +1,4 @@
-Last updated: 2026-10-05T16:32:21Z (UTC)
+Last updated: 2026-10-09T14:54:05Z (UTC)
 
 # Repo Plans
 
@@ -17,10 +17,11 @@ entries after mixed cutover.
 
 ## Current Plans
 
-- Draft cross-tool agent coordination discovery: reusable commissioning and context, lean relay
-  responsibilities, asynchronous interaction, permission-profile investigation and bounded pilot
-  evidence; implementation is not activated:
-  `cross-tool-agent-coordination/cross-tool-agent-coordination_discovery_doc.md`
+- Completed cross-tool agent coordination discovery and draft implementation plan: accepted
+  bounded pilots, strict relay transport, a maintained CLI invocation helper, durable consumer
+  routing and fresh-director onboarding; implementation is not activated:
+  - [Discovery](cross-tool-agent-coordination/cross-tool-agent-coordination_discovery_doc.md)
+  - [Implementation plan](cross-tool-agent-coordination/cross-tool-agent-coordination_implementation_doc.md)
 
 - Active Claude Code operating guide implementation plan and execution log (v0.1.34 released;
   two of four assigned default branches adopted, two pending with their owners): an optional
