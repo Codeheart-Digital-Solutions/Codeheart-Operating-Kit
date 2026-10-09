@@ -1,4 +1,4 @@
-Last updated: 2026-10-09T15:16:43Z (UTC)
+Last updated: 2026-10-09T15:22:56Z (UTC)
 Created: 2026-10-09
 Status: draft
 
@@ -42,10 +42,11 @@ implementation and its delivery grant remain for review.
 | internal/cli/cli.go, internal/commands/, components/agent-interface/component.yaml | Existing compiled command and managed-content delivery paths. |
 
 Authoring checkpoint: source placement, relative links, public-core hygiene, Markdown timestamps
-and canonical plan catalog were checked. A fresh independent Claude review found corrections;
-the author disposition is in [the review record](attachments/independent-plan-review.md).
-Focused correction review and execution approval remain outstanding. Runtime behavior is planned,
-not proven by document checks.
+and canonical plan catalog were checked. The fresh independent reviewer judged corrected
+candidate 7edfde4 Ready (plan only); see [the review record](attachments/independent-plan-review.md).
+The final low-severity lock-recovery clarification and the user's later transparency/retention
+requirements are recorded below and were not part of that reviewed candidate. Execution approval
+remains outstanding. Runtime behavior is planned, not proven by document checks.
 
 ## Contents
 
@@ -176,7 +177,8 @@ and tool settings, authority, state root and exact return destination from appro
 It assigns the attempt ID and knows its deterministic evidence directory before dispatch.
 Relay receives only the prepared file path and transport instructions, starts/resumes the specified
 session and returns the original response. Missing/invalid fields return a blocker; relay and
-worker never choose defaults, permissions, models or substantive context on the coordinator's behalf. Only the coordinator assesses results or answers substantive questions.
+worker never choose defaults, permissions, models or substantive context on the coordinator's
+behalf. Only the coordinator assesses results or answers substantive questions.
 Independent review remains independent of authorship. Session reuse is distinct from role identity.
 
 Reuse a configured independent ordinary relay. For multiple active assignments, it dispatches
@@ -194,6 +196,34 @@ watcher or notification guarantee; it does not automatically resend or relaunch 
 The coordinator may discuss unrelated matters while work proceeds; it does not busy-wait, continually
 inspect transcripts, or duplicate the commissioned research. Active waiting is appropriate when
 the next decision genuinely depends on the result.
+
+### Human-visible findings and proportionate records
+
+For consequential reviews, the coordinator presents the material findings in plain language:
+what was found, why it matters, the proposed correction and whether it was accepted, challenged,
+deferred or remains unresolved. State the review verdict and residual uncertainty. Link the
+original response when useful; a terse "review passed" or "findings addressed" is insufficient.
+This substantive reporting belongs to the coordinator, never the relay. Ordinary trivial replies
+do not need a formal review table or a new report.
+
+The agent replies normally in its CLI conversation; it is not asked to author an extra response
+document. CLI JSON contains the original final reply. A generated response.md may expose that
+same text conveniently; it is optional, not an additional required report or competing source of
+truth. Reading the original conversation is also valid. For deterministic result capture, prefer
+the direct CLI result with exact session/attempt identity over scraping a large saved transcript.
+
+Keep one original invocation result and the minimal request/session/process/delivery state needed
+to resume or reconcile it. A file plus JSON-field locator can reference the final text without
+another Markdown copy. Direct stdout/stderr files remain necessary for interruption evidence;
+avoid duplicate summaries, manifests and receipts where one compact attempt record suffices.
+The current pilot's collection of scaffolding files is not a production file-count requirement.
+
+Generated evidence remains ignored machine-local data, not committed repository content. Record
+meaningful accepted findings/decisions and the implementer/reviewer locator in the existing owning
+plan/log; do not create a permanent document for every turn. Once accepted and no longer needed
+for active work, correction review or recovery, generated duplicates/logs are eligible for normal
+authorized cleanup. Preserve required original evidence and unfinished session/recovery state;
+no automatic sweeping, scheduled retention service or silent deletion is introduced.
 
 ### Bounded invocation contract
 
@@ -218,8 +248,12 @@ classifier will allow an action.
 
 Use one ignored shared state root for participating launches through a relay on one host.
 An exclusive-create session lock holding the attempt ID and unique attempt directories prevent
-accidental second launch, overwrite and replay. No automatic staleness heuristics or lock stealing. Retain session/attempt information before spawning. Refuse stale/ambiguous
-locks pending coordinator inspection; do not steal locks automatically. A participating-process
+accidental second launch, overwrite and replay. Retain session/attempt information before spawning;
+record launcher and child process IDs with start identities as soon as known. No automatic staleness
+heuristics or lock stealing. Recovery documents a deliberate release of the named attempt's lock,
+only after verifying the same lock owner and that both recorded processes have ended. Refuse release
+while either is alive or process identity/ownership is uncertain, including a launch interrupted
+before identity capture. Preserve original outputs and session state when releasing the lock. A participating-process
 lock cannot prove there is no independent CLI/app/other-host writer. Fresh CLI ownership and the
 runbook remain necessary.
 
@@ -228,7 +262,8 @@ not to a helper-owned pipe or an in-memory buffer. Helper/worker death must not 
 written; it may still terminate the child under host rules. Parse the completed JSON afterwards,
 preserving incomplete output and absence of a final record as uncertainty. Keep a compact
 result record: requested/actual session, process state/exit, timestamps, model/usage if available,
-original response path, permission-denial metadata and error/status. Use atomic final record
+original response locator (file and optional JSON field), permission-denial metadata and error/status.
+Use atomic final record
 writes; normal stdout is only this compact metadata. Emit a native-tool message argument file
 with the exact return destination and original short reply or response reference. No semantic
 digest, fabricated completion state or task acceptance. The relay loads the file directly into
@@ -346,6 +381,9 @@ are specified for Epic 2, not presented as already available.
 - [ ] Add the optional local reference starter and explicit member-to-home navigation guidance.
   Preserve Program appointments and existing config authority.
 - [ ] Document the scoped ordinary-merge example and denial behavior without changing live settings.
+- [ ] Include human-visible review findings and coordinator disposition, optional generated
+  response views, minimal ignored runtime evidence and ordinary authorized cleanup guidance.
+  Keep durable conclusions in existing plan/log records rather than a new report per turn.
 - [ ] Update manifest/resource mirrors and nearest routers; run affected routing/resource and
   public-core/Markdown checks. Review together with Epic 2.
 
@@ -386,8 +424,9 @@ must remain unchanged; new command parity is specified by its Go tests, not a Py
 - [ ] Add focused fake-CLI tests for quoting/spaces and stdin fidelity; wrong/empty session and
   malformed/error/denial outputs; nonzero exit; two distinct concurrent assignments; same-session
   collision/replayed attempt; helper termination while a fake child is writing; retained partial
-  files and unresolved pending state; interrupted/stale attempt; no raw normal output or implicit
-  escalation. Use sanitized real CLI response/denial and message-rejection shapes to anchor fake
+  files and unresolved pending state; interrupted/stale attempt; deliberate lock release refused
+  while the recorded process is alive or identity is unknown, permitted only after verified exit
+  and matching lock ownership; no raw normal output or implicit escalation. Use sanitized real CLI response/denial and message-rejection shapes to anchor fake
   fixtures. Exercise actual process behavior, not just mocked return values.
 - [ ] Verify on the supported live host that a controlled harmless process continues through
   normal tool output-yield/resume cycles and retains evidence on interruption. Record actual
@@ -453,6 +492,9 @@ publication, then the same scenario once on installed release. Do not repeatedly
 - [ ] Cover missing/stale route handling in the same onboarding exercise or non-live fixture.
   Retain existing accepted overlap evidence; repeat only if the new mechanics/topology invalidate it.
   Record live usage/time if exposed and distinguish cached input from new output; no invented budget threshold.
+- [ ] Director presents material findings, accepted/challenged corrections and residual limits
+  to the human, with an original-response reference. Verify generated artifacts are ignored and
+  sufficient for recovery without requiring a duplicate authored report.
 - [ ] Director accepts evidence and honest support limits; archive only the temporary approved
   test chat, retain relay and original results, publish final plan/log/adoption state.
 
@@ -476,6 +518,11 @@ rules. Recheck the affected boundary, retain original failures and adapt one rec
 every transient failure into framework work. No AWS or product feature implementation is included.
 
 # Revision Notes
+
+- 2026-10-09: recorded independent Ready verdict on 7edfde4; added the reviewer's remaining
+  low-severity deliberate lock-release clarification and the user's requirement for transparent
+  findings and minimal ignored evidence. These final clarifications are author-checked; no new
+  implementation or release claim is implied.
 
 - 2026-10-09: addressed independent review with coordinator-owned requests, explicit durable
   failure lookup, direct child output files, bounded lifetime/interruption proof, narrower member

@@ -1,4 +1,4 @@
-Last updated: 2026-10-09T15:16:43Z (UTC)
+Last updated: 2026-10-09T15:22:56Z (UTC)
 Created: 2026-10-05
 Status: completed
 
@@ -166,6 +166,19 @@ it does not routinely duplicate the delegated investigation while waiting.
 **FR-7 — Reuse and direction.** Generic doctrine must permit either tool to coordinate. Tool
 recipes must name tested directions and limitations. Fresh agents should discover the appropriate
 procedure and appointed advisor from normal repository/Program routes without manual coaching.
+
+**FR-8 — Human transparency.** For consequential reviews, the coordinator exposes the core
+findings, their significance and accepted/challenged/deferred corrections in readable language,
+with an original-response reference when useful. Verdict alone is not enough. This does not turn
+the relay into a summarizer or require a new report for every message.
+
+**NFR-0 — Minimal records.** The CLI's original final reply is sufficient review material, whether
+read from its conversation or captured invocation result. A generated response.md is an optional
+convenience view, not an extra authored deliverable. Keep minimum request/session/process/delivery
+evidence ignored locally; preserve partial output and active recovery data. Durable accepted
+conclusions belong in existing plans/logs. Eligible generated duplicates/logs may be removed through
+ordinary authorized cleanup after acceptance and recovery needs end; no retention service or
+automatic deletion is required.
 
 **NFR-1 — Economy.** Give relays compact, fresh context and configurable model/reasoning selection.
 Model preference belongs in consumer configuration, not a hardcoded public model version. Record
@@ -377,6 +390,10 @@ Next review is of that coherent plan. No live relay appointment, policy installa
 release or consumer upgrade is authorized merely by this discovery checkpoint.
 
 ## Revision Notes
+
+- 2026-10-09: included the user's human-transparency and minimal-record requirements: material
+  findings plus coordinator disposition, optional response view, ignored recovery evidence and
+  ordinary cleanup instead of a permanent report per message.
 
 - 2026-10-09: clarified mechanics after independent plan review without reducing whole-plan scope:
   coordinator owns complete requests, child output survives helper interruption, known attempt
