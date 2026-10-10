@@ -116,6 +116,19 @@ func runFakeCLI(mode string) int {
 		line("claude-stream-init.json", nil)
 		line("claude-result-denial.json", func(f map[string]any) { f["result"] = "Substantive handoff: the Write call was denied." })
 		line("claude-result-success.json", func(f map[string]any) { f["result"] = "Background task finished." })
+	case "earlier_error_no_text", "earlier_error_text":
+		// An earlier error record, with or without a text reply, followed by a later success.
+		line("claude-stream-init.json", nil)
+		line("claude-result-success.json", func(f map[string]any) {
+			f["subtype"] = "error_max_turns"
+			f["is_error"] = true
+			if mode == "earlier_error_no_text" {
+				delete(f, "result")
+			} else {
+				f["result"] = "Stopped before finishing the assignment."
+			}
+		})
+		line("claude-result-success.json", func(f map[string]any) { f["result"] = "Background task finished." })
 	case "wrong_session":
 		line("claude-stream-init.json", func(f map[string]any) { f["session_id"] = "99999999-9999-4999-8999-999999999999" })
 		line("claude-result-success.json", func(f map[string]any) { f["session_id"] = "99999999-9999-4999-8999-999999999999" })

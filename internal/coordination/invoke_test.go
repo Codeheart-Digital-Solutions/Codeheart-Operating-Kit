@@ -323,11 +323,15 @@ func TestInvokeKeepsEarlierResultDenialsAndLocations(t *testing.T) {
 		t.Fatalf("final response locator = %+v", record.Response)
 	}
 	want := ResponseLocator{File: filepath.Join(outcome.AttemptDir, StdoutFile), Line: 2, JSONField: "result", Chars: len([]rune("Substantive handoff: the Write call was denied."))}
-	if len(record.EarlierResponses) != 1 || record.EarlierResponses[0] != want {
-		t.Fatalf("earlier responses = %+v, want %+v", record.EarlierResponses, want)
+	if len(record.EarlierResults) != 1 || record.EarlierResults[0].Line != 2 || record.EarlierResults[0].Subtype != "success" ||
+		record.EarlierResults[0].Reply == nil || *record.EarlierResults[0].Reply != want {
+		t.Fatalf("earlier results = %+v, want reply %+v", record.EarlierResults, want)
+	}
+	if record.Detail != "" {
+		t.Fatalf("a successful earlier record must not be reported as a failure: %q", record.Detail)
 	}
 	message := readMessage(t, outcome)
-	if !strings.Contains(message.Prompt, "Permission denials: 1.") || !strings.Contains(message.Prompt, "line(s) 2, JSON field \"result\"") {
+	if !strings.Contains(message.Prompt, "Permission denials: 1.") || !strings.Contains(message.Prompt, `line 2 (subtype "success", is_error false, text reply in JSON field "result")`) {
 		t.Fatalf("message hides the earlier result or denial:\n%s", message.Prompt)
 	}
 	if strings.Contains(message.Prompt, "Substantive handoff") {
@@ -335,6 +339,48 @@ func TestInvokeKeepsEarlierResultDenialsAndLocations(t *testing.T) {
 	}
 	if !strings.Contains(message.Prompt, "Original reply (unchanged):\nBackground task finished.") {
 		t.Fatalf("final reply not preserved:\n%s", message.Prompt)
+	}
+}
+
+func TestInvokeSurfacesEarlierFailedResultBeforeLaterSuccess(t *testing.T) {
+	for _, tc := range []struct {
+		mode      string
+		withReply bool
+	}{{"earlier_error_no_text", false}, {"earlier_error_text", true}} {
+		t.Run(tc.mode, func(t *testing.T) {
+			h := newHarness(t, tc.mode)
+			outcome := mustInvoke(t, h.request("assign-a", "attempt-1", "brief", nil))
+			// The final reply exists, so the status may stay response_captured; the earlier
+			// failure must be explicit in the record, the detail and the message.
+			if outcome.Status != StatusResponseCaptured {
+				t.Fatalf("outcome = %+v", outcome)
+			}
+			record, err := ReadAttempt(outcome.AttemptDir)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if len(record.EarlierResults) != 1 {
+				t.Fatalf("earlier results = %+v", record.EarlierResults)
+			}
+			earlier := record.EarlierResults[0]
+			if earlier.Line != 2 || earlier.Subtype != "error_max_turns" || earlier.IsError == nil || !*earlier.IsError || (earlier.Reply != nil) != tc.withReply {
+				t.Fatalf("earlier result = %+v", earlier)
+			}
+			if record.Response == nil || record.Response.Line != 3 {
+				t.Fatalf("final response locator = %+v", record.Response)
+			}
+			wantFailure := `earlier result record reported a failure: line 2 (subtype "error_max_turns", is_error true`
+			if !strings.Contains(record.Detail, wantFailure) || !strings.Contains(outcome.Detail, wantFailure) {
+				t.Fatalf("detail hides the earlier failure: record %q, outcome %q", record.Detail, outcome.Detail)
+			}
+			message := readMessage(t, outcome)
+			if !strings.Contains(message.Prompt, wantFailure) || !strings.Contains(message.Prompt, "Original reply (unchanged):\nBackground task finished.") {
+				t.Fatalf("message hides the earlier failure or final reply:\n%s", message.Prompt)
+			}
+			if strings.Contains(message.Prompt, "Stopped before finishing") {
+				t.Fatalf("message copied an earlier reply instead of locating it:\n%s", message.Prompt)
+			}
+		})
 	}
 }
 
