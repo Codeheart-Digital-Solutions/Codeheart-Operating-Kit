@@ -1,6 +1,56 @@
-Last updated: 2026-10-09T21:14:03Z (UTC)
+Last updated: 2026-10-10T07:07:56Z (UTC)
 
 # Codeheart Operating Kit Release Notes
+
+## v0.1.36 Release Notes
+
+The cross-tool coordination helper no longer loses evidence when a Claude CLI run emits more than
+one result record, for example a substantive reply or a failure followed by a background-task
+completion. The guidance adds an optional explicit-permission profile and makes the relay's
+helper path and message handling unambiguous.
+
+### Impact And Adoption
+
+- Helper record change, additive (`coordination invoke-claude`):
+  - Every result record before the last is listed in a new optional `earlier_results` list in
+    `attempt.json`, with its line, `subtype`, `is_error` and, for a text reply, a locator in the
+    existing shape.
+  - Earlier records marked as errors or not `success` are named in `detail` and the coordinator
+    message, even without text and even when a later record succeeds.
+  - Permission denials are gathered from every result record; a repeated tool use ID counts once.
+  - The last record stays the final reply, so `response` and `response_captured` keep their
+    meaning. Usage, cost, duration and turn count come from the last result record only and are
+    not summed.
+  - No migration is needed. Readers that ignore unknown fields are unaffected, and
+    `permission_denials` may hold more entries for runs with several result records.
+- v0.1.35 limitation: its helper keeps only the last result record, so an earlier reply, failure
+  or denial can be missing from `attempt.json` and the message. Until you upgrade, read
+  `stdout.jsonl` directly whenever it holds more than one `type: result` line.
+- `instruction-only change`, agent-interface guidance:
+  - **Explicit permissions:** an optional `dontAsk` profile with explicitly listed development
+    and GitHub commands. `dontAsk` denies actions that would otherwise prompt; allowed actions
+    still run, and a denial returns to the agent. The illustrative deny examples are not
+    exhaustive; branch protection and delivery gates stay authoritative.
+  - **Profile decisions:** choosing or changing a profile is the policy owner's explicit,
+    recorded decision before work resumes; agents never switch profiles to get past their own
+    denial. Command patterns are workflow control, not operating-system isolation. Nothing is
+    installed in local or global permission settings.
+  - **Working directory:** start or resume a session in the repository it changes. A command
+    that changes directory and then runs Git is evaluated separately.
+  - **Helper path:** the coordinator verifies its selected Operating Kit helper supports
+    `coordination` and gives the relay that exact path for `invoke-claude` and `record-delivery`.
+    A `PATH` lookup can resolve an older helper.
+  - **Message file:** `message_file` is a path to read and parse, not a send-tool argument; its
+    `threadId`, `hostId` and `prompt` values are passed unchanged. An undeliverable notice is
+    reported as an explicit error, and a status visible only to a native parent is not a
+    successful report-back.
+  - The reference starter's local settings row also holds the helper path.
+- Upgrade through the supported lifecycle to v0.1.36, then verify the installed version and
+  routes. If a newer CLI reports a pristine older installation as partial, start the upgrade with
+  the verified published CLI matching the installed version. Consumer-owned references and local
+  settings are preserved.
+- macOS universal and Windows x64 and the unsigned, unnotarized internal/prototype
+  HTTPS-plus-SHA256 audience are unchanged.
 
 ## v0.1.35 Release Notes
 

@@ -1,4 +1,4 @@
-Last updated: 2026-10-10T00:19:49Z (UTC)
+Last updated: 2026-10-10T07:07:56Z (UTC)
 Created: 2026-10-09
 
 # Cross-Tool Agent Coordination Execution Log
@@ -427,6 +427,26 @@ Its release notes must cover:
 - that the v0.1.35 helper can miss an earlier reply, failure or denial when a run emits more
   than one result record, so v0.1.35 users should read `stdout.jsonl` directly in that case.
 
+## Next Patch Release Grant And Candidate
+
+After the follow-up was integrated, the user commissioned publication and final plan closure:
+the next unused patch, v0.1.36, under the unchanged audience and platforms. The grant also covers
+public smoke, default-branch adoption by the named consumer with its local helper selection
+updated, and closure records. The commissioning director accepts the candidate before
+publication.
+
+The candidate is broad scope, because the helper's runtime and record behavior changed. It
+contains:
+- the integrated follow-up, already reviewed and accepted;
+- release identity and notes;
+- one guidance clarification from an observed relay mistake: `message_file` is a path to read
+  and parse, not an argument the send tool accepts; its `threadId`, `hostId` and `prompt` values
+  are passed unchanged; and a status that reaches only a native parent is not a successful
+  report-back.
+
+Earlier accepted source reviews, onboarding, fixtures and overlap evidence are reused where their
+inputs still apply.
+
 ## Current State And Remaining Evidence
 
 **Delivered (the one authorized patch):**
@@ -449,8 +469,8 @@ Its release notes must cover:
   then, the published v0.1.35 helper keeps its multiple-result capture limitation.
 
 **Pending:**
+- v0.1.36 candidate qualification and director acceptance, then publication, public smoke and the
+  named consumer's adoption.
 - The director's presentation of findings and final whole-plan acceptance and closure.
-- Any decision to commission the next patch release; this delivery does not authorize a second
-  release.
 
 The plan stays active.

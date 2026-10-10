@@ -1,4 +1,4 @@
-Last updated: 2026-10-10T00:19:49Z (UTC)
+Last updated: 2026-10-10T07:07:56Z (UTC)
 Created: 2026-10-09
 Status: active
 
@@ -752,6 +752,16 @@ rules. Recheck the affected boundary, retain original failures and adapt one rec
 every transient failure into framework work. No AWS or product feature implementation is included.
 
 # Revision Notes
+
+- 2026-10-10: the user commissioned publication of the accepted follow-up and final plan closure.
+  This extends the earlier one-patch boundary to the next unused patch, v0.1.36, with the
+  following scope:
+  - the unchanged audience and platforms;
+  - public release smoke;
+  - supported default-branch adoption by the named consumer, with its local helper selection
+    updated;
+  - closure of this plan and the private handover.
+  The plan stays active until publication, smoke, adoption and director acceptance are complete.
 
 - 2026-10-10: recorded delivery evidence and ticked completed tasks:
   - source accepted, v0.1.35 published and verified;

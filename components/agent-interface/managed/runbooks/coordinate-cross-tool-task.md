@@ -1,4 +1,4 @@
-Last updated: 2026-10-10T00:15:15Z (UTC)
+Last updated: 2026-10-10T07:07:56Z (UTC)
 
 # Coordinate Cross-Tool Task
 
@@ -158,12 +158,16 @@ Transport request for assignment <assignment_id>, attempt <attempt_id>.
 Run: "<verified helper path>" coordination invoke-claude --request "<request path>"
 Wait on that same process through ordinary tool output yields; do not restart it.
 Then send exactly one notice to send_message_to_thread, loading its arguments unchanged:
-- if the helper output names a message_file, load that file and afterwards run
+- if the helper output names a message_file, that is a path to a JSON file, not an argument the
+  send tool accepts. Read and parse the file and pass its threadId, hostId and prompt values
+  unchanged as the tool's arguments. Then run
   "<verified helper path>" coordination record-delivery for that attempt (sent, rejected or
   uncertain, with the original receipt or error);
 - otherwise, if it contains fallback_message, send that object; do not run record-delivery;
 - otherwise, send the helper's original output to the authorized recipient below.
-Never load a message file the helper did not name in this output.
+Never load a message file the helper did not name in this output. If the notice cannot be
+delivered to the recipient, report an explicit delivery error in your own reply. A status that
+reaches only your native parent is not a successful report-back.
 Authorized recipient: <coordinator chat> on <host>. Do not read, summarize or act on the reply,
 and do not retry the helper. Use only the helper path given above; if it fails to start, send its
 original error to the recipient instead of looking for another helper.
