@@ -1,4 +1,4 @@
-Last updated: 2026-10-10T00:50:00Z (UTC)
+Last updated: 2026-10-10T08:35:00Z (UTC)
 Created: 2026-10-09
 
 # Cross-Tool Agent Coordination Execution Log
@@ -316,10 +316,10 @@ packs, the catalog, the installers, bootstrap and notes, each with a SHA-256 sid
 - Released-asset smoke run `38005211633` passed both public native jobs.
 - The unsigned, unnotarized internal/prototype audience is unchanged.
 
-**Consumer adoption (prepared, not merged).** The named coordination home was upgraded on its
-assigned branch through the supported lifecycle, and an adoption PR awaits the director's
-primary review. It is not merged; the native onboarding exercise and first-use probes remain
-with the director. Two findings:
+**Consumer adoption.** The named coordination home was upgraded on its assigned branch through
+the supported lifecycle. After the director's primary review, its adoption PR merged, so the
+consumer's default branch now runs v0.1.35. Its owner selected a verified repository-local helper
+in ignored local settings, with no global CLI or `PATH` change. Two findings from the upgrade:
 - The released CLI reports a pristine v0.1.34 installation as partial. The upgrade was started
   with the verified published CLI matching the installed version. The result is healthy and
   current; only managed files and the lock changed, and authored and local files are
@@ -331,6 +331,30 @@ with the director. Two findings:
 **Fixtures.** Four fixture repositories were created with the released CLI. An automated check
 against the public releases confirmed that a custom coordination reference and ignored local
 settings survive upgrade, sync and repair.
+
+**Fresh-director onboarding (director-run, reported to the implementer).**
+- **Live route:** a fresh ordinary director found the member-to-home route without coaching and
+  launched Claude through the relay. It then:
+  - received a question and answered it;
+  - resumed the same Claude session with the approved answer;
+  - received, read and assessed the final reply.
+- **Denied write:** a harmless denied Write reached the director with its original evidence and
+  no file created.
+- **Native-only probe:**
+  - used native goals for an implementation;
+  - stayed native after an explicit decline;
+  - reported before unapproved amendments;
+  - honored a goal opt-out.
+- **Failure probes:** the missing-CLI and stale-relay probes stopped correctly.
+- **Helper finding:** the director prepared a correct request, but told the relay to run the bare
+  helper command. On that host, `PATH` still resolved an older helper without the `coordination`
+  subcommand, which failed before Claude started. The director recovered through tooling
+  readiness, found the verified v0.1.35 helper and supplied its absolute path; the round trip
+  then worked. This follow-up adds that rule to the guidance: the coordinator verifies the
+  selected helper supports `coordination` and gives the relay its exact path for both
+  `invoke-claude` and `record-delivery`.
+- **Not claimed complete here:** further simulated-delivery recovery and final closure records
+  remain with the director.
 
 ## Permission Guidance And Multi-Result Capture Follow-Up
 
@@ -347,6 +371,12 @@ The follow-up fixes this as follows:
 - The last record stays the final reply.
 - A sanitized fake-process regression reproduces the observed sequence; it fails against the
   previous logic.
+
+**Helper readiness.** The runbook's preparation step now requires the coordinator to confirm
+its selected helper reports a release with `coordination` and lists `invoke-claude` and
+`record-delivery` before dispatch. The coordinator passes that exact path in the relay envelope
+for both commands. Missing helpers go through tooling readiness, never a silent install, `PATH`
+change or worker-side search. No request field, command or setting is added.
 
 **Guidance.** The follow-up documents in the contract the optional explicit-permission
 (`dontAsk`) profile, alongside the Auto-mode allowance and its observed refusals. It covers:
@@ -368,12 +398,13 @@ behavior and record contract change. That release has not been started.
 - v0.1.35 published and verified.
 - Earlier gates passed: the release-candidate fixture test was green, the native macOS and Windows
   lanes passed, and release notes and permission wording were reviewed.
+- The named consumer adopted v0.1.35 on its default branch.
+- The director reports the live fresh-director round trip and the first-use probes above as
+  observed.
 
 **Pending:**
-- Director review and merge of the consumer adoption PR.
-- The fresh-director onboarding exercise with the installed helper through the relay, including
-  output-yield and resume.
-- The first-use probes.
-- Review of this follow-up PR and the release that will ship it.
+- The director's remaining simulated-delivery recovery checks and closure records.
+- Review of this follow-up PR and the release that will ship it. The published v0.1.35 helper
+  still has the multiple-result capture limitation until then.
 
 The plan stays active.
