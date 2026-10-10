@@ -17,8 +17,9 @@ that can be reused across epics. The same guidance covers routine changes and in
   work and useful ignored files, resolve chat/process dependencies, and report removal or a
   retention reason, owner and next event. Chat archival and separate branch deletion keep their
   own authority. A clone's required Git history must survive in a verified copy outside it.
-- The root `AGENTS.md` managed route label becomes "Agent assignment, workspaces and closure".
-  Upgrade refreshes that managed block while preserving repository-owned instructions.
+- The existing root `AGENTS.md` agent-coordination link reaches the workspace rules. The
+  agent-interface inventory and planning runbooks make workspace selection and closure explicit;
+  the root managed block is unchanged in this release.
 - No CLI behavior, schema, installer behavior, consumer-owned file placement or permission
   setting changes. No workspace registry, background cleanup, new mandatory configuration or
   migration is introduced. Machine-specific workspace roots remain local preferences.

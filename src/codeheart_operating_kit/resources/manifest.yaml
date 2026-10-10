@@ -76,7 +76,7 @@ profiles:
     version: 0.1.37
     manifest_path: profiles/standard.yaml
     checksum_sha256: 959fcd6a64653d477f2754cafcf54e7f363c77aee46cda634c3248f7c6e1e7bb
-    graph_sha256: ad3aee9d6e19d8b6855fa4460c9284ababae890218d042822465492bbc8dcc07
+    graph_sha256: 3c73e23862e6b417e30c18e395629ae121cb3dd8dff5e120b8035ce12d2e2a69
     components:
       - planning-workflows
       - agent-memory
