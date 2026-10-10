@@ -1,4 +1,4 @@
-Last updated: 2026-10-10T00:19:49Z (UTC)
+Last updated: 2026-10-10T07:07:56Z (UTC)
 
 # Cross-Tool Coordination Contract
 
@@ -96,7 +96,7 @@ The coordinator knows the directory before dispatch:
 | `attempt.json` | Compact record: status, request path and digest, requested and actual session, model, CLI version, argv, launcher and child identity, exit, response locator, `earlier_results`, denial metadata, usage, lock release. Usage, cost, duration and turn count come from the last result record only; they are not summed across records. |
 | `stdout.jsonl` | Original CLI output. The final reply is the `result` field of the last `type: result` line and must be a JSON string (an empty string counts); a missing, null or non-string value is `incomplete_output`, never a captured reply. A run can emit more than one result record, for example a substantive reply or a failure followed by a background-task completion. Each earlier record is listed in `earlier_results` with its line, `subtype`, `is_error` and, when it has a text reply, a `reply` locator. |
 | `stderr.txt` | Original CLI error output. |
-| `message.json` | Native send-message arguments: `threadId`, `hostId` and `prompt`. Load it unchanged, and only when this invocation's output names it as `message_file`. |
+| `message.json` | Native send-message arguments: `threadId`, `hostId` and `prompt`. `message_file` is the path to this file, not a send-tool argument: read and parse it, then pass these three values unchanged as the tool's arguments. Use it only when this invocation's output names it as `message_file`. |
 | `delivery.json` | `pending`, then `sent`, `rejected` or `uncertain`, with the original receipt or error. |
 
 Statuses: `response_captured` (a final reply was captured; not task acceptance), `cli_error`,
