@@ -1,4 +1,4 @@
-Last updated: 2026-10-10T00:45:00Z (UTC)
+Last updated: 2026-10-10T08:30:00Z (UTC)
 
 # Cross-Tool Coordination Contract
 
@@ -134,6 +134,10 @@ codeheart-operating-kit coordination record-delivery --attempt-dir <dir>
 codeheart-operating-kit coordination release-lock --state-root <root> --session-id <uuid>
   --assignment-id <id> --attempt-id <id> [--manual-verification "<statement>"]
 ```
+
+Run both commands, like `invoke-claude`, with the exact helper path the coordinator verified
+and supplied in the transport request; a `PATH` lookup can resolve an older helper without the
+`coordination` subcommand.
 
 `record-delivery` changes a pending record once. A reported recipient that differs from the
 prepared one is retained as `uncertain`; an omitted reported recipient never counts as

@@ -1,4 +1,4 @@
-Last updated: 2026-10-10T00:45:00Z (UTC)
+Last updated: 2026-10-10T08:30:00Z (UTC)
 
 # Coordinate Cross-Tool Task
 
@@ -129,16 +129,24 @@ assignment can now be commissioned.
    with `--version`; record the observed version with the attempt. If the version differs from
    the one recorded for the approved setting, note the change; an unsupported flag will surface
    as `unsupported_invocation`, never as a silent fallback.
-3. Write the brief from the owning records. For an approved implementation plan, use the native
+3. Select the Operating Kit helper the relay will run, using the exact path named in the ignored
+   local settings or a verified installation. Confirm it yourself before dispatch: `--version`
+   reports a release that includes `coordination`, and `coordination --help` lists
+   `invoke-claude` and `record-delivery`. The repository's installed guidance version does not
+   prove that the relay's `PATH` resolves the same helper; an older one rejects the subcommand
+   before Claude starts. If no suitable helper is available, follow `handle-tooling-readiness.md`.
+   Do not silently install or update, change `PATH`, or leave the transport worker to look for
+   alternatives.
+4. Write the brief from the owning records. For an approved implementation plan, use the native
    goal by default: open the brief with the supported `/goal <condition>` invocation for the
    current phase, aimed at a real handoff such as source review. Honor an explicit opt-out.
-4. Write the request JSON with every concrete value, a new `attempt_id`, the exact return chat,
+5. Write the request JSON with every concrete value, a new `attempt_id`, the exact return chat,
    and `session.mode` `new`, or `resume` with the retained session for the same assignment.
    Set `working_directory` to the repository this attempt changes; when work moves to another
    repository, resume the same session in a new attempt from that repository. With an explicit
    `dontAsk` profile, confirm a new profile once with harmless probes first; see the contract's
    permission profiles section.
-5. Note the attempt directory `<state_root>/attempts/<assignment_id>/<attempt_id>/` in the
+6. Note the attempt directory `<state_root>/attempts/<assignment_id>/<attempt_id>/` in the
    assignment record before dispatch.
 
 ### 2. Dispatch And Yield
@@ -147,17 +155,18 @@ Send the relay one compact envelope and then yield to the user:
 
 ```text
 Transport request for assignment <assignment_id>, attempt <attempt_id>.
-Run: codeheart-operating-kit coordination invoke-claude --request "<request path>"
+Run: "<verified helper path>" coordination invoke-claude --request "<request path>"
 Wait on that same process through ordinary tool output yields; do not restart it.
 Then send exactly one notice to send_message_to_thread, loading its arguments unchanged:
 - if the helper output names a message_file, load that file and afterwards run
-  coordination record-delivery for that attempt (sent, rejected or uncertain, with the
-  original receipt or error);
+  "<verified helper path>" coordination record-delivery for that attempt (sent, rejected or
+  uncertain, with the original receipt or error);
 - otherwise, if it contains fallback_message, send that object; do not run record-delivery;
 - otherwise, send the helper's original output to the authorized recipient below.
 Never load a message file the helper did not name in this output.
 Authorized recipient: <coordinator chat> on <host>. Do not read, summarize or act on the reply,
-and do not retry the helper.
+and do not retry the helper. Use only the helper path given above; if it fails to start, send its
+original error to the recipient instead of looking for another helper.
 ```
 
 The helper names a `message_file` only when this invocation wrote it, which covers every outcome
