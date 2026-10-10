@@ -1,8 +1,13 @@
-Last updated: 2026-10-05T09:41:09Z (UTC)
+Last updated: 2026-10-10T19:06:46Z (UTC)
 Created: 2026-10-05
 Plan: claude-code-operating-guide_implementation_doc.md
 
 # Claude Code Operating Guide Execution Log
+
+Current state as of 2026-10-10: `v0.1.34` was released, three assigned default branches now
+carry the guide through `v0.1.37`, and one adoption remains open under its owner's merge hold.
+The plan remains active. The dated reconciliation at the end supersedes the delivery counts in
+the October 5 history below.
 
 ## Commissioning And Activation
 
@@ -172,7 +177,7 @@ includes the corrections to AD-2 items 4 and 8. The Director also decided:
   decides when to merge it.
 - **Held target.** One target stays local until the Director gives the go-ahead.
 
-## EP-02 Release, Smoke And Adoption
+## EP-02 Release, Smoke And Adoption — 2026-10-05
 
 PR #22 merged normally at 2026-10-05T09:33:02Z as `6eb5f1a7152a744d85387a24d859943afbcdd55e`.
 The merged tree equals the accepted head. It differs from the validated candidate only in two
@@ -188,8 +193,8 @@ are byte-identical to the staged ones. A public install through the published in
 `0.1.34`. Released-asset smoke run `37290917668` passed both public native jobs without replaying
 source suites.
 
-Each of the four assigned default branches was upgraded in its own isolated worktree, cut from
-the current remote default branch. The upgrade used a verified matching published CLI installed
+An upgrade for each of the four assigned consumers was prepared in its own isolated worktree,
+cut from its current remote default branch. The upgrade used a verified matching published CLI installed
 in a temporary location; the shared CLI was not changed. Each ran `check`, a dry-run, apply, a
 completed-state wait and a final `check`. The dry-run's catalog-to-archive, pack-to-binary and
 staged-version validations passed each time. All four reached `0.1.34` with 51 managed resources
@@ -198,7 +203,7 @@ plans, module state, instructions and local-user files were preserved. One targe
 directly from `v0.1.32`, which confirms A-1; its adoption includes the `v0.1.33` guidance. Using
 matching CLIs avoided the partial classification in OQ-2.
 
-Delivery state by target:
+Delivery state by target on 2026-10-05:
 
 - **Two targets merged.** Their pull requests merged normally with no required checks
   triggered. Each fetched remote default branch equals the reviewed adoption head, reports
@@ -210,6 +215,37 @@ Delivery state by target:
   pushed. Its governance gate's classification of the new Kit-managed path stays unverified
   until the Director's go-ahead.
 
-The plan stays active until both remaining targets are adopted on their default branches. The
-Director closes those with their owners. Final completion of the plan, log and index follows
-that adoption.
+At that checkpoint, two default-branch adoptions remained pending with the Director and their
+owners, and the plan stayed active. The following reconciliation records the later state.
+
+## EP-02 Adoption Record Reconciliation — 2026-10-10
+
+The accountable owner requested updating the plan, this log and the plans index before discussing
+the remaining consumer merge and an independent product-repository follow-up. This is a
+documentation-only progress correction within EP-02; it changes no managed guide, release input,
+consumer repository, delivery authority or acceptance requirement.
+
+Read-only checks against the three consumers' current remote default-branch commits confirmed:
+
+- Each committed Kit lock reports `0.1.37`.
+- Each installed `claude-code-task-operations.md` is byte-identical to the producer source at
+  published tag `v0.1.37`.
+- The previously local-only `v0.1.34` target is among these three adopted consumers. Its old
+  adoption branch has been overtaken by the later rollout and needs no replay.
+
+The fourth consumer's `v0.1.37` adoption PR is still open and unmerged. Its owner continues to
+hold the merge because it triggers a development deployment. The Director remains responsible
+for coordinating that outstanding adoption with the owner. The next resolving event is the
+owner's merge decision, followed by default-branch verification; no hold is lifted or obligation
+transferred by this correction. Private target identities, commit references and the PR locator
+remain in the coordinating assignment.
+
+These checks reconcile default-branch version and guide-content facts. They do not rerun or
+replace the earlier release, upgrade, managed-checksum and preservation evidence, and they make
+no claim about every retained worktree. No native candidate run or new release is needed for
+these three planning-record edits. Validation is limited to document/public-core checks and the
+normal PR feedback gate.
+
+EP-02 and the plan remain active. Final plan/log/index closure awaits the remaining adoption or
+an explicitly accepted change to its delivery boundary. The independent product follow-up is
+not a dependency of this record correction or of the guide's delivered source.
