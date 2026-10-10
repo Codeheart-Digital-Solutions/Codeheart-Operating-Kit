@@ -1,4 +1,4 @@
-Last updated: 2026-10-10T08:35:00Z (UTC)
+Last updated: 2026-10-10T00:15:15Z (UTC)
 Created: 2026-10-09
 
 # Cross-Tool Agent Coordination Execution Log
@@ -365,12 +365,33 @@ The helper kept only the last record, so the earlier denial and reply location w
 
 The follow-up fixes this as follows:
 - Denials are gathered from every result record, and a repeated tool use ID counts once.
-- Earlier text replies are located in a new optional `earlier_responses` list, using the existing
-  locator shape.
-- The message names their exact lines without quoting or summarizing them.
-- The last record stays the final reply.
-- A sanitized fake-process regression reproduces the observed sequence; it fails against the
-  previous logic.
+- Every earlier result record is listed in a new optional `earlier_results` list, with its line,
+  `subtype`, `is_error` and, for a text reply, a locator in the existing shape.
+- Earlier records marked as errors or not `success` are named in `detail` and in the message,
+  even when they have no text and a later record succeeds.
+- The message lists earlier records without quoting or summarizing them.
+- The last record stays the final reply. Usage, cost, duration and turn count come from that last
+  record and are not summed.
+- Sanitized fake-process regressions cover the observed reply-and-denial sequence, and earlier
+  error records with and without text followed by a success. Each fails against the previous
+  logic.
+
+**Focused review of the follow-up.** The retained reviewer found two Medium issues and the
+director's three wording points, all corrected in this PR:
+- An earlier failed record without text could still be hidden by a later success; it is now
+  listed and named.
+- The guidance could read as switching profiles to get past a refusal. It now states that a
+  profile choice or change is the policy owner's explicit, recorded decision before work resumes;
+  agents never switch to get past their own denial; and relayed approval does not override a
+  refusal.
+- `dontAsk` is described accurately: it denies actions that would otherwise prompt; allowed
+  actions still run; and the denial returns to the agent.
+- The deny examples add `-f` and are labelled illustrative, not exhaustive; branch protection and
+  delivery gates stay authoritative.
+- Placeholder timestamps were replaced with actual edit times.
+
+The reviewer also asked that the next release notes state that the v0.1.35 helper keeps only the
+last result record; the contract now says so.
 
 **Helper readiness.** The runbook's preparation step now requires the coordinator to confirm
 its selected helper reports a release with `coordination` and lists `invoke-claude` and
@@ -390,6 +411,12 @@ Exact private profiles and paths stay with the consumer.
 **Not yet shipped.** These changes are not part of published v0.1.35. Shipping them needs the
 next patch release with broad candidate qualification, because the helper's executable
 behavior and record contract change. That release has not been started.
+
+Its release notes must cover:
+- the `earlier_results` field;
+- denial aggregation across result records;
+- that the v0.1.35 helper can miss an earlier reply, failure or denial when a run emits more
+  than one result record, so v0.1.35 users should read `stdout.jsonl` directly in that case.
 
 ## Current State And Remaining Evidence
 
