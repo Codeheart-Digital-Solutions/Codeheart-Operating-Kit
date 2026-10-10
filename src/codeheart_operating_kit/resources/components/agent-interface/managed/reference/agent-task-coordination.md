@@ -1,4 +1,4 @@
-Last updated: 2026-10-10T16:27:45Z (UTC)
+Last updated: 2026-10-10T16:34:21Z (UTC)
 
 # Agent Task Coordination
 
@@ -101,8 +101,10 @@ execution record; keep its exact local path in the appropriate local evidence. T
 agent owns closure by default; for undelegated work, the agent doing the work owns that step.
 Establish whether the actual grant covers removing this assignment's exact temporary workspace
 after the conditions below hold. Reuse sufficient authority without asking again; the record
-does not create authority. Branch deletion, other workspaces, force operations and unexpected
-unique material are outside that bounded removal grant. Tool-enforced gates still apply.
+does not create authority. Separate branch deletion, other workspaces, force operations and
+unexpected unique material are outside that bounded removal grant. For an independent clone,
+covered removal includes its local Git store only after the preservation checks below; it never
+authorizes deleting branches in another repository or on a remote. Tool-enforced gates still apply.
 
 While working, place deliverables intended to outlast the assignment in their lasting home: a
 committed record, an agreed document folder or the shared evidence location. Standing chats,
@@ -130,13 +132,14 @@ or ignored material and any dependent sessions or processes. The closure owner v
    applicable authority; a workspace-removal grant does not authorize it. Preserve conversation
    continuity and inspect any coupled removal effects before an authorized handoff or archival.
    An idle chat alone is not proof of independence.
-4. Removal is covered by applicable authority. Remove only the identified temporary workspace
-   through its supported app or Git operation, or scoped filesystem removal for an independent
-   clone, without force. Inspect any coupled branch or chat effects first. Preserve the branch
-   unless its deletion is separately covered; never remove the usual checkout as assignment
-   cleanup. Run manual removal from outside the target after your own continuing session no
-   longer depends on it; otherwise use a supported app lifecycle route or retain it for another
-   owner to close.
+4. Removal is covered by applicable authority. Remove a linked or app-managed worktree through
+   its supported Git or app operation without overriding safety checks. For an independent clone,
+   remove exactly the identified clone folder and its contents only after condition 2 is verified.
+   Inspect any coupled branch or chat effects first. Preserve a linked worktree's branch unless
+   its deletion is separately covered; for a clone, preserve the verified copy of its required
+   branches and commits under condition 2. Never remove the usual checkout as assignment cleanup.
+   Run manual removal from outside the target after your own continuing session no longer depends
+   on it; otherwise use a supported app lifecycle route or retain it for another owner to close.
 
 Record the result as removed or retained. For retention, one line in the existing record gives
 the reason, responsible owner and next resolving event; no expiry timer or watcher is required.

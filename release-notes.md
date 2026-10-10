@@ -1,6 +1,32 @@
-Last updated: 2026-10-10T07:07:56Z (UTC)
+Last updated: 2026-10-10T16:34:21Z (UTC)
 
 # Codeheart Operating Kit Release Notes
+
+## v0.1.37 Release Notes
+
+Assignment workspaces now have a clear selection and closure owner. Standing coordination normally
+uses the usual checkout; implementation and concurrent changes use suitable isolated workspaces
+that can be reused across epics. The same guidance covers routine changes and independent clones.
+
+### Impact And Adoption
+
+- `instruction-only change`: existing agent-interface and planning-workflow guidance now routes
+  workspace selection, readable manual locations, coordinated writers and final disposition.
+  App-managed locations remain supported; no existing workspace must move to adopt these rules.
+- Reviewed cleanup-safety clarification: commission bounded removal authority, preserve unique
+  work and useful ignored files, resolve chat/process dependencies, and report removal or a
+  retention reason, owner and next event. Chat archival and separate branch deletion keep their
+  own authority. A clone's required Git history must survive in a verified copy outside it.
+- The root `AGENTS.md` managed route label becomes "Agent assignment, workspaces and closure".
+  Upgrade refreshes that managed block while preserving repository-owned instructions.
+- No CLI behavior, schema, installer behavior, consumer-owned file placement or permission
+  setting changes. No workspace registry, background cleanup, new mandatory configuration or
+  migration is introduced. Machine-specific workspace roots remain local preferences.
+- Upgrade through the supported lifecycle to v0.1.37 and verify the installed route and health.
+  Release notes and the changed managed guidance are the adoption instructions; existing local
+  documents and unfinished work remain preserved.
+- macOS universal and Windows x64 and the unsigned, unnotarized internal/prototype
+  HTTPS-plus-SHA256 audience are unchanged.
 
 ## v0.1.36 Release Notes
 
