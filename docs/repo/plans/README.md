@@ -1,4 +1,4 @@
-Last updated: 2026-10-10T08:10:23Z (UTC)
+Last updated: 2026-10-10T19:06:46Z (UTC)
 
 # Repo Plans
 
@@ -25,7 +25,8 @@ entries after mixed cutover.
   - [Execution log](cross-tool-agent-coordination/cross-tool-agent-coordination_execution_log.md)
 
 - Active Claude Code operating guide implementation plan and execution log (v0.1.34 released;
-  two of four assigned default branches adopted, two pending with their owners): an optional
+  three of four assigned default branches adopted through v0.1.37; one adoption PR remains
+  under its owner's deployment-related merge hold, with final closure pending): an optional
   Claude Code companion to the generic agent task coordination contract, released through the
   guidance route and adopted on assigned consumer default branches:
   `claude-code-operating-guide/claude-code-operating-guide_implementation_doc.md`

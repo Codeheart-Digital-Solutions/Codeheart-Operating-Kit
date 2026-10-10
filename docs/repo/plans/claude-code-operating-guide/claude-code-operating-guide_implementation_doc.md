@@ -1,4 +1,4 @@
-Last updated: 2026-10-05T09:41:09Z (UTC)
+Last updated: 2026-10-10T19:06:46Z (UTC)
 Created: 2026-10-05
 Status: active
 Execution log: claude-code-operating-guide_execution_log.md
@@ -43,6 +43,13 @@ agent. Minor points were also corrected.
 
 The accountable owner approved execution on 2026-10-05. This plan is active under the delivery
 grant in Section 2.4, with one dedicated implementer.
+
+Current delivery state, reconciled on 2026-10-10: the guide shipped in `v0.1.34`; three of the
+four assigned consumer default branches now carry it through `v0.1.37`. One adoption remains
+open under its owner's merge hold because merging triggers a development deployment. The
+Director retains coordination of that remaining obligation. EP-02 and this plan remain active;
+this record update neither lifts the hold nor transfers the obligation or closes the plan.
+The execution log preserves the original delivery evidence and the current read-only checks.
 
 ## Essential Context Reference Files
 
@@ -461,10 +468,15 @@ classification through the matching-CLI route if needed (OQ-2).
       candidate.
 - [x] Build, verify and publish the release per `release-operating-kit.md`, then run
       `gh workflow run validate.yml -f mode=released-smoke -f release_version=v0.1.34`.
-- [ ] For each assigned consumer, in the order the assignment gives: create a fresh worktree from
-      its remote default branch, preview and apply the supported upgrade, verify version, the new
-      route, managed checksums and preservation, open a Kit-only adoption PR, merge it after the
-      consumer's required checks, and verify the remote default branch.
+- [x] Reconcile the three completed default-branch adoptions with later rollouts: on 2026-10-10,
+      their committed locks report `v0.1.37` and their installed Claude companions match that
+      release's source. Retain the earlier rollout validation; the original held local
+      `v0.1.34` adoption has been superseded by a later main-branch adoption.
+- [ ] Finish the remaining consumer adoption through its owner's existing pull request and merge
+      decision. Its current `v0.1.37` adoption PR remains open under the deployment-related hold.
+      After an authorized merge, verify the remote default branch and applicable upgrade,
+      managed-checksum and authored-preservation evidence. Reuse the existing rollout work;
+      the earlier `v0.1.34` branch does not need replaying.
 - [ ] Complete this plan, its log and the plans index on producer main, and send the final report
       to the Director.
 
