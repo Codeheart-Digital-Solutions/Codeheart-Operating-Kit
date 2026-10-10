@@ -1,4 +1,4 @@
-Last updated: 2026-10-09T19:01:13Z (UTC)
+Last updated: 2026-10-10T08:10:23Z (UTC)
 
 # Repo Plans
 
@@ -17,9 +17,9 @@ entries after mixed cutover.
 
 ## Current Plans
 
-- Completed cross-tool agent coordination discovery and active implementation plan: accepted
-  bounded pilots, strict relay transport, a maintained CLI invocation helper, durable consumer
-  routing and fresh-director onboarding; whole-plan execution commissioned on 2026-10-09:
+- Completed cross-tool agent coordination discovery and implementation plan (v0.1.35 and v0.1.36
+  released; named coordination home adopted): accepted bounded pilots, strict relay transport, a
+  maintained CLI invocation helper, durable consumer routing and fresh-director onboarding:
   - [Discovery](cross-tool-agent-coordination/cross-tool-agent-coordination_discovery_doc.md)
   - [Implementation plan](cross-tool-agent-coordination/cross-tool-agent-coordination_implementation_doc.md)
   - [Execution log](cross-tool-agent-coordination/cross-tool-agent-coordination_execution_log.md)

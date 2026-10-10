@@ -1,6 +1,7 @@
-Last updated: 2026-10-10T07:07:56Z (UTC)
+Last updated: 2026-10-10T08:10:23Z (UTC)
 Created: 2026-10-09
-Status: active
+Status: completed
+Completed: 2026-10-10
 
 # Cross-Tool Agent Coordination Implementation Plan
 
@@ -726,10 +727,10 @@ publication, then the same scenario once on installed release. Do not repeatedly
   the selected Claude native-goal invocation and review/blocker handoff within the installed live
   exercise; the director reads the activation/evaluator evidence. Check Codex's native instruction
   path against exposed goal tools, without claiming the deferred reverse cross-tool recipe.
-- [ ] Director presents material findings, recommended versus approved/implemented corrections and
+- [x] Director presents material findings, recommended versus approved/implemented corrections and
   residual limits to the human, with the original-response reference. Verify generated artifacts
   are ignored and sufficient for recovery without requiring a duplicate authored report.
-- [ ] Director accepts evidence and honest support limits; archive only the temporary approved
+- [x] Director accepts evidence and honest support limits; archive only the temporary approved
   test chat, retain relay and original results, publish final plan/log/adoption state.
 
 **G) Implementation Notes:** Installation tests prove packaged routing and command availability;
@@ -752,6 +753,13 @@ rules. Recheck the affected boundary, retain original failures and adapt one rec
 every transient failure into framework work. No AWS or product feature implementation is included.
 
 # Revision Notes
+
+- 2026-10-10: completed:
+  - v0.1.36 was qualified, published and verified, and ships the follow-up;
+  - the named consumer adopted it on its default branch, with its local helper selection updated;
+  - the director presented the findings and limits to the user and accepted the whole plan.
+  The remaining host and reverse-direction limits are deliberate scope limits, not delivery
+  blockers. See the execution log's final state.
 
 - 2026-10-10: the user commissioned publication of the accepted follow-up and final plan closure.
   This extends the earlier one-patch boundary to the next unused patch, v0.1.36, with the
