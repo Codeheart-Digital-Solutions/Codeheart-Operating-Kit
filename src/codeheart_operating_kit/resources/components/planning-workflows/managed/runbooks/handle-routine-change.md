@@ -1,4 +1,4 @@
-Last updated: 2026-10-09T20:47:14Z (UTC)
+Last updated: 2026-10-10T16:27:45Z (UTC)
 
 # Handle Routine Change
 
@@ -51,6 +51,10 @@ module system and read `docs/repo/state/<id>/` plus the module's own route befor
 2. Inspect current state and protect overlapping user changes. Confirm eligibility and the owning
    method. If uncertain, use `discovery-workflow.md` or `draft-implementation-plan.md` at the scope
    needed to settle the uncertainty.
+   Before editing, apply "Assignment Workspaces" in
+   `../../agent-interface/reference/agent-task-coordination.md`: select or reuse a suitable
+   checkout and coordinate its writer. When using a temporary workspace, establish who closes
+   it under what authority.
 3. Record purpose, scope and applicable authority in the existing PR, issue or owning record.
    A short paragraph is enough. Create a short owner-placed record only when none fits; no mini-plan
    or new schema is required.
@@ -76,6 +80,10 @@ module system and read `docs/repo/state/<id>/` plus the module's own route befor
    review or permission. Record validation, remaining
    limits, commit/push/PR state and the next owner. If validation fails, correct within scope or
    preserve the current state with the concrete blocker and recovery route.
+8. Apply that reference's "Close Or Retain" conditions to any temporary workspace. The closure
+   owner records removal or a retention reason, owner and next resolving event, and the safe
+   refresh or update blocker for the usual checkout. A small change in the usual checkout needs
+   no temporary workspace or cleanup record merely to satisfy this step.
 
 Retain applicable evidence after a correction or interruption; recheck only invalidated behavior
 and required owner gates. Diagnose code, test, environment, authentication and billing failures

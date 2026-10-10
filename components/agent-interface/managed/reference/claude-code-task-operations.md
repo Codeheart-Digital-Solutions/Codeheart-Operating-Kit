@@ -1,4 +1,4 @@
-Last updated: 2026-10-10T00:15:15Z (UTC)
+Last updated: 2026-10-10T16:27:45Z (UTC)
 
 # Claude Code Task Operations
 
@@ -63,15 +63,23 @@ never change a destination or mode to force delivery.
 
 ## Worktrees, Branches And Pull Requests
 
+Apply "Assignment Workspaces" in `agent-task-coordination.md` for selection, closure ownership
+and preservation. Standing coordination normally uses the usual checkout. App-managed locations
+and manual workspace preferences are distinct; do not relocate an app-managed workspace to match
+a manual folder convention.
+
 Desktop worktrees live under `<repository>/.claude/worktrees/<name>` by default and normally start
 from the remote default branch; confirm that path is ignored locally, adding it to
-`.git/info/exclude` if not. Leave the main checkout and other sessions' worktrees alone. Fetch
-first, then branch from the remote default branch without upstream tracking, so a bare push cannot
-target the default branch; run the second form inside another repository for its own worktree:
+`.git/info/exclude` if not. Leave other sessions' worktrees alone; use the usual checkout only as
+"Assignment Workspaces" permits. Fetch first, then branch from the remote default branch without
+upstream tracking, so a bare push cannot target the default branch. Use the first form only inside
+your own app-created assignment worktree when a new branch is needed. For a manually created
+worktree, resolve `<workspace-path>` under the chosen manual workspace root and run the second
+form from the owning repository:
 
 ```sh
 git switch --no-track -c <branch> origin/<default>
-git worktree add --no-track -b <branch> <repository>/.claude/worktrees/<name> origin/<default>
+git worktree add --no-track -b <branch> <workspace-path> origin/<default>
 ```
 
 Where the app offers its base-branch sync for a worktree it made, use it; otherwise use Git.

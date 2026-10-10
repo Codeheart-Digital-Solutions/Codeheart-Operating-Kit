@@ -1,4 +1,4 @@
-Last updated: 2026-09-07T22:40:39Z (UTC)
+Last updated: 2026-10-10T16:09:55Z (UTC)
 
 # Planning Workflows
 
@@ -10,7 +10,8 @@ and the stable plan-register entry point.
 
 - Use `runbooks/handle-routine-change.md` for known bounded changes with existing-record evidence.
 - Use `../agent-interface/reference/agent-task-coordination.md` to commission whole-plan execution,
-  name Git/delivery boundaries and delegate epic review with direct report-back.
+  select and close assignment workspaces, name Git/delivery boundaries and delegate epic review
+  with direct report-back. Its workspace rules also apply to routine changes.
 
 - Use `runbooks/discovery-workflow.md` for unclear, early, cross-domain, or decision-heavy
   discovery work.
