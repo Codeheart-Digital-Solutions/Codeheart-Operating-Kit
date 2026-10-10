@@ -1,4 +1,4 @@
-Last updated: 2026-10-10T08:10:23Z (UTC)
+Last updated: 2026-10-10T08:13:53Z (UTC)
 Created: 2026-10-09
 
 # Cross-Tool Agent Coordination Execution Log
@@ -459,7 +459,7 @@ equals the qualified candidate. Annotated tag `v0.1.36` points to that merge. Ch
 - The archives and the full asset chain are unchanged from qualification. In the catalog, only the
   public URLs changed.
 - Released-asset smoke run `38036297304` passed both public native jobs.
-- The director independently downloaded and verified the published assets.
+- The director independently verified the downloaded public assets against the staged bytes.
 - The unsigned, unnotarized internal/prototype audience is unchanged.
 
 **Consumer adoption.** The named coordination home was upgraded from v0.1.35 to v0.1.36 through
@@ -478,10 +478,18 @@ delivery records. Global `PATH` is unchanged.
 was refused, because the command is not listed in the profile. Nothing depended on it. It was not
 retried and no workaround was used. This is a known limit of the profile, not a delivery blocker.
 
+During closure validation, a compound command using a shell variable and output pipes was also
+refused. The implementer then used the already permitted direct CLI invocation, which returned
+valid plan metadata. This changed neither permissions nor repository contents, but it departed
+from the assignment's instruction to report a refusal before attempting recovery. The director
+accepted the validation evidence and recorded this execution deviation; it is not evidence that
+arbitrary command forms are supported by the profile.
+
 **Transport clarification in use.** Earlier, a relay worker misread `message_file`, and its
 status reached only its native parent instead of the requesting chat. The original result was
 recovered from the retained attempt record, with no resend or relaunch. v0.1.36 ships the
-clarification described above. Later results were returned to the requesting chat as the
+clarification described above. The ordinary relay subsequently delivered that unsent notice once
+and recorded its receipt. Later results were returned to the requesting chat as the
 original replies. Delivery remains best effort: the retained attempt records and on-demand lookup
 are the recovery path, not a guaranteed notifier.
 
@@ -505,6 +513,6 @@ are the recovery path, not a guaranteed notifier.
 - Reverse-direction (Claude-led) orchestration and cross-host messaging are deferred.
 - Result return is best effort, backed by retained records and on-demand lookup.
 - Explicit-permission profiles are workflow control, not operating-system isolation. Unlisted
-  commands are refused.
+  commands that would otherwise require a permission prompt are refused.
 
 The plan is completed.
