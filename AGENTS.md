@@ -27,6 +27,10 @@ Last updated: 2026-07-10T11:29:07Z (UTC)
 
 ## Managed Routes
 
+- Routine changes: `.codeheart/kit/docs/planning-workflows/runbooks/handle-routine-change.md`
+- Agent assignment, workspaces and closure:
+  `.codeheart/kit/docs/agent-interface/reference/agent-task-coordination.md`
+
 - Discovery: `.codeheart/kit/docs/planning-workflows/runbooks/discovery-workflow.md`
 - Implementation planning:
   `.codeheart/kit/docs/planning-workflows/runbooks/draft-implementation-plan.md`
@@ -34,14 +38,22 @@ Last updated: 2026-07-10T11:29:07Z (UTC)
   `.codeheart/kit/docs/planning-workflows/runbooks/execute-implementation-plan.md`
 - Planning document review:
   `.codeheart/kit/docs/planning-workflows/runbooks/review-planning-document.md`
-- Plan registers and configured portfolio coordination:
+- Plan catalog views and legacy-register compatibility:
   `.codeheart/kit/docs/planning-workflows/runbooks/maintain-plan-register.md`
+- Portfolio member/home setup:
+  `.codeheart/kit/docs/planning-workflows/runbooks/configure-portfolio-coordination.md`
+- Portfolio refresh before current analysis:
+  `.codeheart/kit/docs/planning-workflows/runbooks/refresh-portfolio-catalog.md`
+- Reviewed plan-catalog migration:
+  `.codeheart/kit/docs/planning-workflows/runbooks/migrate-plan-catalog.md`
 - Agent memory: `.codeheart/kit/docs/agent-memory/README.md`
 - Agent interface: `.codeheart/kit/docs/agent-interface/README.md`
 - Operation routing and dispatch:
   `.codeheart/kit/docs/agent-interface/reference/operation-routing-and-dispatch.md`
 - Operating Kit installation lifecycle:
   `.codeheart/kit/docs/agent-interface/runbooks/maintain-operating-kit-installation.md`
+- Repo feedback capture:
+  `.codeheart/kit/docs/agent-interface/runbooks/capture-repo-feedback.md`
 - Operating Kit feedback:
   `.codeheart/kit/docs/agent-interface/runbooks/submit-kit-feedback.md`
 - Tooling readiness:

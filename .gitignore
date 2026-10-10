@@ -34,3 +34,10 @@ node_modules/
 .codeheart/user/feedback/
 # Codeheart Operating Kit local machine layer
 .codeheart/local/
+
+# Producer-local consumer installation; maintained source lives in components/.
+.codeheart/kit/
+.codeheart/kit.lock.yaml
+.codeheart/reports/
+
+.codeheart/kit.transaction.json
