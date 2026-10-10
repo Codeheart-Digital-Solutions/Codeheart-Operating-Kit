@@ -1,6 +1,7 @@
-Last updated: 2026-10-10T19:06:46Z (UTC)
+Last updated: 2026-10-10T19:10:23Z (UTC)
 Created: 2026-10-05
-Status: active
+Status: completed
+Completed: 2026-10-10
 Execution log: claude-code-operating-guide_execution_log.md
 
 # Claude Code Operating Guide
@@ -13,7 +14,7 @@ plan:
   kind: implementation
   purpose: Deliver an optional Claude Code companion to the generic agent task coordination contract, release it through the guidance route and verify adoption on assigned consumer default branches.
   first_cataloged: 2026-10-05T07:19:31Z
-  catalog_metadata_updated: 2026-10-05T07:42:54Z
+  catalog_metadata_updated: 2026-10-10T19:10:23Z
   relations:
     - kind: related
       target: codeheart-operating-kit.implementation.proportionate-agent-workflows
@@ -41,15 +42,14 @@ Python tests. Three material points were corrected in this revision: explicit re
 and graph-digest steps; correct root-instruction guidance; and a genuinely fresh walkthrough
 agent. Minor points were also corrected.
 
-The accountable owner approved execution on 2026-10-05. This plan is active under the delivery
-grant in Section 2.4, with one dedicated implementer.
+The accountable owner approved execution on 2026-10-05. Delivery is complete under the
+explicitly amended closure boundary in Section 2.4.
 
-Current delivery state, reconciled on 2026-10-10: the guide shipped in `v0.1.34`; three of the
-four assigned consumer default branches now carry it through `v0.1.37`. One adoption remains
-open under its owner's merge hold because merging triggers a development deployment. The
-Director retains coordination of that remaining obligation. EP-02 and this plan remain active;
-this record update neither lifts the hold nor transfers the obligation or closes the plan.
-The execution log preserves the original delivery evidence and the current read-only checks.
+Final disposition, 2026-10-10: the guide shipped in `v0.1.34`; three assigned consumer default
+branches now carry it through `v0.1.37`. The fourth adoption remains pending under its owner's
+deployment-related merge hold. At the accountable owner's request, its receiving owner explicitly
+accepted that remaining obligation through the existing adoption PR. This closes the original
+guide assignment without claiming the fourth adoption is complete or lifting its hold.
 
 ## Essential Context Reference Files
 
@@ -102,7 +102,7 @@ Completion means all of the following are true:
    released-asset smoke passes for that tag.
 6. Each assigned consumer default branch runs the new version, contains the new route
    byte-identical to source, and keeps its authored configuration, plans, instructions and
-   local-user files.
+   local-user files, subject to the expressly accepted remaining-adoption transfer in Section 2.4.
 7. A fresh-context walkthrough and a routing probe by an agent that has not seen the plan pass,
    judged by the independent reviewer.
 8. This plan, its execution log and the plans index are completed on producer main.
@@ -309,6 +309,7 @@ the agent-interface component version and the profile version as earlier guidanc
 route and one Kit-only adoption PR per consumer, merged after that consumer's required checks.
 Sessions working elsewhere pick up the release when they next sync with their default branch; no
 separate worktree reconciliation is planned unless the assignment names one.
+The final remaining adoption follows the accepted owner transfer in Section 2.4.
 
 **AD-6 — Validation.** The independent reviewer checks content and public safety. A separate,
 fresh subagent that has not seen this plan, the diff or the log receives only a temporary
@@ -345,6 +346,15 @@ EP-01 review, at completion, at a genuine blocker or at a material scope issue. 
 authority, preservation or cost changes return to the Director. Exact consumer targets, their
 order and holds, and the report-back locator remain in the private assignment.
 
+**Accepted closure amendment — 2026-10-10.** After the three adopted default branches were
+verified, the accountable owner explicitly requested that the owner of the remaining consumer
+accept its adoption so this original guide assignment could close. The receiving owner accepted
+responsibility through the existing `v0.1.37` adoption PR. That PR remains open under the
+deployment-related merge hold; its owner retains the merge decision and subsequent adoption
+verification. The private assignment records the receiving owner and PR locator. This disposition
+completes EP-02's responsibility in this plan; it neither completes the pending adoption nor
+authorizes its merge or deployment. Source/release acceptance and the other three adoptions stand.
+
 # Section 3 - Execution Plan
 
 ## 3.0 Epic Map
@@ -352,7 +362,7 @@ order and holds, and the report-back locator remain in the private assignment.
 | Epic | Outcome | Size | Depends on | Review point |
 | --- | --- | --- | --- | --- |
 | EP-01 — Claude Code companion and routing | One exact, validated candidate with the companion, routes, mirrors, release identity and notes | M | Activation | Director acceptance after independent review, fresh walkthrough, routing probe and both guidance lanes |
-| EP-02 — Release and adoption | Published patch, released-asset smoke, adoption on every assigned consumer default branch, closure on main | M | EP-01 accepted | Final report to the Director |
+| EP-02 — Release and adoption | Published patch, released-asset smoke, three default-branch adoptions, accepted transfer of the remaining adoption, closure on main | M | EP-01 accepted | Final report to the Director |
 
 ## EP-01 — Claude Code companion and routing
 
@@ -436,8 +446,9 @@ OQ-1 and OQ-4.
 
 ### A) Epic ID, Title, And Outcome
 
-EP-02. The patch is published, released-asset smoke passes, every assigned consumer default branch
-runs it with authored content preserved, and the plan is closed on producer main.
+EP-02. The patch is published, released-asset smoke passes, three assigned consumer default
+branches have adopted it, the remaining adoption is transferred under Section 2.4, and the plan
+is closed on producer main.
 
 ### B) Scope
 
@@ -453,7 +464,8 @@ log and the plans index at closure.
 - The merged tree equals the accepted, validated candidate.
 - The release has its normal assets and checksums; released-asset smoke passes for its tag.
 - Each assigned consumer default branch reports the new version, contains the new route
-  byte-identical to source, passes managed checksums, and preserves authored files.
+  byte-identical to source, passes managed checksums, and preserves authored files, except the
+  remaining adoption explicitly transferred under Section 2.4. Its owner retains these checks.
 - Plan, log and index show completion on producer main.
 - Size: M, about one day, mostly waiting on checks.
 
@@ -472,12 +484,11 @@ classification through the matching-CLI route if needed (OQ-2).
       their committed locks report `v0.1.37` and their installed Claude companions match that
       release's source. Retain the earlier rollout validation; the original held local
       `v0.1.34` adoption has been superseded by a later main-branch adoption.
-- [ ] Finish the remaining consumer adoption through its owner's existing pull request and merge
-      decision. Its current `v0.1.37` adoption PR remains open under the deployment-related hold.
-      After an authorized merge, verify the remote default branch and applicable upgrade,
-      managed-checksum and authored-preservation evidence. Reuse the existing rollout work;
-      the earlier `v0.1.34` branch does not need replaying.
-- [ ] Complete this plan, its log and the plans index on producer main, and send the final report
+- [x] Transfer the remaining consumer adoption to its accepting owner through the existing
+      `v0.1.37` adoption PR, under Section 2.4. Adoption stays pending; its deployment-related
+      merge hold remains. The receiving owner owns the merge decision and post-merge
+      default-branch, managed-checksum and authored-preservation verification.
+- [x] Complete this plan, its log and the plans index on producer main, and send the final report
       to the Director.
 
 ### G) Implementation Notes
@@ -510,6 +521,9 @@ contract.
 
 # Revision Notes
 
+- 2026-10-10: Closed the original guide assignment after the accountable owner's explicit
+  request and receiving owner's acceptance transferred the one pending adoption to its existing
+  PR. Three default branches are adopted; the fourth remains pending under its unchanged hold.
 - 2026-10-05: Drafted from the commissioning organization's accepted discovery and its
   two-step decision (guide first).
 - 2026-10-05: Activated after the accountable owner approved execution; Section 2.4 records
