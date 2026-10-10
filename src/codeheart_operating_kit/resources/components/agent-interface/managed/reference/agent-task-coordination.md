@@ -1,4 +1,4 @@
-Last updated: 2026-10-10T16:09:55Z (UTC)
+Last updated: 2026-10-10T16:27:45Z (UTC)
 
 # Agent Task Coordination
 
@@ -82,8 +82,9 @@ schema.
   branch that would disturb other chats. A small sequential change may use the usual checkout
   when its files and branch can be changed without disrupting anyone else. Coordinate one writer
   per checkout; do not switch a shared checkout's branch underneath dependent chats or processes.
-- Inspect existing workspaces first and reuse a suitable one for the same assignment. A new epic
-  or review alone does not require another workspace. Prefer linked worktrees; record a concrete
+- Inspect existing workspaces first, including recorded clone paths, and reuse a suitable one for
+  the same assignment. Independent clones do not appear in `git worktree list`. A new epic or
+  review alone does not require another workspace. Prefer linked worktrees; record a concrete
   reason for an independent clone, such as an isolated comparison experiment.
 - For manually created workspaces, use the repository's or user's chosen workspace root, outside
   the usual checkout and other repository checkouts. A readable convention is
@@ -112,19 +113,30 @@ shared helpers and their sole configuration must not depend on a temporary assig
 At final handoff, the implementer reports the workspace's branch/commit state, useful untracked
 or ignored material and any dependent sessions or processes. The closure owner verifies:
 
-1. The outcome is accepted and integrated, or explicitly superseded with useful work preserved.
+1. The outcome is accepted and integrated, or explicitly superseded or cancelled with useful work
+   preserved.
    Required release, adoption, review and follow-up work is finished or transferred to a named
    owner with a usable workspace; a merged PR alone does not establish this.
 2. Unique commits, unfinished changes, documents and useful untracked or ignored evidence have
    a verified durable or recoverable home outside the workspace. Inspect ignored files as well
    as Git status. Regenerable build outputs need no routine backup.
+   A linked worktree's retained branch keeps its commits in the shared Git store. An independent
+   clone has its own Git store, which removal also deletes: first verify that its unique commits
+   and required branches are preserved in a remote under covered publication authority, a Git
+   bundle or another repository outside the clone.
 3. No running process, continuing chat, active report-back destination or shared tool still
-   depends on the folder. Preserve conversation continuity through the tool's supported handoff
-   or archival route before removing it; an idle chat alone is not proof of independence.
+   depends on the folder. Retain the workspace until those dependencies are resolved, using a
+   supported chat handoff under its own authority where needed. Chat archival requires its own
+   applicable authority; a workspace-removal grant does not authorize it. Preserve conversation
+   continuity and inspect any coupled removal effects before an authorized handoff or archival.
+   An idle chat alone is not proof of independence.
 4. Removal is covered by applicable authority. Remove only the identified temporary workspace
-   through its supported app or Git operation, without force. Inspect any coupled branch or chat
-   effects first. Preserve the branch unless its deletion is separately covered; never remove
-   the usual checkout as assignment cleanup.
+   through its supported app or Git operation, or scoped filesystem removal for an independent
+   clone, without force. Inspect any coupled branch or chat effects first. Preserve the branch
+   unless its deletion is separately covered; never remove the usual checkout as assignment
+   cleanup. Run manual removal from outside the target after your own continuing session no
+   longer depends on it; otherwise use a supported app lifecycle route or retain it for another
+   owner to close.
 
 Record the result as removed or retained. For retention, one line in the existing record gives
 the reason, responsible owner and next resolving event; no expiry timer or watcher is required.

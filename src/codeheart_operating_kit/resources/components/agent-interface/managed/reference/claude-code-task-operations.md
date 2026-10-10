@@ -1,4 +1,4 @@
-Last updated: 2026-10-10T16:09:55Z (UTC)
+Last updated: 2026-10-10T16:27:45Z (UTC)
 
 # Claude Code Task Operations
 
@@ -70,10 +70,12 @@ a manual folder convention.
 
 Desktop worktrees live under `<repository>/.claude/worktrees/<name>` by default and normally start
 from the remote default branch; confirm that path is ignored locally, adding it to
-`.git/info/exclude` if not. Leave the main checkout and other sessions' worktrees alone. Fetch
-first, then branch from the remote default branch without upstream tracking, so a bare push cannot
-target the default branch. For a manually created worktree, resolve `<workspace-path>` under the
-chosen manual workspace root; run the second form from the owning repository:
+`.git/info/exclude` if not. Leave other sessions' worktrees alone; use the usual checkout only as
+"Assignment Workspaces" permits. Fetch first, then branch from the remote default branch without
+upstream tracking, so a bare push cannot target the default branch. Use the first form only inside
+your own app-created assignment worktree when a new branch is needed. For a manually created
+worktree, resolve `<workspace-path>` under the chosen manual workspace root and run the second
+form from the owning repository:
 
 ```sh
 git switch --no-track -c <branch> origin/<default>

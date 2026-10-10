@@ -1,4 +1,4 @@
-Last updated: 2026-10-10T16:09:55Z (UTC)
+Last updated: 2026-10-10T16:27:45Z (UTC)
 
 # Handle Routine Change
 
@@ -53,7 +53,8 @@ module system and read `docs/repo/state/<id>/` plus the module's own route befor
    needed to settle the uncertainty.
    Before editing, apply "Assignment Workspaces" in
    `../../agent-interface/reference/agent-task-coordination.md`: select or reuse a suitable
-   checkout, coordinate its writer and establish who closes it under what authority.
+   checkout and coordinate its writer. When using a temporary workspace, establish who closes
+   it under what authority.
 3. Record purpose, scope and applicable authority in the existing PR, issue or owning record.
    A short paragraph is enough. Create a short owner-placed record only when none fits; no mini-plan
    or new schema is required.
