@@ -1,4 +1,4 @@
-Last updated: 2026-10-10T07:07:56Z (UTC)
+Last updated: 2026-10-10T08:10:23Z (UTC)
 Created: 2026-10-09
 
 # Cross-Tool Agent Coordination Execution Log
@@ -417,11 +417,11 @@ change or worker-side search. No request field, command or setting is added.
 
 Exact private profiles and paths stay with the consumer.
 
-**Not yet shipped.** These changes are not part of published v0.1.35. Shipping them needs the
-next patch release with broad candidate qualification, because the helper's executable
-behavior and record contract change. That release has not been started.
+**Shipping.** At integration, these changes were not part of published v0.1.35. They shipped in
+v0.1.36 after broad candidate qualification, because the helper's executable behavior and record
+contract changed; see the release section below.
 
-Its release notes must cover:
+Its release notes had to cover:
 - the `earlier_results` field;
 - denial aggregation across result records;
 - that the v0.1.35 helper can miss an earlier reply, failure or denial when a run emits more
@@ -447,30 +447,64 @@ contains:
 Earlier accepted source reviews, onboarding, fixtures and overlap evidence are reused where their
 inputs still apply.
 
-## Current State And Remaining Evidence
+## v0.1.36 Release And Adoption
 
-**Delivered (the one authorized patch):**
-- Epics 1 and 2 were accepted at source.
-- v0.1.35 was published and verified.
-- The release gates passed: the release-candidate fixture test was green, the native macOS and
-  Windows lanes passed, and release notes and permission wording were reviewed.
-- The named consumer adopted v0.1.35 on its default branch.
-- The director accepted the fresh-director exercise, the first-use probes and the
-  rejected-notification recovery described above.
+**Qualification.** The broad candidate run `38033539084` passed on macOS, Windows, Ubuntu and the
+Git 2.43 lane; the Windows lane took 42m13s. PR feedback run `38033539246` passed. The director
+accepted the qualified candidate `e606113` before publication.
 
-**Accepted follow-up source (integrated, not released):**
-- The retained reviewer's focused follow-up of the corrections concluded Ready for source
-  acceptance.
-- The director accepted the source, contingent on one illustrative deny-example addition
-  (`git push -f*`), which is now made.
-- This PR integrates the permission guidance, the helper-path rule and the multi-result capture
-  fix into the main branch.
-- None of it ships until a separately commissioned next patch is qualified and published. Until
-  then, the published v0.1.35 helper keeps its multiple-result capture limitation.
+**Release.** Release PR 29 merged as `696f88e038e285b9f0f9cb6360706e7778e05f7d`, and its tree
+equals the qualified candidate. Annotated tag `v0.1.36` points to that merge. Checks:
+- All 14 public assets equal the staged assets, and all 7 sidecars match.
+- The archives and the full asset chain are unchanged from qualification. In the catalog, only the
+  public URLs changed.
+- Released-asset smoke run `38036297304` passed both public native jobs.
+- The director independently downloaded and verified the published assets.
+- The unsigned, unnotarized internal/prototype audience is unchanged.
 
-**Pending:**
-- v0.1.36 candidate qualification and director acceptance, then publication, public smoke and the
-  named consumer's adoption.
-- The director's presentation of findings and final whole-plan acceptance and closure.
+**Consumer adoption.** The named coordination home was upgraded from v0.1.35 to v0.1.36 through
+the supported lifecycle, using the verified v0.1.35 CLI and the published catalog. The result is
+healthy and current. The adoption changed only the lock, four managed agent-interface documents
+and the consumer's own reference and handover records. Authored files, local settings and the
+permission profile were preserved. After the director's primary review, the adoption PR merged
+normally, and the consumer's default branch now runs v0.1.36.
 
-The plan stays active.
+**Local helper.** The consumer's owner selected a separate repository-local copy of the published
+v0.1.36 helper in ignored local settings. The director verified its digest, its version, its
+`coordination` help and `check`. The earlier v0.1.35 helper stays in place for older in-flight
+delivery records. Global `PATH` is unchanged.
+
+**Disclosed denial.** During adoption, one optional `git -C` cross-check of this source checkout
+was refused, because the command is not listed in the profile. Nothing depended on it. It was not
+retried and no workaround was used. This is a known limit of the profile, not a delivery blocker.
+
+**Transport clarification in use.** Earlier, a relay worker misread `message_file`, and its
+status reached only its native parent instead of the requesting chat. The original result was
+recovered from the retained attempt record, with no resend or relaunch. v0.1.36 ships the
+clarification described above. Later results were returned to the requesting chat as the
+original replies. Delivery remains best effort: the retained attempt records and on-demand lookup
+are the recovery path, not a guaranteed notifier.
+
+## Final State
+
+**Delivered and accepted:**
+- Epics 1 and 2: the coordination contract, the relay and return guidance, and the maintained
+  invocation helper. The director accepted them at source after independent and primary review.
+- v0.1.35: published, verified and adopted on the named consumer's default branch.
+- Fresh-director onboarding, first-use probes and rejected-notification recovery: accepted by the
+  director.
+- The follow-up (permission guidance, the helper-path rule and the multi-result capture fix):
+  published in v0.1.36 and adopted on the named consumer's default branch.
+- The director presented the original report links, the material findings, its own acceptance
+  and the remaining limits to the user. The temporary test chat was archived; the relay and the
+  original results are retained.
+
+**Deliberate scope limits (not delivery blockers):**
+- Windows live Claude invocation and desktop wakeup are not qualified.
+- Creating a relay from scratch is covered by fixtures and procedure only, not live proof.
+- Reverse-direction (Claude-led) orchestration and cross-host messaging are deferred.
+- Result return is best effort, backed by retained records and on-demand lookup.
+- Explicit-permission profiles are workflow control, not operating-system isolation. Unlisted
+  commands are refused.
+
+The plan is completed.
