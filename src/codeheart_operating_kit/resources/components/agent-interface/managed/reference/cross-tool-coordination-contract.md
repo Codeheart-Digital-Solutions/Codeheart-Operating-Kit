@@ -1,4 +1,4 @@
-Last updated: 2026-10-10T00:15:15Z (UTC)
+Last updated: 2026-10-10T00:19:49Z (UTC)
 
 # Cross-Tool Coordination Contract
 
@@ -230,7 +230,7 @@ the task's directories:
       "Bash(printf <allowed readiness probe>)"
     ],
     "ask": ["Bash(printf <ask readiness probe>)"],
-    "deny": ["Bash(git push *--force*)", "Bash(git push * -f*)", "Bash(git push *--delete*)", "Bash(git branch -D *)", "Bash(gh pr merge *--admin*)"]
+    "deny": ["Bash(git push *--force*)", "Bash(git push -f*)", "Bash(git push * -f*)", "Bash(git push *--delete*)", "Bash(git branch -D *)", "Bash(gh pr merge *--admin*)"]
   }
 }
 ```
