@@ -1,4 +1,4 @@
-Last updated: 2026-10-09T22:01:24Z (UTC)
+Last updated: 2026-10-10T00:19:49Z (UTC)
 Created: 2026-10-09
 
 # Cross-Tool Agent Coordination Execution Log
@@ -14,12 +14,14 @@ and remains accountable for acceptance. This replaces an automatic extra-reviewe
 generic guidance; no tool/model or second chat is inherently required. Existing independent
 source findings and correction proof for this delivery remain useful and are retained.
 
-The amendment is in the active plan and pending source-guidance implementation. It adds no helper
-mechanism or release. The corrected candidate 685515578ca8c2ba7df4d77e312d320e108c695b has passed
-PR feedback. The director read the original correction report and inspected failure finalization,
-replay refusal, local-settings guidance and original selected-host new/resume/denial results;
-observed CLI version is 2.1.286. Source acceptance still awaits the guidance amendment, primary
-review and focused follow-up on the earlier independent findings. No merge or release is accepted.
+At the time, the amendment was pending source-guidance implementation. The corrected candidate
+685515578ca8c2ba7df4d77e312d320e108c695b had passed PR feedback. The director had read the
+original correction report and inspected the following:
+- failure finalization and replay refusal;
+- local-settings guidance;
+- the original selected-host new, resume and denial results, observed on CLI 2.1.286.
+
+The amendment was later implemented and accepted with the source; see the sections below.
 
 ## Activation And Assignment
 
@@ -284,16 +286,171 @@ rephrased or routed through another agent. Integration, tag, release, released-a
 consumer upgrade wait for the integration owner. This log entry is a planning record only; it
 changes no release input, so the candidate evidence above stays applicable.
 
+## Integration, Release And Adoption
+
+**Integration.** After the self-approval refusal, the user authorized one normal merge retry
+under unchanged permissions. PR 27 merged as `830aa5ab3e0521f1b694339d72526e8d754e96ff`; its tree
+equals the evidenced head, which differs from the qualified candidate only in this log.
+
+**Publication permissions.** The implementer's Auto-mode classifier refused the public tag and
+release (reason: creating a public surface) twice. The second refusal came after a user approval
+of the exact publication had been relayed in the brief. It also refused the read-only
+publication preflight as a bypass attempt.
+
+The user then approved a simpler explicit-permission profile: `dontAsk` mode with the task's
+development and GitHub commands listed, explicit ask and deny rules kept, and no sandbox. Setting
+it up ran into the following, in order:
+- Its readiness probes behaved as designed: the allowed probe ran, and the ask probe and an
+  unlisted interpreter command were refused.
+- A permitted `shasum` then aborted under the inherited `C.UTF-8` locale, which is an environment
+  failure. Listed `sha256sum` and `mkdir` commands on staging paths outside the session's
+  working directories were refused; the cause was not proven.
+- The commissioner set a supported locale and added the assigned staging directories as working
+  directories, without changing the command rules.
+
+**Release.** Annotated tag `v0.1.35` points to the merge. The release publishes 14 assets: both
+packs, the catalog, the installers, bootstrap and notes, each with a SHA-256 sidecar.
+- Before publication, the packs were byte-identical to the qualified run's artifacts, every
+  sidecar matched, and the text assets equal the tagged source.
+- The re-downloaded public assets match the staged bytes.
+- Released-asset smoke run `38005211633` passed both public native jobs.
+- The unsigned, unnotarized internal/prototype audience is unchanged.
+
+**Consumer adoption.** The named coordination home was upgraded on its assigned branch through
+the supported lifecycle. After the director's primary review, its adoption PR merged, so the
+consumer's default branch now runs v0.1.35. Its owner selected a verified repository-local helper
+in ignored local settings, with no global CLI or `PATH` change. Two findings from the upgrade:
+- The released CLI reports a pristine v0.1.34 installation as partial. The upgrade was started
+  with the verified published CLI matching the installed version. The result is healthy and
+  current; only managed files and the lock changed, and authored and local files are
+  byte-identical.
+- A command that changed into the consumer repository and then ran Git was refused even after
+  `cd` rules were added. Starting the same session in that repository resolved it, and no
+  command was denied there.
+
+**Fixtures.** Four fixture repositories were created with the released CLI. An automated check
+against the public releases confirmed that a custom coordination reference and ignored local
+settings survive upgrade, sync and repair.
+
+**Fresh-director onboarding (director-run, reported to the implementer).**
+- **Live route:** a fresh ordinary director found the member-to-home route without coaching and
+  launched Claude through the relay. It then:
+  - received a question and answered it;
+  - resumed the same Claude session with the approved answer;
+  - received, read and assessed the final reply.
+- **Denied write:** a harmless denied Write reached the director with its original evidence and
+  no file created.
+- **Native-only probe:**
+  - used native goals for an implementation;
+  - stayed native after an explicit decline;
+  - reported before unapproved amendments;
+  - honored a goal opt-out.
+- **Failure probes:** the missing-CLI and stale-relay probes stopped correctly.
+- **Helper finding:** the director prepared a correct request, but told the relay to run the bare
+  helper command. On that host, `PATH` still resolved an older helper without the `coordination`
+  subcommand, which failed before Claude started. The director recovered through tooling
+  readiness, found the verified v0.1.35 helper and supplied its absolute path; the round trip
+  then worked. This follow-up adds that rule to the guidance: the coordinator verifies the
+  selected helper supports `coordination` and gives the relay its exact path for both
+  `invoke-claude` and `record-delivery`.
+- **Rejected notification:** an injected rejected notification kept its original injected
+  receipt, and the director recovered the original result through the known attempt path, with
+  no resend or relaunch. It used a historical native-recipient rejection shape. This proves
+  receipt preservation and recovery by injection, not a newly observed live rejection.
+- **Goals:** native goal activation and completion were observed for Codex and Claude within the
+  stated host limits, including the opt-out. The unavailable-goal case was a scenario
+  explanation, not a manufactured live platform failure.
+- **Closure:** the director accepted this onboarding evidence. The temporary test director was
+  archived after acceptance; the operational relay and the original evidence are retained.
+- **Still unqualified, with no claims made:** creating a relay from scratch, Windows live Claude
+  and desktop wakeup, the reverse tool direction and cross-host messaging.
+
+## Permission Guidance And Multi-Result Capture Follow-Up
+
+**Multi-result capture.** A real implementer run emitted two result records. The first held the
+substantive handoff and a permission denial; a later background-task completion held no denials.
+The helper kept only the last record, so the earlier denial and reply location were lost from
+`attempt.json` and the message. The original output kept everything.
+
+The follow-up fixes this as follows:
+- Denials are gathered from every result record, and a repeated tool use ID counts once.
+- Every earlier result record is listed in a new optional `earlier_results` list, with its line,
+  `subtype`, `is_error` and, for a text reply, a locator in the existing shape.
+- Earlier records marked as errors or not `success` are named in `detail` and in the message,
+  even when they have no text and a later record succeeds.
+- The message lists earlier records without quoting or summarizing them.
+- The last record stays the final reply. Usage, cost, duration and turn count come from that last
+  record and are not summed.
+- Sanitized fake-process regressions cover the observed reply-and-denial sequence, and earlier
+  error records with and without text followed by a success. Each fails against the previous
+  logic.
+
+**Focused review of the follow-up.** The retained reviewer found two Medium issues and the
+director's three wording points, all corrected in this PR:
+- An earlier failed record without text could still be hidden by a later success; it is now
+  listed and named.
+- The guidance could read as switching profiles to get past a refusal. It now states that a
+  profile choice or change is the policy owner's explicit, recorded decision before work resumes;
+  agents never switch to get past their own denial; and relayed approval does not override a
+  refusal.
+- `dontAsk` is described accurately: it denies actions that would otherwise prompt; allowed
+  actions still run; and the denial returns to the agent.
+- The deny examples add `-f` and are labelled illustrative, not exhaustive; branch protection and
+  delivery gates stay authoritative.
+- Placeholder timestamps were replaced with actual edit times.
+
+The reviewer also asked that the next release notes state that the v0.1.35 helper keeps only the
+last result record; the contract now says so.
+
+**Helper readiness.** The runbook's preparation step now requires the coordinator to confirm
+its selected helper reports a release with `coordination` and lists `invoke-claude` and
+`record-delivery` before dispatch. The coordinator passes that exact path in the relay envelope
+for both commands. Missing helpers go through tooling readiness, never a silent install, `PATH`
+change or worker-side search. No request field, command or setting is added.
+
+**Guidance.** The follow-up documents in the contract the optional explicit-permission
+(`dontAsk`) profile, alongside the Auto-mode allowance and its observed refusals. It covers:
+- that command patterns are workflow control, not operating-system isolation;
+- one-time readiness probes;
+- starting sessions in the repository they change;
+- treating environment failures, such as the locale abort, as environment failures.
+
+Exact private profiles and paths stay with the consumer.
+
+**Not yet shipped.** These changes are not part of published v0.1.35. Shipping them needs the
+next patch release with broad candidate qualification, because the helper's executable
+behavior and record contract change. That release has not been started.
+
+Its release notes must cover:
+- the `earlier_results` field;
+- denial aggregation across result records;
+- that the v0.1.35 helper can miss an earlier reply, failure or denial when a run emits more
+  than one result record, so v0.1.35 users should read `stdout.jsonl` directly in that case.
+
 ## Current State And Remaining Evidence
 
-Epics 1 and 2 are implemented, with the first correction cycle applied. They await the same
-reviewer's focused follow-up and director acceptance.
+**Delivered (the one authorized patch):**
+- Epics 1 and 2 were accepted at source.
+- v0.1.35 was published and verified.
+- The release gates passed: the release-candidate fixture test was green, the native macOS and
+  Windows lanes passed, and release notes and permission wording were reviewed.
+- The named consumer adopted v0.1.35 on its default branch.
+- The director accepted the fresh-director exercise, the first-use probes and the
+  rejected-notification recovery described above.
 
-Required Epic 3 gates, none waived:
-- The release-candidate asset-name fixture test must be green at the release candidate.
-- Native Windows Go tests and release gates must pass.
-- Codex relay output-yield/resume must be observed with the installed helper.
-- Release notes and permission-wording review.
-- Named consumer adoption, first-use probes and the fresh-director exercise.
+**Accepted follow-up source (integrated, not released):**
+- The retained reviewer's focused follow-up of the corrections concluded Ready for source
+  acceptance.
+- The director accepted the source, contingent on one illustrative deny-example addition
+  (`git push -f*`), which is now made.
+- This PR integrates the permission guidance, the helper-path rule and the multi-result capture
+  fix into the main branch.
+- None of it ships until a separately commissioned next patch is qualified and published. Until
+  then, the published v0.1.35 helper keeps its multiple-result capture limitation.
+
+**Pending:**
+- The director's presentation of findings and final whole-plan acceptance and closure.
+- Any decision to commission the next patch release; this delivery does not authorize a second
+  release.
 
 The plan stays active.

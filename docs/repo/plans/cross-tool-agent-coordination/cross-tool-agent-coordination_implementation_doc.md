@@ -1,4 +1,4 @@
-Last updated: 2026-10-09T20:48:19Z (UTC)
+Last updated: 2026-10-10T00:19:49Z (UTC)
 Created: 2026-10-09
 Status: active
 
@@ -585,7 +585,7 @@ are specified for Epic 2, not presented as already available.
 - [x] Include human-visible review findings and coordinator disposition, optional generated
   response views, minimal ignored runtime evidence and ordinary authorized cleanup guidance.
   Keep durable conclusions in existing plan/log records rather than a new report per turn.
-- [ ] Update manifest/resource mirrors and nearest routers; run affected routing/resource and
+- [x] Update manifest/resource mirrors and nearest routers; run affected routing/resource and
   public-core/Markdown checks. Review together with Epic 2.
 
 **G) Implementation Notes:** Missing binary/runtime -> existing tooling-readiness route; missing
@@ -634,10 +634,10 @@ specified by its Go tests, not a Python copy.
   and matching lock ownership; interruption before child identity capture retains a blocker and
   documented owner-directed recovery. No raw normal output or implicit escalation. Use sanitized
   real CLI response/denial and message-rejection shapes to anchor fake fixtures. Exercise actual process behavior, not just mocked return values.
-- [ ] Verify on the supported live host that a controlled harmless process continues through
+- [x] Verify on the supported live host that a controlled harmless process continues through
   normal tool output-yield/resume cycles and retains evidence on interruption. Record actual
   process-limit knowledge separately from observed duration; do not burn hours testing idleness.
-- [ ] Run affected Go tests on supported platforms and one independent coherent source review
+- [x] Run affected Go tests on supported platforms and one independent coherent source review
   across Epics 1–2, emphasizing authority, result fidelity and process/concurrency failure behavior.
   Address findings without restarting unchanged reviews.
 
@@ -678,16 +678,16 @@ precedes live installed-use acceptance. Use candidate fixtures for cheap routing
 publication, then the same scenario once on installed release. Do not repeatedly live-test merges.
 
 **F) Tasks Checklist:**
-- [ ] Confirm exact execution grant, named consumer/default branch, host/relay owner and existing
+- [x] Confirm exact execution grant, named consumer/default branch, host/relay owner and existing
   membership. Preserve conflicts/unrelated work; use a configured fixture for routing proof.
-- [ ] Select release version, record impact/safety review, update identity and notes, run the broad
+- [x] Select release version, record impact/safety review, update identity and notes, run the broad
   candidate/native release gates and integrate the reviewed candidate normally.
-- [ ] Publish and verify the permitted patch release; upgrade the named consumer through the
+- [x] Publish and verify the permitted patch release; upgrade the named consumer through the
   managed lifecycle route. Commit/push/merge the adoption checkpoint under the whole-plan grant.
-- [ ] Create its local operational reference and links; move ongoing relay routing authority out
+- [x] Create its local operational reference and links; move ongoing relay routing authority out
   of the improvement Program while retaining its history and program-specific appointments.
   Configure exact model/host/session preferences privately and reconcile the assigned checkout.
-- [ ] Use bounded fresh-agent probes in fixture repositories for behavior, not document review
+- [x] Use bounded fresh-agent probes in fixture repositories for behavior, not document review
   alone: (a) no reference/Claude/account/preference -> ordinary native work proceeds with no
   Claude call or setup prompt; (b) selected Claude with missing CLI/login -> guides the concrete
   setup/choice without fallback, credential copying, bypass or unapproved installation; (c) feed
@@ -697,31 +697,31 @@ publication, then the same scenario once on installed release. Do not repeatedly
   scope in those probes. Use an automated existing-reference fixture for (d): repeat setup and
   Kit upgrade preserve custom reference contents and leave personal choices in the ignored layer.
   Use the real installed cross-tool exercise below for positive login/preflight.
-- [ ] Give a fresh ordinary director a small user-style request. Require it to discover the
+- [x] Give a fresh ordinary director a small user-style request. Require it to discover the
   installed route/reference from a configured member fixture/home, launch one harmless consultation
   through the maintained helper/relay, yield, receive a question, resume the same session with an
   authorized answer, yield again and read the original final response. Do not mention the relay
   or its path in the initial user-style request. Observe relay behavior: no research/digest/
   acceptance, exact destination and session, coordinator remains available.
-- [ ] Within that exercise, use one harmless deliberately denied tool request in a scoped
+- [x] Within that exercise, use one harmless deliberately denied tool request in a scoped
   read-only test profile; verify the installed helper preserves the real denial and returns it.
   Anchor the failure fixtures to this actual CLI shape. Exercise rejected-notification persistence
   using an injected send rejection with the already observed native rejection shape; verify the
   coordinator can find the retained result by its known attempt path on demand. No arbitrary
   real recipient or repeat live negative messaging is required unless actual host behavior changed.
-- [ ] Cover missing/stale route handling in the same onboarding exercise or non-live fixture.
+- [x] Cover missing/stale route handling in the same onboarding exercise or non-live fixture.
   Retain existing accepted overlap evidence; repeat only if the new mechanics/topology invalidate it.
   Record live usage/time if exposed and distinguish cached input from new output; no invented
   budget threshold. Disclose that initial real adoption reuses an existing relay: creating one
   from scratch is fixture/procedure coverage unless independently observed, not claimed live proof.
-- [ ] In a bounded fixture continuation of the existing agent exercise, request an agreed planning
+- [x] In a bounded fixture continuation of the existing agent exercise, request an agreed planning
   edit plus review and provide a reviewer finding suggesting another change. Pass: coordinator
   links the original, summarizes findings, gives its own assessment/recommendation and yields;
   only the agreed edit exists, with no new amendment or corrective dispatch. Then supply explicit
   correction authority: it applies covered fixes without per-finding approval. Verify the recipe
   preserves routine corrections under an existing whole-plan execution grant. No extra live
   external review or new production task is required solely for this probe.
-- [ ] Extend the bounded commissioning fixture to cover default-goal selection, an explicit opt-out
+- [x] Extend the bounded commissioning fixture to cover default-goal selection, an explicit opt-out
   and unavailable/unverifiable activation without false claims or host-authority bypass. Qualify
   the selected Claude native-goal invocation and review/blocker handoff within the installed live
   exercise; the director reads the activation/evaluator evidence. Check Codex's native instruction
@@ -752,6 +752,15 @@ rules. Recheck the affected boundary, retain original failures and adapt one rec
 every transient failure into framework work. No AWS or product feature implementation is included.
 
 # Revision Notes
+
+- 2026-10-10: recorded delivery evidence and ticked completed tasks:
+  - source accepted, v0.1.35 published and verified;
+  - the named consumer adopted v0.1.35 on its default branch;
+  - the director's fresh-director exercise and first-use probes passed;
+  - the accepted follow-up source (permission guidance and multi-result capture) is integrated,
+    but not released.
+  The director's findings presentation and final acceptance and closure remain open; the plan
+  stays active.
 
 - 2026-10-09: user approved the commissioning agent as primary reviewer, with proportionate
   additional independent review. Fold this bounded guidance amendment in at the first correction

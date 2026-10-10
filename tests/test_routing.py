@@ -390,7 +390,9 @@ def test_cross_tool_coordination_routes_are_installed_and_optional(tmp_path):
     assert "otherwise\ncontinue with the current tool" in coordination
     assert (kit / "agent-interface/templates/agent-coordination-reference.md").exists()
     assert not (consumer / "docs/repo/reference/agent-coordination.md").exists()
-    assert "codeheart-operating-kit coordination invoke-claude" in runbook
+    assert '"<verified helper path>" coordination invoke-claude' in runbook
+    assert '"<verified helper path>" coordination record-delivery' in runbook
+    assert "does not\n   prove that the relay's `PATH` resolves the same helper" in runbook
     for section in ["Audience: hybrid", "## User-Facing Flow", "## Operator Notes", "## Execution Path", "## Stop Conditions", "## Evidence And Validation"]:
         assert section in runbook, section
     help_result = subprocess.run([str(binary), "coordination", "invoke-claude", "--help"], text=True, capture_output=True, check=False)

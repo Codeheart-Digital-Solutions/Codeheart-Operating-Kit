@@ -71,6 +71,20 @@ type ResponseLocator struct {
 	Chars     int    `json:"chars"`
 }
 
+// EarlierResult identifies one result record before the last, as the CLI reported it. Reply is
+// set only when its result field is a JSON string; the text itself stays in stdout.jsonl.
+type EarlierResult struct {
+	Line    int              `json:"line"`
+	Subtype string           `json:"subtype,omitempty"`
+	IsError *bool            `json:"is_error,omitempty"`
+	Reply   *ResponseLocator `json:"reply,omitempty"`
+}
+
+// Failed reports whether the CLI marked this earlier result as an error or not a success.
+func (e EarlierResult) Failed() bool {
+	return (e.IsError != nil && *e.IsError) || e.Subtype != "success"
+}
+
 // Denial keeps permission-denial metadata; the original tool input stays in stdout.jsonl.
 type Denial struct {
 	ToolName  string `json:"tool_name"`
@@ -107,18 +121,21 @@ type AttemptRecord struct {
 	Child             *ChildRecord     `json:"child,omitempty"`
 	LockOwner         *SessionLock     `json:"blocking_lock_owner,omitempty"`
 	Response          *ResponseLocator `json:"response,omitempty"`
-	ResultSubtype     string           `json:"result_subtype,omitempty"`
-	IsError           *bool            `json:"is_error,omitempty"`
-	TerminalReason    string           `json:"terminal_reason,omitempty"`
-	PermissionDenials []Denial         `json:"permission_denials"`
-	Usage             json.RawMessage  `json:"usage,omitempty"`
-	ModelUsage        json.RawMessage  `json:"model_usage,omitempty"`
-	TotalCostUSD      *float64         `json:"total_cost_usd,omitempty"`
-	DurationMS        *int64           `json:"duration_ms,omitempty"`
-	NumTurns          *int             `json:"num_turns,omitempty"`
-	UnparsedLines     int              `json:"unparsed_output_lines,omitempty"`
-	LockRelease       *LockRelease     `json:"lock_release,omitempty"`
-	UpdatedAt         string           `json:"updated_at"`
+	// EarlierResults lists result records before the last one. Some CLI runs emit more than one;
+	// an earlier record can hold the substantive reply or a failure a later record would hide.
+	EarlierResults    []EarlierResult `json:"earlier_results,omitempty"`
+	ResultSubtype     string          `json:"result_subtype,omitempty"`
+	IsError           *bool           `json:"is_error,omitempty"`
+	TerminalReason    string          `json:"terminal_reason,omitempty"`
+	PermissionDenials []Denial        `json:"permission_denials"`
+	Usage             json.RawMessage `json:"usage,omitempty"`
+	ModelUsage        json.RawMessage `json:"model_usage,omitempty"`
+	TotalCostUSD      *float64        `json:"total_cost_usd,omitempty"`
+	DurationMS        *int64          `json:"duration_ms,omitempty"`
+	NumTurns          *int            `json:"num_turns,omitempty"`
+	UnparsedLines     int             `json:"unparsed_output_lines,omitempty"`
+	LockRelease       *LockRelease    `json:"lock_release,omitempty"`
+	UpdatedAt         string          `json:"updated_at"`
 }
 
 // SessionLock is the exclusive-create lock content for one session.

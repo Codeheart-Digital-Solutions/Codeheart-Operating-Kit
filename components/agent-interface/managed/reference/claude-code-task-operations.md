@@ -1,4 +1,4 @@
-Last updated: 2026-10-09T19:52:39Z (UTC)
+Last updated: 2026-10-10T00:15:15Z (UTC)
 
 # Claude Code Task Operations
 
@@ -123,6 +123,17 @@ in the result's permission-denial metadata even when the process exits successfu
 helper returns them unchanged. A profile that allows ordinary pull-request merges in the task
 repository grants tool permission only; the workflow still checks authority, review, CI and
 candidate identity, and no profile adds release or deployment authority.
+
+For delivery work, an explicit `dontAsk` profile listing the task's ordinary development and
+GitHub commands is simpler than an Auto-mode classifier allowance, which refused a self-authored
+merge and a public release. `dontAsk` denies actions that would otherwise prompt; allowed actions
+still run, and a denial returns to the agent as a refusal. Choosing or changing a profile is the
+policy owner's explicit, recorded decision before work resumes; an agent never switches profiles,
+modes or tools to get past its own denial, and relayed approval does not override a refusal.
+Confirm a new profile once with harmless allowed, ask and unlisted probes. Start or resume the
+session in the repository it changes, because changing directory and then running Git in one
+command is evaluated separately. See the permission profiles section of
+`cross-tool-coordination-contract.md`.
 
 ## Archival And Preservation
 

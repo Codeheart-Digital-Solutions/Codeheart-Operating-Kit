@@ -1,4 +1,4 @@
-Last updated: 2026-10-09T20:34:57Z (UTC)
+Last updated: 2026-10-10T00:15:15Z (UTC)
 
 # Agent Coordination
 
@@ -25,11 +25,12 @@ the current tool does not need this file.
 | Relay worker model | `<model and reasoning, or "relay default">` |
 | Approved CLI | `<distribution, e.g. app-bundled Claude Code CLI; who approved it>` |
 | Permission profile per role | `<profile name, permission mode and permission_prompts value per role; approving record>` |
-| Local execution settings | `<ignored file holding exact paths, e.g. .codeheart/user/agent-coordination.local.yaml>` |
+| Local execution settings | `<ignored file holding exact paths, e.g. .codeheart/user/agent-coordination.local.yaml, including the verified Operating Kit helper the relay runs>` |
 | Evidence root | `<ignored local path convention, e.g. .codeheart/local/coordination>` |
 
-Exact host values stay out of this file: the absolute CLI path, its observed version and profile
-file paths live in the ignored local settings named above or in an assignment's private record.
+Exact host values stay out of this file: the absolute CLI path, its observed version, the
+Operating Kit helper path and profile file paths live in the ignored local settings named above
+or in an assignment's private record.
 Coordinators resolve them from there, verify the executable and its version before each
 commission, and never fall back to an unapproved `PATH` lookup. Sign-in lives in each tool's own
 credential storage on each machine; nothing here proves that a user is signed in.

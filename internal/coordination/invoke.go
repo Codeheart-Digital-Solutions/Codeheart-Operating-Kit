@@ -12,6 +12,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"regexp"
+	"strconv"
 	"strings"
 )
 
@@ -294,6 +295,13 @@ func Invoke(opts Options) (Outcome, error) {
 	parsed = parseStream(stdoutPath)
 	applyParsed(record, parsed, stdoutPath)
 	record.Status, record.Detail = classify(record, parsed, exitCode, signaled, waitErr, sessionID, stderrPath)
+	if failure := earlierFailureDetail(record); failure != "" {
+		if record.Detail == "" {
+			record.Detail = failure
+		} else {
+			record.Detail += "; " + failure
+		}
+	}
 	outcome.ChildExitCode = &exitCode
 	// The child has exited and this launcher owns the lock.
 	return finish(true)
@@ -360,8 +368,26 @@ type streamResult struct {
 	result        map[string]json.RawMessage
 	reply         string
 	replyIsString bool
-	unparsed      int
-	totalBytes    int64
+	// earlier holds every result record before the last one, and denials gathers permission
+	// denials from every result record, so a later record cannot hide a reply, failure or denial.
+	earlier    []EarlierResult
+	denials    []Denial
+	unparsed   int
+	totalBytes int64
+}
+
+// earlierFrom describes a superseded result record without interpreting it.
+func earlierFrom(line int, fields map[string]json.RawMessage, reply string, replyIsString bool) EarlierResult {
+	entry := EarlierResult{Line: line}
+	_ = json.Unmarshal(fields["subtype"], &entry.Subtype)
+	var isError bool
+	if json.Unmarshal(fields["is_error"], &isError) == nil {
+		entry.IsError = &isError
+	}
+	if replyIsString {
+		entry.Reply = &ResponseLocator{Line: line, JSONField: "result", Chars: len([]rune(reply))}
+	}
+	return entry
 }
 
 func parseStream(path string) streamResult {
@@ -395,6 +421,13 @@ func parseStream(path string) streamResult {
 						_ = json.Unmarshal(fields["claude_code_version"], &parsed.cliVersion)
 					}
 					if kind == "result" {
+						if parsed.hasResult {
+							parsed.earlier = append(parsed.earlier, earlierFrom(parsed.resultLine, parsed.result, parsed.reply, parsed.replyIsString))
+						}
+						var denials []Denial
+						if json.Unmarshal(fields["permission_denials"], &denials) == nil {
+							parsed.denials = appendDenials(parsed.denials, denials)
+						}
 						parsed.hasResult = true
 						parsed.resultLine = line
 						parsed.result = fields
@@ -432,9 +465,16 @@ func applyParsed(record *AttemptRecord, parsed streamResult, stdoutPath string) 
 	if json.Unmarshal(fields["is_error"], &isError) == nil {
 		record.IsError = &isError
 	}
-	var denials []Denial
-	if json.Unmarshal(fields["permission_denials"], &denials) == nil && denials != nil {
-		record.PermissionDenials = denials
+	if parsed.denials != nil {
+		record.PermissionDenials = parsed.denials
+	}
+	for _, earlier := range parsed.earlier {
+		if earlier.Reply != nil {
+			reply := *earlier.Reply
+			reply.File = stdoutPath
+			earlier.Reply = &reply
+		}
+		record.EarlierResults = append(record.EarlierResults, earlier)
 	}
 	if raw, ok := fields["usage"]; ok && string(raw) != "null" {
 		record.Usage = raw
@@ -505,6 +545,13 @@ func composeMessage(record *AttemptRecord, parsed streamResult, attemptDir strin
 		fmt.Fprintf(&b, "Detail: %s\n", record.Detail)
 	}
 	fmt.Fprintf(&b, "Attempt record: %s\n", filepath.Join(attemptDir, AttemptFile))
+	if len(record.EarlierResults) > 0 {
+		entries := make([]string, 0, len(record.EarlierResults))
+		for _, earlier := range record.EarlierResults {
+			entries = append(entries, describeEarlier(earlier))
+		}
+		fmt.Fprintf(&b, "Earlier result records in %s: %s. Read them too; only the last reply is quoted below.\n", filepath.Join(attemptDir, StdoutFile), strings.Join(entries, "; "))
+	}
 	b.WriteString("Transport status only; this is not task acceptance.\n")
 	switch {
 	case parsed.replyIsString && len([]rune(parsed.reply)) <= InlineReplyLimit:
@@ -524,6 +571,58 @@ func composeMessage(record *AttemptRecord, parsed streamResult, attemptDir strin
 		}
 	}
 	return b.String()
+}
+
+// describeEarlier states an earlier result record's line, subtype, error flag and whether it has
+// a text reply, exactly as reported.
+func describeEarlier(earlier EarlierResult) string {
+	isError := "absent"
+	if earlier.IsError != nil {
+		isError = strconv.FormatBool(*earlier.IsError)
+	}
+	reply := "no text reply"
+	if earlier.Reply != nil {
+		reply = "text reply in JSON field \"result\""
+	}
+	return fmt.Sprintf("line %d (subtype %q, is_error %s, %s)", earlier.Line, earlier.Subtype, isError, reply)
+}
+
+// earlierFailureDetail names earlier result records the CLI marked as errors or not successes,
+// so a later successful record cannot hide them.
+func earlierFailureDetail(record *AttemptRecord) string {
+	var failed []string
+	for _, earlier := range record.EarlierResults {
+		if earlier.Failed() {
+			failed = append(failed, describeEarlier(earlier))
+		}
+	}
+	if len(failed) == 0 {
+		return ""
+	}
+	return "earlier result record reported a failure: " + strings.Join(failed, "; ")
+}
+
+// appendDenials adds denials not already present; a tool use ID identifies a repeated report of
+// the same denial across result records. Denials without an ID are always kept.
+func appendDenials(existing []Denial, more []Denial) []Denial {
+	if existing == nil {
+		existing = []Denial{}
+	}
+	for _, denial := range more {
+		duplicate := false
+		if denial.ToolUseID != "" {
+			for _, known := range existing {
+				if known.ToolUseID == denial.ToolUseID && known.ToolName == denial.ToolName {
+					duplicate = true
+					break
+				}
+			}
+		}
+		if !duplicate {
+			existing = append(existing, denial)
+		}
+	}
+	return existing
 }
 
 // isJSONString reports whether raw is a JSON string value. Missing, null and other values are
