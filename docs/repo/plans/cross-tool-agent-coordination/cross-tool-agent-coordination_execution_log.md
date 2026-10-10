@@ -1,4 +1,4 @@
-Last updated: 2026-10-10T00:15:15Z (UTC)
+Last updated: 2026-10-10T00:19:49Z (UTC)
 Created: 2026-10-09
 
 # Cross-Tool Agent Coordination Execution Log
@@ -353,8 +353,17 @@ settings survive upgrade, sync and repair.
   then worked. This follow-up adds that rule to the guidance: the coordinator verifies the
   selected helper supports `coordination` and gives the relay its exact path for both
   `invoke-claude` and `record-delivery`.
-- **Not claimed complete here:** further simulated-delivery recovery and final closure records
-  remain with the director.
+- **Rejected notification:** an injected rejected notification kept its original injected
+  receipt, and the director recovered the original result through the known attempt path, with
+  no resend or relaunch. It used a historical native-recipient rejection shape. This proves
+  receipt preservation and recovery by injection, not a newly observed live rejection.
+- **Goals:** native goal activation and completion were observed for Codex and Claude within the
+  stated host limits, including the opt-out. The unavailable-goal case was a scenario
+  explanation, not a manufactured live platform failure.
+- **Closure:** the director accepted this onboarding evidence. The temporary test director was
+  archived after acceptance; the operational relay and the original evidence are retained.
+- **Still unqualified, with no claims made:** creating a relay from scratch, Windows live Claude
+  and desktop wakeup, the reverse tool direction and cross-host messaging.
 
 ## Permission Guidance And Multi-Result Capture Follow-Up
 
@@ -420,18 +429,28 @@ Its release notes must cover:
 
 ## Current State And Remaining Evidence
 
-**Done:**
-- Epics 1 and 2 accepted at source.
-- v0.1.35 published and verified.
-- Earlier gates passed: the release-candidate fixture test was green, the native macOS and Windows
-  lanes passed, and release notes and permission wording were reviewed.
+**Delivered (the one authorized patch):**
+- Epics 1 and 2 were accepted at source.
+- v0.1.35 was published and verified.
+- The release gates passed: the release-candidate fixture test was green, the native macOS and
+  Windows lanes passed, and release notes and permission wording were reviewed.
 - The named consumer adopted v0.1.35 on its default branch.
-- The director reports the live fresh-director round trip and the first-use probes above as
-  observed.
+- The director accepted the fresh-director exercise, the first-use probes and the
+  rejected-notification recovery described above.
+
+**Accepted follow-up source (integrated, not released):**
+- The retained reviewer's focused follow-up of the corrections concluded Ready for source
+  acceptance.
+- The director accepted the source, contingent on one illustrative deny-example addition
+  (`git push -f*`), which is now made.
+- This PR integrates the permission guidance, the helper-path rule and the multi-result capture
+  fix into the main branch.
+- None of it ships until a separately commissioned next patch is qualified and published. Until
+  then, the published v0.1.35 helper keeps its multiple-result capture limitation.
 
 **Pending:**
-- The director's remaining simulated-delivery recovery checks and closure records.
-- Review of this follow-up PR and the release that will ship it. The published v0.1.35 helper
-  still has the multiple-result capture limitation until then.
+- The director's presentation of findings and final whole-plan acceptance and closure.
+- Any decision to commission the next patch release; this delivery does not authorize a second
+  release.
 
 The plan stays active.
