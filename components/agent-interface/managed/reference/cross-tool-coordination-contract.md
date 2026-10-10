@@ -1,4 +1,4 @@
-Last updated: 2026-10-10T08:30:00Z (UTC)
+Last updated: 2026-10-10T00:15:15Z (UTC)
 
 # Cross-Tool Coordination Contract
 
@@ -93,8 +93,8 @@ The coordinator knows the directory before dispatch:
 
 | File | Content |
 | --- | --- |
-| `attempt.json` | Compact record: status, request path and digest, requested and actual session, model, CLI version, argv, launcher and child identity, exit, response locator, `earlier_responses` locators, denial metadata, usage, lock release. |
-| `stdout.jsonl` | Original CLI output. The final reply is the `result` field of the last `type: result` line and must be a JSON string (an empty string counts); a missing, null or non-string value is `incomplete_output`, never a captured reply. A run can emit more than one result record, for example a substantive reply followed by a background-task completion; earlier text replies are located in `earlier_responses`. |
+| `attempt.json` | Compact record: status, request path and digest, requested and actual session, model, CLI version, argv, launcher and child identity, exit, response locator, `earlier_results`, denial metadata, usage, lock release. Usage, cost, duration and turn count come from the last result record only; they are not summed across records. |
+| `stdout.jsonl` | Original CLI output. The final reply is the `result` field of the last `type: result` line and must be a JSON string (an empty string counts); a missing, null or non-string value is `incomplete_output`, never a captured reply. A run can emit more than one result record, for example a substantive reply or a failure followed by a background-task completion. Each earlier record is listed in `earlier_results` with its line, `subtype`, `is_error` and, when it has a text reply, a `reply` locator. |
 | `stderr.txt` | Original CLI error output. |
 | `message.json` | Native send-message arguments: `threadId`, `hostId` and `prompt`. Load it unchanged, and only when this invocation's output names it as `message_file`. |
 | `delivery.json` | `pending`, then `sent`, `rejected` or `uncertain`, with the original receipt or error. |
@@ -121,9 +121,16 @@ itself is valid), `helper_error` before an attempt record exists, a failed messa
 
 The message prompt states the assignment, attempt, status, session, denial count and attempt
 record path. It carries the original reply unchanged when it has at most 2,000 characters, and
-otherwise an exact file, line and JSON-field reference. When earlier result records hold replies,
-it names their exact lines instead of quoting them; the coordinator reads every one. It contains
-no summary or judgment.
+otherwise an exact file, line and JSON-field reference. When earlier result records exist, it lists
+each one's line, `subtype`, `is_error` and whether it has a text reply, without quoting it; the
+coordinator reads every one. An earlier record marked as an error or not `success` is also named
+in `detail`. The status can still be `response_captured` when the last record holds a reply, but
+the earlier failure stays explicit. The message contains no summary or judgment.
+
+Helpers released before this capture change, including v0.1.35, keep only the last result
+record, so an earlier reply, failure or denial can be missing from `attempt.json` and the
+message. With those helpers, read `stdout.jsonl` directly whenever it holds more than one
+`type: result` line. The release that ships this change must say so in its notes.
 
 ## Delivery And Recovery Commands
 
@@ -194,12 +201,20 @@ cannot authorize itself. Nothing here is installed globally, and a consumer that
 cross-tool delegation needs no profile. Choosing and approving one is the consumer's decision;
 its exact command list and paths stay in the consumer's ignored local layer.
 
+Choosing or changing a profile is the policy owner's explicit, recorded decision, made before
+work resumes. An agent never switches profiles, modes or tools in response to its own denial.
+Once approved, a profile covers the actions it lists; the owner does not need to re-approve
+each covered action.
+
 ### Explicit command permissions (`dontAsk`)
 
-For delivery work, an explicit profile is simpler and more predictable than an AI classifier:
-`dontAsk` mode refuses anything not listed, so the agent stops instead of being judged case by
-case. List only the task's ordinary development and delivery commands, keep explicit ask and
-deny rules for destructive options, and grant file edits only inside the task's directories:
+For delivery work, an explicit profile is simpler and more predictable than an AI classifier.
+`dontAsk` denies any action that would otherwise ask for permission. Actions the rules allow, and
+actions that never need permission, still run. A denial comes back to the agent as a refusal; the
+session does not end, so the agent reports it instead of being judged case by case (see the
+official permissions documentation). List only the task's ordinary development and delivery
+commands, keep explicit ask and deny rules for risky options, and grant file edits only inside
+the task's directories:
 
 ```json
 {
@@ -215,7 +230,7 @@ deny rules for destructive options, and grant file edits only inside the task's 
       "Bash(printf <allowed readiness probe>)"
     ],
     "ask": ["Bash(printf <ask readiness probe>)"],
-    "deny": ["Bash(git push *--force*)", "Bash(git push *--delete*)", "Bash(git branch -D *)", "Bash(gh pr merge *--admin*)"]
+    "deny": ["Bash(git push *--force*)", "Bash(git push * -f*)", "Bash(git push *--delete*)", "Bash(git branch -D *)", "Bash(gh pr merge *--admin*)"]
   }
 }
 ```
@@ -223,12 +238,15 @@ deny rules for destructive options, and grant file edits only inside the task's 
 Add release, merge or other public-surface commands only when the assignment includes those
 effects. Command patterns are workflow control for a trusted agent, not operating-system
 isolation: an allowed test or build command runs repository code, and `gh` and `git push` rules
-do not check repository identity, review readiness or CI. The workflow still checks authority,
-review, CI and the exact target.
+do not check repository identity, review readiness or CI. The deny entries are illustrative
+examples, not exhaustive enforcement: other spellings, such as a `+<refspec>` force push or
+`:<branch>` deletion, are not matched. Branch protection, the reviewed scope and the delivery
+gates stay authoritative. The workflow still checks authority, review, CI and the exact target.
 
 When setting up or changing a profile, confirm it once with harmless probes before real work:
-the allowed probe runs, the ask probe and one unlisted command (for example an interpreter
-one-liner) are refused. Any other refusal during real work is a blocker to report unchanged.
+the allowed probe runs, and the ask probe and one unlisted command that would normally prompt
+(for example an interpreter one-liner) are refused. Any other refusal during real work is a
+blocker to report unchanged.
 
 Launch or resume the session with its working directory set to the repository it must change,
 and add other task directories as working directories. A command that changes directory and then
@@ -261,9 +279,11 @@ the task repository:
 }
 ```
 
-In practice the classifier refused a self-authored merge and later a public tag and release,
-even when a human approval was relayed in the brief. Prefer an explicit profile for delivery
-work that includes merge or release effects.
+In practice the classifier refused a self-authored merge and later a public tag and release.
+Approval relayed in a brief is not new human authority and does not override a tool refusal.
+For delivery work that includes merge or release effects, the policy owner may prefer an
+explicit profile, chosen as a recorded decision before work resumes; agents do not make that
+switch themselves.
 
 Neither example is an installed setting. Applying one requires authority covering its effects.
 A real denial returns unchanged; do not route the same action through another agent, tool or
