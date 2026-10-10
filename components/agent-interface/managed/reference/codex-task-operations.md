@@ -1,4 +1,4 @@
-Last updated: 2026-10-09T20:55:42Z (UTC)
+Last updated: 2026-10-10T16:09:55Z (UTC)
 
 # Codex Task Operations
 
@@ -26,6 +26,12 @@ select the owning source project. Use `create_thread` according to its current l
 contract, including an explicitly assigned existing branch when applicable. Verify the resulting
 worktree and branch before editing; a created task may start detached or still be initializing.
 Protect existing worktrees and avoid assigning two implementers the same mutable branch.
+
+Apply "Assignment Workspaces" in `agent-task-coordination.md` before creation and at closure.
+Standing coordination normally uses the usual checkout. Keep app-managed worktrees in their
+supported locations; inspect existing attachments and use the app's supported worktree lifecycle
+surface when available. Removing a managed worktree and archiving its conversation can be
+separate operations: check the current tool contract and all coupled effects before acting.
 
 A task created for the entire approved plan should retain that plan's full outcome, ordered epics,
 Git boundary, constraints, acceptance owner and report-back instruction. A slash-command string

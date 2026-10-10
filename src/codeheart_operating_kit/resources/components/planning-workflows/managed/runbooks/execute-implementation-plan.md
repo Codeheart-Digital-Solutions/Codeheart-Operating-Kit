@@ -1,4 +1,4 @@
-Last updated: 2026-10-09T20:47:14Z (UTC)
+Last updated: 2026-10-10T16:09:55Z (UTC)
 
 # Execute Implementation Plan
 
@@ -97,6 +97,10 @@ normal pushes, PR creation/updates and final boundary. Follow
 explicit direct report-back. Distinguish draft review, activation-only bookkeeping and whole-plan
 execution. A whole-plan request covers the specified implementation, validation and Git checkpoints;
 it is not a new user permission decision at each epic.
+
+Before editing, apply "Assignment Workspaces" in that reference: select or reuse the checkout,
+coordinate its writer, and record the closure owner and applicable removal authority. Keep a
+workspace through its coherent assignment instead of creating one per epic.
 
 Merge, release, adoption and provider effects require included or delegated authority, their named
 owner, exact action-time inputs and passing gates. Reuse valid authority while target, scope and
@@ -280,7 +284,8 @@ Resolve new decisions outside the approved plan with the acceptance owner before
 - security, secrets, customer data, or tenant data;
 - cloud accounts, deployment targets, or external systems;
 - public repository settings, tags, releases, or permissions;
-- destructive cleanup;
+- destructive cleanup outside the assignment workspace's established authority and preservation
+  conditions;
 - scope that later epics depend on.
 
 ## Per-Epic Flow
@@ -445,6 +450,13 @@ adopted and pilot-pending states distinct.
 
 ## Final User Summary
 
+At the final handoff, apply "Close Or Retain" in
+`../../agent-interface/reference/agent-task-coordination.md`. Report the temporary workspace's
+state and dependencies to its closure owner, who removes it when the conditions and authority
+hold or records the retention reason, owner and next resolving event. Include the safe refresh
+or specific update blocker for the usual checkout. Do not confuse workspace removal with plan
+archival or branch deletion.
+
 After the full plan is achieved, summarize:
 
 - overall divergence;
@@ -453,7 +465,8 @@ After the full plan is achieved, summarize:
 - safe defaults chosen;
 - user decisions required;
 - validation summary;
-- open follow-ups.
+- open follow-ups;
+- workspace disposition and usual-checkout update state.
 
 Keep the final chat response concise. Do not paste the full execution log unless the user asks for
 it.

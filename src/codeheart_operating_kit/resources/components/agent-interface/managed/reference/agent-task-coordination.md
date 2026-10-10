@@ -1,4 +1,4 @@
-Last updated: 2026-10-09T20:47:14Z (UTC)
+Last updated: 2026-10-10T16:09:55Z (UTC)
 
 # Agent Task Coordination
 
@@ -26,6 +26,8 @@ record these facts in the existing plan and assignment, using private locators o
 audience's records:
 
 - canonical plan name/path and owning project, repository and branch;
+- selected workspace, closure owner and any covered workspace-removal authority, following
+  "Assignment Workspaces" below;
 - intended outcome, ordered epics, constraints, non-goals and acceptance evidence;
 - execution authority, coherent commit/normal-push/PR checkpoints during work, independently
   usable integration outcomes and their dependencies, and final delivery boundary;
@@ -64,6 +66,75 @@ Preserve the result and disclose failed message delivery. Do not add a watcher.
 
 Fill the placeholders with real authorized scope before commissioning. Do not copy the example as
 approval evidence. Keep consumer facts out of reusable public guidance.
+
+## Assignment Workspaces
+
+A temporary workspace belongs to an assignment; deciding its disposition is part of finishing
+that assignment. These rules cover linked Git worktrees and independent clones, for whole-plan
+execution and routine changes alike. They introduce no registry, cleanup service or new settings
+schema.
+
+### Select And Locate
+
+- Standing coordinators and directors normally use the usual checkout for discussion, reading,
+  review and coordinated drafting. A standing role does not need a permanent worktree.
+- Use an isolated workspace for an implementation assignment, concurrent editing, or a different
+  branch that would disturb other chats. A small sequential change may use the usual checkout
+  when its files and branch can be changed without disrupting anyone else. Coordinate one writer
+  per checkout; do not switch a shared checkout's branch underneath dependent chats or processes.
+- Inspect existing workspaces first and reuse a suitable one for the same assignment. A new epic
+  or review alone does not require another workspace. Prefer linked worktrees; record a concrete
+  reason for an independent clone, such as an isolated comparison experiment.
+- For manually created workspaces, use the repository's or user's chosen workspace root, outside
+  the usual checkout and other repository checkouts. A readable convention is
+  `Workspaces/<repository>/<assignment>/`; a date prefix is optional. Reuse an existing local
+  convention, or select a suitable sibling location and state it when none exists. Keep actual
+  machine paths in ignored local settings or local assignment evidence. This is a guidance
+  preference, not a new Kit configuration key or a requirement to create a coordination reference.
+- App-managed workspaces stay in their supported locations and use the app's lifecycle tools.
+  Do not move them solely to match the manual convention. Existing workspaces do not need a
+  relocation merely to adopt this guidance.
+
+Record the workspace kind, repository/branch and closure owner in the existing assignment or
+execution record; keep its exact local path in the appropriate local evidence. The commissioning
+agent owns closure by default; for undelegated work, the agent doing the work owns that step.
+Establish whether the actual grant covers removing this assignment's exact temporary workspace
+after the conditions below hold. Reuse sufficient authority without asking again; the record
+does not create authority. Branch deletion, other workspaces, force operations and unexpected
+unique material are outside that bounded removal grant. Tool-enforced gates still apply.
+
+While working, place deliverables intended to outlast the assignment in their lasting home: a
+committed record, an agreed document folder or the shared evidence location. Standing chats,
+shared helpers and their sole configuration must not depend on a temporary assignment workspace.
+
+### Close Or Retain
+
+At final handoff, the implementer reports the workspace's branch/commit state, useful untracked
+or ignored material and any dependent sessions or processes. The closure owner verifies:
+
+1. The outcome is accepted and integrated, or explicitly superseded with useful work preserved.
+   Required release, adoption, review and follow-up work is finished or transferred to a named
+   owner with a usable workspace; a merged PR alone does not establish this.
+2. Unique commits, unfinished changes, documents and useful untracked or ignored evidence have
+   a verified durable or recoverable home outside the workspace. Inspect ignored files as well
+   as Git status. Regenerable build outputs need no routine backup.
+3. No running process, continuing chat, active report-back destination or shared tool still
+   depends on the folder. Preserve conversation continuity through the tool's supported handoff
+   or archival route before removing it; an idle chat alone is not proof of independence.
+4. Removal is covered by applicable authority. Remove only the identified temporary workspace
+   through its supported app or Git operation, without force. Inspect any coupled branch or chat
+   effects first. Preserve the branch unless its deletion is separately covered; never remove
+   the usual checkout as assignment cleanup.
+
+Record the result as removed or retained. For retention, one line in the existing record gives
+the reason, responsible owner and next resolving event; no expiry timer or watcher is required.
+If preservation or removal fails, retain the workspace and report the specific blocker. Report
+delivery completion and workspace disposition separately.
+
+After integration, refresh the responsible agent's usual checkout by fast-forward only when its
+branch and dependent sessions permit and existing local work is preserved. If this is not safe or
+possible, report the divergence or collision and next owner; do not reset, switch a shared branch,
+or stash unrelated changes merely to complete closure.
 
 ## Native Goal By Default
 
@@ -172,7 +243,9 @@ unavailable acceptance owner.
 UI archival, organizational lifecycle and deletion/worktree cleanup are separate decisions, even
 when an app couples some effects. Inspect actual app behavior and preserve required work before
 archival. Archiving a conversation does not itself close a role or plan. Deletion and destructive
-cleanup require their own applicable authority and preservation checks. For optional tool-specific
+cleanup require their own applicable authority and preservation checks; the bounded authority
+established under "Assignment Workspaces" can cover that exact removal without another approval.
+For optional tool-specific
 surfaces and worktree consequences, read `codex-task-operations.md` for Codex or
 `claude-code-task-operations.md` for Claude Code. For commissioning another tool's agent, use
 `../runbooks/coordinate-cross-tool-task.md` and `cross-tool-coordination-contract.md`.

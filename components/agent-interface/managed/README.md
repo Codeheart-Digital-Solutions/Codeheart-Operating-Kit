@@ -1,4 +1,4 @@
-Last updated: 2026-10-09T19:52:39Z (UTC)
+Last updated: 2026-10-10T16:09:55Z (UTC)
 
 # Agent Interface
 
@@ -13,7 +13,8 @@ state, and repository-owned documents, not in the managed bootstrap text.
 
 ## Routes
 
-- Generic whole-plan assignments, delegated reviews and report-back: `reference/agent-task-coordination.md`
+- Agent assignments, workspace selection and closure, delegated reviews and report-back:
+  `reference/agent-task-coordination.md`
 - Optional Codex task and goal operations: `reference/codex-task-operations.md`
 - Optional Claude Code session and goal operations: `reference/claude-code-task-operations.md`
 - Optional cross-tool commissioning (Codex coordinator, Claude CLI agent):
