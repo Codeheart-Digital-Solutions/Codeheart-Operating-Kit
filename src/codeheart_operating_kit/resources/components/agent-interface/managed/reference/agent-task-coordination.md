@@ -1,4 +1,4 @@
-Last updated: 2026-10-10T16:34:21Z (UTC)
+Last updated: 2026-10-11T10:41:32Z (UTC)
 
 # Agent Task Coordination
 
@@ -77,7 +77,10 @@ schema.
 ### Select And Locate
 
 - Standing coordinators and directors normally use the usual checkout for discussion, reading,
-  review and coordinated drafting. A standing role does not need a permanent worktree.
+  review and coordinated drafting, on the repository's default branch (for example,
+  `main`). A standing role does not need a permanent worktree. Use a temporary publication
+  worktree when a publication branch would disturb ongoing work in the shared checkout; apply
+  "Close Or Retain" below afterwards.
 - Use an isolated workspace for an implementation assignment, concurrent editing, or a different
   branch that would disturb other chats. A small sequential change may use the usual checkout
   when its files and branch can be changed without disrupting anyone else. Coordinate one writer

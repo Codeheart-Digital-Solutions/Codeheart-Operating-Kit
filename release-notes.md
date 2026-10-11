@@ -1,6 +1,22 @@
-Last updated: 2026-10-10T16:34:21Z (UTC)
+Last updated: 2026-10-11T10:41:32Z (UTC)
 
 # Codeheart Operating Kit Release Notes
+
+## v0.1.38 Release Notes
+
+Shared director and coordinator checkouts normally stay on the repository's default branch.
+Use a temporary publication worktree when a publication branch would disturb ongoing work in
+that shared checkout, and apply the existing closure rules afterwards.
+
+### Impact And Adoption
+
+- `instruction-only change`: clarifies the existing agent-interface workspace guidance.
+- The one-writer rule, safe sequential changes and protection of existing work remain in place.
+  This guidance does not instruct agents to force a branch change in an occupied checkout.
+- No CLI, schema, installer, permission setting or consumer-owned placement changes; no migration.
+- Upgrade through the supported lifecycle to v0.1.38 to refresh the managed coordination route.
+- macOS universal and Windows x64 and the unsigned, unnotarized internal/prototype
+  HTTPS-plus-SHA256 audience are unchanged.
 
 ## v0.1.37 Release Notes
 
