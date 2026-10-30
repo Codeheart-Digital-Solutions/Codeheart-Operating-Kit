@@ -1,4 +1,4 @@
-Last updated: 2026-10-10T16:09:55Z (UTC)
+Last updated: 2026-10-30T19:30:00Z (UTC)
 
 # Agent Interface
 
@@ -20,6 +20,7 @@ state, and repository-owned documents, not in the managed bootstrap text.
 - Optional cross-tool commissioning (Codex coordinator, Claude CLI agent):
   `runbooks/coordinate-cross-tool-task.md`, with `reference/cross-tool-coordination-contract.md`
   and the opt-in local reference starter `templates/agent-coordination-reference.md`
+
 - Root `AGENTS.md` contract: `reference/root-agents-md-contract.md`
 - Operation routing and dispatch: `reference/operation-routing-and-dispatch.md`
 - Managed section boundaries: `reference/managed-section-boundaries.md`
@@ -44,3 +45,12 @@ state, and repository-owned documents, not in the managed bootstrap text.
 - Installed fallback inventory: `.codeheart/kit/README.md`
 - Semantic plan catalog and portfolio coordination:
   `../planning-workflows/README.md`
+
+## Scripts
+
+Managed scripts are explicitly invoked workflow assets. Nothing runs them on install, repair,
+sync or upgrade.
+
+| Script | Role | Caller |
+| --- | --- | --- |
+| `scripts/forward-prepared-message.js` | Forwards one coordination helper outcome through the native send tool, claims the attempt and records a receipt-derived delivery status. | A Codex relay, only through the loader in `reference/cross-tool-coordination-contract.md`. |

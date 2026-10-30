@@ -1,4 +1,4 @@
-Last updated: 2026-10-10T16:09:55Z (UTC)
+Last updated: 2026-10-30T19:30:00Z (UTC)
 
 # Codex Task Operations
 
@@ -88,12 +88,15 @@ The cross-tool recipe in `../runbooks/coordinate-cross-tool-task.md` was qualifi
 desktop coordinator. Native subagents and task children are not report-back routes in that
 recipe: a native child's completion did not wake an idle parent, and app messages to a native
 ancestor or to a subagent recipient were rejected. Use an independent ordinary relay chat instead.
-The relay dispatches temporary transport workers that run the installed helper and send exactly
-one notice with `send_message_to_thread` to the requesting ordinary chat, following the runbook's
-dispatch rules: load only the `message_file` named in this invocation's helper output, otherwise
-its `fallback_message`; never resend an earlier attempt's result. Loading prepared arguments
-avoids retyping thread identifiers. Record the send with `coordination record-delivery` only when
-this invocation named a delivery record. Never bypass a rejected send or switch recipients. The Codex director reviews a Claude
+The relay dispatches temporary transport workers that run the installed helper and then the
+installed forwarder `../scripts/forward-prepared-message.js` once, in one JavaScript
+tool-execution cell, through the loader in `cross-tool-coordination-contract.md`. The forwarder
+receives `tools.mcp__codex_app__send_message_to_thread` and `tools.exec_command`. It sends exactly
+one notice to the requesting ordinary chat from the `message_file` or `fallback_message` this
+invocation named, and records a receipt-derived status. The worker never retypes message
+arguments, receipts or delivery status. A printed `next_owner` of `relay` is reported unchanged in
+the worker's own reply. Never resend an earlier attempt's result, bypass a rejected send or switch
+recipients. The Codex director reviews a Claude
 implementer's delivered work directly as the primary reviewer; reviewing needs no relay, second
 chat or model switch.
 

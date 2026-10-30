@@ -1,4 +1,4 @@
-Last updated: 2026-10-30T17:41:36Z (UTC)
+Last updated: 2026-10-30T19:30:00Z (UTC)
 Created: 2026-10-30
 
 # Deterministic Relay Delivery Execution Log
@@ -45,12 +45,83 @@ parsed object into the native send tool. It preserves the exact receipt and reco
 The director checks the known attempt once at a dependent checkpoint if a notice is missing.
 There is no watcher or automatic re-execution of Claude.
 
+## EP-01 Source Candidate
+
+Implementation started on 2026-10-30 from the merged activation checkpoint on the isolated
+branch `codex/deterministic-relay-delivery`. The implementer's native phase goal was confirmed
+active from the CLI's goal confirmation. Its permission profile was probed once: the allowed
+probe ran and the explicit ask probe was refused headlessly. The unlisted harmless `printf` probe
+unexpectedly ran, apparently because the CLI treats it as a read-only command needing no
+permission; an unlisted non-read-only command was refused. The profile was not changed. The
+deviation is reported to the director as qualification evidence.
+
+Changed behavior:
+
+- New managed workflow `components/agent-interface/managed/scripts/forward-prepared-message.js`,
+  installed at `.codeheart/kit/docs/agent-interface/scripts/`. It runs in the Codex
+  tool-execution runtime with injected native-send and shell callbacks, binds the helper outcome
+  to the authorized assignment, attempt, state root and destination, and checks that the helper
+  provides `record-delivery`. It reads `delivery.json` and `message.json` through framed,
+  byte-counted shell reads and claims the attempt by atomic `delivery-claim/` creation. It then
+  passes the parsed message object unchanged to the send tool once, saves the native result,
+  derives the status and records it with the existing `record-delivery`. After a definite
+  argument rejection only, it sends one compact failure notice. Fallback outcomes are sent once
+  per invocation without records. The compact result names the outcome, locators and next owner,
+  never the message or raw receipt.
+- Receipt interpretation: `sent` only for a success envelope (or a bare `{threadId}`) naming the
+  expected recipient; `rejected` only for the known invalid-arguments envelope. Any other error
+  envelope, throw, mismatch or unfamiliar shape is `uncertain`, with no notice or resend.
+- Guidance: the contract gains "Deterministic Forwarding" with the loader, inputs, sequence,
+  receipt table, result fields and recovery. The hybrid runbook's dispatch envelope runs the
+  loader instead of manual send and record steps, and its recovery covers claims. The Codex
+  operations reference, managed README script index, installed inventory and placement contract
+  name the asset and its caller.
+- Distribution: declared in the agent-interface component, mirrored as a packaged resource, with
+  the component checksum and content-graph digest refreshed. Go embedding already covered the
+  file; the helper's Go source is unchanged.
+- Feedback: `node --test tests/coordination-forwarder.test.cjs` added to the cheap `feedback`
+  job; public-core hygiene now also scans `.js` and `.cjs` files.
+
+Deliberate choices for review: helper output that is not one JSON outcome (for example a helper
+that failed to start) is a blocker that the relay reports in its own reply; the forwarder
+composes no message for it. An outcome naming a message file without its delivery record is a
+binding blocker. A failure notice follows a definite rejection even when its recording failed.
+The bare `{threadId}` receipt shape is accepted, but only the tool envelope has been observed
+from the native send tool so far.
+
+Consumer impact: additive managed file under an existing component target, with a reviewed
+external-action and recovery-policy change for relays (`security or safety policy change`), and
+a producer validator change. No consumer scaffold, migration or new prerequisite: consumers need
+no Node runtime. In-flight attempts keep their commissioned route; adoption is deliberate for new
+attempts. The script is not guidance-scope eligible, so release uses the broad candidate scope.
+
+Focused validation on macOS (Node 26, Go 1.26, Python 3.11 in the repo-local environment):
+
+- `node --test tests/coordination-forwarder.test.cjs`: 24 passed. Recording uses the real
+  helper built from this source; `exec_command` is emulated by running each generated command
+  string through `/bin/sh`; the native send tool is always a fake. It covers success,
+  error-shaped and unknown/mismatched receipts, throws, the incident's `thread` key, unsafe
+  paths and shell-sensitive text, truncated reads, failed persistence/recording, interruption,
+  concurrent and repeated entry, long-reply locators, fallbacks, and the documented loader.
+- `pytest` feedback set (routing, packaging, guidance candidate/lifecycle, release identity):
+  122 passed; sync/drift/init/install metadata/public-core/markdown: 43 passed; JSON schemas,
+  CLI and Go parity: 59 passed.
+- `go test` for manifest, state, kitfs, hash, coordination, CLI and commands packages: passed.
+- Public-core, Markdown header, JSON schema, release manifest and release identity validators:
+  passed.
+
+Limits: none of this exercises the Codex host. The actual `exec_command` parameters (`login`,
+`tty`, `yield_time_ms`, `max_output_tokens`), its result shape, `new Function` loading, the
+text-output function name and the live native receipt remain to be confirmed by the director's
+candidate exercise, together with the fresh low-context route walkthrough, primary review and
+one independent source review. No merge, release or adoption has occurred.
+
 ## Current State
 
-- Plan: active; activation publication is being completed.
-- Source implementation: not started; commissioning follows the planning merge.
-- Release and consumer adoption: not started.
-- EP-01 and EP-02: unaccepted.
+- Plan: active.
+- EP-01: source candidate pushed for director review, independent source review and the
+  Codex-host candidate exercise; unaccepted.
+- EP-02 release and consumer adoption: not started; authorized after EP-01 acceptance.
 - Workspace: retained by the commissioning director through implementation/review/release and
   adoption; remove only after the approved preservation and dependency checks, retaining its
   branch and useful evidence.

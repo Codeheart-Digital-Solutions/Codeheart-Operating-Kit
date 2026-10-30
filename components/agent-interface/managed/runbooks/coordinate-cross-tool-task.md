@@ -1,4 +1,4 @@
-Last updated: 2026-10-10T07:07:56Z (UTC)
+Last updated: 2026-10-30T19:30:00Z (UTC)
 
 # Coordinate Cross-Tool Task
 
@@ -53,7 +53,9 @@ reports as `unsupported_invocation`. The helper builds for Windows, but Windows 
 live Claude and desktop wakeup, cross-host delivery and Claude-led reverse execution are not
 qualified. The helper runs the executable directly; a Windows `.cmd` or `.bat` wrapper would be
 interpreted by `cmd.exe` with its own quoting rules and is not supported. Host messaging behavior
-can change; recheck it when a send is rejected or does not wake the coordinator.
+can change; recheck it when a send is rejected or does not wake the coordinator. The relay's
+forwarder runs only in the Codex desktop JavaScript tool-execution runtime with its native send
+and shell tools; an unfamiliar native result is reported as `uncertain`, never as delivered.
 
 ## User-Facing Flow
 
@@ -136,7 +138,9 @@ assignment can now be commissioned.
    prove that the relay's `PATH` resolves the same helper; an older one rejects the subcommand
    before Claude starts. If no suitable helper is available, follow `handle-tooling-readiness.md`.
    Do not silently install or update, change `PATH`, or leave the transport worker to look for
-   alternatives.
+   alternatives. Confirm also that the installed Kit contains
+   `.codeheart/kit/docs/agent-interface/scripts/forward-prepared-message.js`; the relay loads
+   that exact file. Without it, keep the attempt's earlier commissioned route or upgrade first.
 4. Write the brief from the owning records. For an approved implementation plan, use the native
    goal by default: open the brief with the supported `/goal <condition>` invocation for the
    current phase, aimed at a real handoff such as source review. Honor an explicit opt-out.
@@ -151,26 +155,24 @@ assignment can now be commissioned.
 
 ### 2. Dispatch And Yield
 
-Send the relay one compact envelope and then yield to the user:
+Send the relay one compact envelope and then yield to the user. Fill the forwarder loader from
+the contract's "Deterministic Forwarding" section with the script path and every input except
+the outcome:
 
 ```text
 Transport request for assignment <assignment_id>, attempt <attempt_id>.
 Run: "<verified helper path>" coordination invoke-claude --request "<request path>"
 Wait on that same process through ordinary tool output yields; do not restart it.
-Then send exactly one notice to send_message_to_thread, loading its arguments unchanged:
-- if the helper output names a message_file, that is a path to a JSON file, not an argument the
-  send tool accepts. Read and parse the file and pass its threadId, hostId and prompt values
-  unchanged as the tool's arguments. Then run
-  "<verified helper path>" coordination record-delivery for that attempt (sent, rejected or
-  uncertain, with the original receipt or error);
-- otherwise, if it contains fallback_message, send that object; do not run record-delivery;
-- otherwise, send the helper's original output to the authorized recipient below.
-Never load a message file the helper did not name in this output. If the notice cannot be
-delivered to the recipient, report an explicit delivery error in your own reply. A status that
-reaches only your native parent is not a successful report-back.
-Authorized recipient: <coordinator chat> on <host>. Do not read, summarize or act on the reply,
-and do not retry the helper. Use only the helper path given above; if it fails to start, send its
-original error to the recipient instead of looking for another helper.
+When it has ended, run the forwarder loader below once in one JavaScript tool-execution cell.
+Paste the helper's complete stdout JSON object unchanged as INPUT.outcome and change nothing
+else. The forwarder reads the message itself, sends exactly one notice and records the result;
+do not read, retype or send message arguments yourself and do not run record-delivery.
+<filled forwarder loader>
+If the cell prints next_owner "relay", or the loader or helper fails before printing a result,
+report that output or error unchanged in your own reply and stop. Do not resend, retry, edit
+records, delete a claim, or use another tool, helper or recipient. A status that reaches only
+your native parent is not a successful report-back.
+Authorized recipient: <coordinator chat> on <host>. Do not read, summarize or act on the reply.
 ```
 
 The helper names a `message_file` only when this invocation wrote it, which covers every outcome
@@ -178,8 +180,13 @@ after the attempt directory exists: replies, CLI failures, `session_locked`, `la
 `helper_interrupted`. A `fallback_message` covers failures before an attempt record exists, a
 message file that could not be written, and `attempt_exists`. For `attempt_exists` the notice is
 a new refusal, not the earlier result: the earlier attempt, message and delivery record stay
-unchanged and nothing is resent. A fallback send is not recorded in any attempt directory; if it
-also fails, the relay reports that in its own reply. Nothing is queued or retried.
+unchanged and nothing is resent. The forwarder handles both. It sends a fallback once without
+recording it and returns a blocker for helper output that is not one JSON outcome, such as a
+helper that failed to start. Nothing is queued or retried.
+
+If the relay's runtime cannot run the loader (no JavaScript tool execution, native send tool or
+shell tool), the relay reports that host-support blocker instead of forwarding by hand. Attempts
+commissioned before the forwarder was adopted keep the dispatch instructions they were given.
 
 With several active assignments, the relay dispatches one temporary transport worker per
 assignment and returns control. Workers send directly to the requesting ordinary chat. Do not
@@ -211,8 +218,11 @@ the result.
 ### 4. Recover
 
 - No notice arrived but the result is needed: read the known attempt directory once.
-  `delivery.json` shows `pending`, `sent`, `rejected` or `uncertain`. Pending can mean the worker
-  stopped before sending. Do not resend or relaunch automatically.
+  `delivery.json` shows `pending`, `sent`, `rejected` or `uncertain`. Pending without
+  `delivery-claim/` means nothing was sent by the forwarder; pending with a claim means a send
+  may have started before an interruption. Check your chat history, then read the original reply
+  from the attempt. Do not resend, relaunch, or remove the claim; see the contract's forwarder
+  outcomes for `refused`, `recording_failed` and `uncertain`.
 - `session_locked`: another attempt holds the session. Find it from the recorded lock owner.
 - `helper_interrupted` or a record left `preparing`, `launching` or `running`: effects are
   uncertain. Inspect the child process, the original output, the worktree and external state

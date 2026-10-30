@@ -1,4 +1,4 @@
-Last updated: 2026-07-31T22:23:19Z (UTC)
+Last updated: 2026-10-30T19:30:00Z (UTC)
 
 # Placement Contract
 
@@ -50,6 +50,10 @@ The Operating Kit may create or manage these consumer paths when the CLI is impl
 - Managed documentation component files target `.codeheart/kit/docs/<component>/`.
 - `.codeheart/kit/README.md` is the one G1 managed fallback inventory target outside
   `.codeheart/kit/docs/` because root `AGENTS.md` routes unclear kit-structure tasks there.
+- Managed host-executed workflow scripts target `.codeheart/kit/docs/<component>/scripts/` beside
+  the guidance that invokes them. They are explicitly invoked assets with a documented caller,
+  never install hooks, consumer scaffolds or globally installed commands, and they introduce no
+  consumer prerequisite beyond the host that runs them.
 - Agent-memory state scaffolds target `docs/agent-memory/` and are never overwritten after
   creation.
 - Repository documentation starters target `docs/repo/` only as absent-file scaffolds. Reusable
