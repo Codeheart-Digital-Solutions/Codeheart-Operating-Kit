@@ -1,4 +1,4 @@
-Last updated: 2026-10-30T18:32:36Z (UTC)
+Last updated: 2026-10-30T19:29:35Z (UTC)
 Created: 2026-10-30
 
 # Deterministic Relay Delivery Execution Log
@@ -214,12 +214,112 @@ On 2026-10-30 the commissioning director accepted EP-01 at `0ab0503`.
 - Gate: the single broad candidate run, artifact verification, publication, HQ adoption and final
   live smoke remain open.
 
+Candidate qualification:
+
+- Release PR #38 feedback passed on candidate `7980b0c`.
+- One broad candidate run, `41108029380` (all lanes), passed on that exact head: macOS,
+  Windows, Ubuntu semantic and the Git 2.43 proof.
+- Retrieved artifacts were verified:
+  - Each archive digest matches its sidecar and the catalog. Each pack-manifest digest matches
+    the catalog, and every payload checksum matches its file.
+  - The binary and content identities agree.
+  - The installers, bootstrap and notes are byte-equal to source.
+  - Both binaries embed the forwarder bytes qualified on the Codex host.
+- The director accepted the candidate for publication.
+
+## EP-02 Publication
+
+- Merge: release PR #38 merged normally to `main` as `5510bec`, pinned to `7980b0c`. The merge
+  tree is identical to the qualified candidate tree, so no release input changed after
+  qualification.
+- Publication: v0.1.39 was confirmed unused and then published from the merge commit:
+  - Release: [Operating Kit v0.1.39 — Deterministic relay forwarding](https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/releases/tag/v0.1.39)
+  - Tag `v0.1.39` points to `5510bec`.
+  - Audience: unchanged unsigned, unnotarized internal/prototype HTTPS-plus-SHA256.
+- Published assets: both packs and their sidecars are the qualified candidate artifacts,
+  unchanged. The public catalog differs from the candidate catalog only in its download URLs.
+  The 14 published assets and their digests:
+
+| Asset | SHA-256 |
+| --- | --- |
+| `codeheart-operating-kit-0.1.39-macos-universal.zip` | `2beb0a6e2deb3a09e18959f14031d60493b0e5acfc0c23d45b8a884805a15f42` |
+| `codeheart-operating-kit-0.1.39-windows-x64.zip` | `436c584874b0d37054c75cb714c5334d8f15f185ecd7210021ac40d86d0fcb20` |
+| `release-catalog-0.1.39.json` | `f29f043c18b3d6e667c13de93d47c36c44dd4ae79e4c2694dc8ba0355556ee29` |
+| `bootstrap.md` | `8269a8f4f3dc696639f305323986e97aed339ce6e593e1b885ac702f41585f43` |
+| `install.sh` | `6c423066d6e24e579a6f3548420688a3b8dcded1da32156326d68b597151d0ba` |
+| `install.ps1` | `488a1f3b2ac4281338b744d1ad5521292081ee288d70d47ecf1ef86acf20659f` |
+| `release-notes.md` | `cf1bcc971fd08b7473b9cfe4d9159b2b6fc3efd0ac67b47cc3b7bf365986cc76` |
+
+  Each of these also has a `.sha256` sidecar, for 14 assets in total.
+- Public download check: all 14 public downloads are byte-identical to the verified staged
+  assets.
+- Released-asset smoke: run `41113459170` with explicit `v0.1.39` passed on macOS and Windows.
+  Both public installers rejected a wrong checksum, installed v0.1.39 from the public catalog,
+  and then onboarded and checked a fresh consumer.
+- At publication, HQ adoption, the real Claude relay smoke and closure remained open; the
+  sections below record them.
+
+## EP-02 Named-Home Adoption
+
+- Upgrade: in an isolated adoption worktree, the named coordination home upgraded from v0.1.38 to
+  v0.1.39 through the supported lifecycle. It used a private copy of the verified v0.1.38 CLI and
+  the published catalog. The dry run and the apply both verified catalog, archive, pack, content
+  and binary provenance against the release.
+- Installed state: the forwarder matches the released and host-qualified digest. Checks before,
+  after and on the committed state were healthy, with no drift. Only the release's managed
+  agent-interface files and the lock changed.
+- Coordination reference: the home's existing reference now names the verified v0.1.39 helper and
+  routes new attempts through the installed forwarder, linking the managed contract instead of
+  duplicating it. Already commissioned attempts keep their route and helper.
+- Merge: the adoption PR merged normally to the home's `main`, and the usual checkout was
+  fast-forwarded. The final supported upgrade and installed-state check there passed with no
+  drift.
+- Helper selection: the local selection now names a verified v0.1.39 helper. The shared v0.1.38
+  helper is unchanged, so attempts already in flight keep their helpers.
+- Preservation: unrelated legacy files and local work in the usual checkout were confirmed
+  unchanged.
+
+## EP-02 Released Real Handoff
+
+- Relay instructions: the actual relay's dispatch instructions were updated for new attempts
+  only.
+- Smoke: one harmless released smoke assignment ran through the actual relay with the v0.1.39
+  helper and the installed forwarder. A real Claude session returned an original harmless reply
+  with no permission denials.
+- Delivery evidence: the native receipt was the qualified envelope naming the exact coordinator.
+  The delivery record says `sent` with the recipient confirmed.
+- Wakeup: the coordinator received the original reply automatically after yielding, without a
+  user turn.
+- Trace: the director inspected the relay's trace of the installed-script load, claim, native
+  send, receipt persistence and recording. Arguments were not reconstructed by the relay.
+- Privacy: the session, chat and evidence locators stay in the home's ignored assignment
+  records.
+
+## Closure
+
+The commissioning director accepted EP-02 and the complete delivery. Each part of the outcome is
+accepted on its own evidence:
+
+| Part | Accepted evidence |
+| --- | --- |
+| Source | PR #37, merged as `64288fa` |
+| Release | v0.1.39 from `5510bec`, with candidate `7980b0c`, broad run `41108029380` and public smoke `41113459170` |
+| Named-home adoption | Adoption merged on the home's `main` |
+| Real handoff | The released smoke above |
+
+Support limits: live delivery is accepted for the Codex desktop relay on macOS in the named
+coordination home only. Windows x64 has distribution and installer evidence but no live chat-host
+qualification, and other consumers have not adopted. Both remain deferred under the plan's
+Section 4.1. The workflow makes no exactly-once claim.
+
+No new release or executable change was made for closure. The source, candidate and public-smoke
+evidence above remains applicable.
+
 ## Current State
 
-- Plan: active; planning publication complete.
-- EP-01: accepted; source merged to `main` as `64288fa`.
-- EP-02: active. The v0.1.39 release candidate is in preparation, awaiting the broad candidate
-  gate and director candidate acceptance before any tag, publication or adoption.
-- Workspace: retained by the commissioning director through implementation/review/release and
-  adoption; remove only after the approved preservation and dependency checks, retaining its
-  branch and useful evidence.
+- Plan: completed on 2026-10-30.
+- EP-01 and EP-02: accepted.
+- Workspaces: the producer worktree is clean and integrated. It is retained until the
+  commissioning director reviews and merges this closure PR, with final evidence preserved.
+  The director then performs safe cleanup of both assignment worktrees (producer and HQ
+  adoption) once no live process depends on them. Branches and useful evidence are preserved.

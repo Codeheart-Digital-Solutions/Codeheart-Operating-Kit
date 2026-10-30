@@ -1,4 +1,4 @@
-Last updated: 2026-10-30T18:32:36Z (UTC)
+Last updated: 2026-10-30T19:29:35Z (UTC)
 
 # Repo Plans
 
@@ -17,12 +17,12 @@ entries after mixed cutover.
 
 ## Current Plans
 
-- Active [deterministic relay delivery implementation plan](deterministic-relay-delivery/deterministic-relay-delivery_implementation_doc.md):
-  a Kit-owned host-executed forwarding function, truthful receipts and failure handling, followed
-  by release and verified adoption in the named coordination home. Approved for whole delivery
-  on 2026-10-30. EP-01 is accepted and merged; EP-02 (the v0.1.39 release candidate and then
-  adoption) is active. The [execution log](deterministic-relay-delivery/deterministic-relay-delivery_execution_log.md)
-  records commissioning and actual progress.
+- Completed [deterministic relay delivery implementation plan](deterministic-relay-delivery/deterministic-relay-delivery_implementation_doc.md):
+  a Kit-owned host-executed forwarding workflow with truthful receipts and failure handling.
+  v0.1.39 was released and adopted on the named coordination home's `main`, and a real Claude
+  reply passed through its actual relay. Live delivery is accepted for that home's macOS Codex
+  relay only. The [execution log](deterministic-relay-delivery/deterministic-relay-delivery_execution_log.md)
+  records the evidence.
 
 - Completed cross-tool agent coordination discovery and implementation plan (v0.1.35 and v0.1.36
   released; named coordination home adopted): accepted bounded pilots, strict relay transport, a
