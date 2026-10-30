@@ -1,4 +1,4 @@
-Last updated: 2026-10-10T19:10:23Z (UTC)
+Last updated: 2026-10-30T17:41:36Z (UTC)
 
 # Repo Plans
 
@@ -16,6 +16,12 @@ codeheart-operating-kit plans list --format json .
 entries after mixed cutover.
 
 ## Current Plans
+
+- Active [deterministic relay delivery implementation plan](deterministic-relay-delivery/deterministic-relay-delivery_implementation_doc.md):
+  a Kit-owned host-executed forwarding function, truthful receipts and failure handling, followed
+  by release and verified adoption in the named coordination home. Approved for whole delivery
+  on 2026-10-30; the [execution log](deterministic-relay-delivery/deterministic-relay-delivery_execution_log.md)
+  records commissioning and actual progress.
 
 - Completed cross-tool agent coordination discovery and implementation plan (v0.1.35 and v0.1.36
   released; named coordination home adopted): accepted bounded pilots, strict relay transport, a
