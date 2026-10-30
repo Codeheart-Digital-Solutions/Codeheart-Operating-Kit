@@ -21,6 +21,7 @@ var CodeheartRelayForwarder = (function () {
   var CLAIM_DIR = 'delivery-claim';
   var RECEIPT_FILE = 'receipt.json';
   var NOTICE_RECEIPT_FILE = 'failure-notice-receipt.json';
+  var FALLBACK_RECEIPT_DIR = 'forwarder-receipts';
   var SEND_TOOL = 'mcp__codex_app__send_message_to_thread';
   var SHELL_TOOL = 'exec_command';
   var TRANSPORT_ONLY = 'Transport status only; not task acceptance.';
@@ -32,6 +33,8 @@ var CodeheartRelayForwarder = (function () {
     'cat -- "$1" || exit 4; printf \'\\n%s\\n\' "$2"';
   // Writes one new private file; noclobber refuses an existing file.
   var WRITE_SCRIPT = 'umask 077; set -C; printf \'%s\\n\' "$1" > "$2"';
+  // Creates one private directory and its missing parents.
+  var MKDIR_SCRIPT = 'umask 077; mkdir -p -- "$1"';
 
   function Stop(outcome, reason, detail) {
     this.outcome = outcome;
@@ -217,11 +220,18 @@ var CodeheartRelayForwarder = (function () {
     return outcome;
   }
 
-  // classifyReceipt derives a delivery status from the native tool result. Only a recognized
-  // success that names the expected recipient is sent; only the known argument rejection is
-  // rejected; anything else is uncertain.
+  // classifyReceipt derives a delivery status from the native tool result. Only the observed
+  // minimal shapes qualify: an envelope of exactly {content, isError} holding exactly one
+  // {type: 'text', text} item, whose success text is exactly {"threadId": <expected>}, or that
+  // payload itself. Only the exact known argument-rejection text in such an envelope is
+  // rejected. Any extra, conflicting or unfamiliar field (error, errors, status, a nested
+  // isError) and any other error, such as a permission refusal, is uncertain.
   function classifyReceipt(receipt, expectedThreadId) {
-    function reported(threadId, shape) {
+    function reported(payload, shape) {
+      if (!isPlainObject(payload) || !sameKeys(payload, ['threadId'])) {
+        return { status: 'uncertain', shape: shape, reason: 'unrecognized_receipt' };
+      }
+      var threadId = payload.threadId;
       if (!plainValue(threadId)) {
         return { status: 'uncertain', shape: shape, reason: 'no_recipient_in_receipt' };
       }
@@ -230,38 +240,28 @@ var CodeheartRelayForwarder = (function () {
       }
       return { status: 'sent', shape: shape, reason: 'accepted', reportedThreadId: threadId };
     }
-    function threadObject(value) {
-      return isPlainObject(value) && !('error' in value) && !('errors' in value) &&
-        typeof value.threadId === 'string';
-    }
-    if (isPlainObject(receipt) && Array.isArray(receipt.content) && typeof receipt.isError === 'boolean') {
-      var texts = receipt.content.filter(function (item) {
-        return isPlainObject(item) && item.type === 'text' && typeof item.text === 'string';
-      }).map(function (item) {
-        return item.text.trim();
-      });
+    if (isPlainObject(receipt) && 'content' in receipt) {
+      var item = Array.isArray(receipt.content) && receipt.content.length === 1 ? receipt.content[0] : null;
+      var text = isPlainObject(item) && sameKeys(item, ['text', 'type']) && item.type === 'text' &&
+        typeof item.text === 'string' ? item.text.trim() : null;
+      if (!sameKeys(receipt, ['content', 'isError']) || typeof receipt.isError !== 'boolean' || text === null) {
+        return { status: 'uncertain', shape: 'unrecognized', reason: 'unrecognized_receipt' };
+      }
       if (receipt.isError) {
-        if (texts.length === 1 && REJECTED_ARGUMENTS.test(texts[0])) {
+        if (REJECTED_ARGUMENTS.test(text)) {
           return { status: 'rejected', shape: 'mcp_envelope', reason: 'invalid_arguments' };
         }
         return { status: 'uncertain', shape: 'mcp_envelope', reason: 'error_envelope' };
       }
-      if ('error' in receipt || texts.length !== 1 || texts.length !== receipt.content.length) {
-        return { status: 'uncertain', shape: 'mcp_envelope', reason: 'unrecognized_receipt' };
-      }
-      var inner = parseJSONObject(texts[0]);
-      if (!threadObject(inner)) {
-        return { status: 'uncertain', shape: 'mcp_envelope', reason: 'unrecognized_receipt' };
-      }
-      return reported(inner.threadId, 'mcp_envelope');
+      return reported(parseJSONObject(text), 'mcp_envelope');
     }
     if (typeof receipt === 'string') {
       var parsed = parseJSONObject(receipt);
-      if (parsed !== null && sameKeys(parsed, ['threadId'])) {
-        return reported(parsed.threadId, 'thread_text');
+      if (parsed !== null) {
+        return reported(parsed, 'thread_text');
       }
-    } else if (isPlainObject(receipt) && sameKeys(receipt, ['threadId'])) {
-      return reported(receipt.threadId, 'thread_object');
+    } else if (isPlainObject(receipt) && 'threadId' in receipt) {
+      return reported(receipt, 'thread_object');
     }
     return { status: 'uncertain', shape: 'unrecognized', reason: 'unrecognized_receipt' };
   }
@@ -321,6 +321,9 @@ var CodeheartRelayForwarder = (function () {
     return result;
   }
 
+  // forwardFallback sends a fallback notice once. It owns no attempt record, so it keeps the
+  // native receipt in a new uniquely named sidecar below <state_root>/forwarder-receipts/ and
+  // never touches attempts/, including an earlier attempt named by attempt_exists.
   async function forwardFallback(input, outcome, callbacks, result) {
     result.once_only = 'invocation';
     result.detail = 'Fallback notice without a delivery record; it is sent at most once by this ' +
@@ -336,6 +339,19 @@ var CodeheartRelayForwarder = (function () {
     result.receipt_shape = sent.shape;
     result.reason = sent.reason;
     result.outcome = sent.status === 'sent' ? 'delivered' : sent.status;
+    var receiptDir = input.stateRoot + '/' + FALLBACK_RECEIPT_DIR + '/' + input.assignmentId;
+    var receiptFile = receiptDir + '/' + input.attemptId + '-fallback-' + Date.now().toString(36) + '-' +
+      Math.random().toString(36).slice(2) + '.json';
+    try {
+      var made = await callbacks.runCommand(['/bin/sh', '-c', MKDIR_SCRIPT, 'sh', receiptDir]);
+      if (made.exitCode !== 0) {
+        throw new Error('directory creation exited ' + made.exitCode);
+      }
+      await writeNewFile(callbacks.runCommand, receiptFile, sent.evidence);
+      result.receipt_file = receiptFile;
+    } catch (error) {
+      result.receipt_problem = 'receipt not persisted: ' + error.message;
+    }
     return result;
   }
 

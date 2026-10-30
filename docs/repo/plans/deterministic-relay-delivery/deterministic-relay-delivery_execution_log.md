@@ -1,4 +1,4 @@
-Last updated: 2026-10-30T19:30:00Z (UTC)
+Last updated: 2026-10-30T18:20:26Z (UTC)
 Created: 2026-10-30
 
 # Deterministic Relay Delivery Execution Log
@@ -46,6 +46,9 @@ The director checks the known attempt once at a dependent checkpoint if a notice
 There is no watcher or automatic re-execution of Claude.
 
 ## EP-01 Source Candidate
+
+This section records the first candidate, `3f4b477`, as it was handed off. The source
+correction below supersedes its receipt and fallback behavior.
 
 Implementation started on 2026-10-30 from the merged activation checkpoint on the isolated
 branch `codex/deterministic-relay-delivery`. The implementer's native phase goal was confirmed
@@ -116,11 +119,51 @@ text-output function name and the live native receipt remain to be confirmed by 
 candidate exercise, together with the fresh low-context route walkthrough, primary review and
 one independent source review. No merge, release or adoption has occurred.
 
+Candidate handoff outcome: the commit was pushed, but the implementer's inline `gh pr create`
+was refused by the headless permission check, although the profile lists that command; its
+Markdown body contained backquotes and dollar signs. Per the assignment, the refusal was reported
+unchanged and not retried in another form. The phase goal kept requiring the PR, the same blocker
+was repeated until the CLI's stop-hook limit ended the turn, and the attempt's final result was
+empty. The candidate, branch and evidence were retained, and the substantive handoff had already
+been given earlier in that session. The source-review PR remains absent pending the owner's
+decision on a body-file retry; the prepared body is kept for that route.
+
+## EP-01 Source Correction 1
+
+The director and the independent reviewer reviewed `3f4b477` and withheld acceptance pending two
+receipt-evidence corrections. They found no other material issue; the fresh low-context recovery
+walkthrough passed and changed packaged resources matched source.
+
+- Receipt classifier: a success envelope with the expected `threadId` beside a nested
+  `isError: true`, a `status` of `rejected` or `failed`, or a top-level `errors` field was
+  classified `sent`. Success now requires the observed minimal shape exactly: an envelope of only
+  `{content, isError}` with one `{type, text}` text item whose JSON is exactly `{threadId}` for the
+  destination, or that exact payload. `rejected` requires the exact known invalid-arguments text
+  in such an envelope, so a permission or security error, or any extra or conflicting field, is
+  `uncertain` and cannot trigger a failure notice.
+- Fallback receipt preservation: a fallback send kept no native evidence. It now writes the native
+  result or thrown error to a new, uniquely named private file below
+  `<state_root>/forwarder-receipts/<assignment_id>/`, returns its locator, and reports
+  `receipt_problem` when it cannot be saved. It never touches `attempts/` (including the earlier
+  attempt named by `attempt_exists`), records no delivery state, and still sends at most once per
+  invocation.
+- The contract's receipt table, fallback paragraph and result fields describe both changes.
+  Markdown timestamps that were set ahead of the actual time in the first candidate are
+  corrected to the original commit time or the correction time.
+
+Focused validation: `node --test tests/coordination-forwarder.test.cjs` passed 27 tests. New
+cases cover the reviewers' conflicting wrappers, permission-like errors near the rejection text,
+qualified success, fallback success, rejection, unknown and thrown receipts, failed sidecar
+persistence, and an unchanged `attempt_exists` attempt. Source-to-packaged equality, routing and
+packaging tests, the manifest graph digest, and the public-core, Markdown, release-manifest and
+release-identity validators were rerun. Unaffected Go and broad Python evidence is reused.
+
 ## Current State
 
 - Plan: active.
-- EP-01: source candidate pushed for director review, independent source review and the
-  Codex-host candidate exercise; unaccepted.
+- EP-01: corrected source candidate pushed for director and independent re-review and the
+  Codex-host candidate exercise; unaccepted. The source PR is absent pending the owner's
+  permission decision.
 - EP-02 release and consumer adoption: not started; authorized after EP-01 acceptance.
 - Workspace: retained by the commissioning director through implementation/review/release and
   adoption; remove only after the approved preservation and dependency checks, retaining its

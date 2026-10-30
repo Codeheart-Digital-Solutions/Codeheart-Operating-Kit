@@ -1,4 +1,4 @@
-Last updated: 2026-10-30T19:30:00Z (UTC)
+Last updated: 2026-10-30T18:20:26Z (UTC)
 
 # Cross-Tool Coordination Contract
 
@@ -224,17 +224,21 @@ Sequence for an outcome that names `message_file`:
 
 A `fallback_message` outcome has no attempt record of its own: for example, `attempt_exists`
 names an earlier attempt that must stay untouched. The forwarder validates and sends that
-parsed object once, writes nothing and records nothing. Nothing guarantees once-only delivery
-across separate invocations for a fallback; the result says so with `once_only: invocation`.
-An outcome with neither field, both fields, or text that is not one JSON object is a blocker.
+parsed object once and records no delivery state. It keeps the native result or thrown error in
+a new, uniquely named private file below `<state_root>/forwarder-receipts/<assignment_id>/`,
+never below `attempts/`; if that file cannot be written, the result says so in
+`receipt_problem` and nothing is resent. Nothing guarantees once-only delivery across separate
+invocations for a fallback; the result says so with `once_only: invocation`. An outcome with
+neither field, both fields, or text that is not one JSON object is a blocker.
 
-Receipt interpretation:
+Receipt interpretation. A tool envelope here means exactly `{content, isError}`, with a boolean
+`isError` and exactly one `{type: "text", text}` item:
 
 | Native result | Derived status |
 | --- | --- |
-| Tool envelope with `isError: false` and one text item whose JSON names the destination's `threadId`; or exactly `{threadId}` for the destination, as an object or JSON text | `sent` |
-| Tool envelope with `isError: true` and exactly the known invalid-arguments text | `rejected` |
-| Any other error envelope, including a permission or approval refusal; a thrown call; a different or missing `threadId`; any unfamiliar shape | `uncertain` |
+| Envelope with `isError: false` whose text is JSON exactly `{"threadId": <destination>}`; or that exact payload as an object or JSON text | `sent` |
+| Envelope with `isError: true` whose whole text is the known `send_message_to_thread received invalid arguments.` | `rejected` |
+| Any other error envelope, including a permission, approval or security refusal; any extra, conflicting or unfamiliar field such as `error`, `errors`, `status` or a nested `isError`; a thrown call; a different or missing `threadId`; any other shape | `uncertain` |
 
 An error envelope is never success. A permission refusal or an uncertain send never triggers a
 failure notice, a resend or another tool. A changed host receipt shape therefore yields
@@ -248,6 +252,7 @@ The compact result is printed as JSON and never contains the message or the raw 
 | `reason`, `detail` | Machine reason and short explanation. |
 | `send_attempted`, `derived_status`, `recorded`, `delivery_status` | Whether the native tool was called, what its result means, and the record state after this call. |
 | `attempt_dir`, `delivery_file`, `claim_dir`, `receipt_file`, `receipt_shape` | Locators and the recognized receipt shape. |
+| `receipt_problem` | Present only when a fallback's receipt could not be saved. |
 | `failure_notice` | Status and receipt locator of the one failure notice, or `null`. |
 | `once_only` | `attempt_claim` for recorded attempts, `invocation` for fallbacks. |
 | `next_owner`, `next_step` | `coordinator` when the reply or a failure notice was delivered; otherwise `relay`. |

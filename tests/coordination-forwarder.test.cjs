@@ -431,12 +431,8 @@ test('concurrent and repeated entry produce exactly one send', async (t) => {
   assert.equal(later.calls.sends.length, 0);
 });
 
-test('a fallback outcome is sent once without inventing or touching attempt records', async () => {
-  const f = fixture();
-  const before = fs.readdirSync(f.attemptDir).sort();
-  const deliveryBefore = fs.readFileSync(path.join(f.attemptDir, 'delivery.json'));
-  const fallback = { threadId: THREAD, hostId: HOST, prompt: 'Claude CLI attempt attempt-1 for assignment assign-a: attempt_exists.\n' + SENSITIVE };
-  const outcome = {
+function attemptExistsOutcome(f, fallback) {
+  return {
     status: 'attempt_exists',
     detail: 'this attempt was already started',
     assignment_id: ASSIGNMENT,
@@ -446,43 +442,158 @@ test('a fallback outcome is sent once without inventing or touching attempt reco
     fallback_message: fallback,
     permission_denials: 0
   };
+}
+
+function snapshot(dir) {
+  return fs.readdirSync(dir).sort().map((name) => [name, fs.readFileSync(path.join(dir, name))]);
+}
+
+function assertFallbackReceipt(f, result, expected) {
+  const sidecarRoot = path.join(f.stateRoot, 'forwarder-receipts', ASSIGNMENT);
+  assert.ok(result.receipt_file.startsWith(sidecarRoot + path.sep), result.receipt_file);
+  assert.ok(!result.receipt_file.includes(path.sep + 'attempts' + path.sep));
+  assert.deepEqual(readJSON(result.receipt_file), expected);
+  assert.equal(fs.statSync(result.receipt_file).mode & 0o077, 0, 'the sidecar is private');
+  assert.equal(result.receipt_problem, undefined);
+}
+
+test('an attempt_exists fallback is sent once, keeps its receipt in a sidecar and leaves the old attempt untouched', async () => {
+  const f = fixture();
+  const before = snapshot(f.attemptDir);
+  const fallback = { threadId: THREAD, hostId: HOST, prompt: 'Claude CLI attempt attempt-1 for assignment assign-a: attempt_exists.\n' + SENSITIVE };
   const { tools, calls } = host(f);
-  const result = await forwarder.forwardWithCodexTools(tools, input(f, { outcome, helperPath: '/bin/unused-helper' }));
+  const result = await forwarder.forwardWithCodexTools(tools, input(f, { outcome: attemptExistsOutcome(f, fallback), helperPath: '/bin/unused-helper' }));
   assert.equal(result.outcome, 'delivered', JSON.stringify(result));
   assert.equal(result.once_only, 'invocation');
   assert.equal(result.recorded, false);
   assert.equal(calls.sends.length, 1);
   assert.equal(calls.sends[0], fallback, 'the parsed fallback object itself is forwarded');
-  assert.equal(calls.commands.length, 0);
-  assert.deepEqual(fs.readdirSync(f.attemptDir).sort(), before);
-  assert.deepEqual(fs.readFileSync(path.join(f.attemptDir, 'delivery.json')), deliveryBefore);
+  assertFallbackReceipt(f, result, envelope(THREAD));
+  assert.ok(!JSON.stringify(result).includes('Reply with'), 'the compact result never carries the message');
+  assert.deepEqual(snapshot(f.attemptDir), before, 'the earlier attempt is unchanged');
   assertNoInjection(f);
 
+  // A second invocation is a separate send with its own sidecar; nothing is overwritten.
+  const again = host(f);
+  const second = await forwarder.forwardWithCodexTools(again.tools, input(f, { outcome: attemptExistsOutcome(f, fallback), helperPath: '/bin/unused-helper' }));
+  assert.notEqual(second.receipt_file, result.receipt_file);
+  assert.deepEqual(readJSON(result.receipt_file), envelope(THREAD));
+  assert.deepEqual(snapshot(f.attemptDir), before);
+});
+
+test('fallback rejection, unknown and thrown receipts are preserved privately without a second notice', async () => {
+  const f = fixture();
+  const before = snapshot(f.attemptDir);
   const invalidRequest = { status: 'invalid_request', problems: ['brief_file must be an existing regular file'], fallback_message: { threadId: THREAD, hostId: HOST, prompt: 'rejected before launch' }, permission_denials: 0 };
-  const second = host(f, { send: () => errorEnvelope('send_message_to_thread received invalid arguments.') });
+  const rejection = errorEnvelope('send_message_to_thread received invalid arguments.');
+  const second = host(f, { send: () => rejection });
   const rejected = await forwarder.forwardWithCodexTools(second.tools, input(f, { outcome: invalidRequest }));
   assert.equal(rejected.outcome, 'rejected');
   assert.equal(second.calls.sends.length, 1, 'a fallback is never followed by a second notice');
   assert.equal(rejected.next_owner, 'relay');
+  assertFallbackReceipt(f, rejected, rejection);
+
+  const unknown = { content: [{ type: 'text', text: JSON.stringify({ threadId: THREAD, status: 'failed' }) }], isError: false };
+  const third = host(f, { send: () => unknown });
+  const uncertain = await forwarder.forwardWithCodexTools(third.tools, input(f, { outcome: invalidRequest }));
+  assert.equal(uncertain.outcome, 'uncertain');
+  assert.equal(third.calls.sends.length, 1);
+  assertFallbackReceipt(f, uncertain, unknown);
+
+  const fourth = host(f, { send: () => { throw new Error('approval declined'); } });
+  const thrown = await forwarder.forwardWithCodexTools(fourth.tools, input(f, { outcome: invalidRequest }));
+  assert.equal(thrown.outcome, 'uncertain');
+  assert.equal(thrown.reason, 'send_threw');
+  assert.equal(fourth.calls.sends.length, 1);
+  assertFallbackReceipt(f, thrown, { forwarder_send_exception: { name: 'Error', message: 'approval declined' } });
+  assert.deepEqual(snapshot(f.attemptDir), before);
 });
 
-test('receipt classification accepts only recognized success shapes for the expected recipient', () => {
+test('a fallback receipt that cannot be saved is reported truthfully without another send', async () => {
+  const f = fixture();
+  const before = snapshot(f.attemptDir);
+  const fallback = { threadId: THREAD, hostId: HOST, prompt: 'attempt_exists notice' };
+  for (const failing of ['mkdir -p --', 'set -C;']) {
+    const { tools, calls } = host(f, { exec: (params) => (params.cmd.includes(failing) ? { output: 'denied', exit_code: 1 } : null) });
+    const result = await forwarder.forwardWithCodexTools(tools, input(f, { outcome: attemptExistsOutcome(f, fallback), helperPath: '/bin/unused-helper' }));
+    assert.equal(result.outcome, 'delivered', failing);
+    assert.equal(result.receipt_file, undefined);
+    assert.match(result.receipt_problem, /^receipt not persisted: /);
+    assert.equal(calls.sends.length, 1);
+  }
+  const unavailable = host(f, { exec: () => { throw new Error('shell refused'); } });
+  const refused = await forwarder.forwardWithCodexTools(unavailable.tools, input(f, { outcome: attemptExistsOutcome(f, fallback), helperPath: '/bin/unused-helper' }));
+  assert.equal(refused.receipt_problem, 'receipt not persisted: shell refused');
+  assert.equal(unavailable.calls.sends.length, 1);
+  assert.deepEqual(snapshot(f.attemptDir), before);
+});
+
+test('receipt classification accepts only the qualified minimal success for the expected recipient', () => {
   const classify = forwarder.classifyReceipt;
-  assert.equal(classify(envelope(THREAD), THREAD).status, 'sent');
+  const wrapped = (payload, extra = {}) => ({ content: [{ type: 'text', text: JSON.stringify(payload) }], isError: false, ...extra });
+  // Qualified success: the observed native envelope, or its exact payload.
+  assert.deepEqual(classify(envelope(THREAD), THREAD), { status: 'sent', shape: 'mcp_envelope', reason: 'accepted', reportedThreadId: THREAD });
+  assert.equal(classify(wrapped({ threadId: THREAD }), THREAD).status, 'sent');
   assert.equal(classify({ threadId: THREAD }, THREAD).status, 'sent');
   assert.equal(classify(JSON.stringify({ threadId: THREAD }), THREAD).status, 'sent');
   assert.equal(classify(errorEnvelope('send_message_to_thread received invalid arguments.'), THREAD).status, 'rejected');
-  for (const receipt of [
+  assert.equal(classify(errorEnvelope('  send_message_to_thread received invalid arguments  '), THREAD).status, 'rejected');
+  const uncertain = [
+    // Reviewer reproductions: conflicting inner or outer error/status fields beside the expected threadId.
+    wrapped({ threadId: THREAD, isError: true }),
+    wrapped({ threadId: THREAD, status: 'rejected' }),
+    wrapped({ threadId: THREAD, status: 'failed' }),
+    wrapped({ threadId: THREAD, error: 'x' }),
+    wrapped({ threadId: THREAD }, { errors: ['late failure'] }),
+    wrapped({ threadId: THREAD }, { error: 'late failure' }),
+    wrapped({ threadId: THREAD }, { status: 'failed' }),
+    wrapped({ threadId: THREAD }, { structuredContent: { threadId: THREAD } }),
+    { content: [{ type: 'text', text: JSON.stringify({ threadId: THREAD }), annotations: {} }], isError: false },
+    { content: [{ type: 'text', text: JSON.stringify({ threadId: THREAD }) }, { type: 'text', text: 'x' }], isError: false },
+    { content: [{ type: 'text', text: JSON.stringify({ threadId: THREAD }) }], isError: 'false' },
+    { content: [{ type: 'text', text: JSON.stringify({ threadId: THREAD }) }] },
     { ...envelope(THREAD), isError: true },
-    { ...envelope(THREAD), error: 'late failure' },
-    { content: [{ type: 'text', text: JSON.stringify({ threadId: THREAD, error: 'x' }) }], isError: false },
-    { threadId: THREAD, status: 'failed' },
     { content: [], isError: false },
+    { threadId: THREAD, status: 'failed' },
+    { threadId: THREAD, isError: false },
+    JSON.stringify({ threadId: THREAD, status: 'rejected' }),
     null,
     'sent',
     42
+  ];
+  for (const receipt of uncertain) {
+    assert.equal(classify(receipt, THREAD).status, 'uncertain', JSON.stringify(receipt));
+  }
+  // A permission or security error never qualifies as the definite rejection that triggers a notice.
+  for (const receipt of [
+    errorEnvelope('Permission denied: send_message_to_thread received invalid arguments.'),
+    errorEnvelope('send_message_to_thread received invalid arguments. Approval required.'),
+    errorEnvelope('User denied the tool call.'),
+    { ...errorEnvelope('send_message_to_thread received invalid arguments.'), errors: ['security policy'] },
+    { content: [{ type: 'text', text: 'send_message_to_thread received invalid arguments.' }, { type: 'text', text: 'blocked by policy' }], isError: true }
   ]) {
     assert.equal(classify(receipt, THREAD).status, 'uncertain', JSON.stringify(receipt));
+  }
+});
+
+test('conflicting success wrappers are recorded uncertain and never trigger a notice', async (t) => {
+  if (needsHelper(t)) return;
+  for (const receipt of [
+    { content: [{ type: 'text', text: JSON.stringify({ threadId: THREAD, isError: true }) }], isError: false },
+    { content: [{ type: 'text', text: JSON.stringify({ threadId: THREAD, status: 'rejected' }) }], isError: false },
+    { ...envelope(THREAD), errors: ['late failure'] },
+    { ...errorEnvelope('send_message_to_thread received invalid arguments.'), errors: ['security policy'] }
+  ]) {
+    const f = fixture();
+    const { tools, calls } = host(f, { send: () => receipt });
+    const result = await forwarder.forwardWithCodexTools(tools, input(f));
+    assert.equal(result.outcome, 'uncertain', JSON.stringify(receipt));
+    assert.equal(result.failure_notice, null);
+    assert.equal(calls.sends.length, 1);
+    const delivery = readJSON(path.join(f.attemptDir, 'delivery.json'));
+    assert.equal(delivery.status, 'uncertain');
+    assert.equal(delivery.recipient_confirmed, false);
+    assert.deepEqual(JSON.parse(delivery.receipt), receipt);
   }
 });
 
