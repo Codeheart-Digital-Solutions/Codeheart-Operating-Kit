@@ -1,4 +1,4 @@
-Last updated: 2026-10-30T18:24:32Z (UTC)
+Last updated: 2026-10-30T18:32:36Z (UTC)
 Created: 2026-10-30
 
 # Deterministic Relay Delivery Execution Log
@@ -175,12 +175,51 @@ The user explicitly approved one retry of the refused PR creation through the pr
 under the unchanged permission profile; review, merge and release gates are unchanged. The retry
 is made from this correction's head and its result is reported in the handoff.
 
+The retry succeeded: source PR #37 opened at `0ab0503` under the unchanged profile.
+
+## EP-01 Acceptance
+
+On 2026-10-30 the commissioning director accepted EP-01 at `0ab0503`.
+
+- Reviews: primary review and the retained independent reviewer passed with no remaining source
+  findings, and the fresh-context recovery routing probe passed. PR feedback run `41106837142`
+  passed on that exact head.
+- Native host exercise:
+  - The actual Codex tool-execution runtime loaded the packaged candidate and confirmed the
+    native send and shell tools, loader evaluation and text output.
+  - It blocked a malformed message and classified permission-error and conflicting-receipt
+    fixtures as `uncertain` without live sends.
+  - The actual relay then ran the same candidate once on a clearly synthetic fixture. The native
+    send returned the qualified envelope, the receipt was saved, and `record-delivery` recorded
+    `sent` with the recipient confirmed. The director received the prepared marker after
+    yielding.
+- Boundaries: the synthetic proof is candidate qualification only. It does not replace the
+  post-adoption smoke with a real Claude consultation. Private locators and receipts stay in the
+  coordination home's ignored assignment evidence.
+- Merge: the repository rules allowed an ordinary merge without any rule change or bypass. PR #37
+  merged normally to `main` as `64288fa`, pinned to the accepted head; the source branch is
+  preserved.
+
+## EP-02 Release Candidate
+
+- Version: v0.1.39 is the next unused patch. Live tags and releases end at v0.1.38, and no open
+  PR reserves a version.
+- Branch: the release candidate is prepared on `codex/deterministic-relay-release` from `64288fa`.
+- Identities: all v0.1.39 literals are updated (CLI, Python package, installers, bootstrap,
+  release-candidate fixture, agent-interface component and standard profile), and the
+  declaration checksums, graph digest and packaged mirrors are refreshed.
+- Release notes: they state the executable coordination, external-action and validator impact,
+  helper compatibility, the in-flight attempt boundary, the macOS live-host scope and the
+  unchanged unsigned internal/prototype audience.
+- Gate: the single broad candidate run, artifact verification, publication, HQ adoption and final
+  live smoke remain open.
+
 ## Current State
 
 - Plan: active; planning publication complete.
-- EP-01: source review awaits this final correction and the director's Codex-host candidate
-  probe; unaccepted. The source PR is created through the approved body-file retry.
-- EP-02 release and consumer adoption: not started; authorized after EP-01 acceptance.
+- EP-01: accepted; source merged to `main` as `64288fa`.
+- EP-02: active. The v0.1.39 release candidate is in preparation, awaiting the broad candidate
+  gate and director candidate acceptance before any tag, publication or adoption.
 - Workspace: retained by the commissioning director through implementation/review/release and
   adoption; remove only after the approved preservation and dependency checks, retaining its
   branch and useful evidence.

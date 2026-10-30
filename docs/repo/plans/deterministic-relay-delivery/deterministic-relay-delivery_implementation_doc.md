@@ -1,4 +1,4 @@
-Last updated: 2026-10-30T17:41:36Z (UTC)
+Last updated: 2026-10-30T18:32:36Z (UTC)
 Created: 2026-10-30
 Status: active
 
@@ -280,15 +280,15 @@ only the named harmless-message authority and precedes release acceptance.
 
 ### F) Tasks Checklist
 
-- [ ] Implement the workflow, deterministic loader and narrowly injected host callbacks; validate
+- [x] Implement the workflow, deterministic loader and narrowly injected host callbacks; validate
       destination/outcome binding, safely claim a recorded attempt, forward once and retain receipts.
-- [ ] Implement receipt classification, existing-helper recording and bounded failure-notice
+- [x] Implement receipt classification, existing-helper recording and bounded failure-notice
       behavior, with conservative interruption and re-entry outcomes from Section 2.3.
-- [ ] Declare and mirror the installed asset; update the compact role index, placement guidance,
+- [x] Declare and mirror the installed asset; update the compact role index, placement guidance,
       hybrid runbook and agent references with the exact invocation and recovery boundaries.
-- [ ] Add and run focused fixtures and packaging checks; integrate only those script checks into
+- [x] Add and run focused fixtures and packaging checks; integrate only those script checks into
       cheap feedback. Run applicable public-core, Markdown and source/mirror equality checks.
-- [ ] Exercise the candidate through the actual host, including successful native receipt and
+- [x] Exercise the candidate through the actual host, including successful native receipt and
       controlled non-live failure cases; complete the fresh-context route walkthrough and primary
       plus independent source review. Record evidence, limitations and the reviewed candidate.
 
@@ -385,6 +385,9 @@ Keep the function portable through injected capabilities while qualifying only d
 
 # Revision Notes
 
+- 2026-10-30: EP-01 accepted by the commissioning director after primary and independent
+  review, two receipt-evidence corrections and the actual Codex-host candidate exercise; the
+  source merged to `main`. EP-02 is active with the v0.1.39 release candidate.
 - 2026-10-30: User approved the plan and complete delivery, including push, merge, activation and
   Claude commissioning. Activated with a plan-only publication checkpoint and one implementer
   retained across both epics; director acceptance and host-side verification remain explicit.
