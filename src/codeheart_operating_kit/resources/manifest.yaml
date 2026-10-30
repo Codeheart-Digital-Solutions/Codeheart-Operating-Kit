@@ -41,7 +41,7 @@ components:
   - id: agent-interface
     version: 0.1.38
     manifest_path: components/agent-interface/component.yaml
-    checksum_sha256: b2c96432021c63c94bf08c4280cda24e31596940fdb062556819d3d0813ddc45
+    checksum_sha256: a2c13587d48ee59353c4016e5bce165dcec8c20e01f6d027af5015c22dcb5969
     consumer_impact:
       - component addition
       - instruction-only change
@@ -76,7 +76,7 @@ profiles:
     version: 0.1.38
     manifest_path: profiles/standard.yaml
     checksum_sha256: e61d1663feb53b947365e480dc28fe08039ff8dec3fc63d14b72763421607411
-    graph_sha256: fe3ea0d644f3b101154685ff9e925e80f28cdcaad377124b5f96616e339328d6
+    graph_sha256: b281643058fdc44951926e66b89988358b35d1bd4192ad6644276bfaf0156010
     components:
       - planning-workflows
       - agent-memory

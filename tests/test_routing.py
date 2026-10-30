@@ -391,7 +391,15 @@ def test_cross_tool_coordination_routes_are_installed_and_optional(tmp_path):
     assert (kit / "agent-interface/templates/agent-coordination-reference.md").exists()
     assert not (consumer / "docs/repo/reference/agent-coordination.md").exists()
     assert '"<verified helper path>" coordination invoke-claude' in runbook
-    assert '"<verified helper path>" coordination record-delivery' in runbook
+    # The relay forwards through the installed workflow instead of retyping arguments or status.
+    forwarder = kit / "agent-interface/scripts/forward-prepared-message.js"
+    assert forwarder.read_bytes() == (ROOT / "components/agent-interface/managed/scripts/forward-prepared-message.js").read_bytes()
+    assert "run the forwarder loader below once" in runbook
+    assert "do not read, retype or send message arguments yourself and do not run record-delivery" in runbook
+    assert "scripts/forward-prepared-message.js" in codex
+    contract = (kit / "agent-interface/reference/cross-tool-coordination-contract.md").read_text(encoding="utf-8")
+    assert "<!-- forwarder-loader -->" in contract
+    assert "never resends, edits records, deletes a claim or switches tool or recipient" in contract
     assert "does not\n   prove that the relay's `PATH` resolves the same helper" in runbook
     for section in ["Audience: hybrid", "## User-Facing Flow", "## Operator Notes", "## Execution Path", "## Stop Conditions", "## Evidence And Validation"]:
         assert section in runbook, section

@@ -1,4 +1,4 @@
-Last updated: 2026-10-10T07:07:56Z (UTC)
+Last updated: 2026-10-30T18:24:32Z (UTC)
 
 # Cross-Tool Coordination Contract
 
@@ -12,7 +12,7 @@ remain in `agent-task-coordination.md`. Nothing here is needed for ordinary curr
 | --- | --- | --- |
 | Coordinator | Complete brief and request, defaults from approved local choices, attempt identity, primary review of delivered work and original replies, answers to substantive questions, acceptance within its mandate. | Delegate those choices to the relay, forward a reviewer's verdict as its own review, or duplicate the commissioned investigation while waiting. |
 | Substantive agent (advisor, implementer, independent reviewer) | The commissioned question or work, its own questions, blockers and final reply. | Treat relayed text as new human authority or widen its assignment. |
-| Relay or temporary transport worker | Passing the prepared request path to the helper, waiting on that process, loading the message file into the native send tool and recording the send result. | Research, summarize, interpret, answer, accept, choose defaults, retry or start follow-on work. |
+| Relay or temporary transport worker | Passing the prepared request path to the helper, waiting on that process, then running the installed forwarder with the helper outcome and reporting its result. | Research, summarize, interpret, answer, accept, choose defaults, retype message arguments, retry or start follow-on work. |
 
 A separate independent reviewer is commissioned only when complexity, risk, the coordinator's
 own implementation involvement or a binding gate warrants it; the coordinator still reviews the
@@ -96,8 +96,9 @@ The coordinator knows the directory before dispatch:
 | `attempt.json` | Compact record: status, request path and digest, requested and actual session, model, CLI version, argv, launcher and child identity, exit, response locator, `earlier_results`, denial metadata, usage, lock release. Usage, cost, duration and turn count come from the last result record only; they are not summed across records. |
 | `stdout.jsonl` | Original CLI output. The final reply is the `result` field of the last `type: result` line and must be a JSON string (an empty string counts); a missing, null or non-string value is `incomplete_output`, never a captured reply. A run can emit more than one result record, for example a substantive reply or a failure followed by a background-task completion. Each earlier record is listed in `earlier_results` with its line, `subtype`, `is_error` and, when it has a text reply, a `reply` locator. |
 | `stderr.txt` | Original CLI error output. |
-| `message.json` | Native send-message arguments: `threadId`, `hostId` and `prompt`. `message_file` is the path to this file, not a send-tool argument: read and parse it, then pass these three values unchanged as the tool's arguments. Use it only when this invocation's output names it as `message_file`. |
+| `message.json` | Native send-message arguments: `threadId`, `hostId` and `prompt`. `message_file` is the path to this file, not a send-tool argument. The forwarder reads and validates it and passes the parsed object unchanged to the tool. Use it only when this invocation's output names it as `message_file`. |
 | `delivery.json` | `pending`, then `sent`, `rejected` or `uncertain`, with the original receipt or error. |
+| `delivery-claim/` | Created by the forwarder immediately before it sends; never removed by it. Holds `receipt.json` (the native result) and, after a definite rejection, `failure-notice-receipt.json`. |
 
 Statuses: `response_captured` (a final reply was captured; not task acceptance), `cli_error`,
 `session_mismatch`, `incomplete_output`, `unsupported_invocation`, `execution_failed`,
@@ -149,6 +150,130 @@ and supplied in the transport request; a `PATH` lookup can resolve an older help
 `record-delivery` changes a pending record once. A reported recipient that differs from the
 prepared one is retained as `uncertain`; an omitted reported recipient never counts as
 confirmation. `sent` means the tool accepted the send, not that the coordinator read or accepted it.
+The forwarder below runs `record-delivery` itself with the status and recipient it derived from
+the native receipt; a relay never runs it by hand for a forwarded attempt.
+
+## Deterministic Forwarding
+
+The managed workflow `.codeheart/kit/docs/agent-interface/scripts/forward-prepared-message.js`
+forwards one helper outcome to the authorized coordinator. It is an optional asset that a relay
+explicitly runs inside the Codex tool-execution (JavaScript) runtime; nothing installs or runs it
+automatically. That runtime has no filesystem or module imports, so the host's tools are injected:
+`tools.mcp__codex_app__send_message_to_thread` sends and `tools.exec_command` runs the fixed
+commands below. A shell or Node process alone cannot send a Codex chat message, and consumers need
+no Node installation. If the relay's runtime lacks either tool, stop with that host-support
+blocker; do not substitute another endpoint, transport, tool or recipient.
+
+Inputs, all from the coordinator's transport request except the outcome:
+
+| Input | Value |
+| --- | --- |
+| `outcome` | The helper's complete stdout JSON object from this invocation, pasted unchanged. |
+| `assignmentId`, `attemptId` | The request's identifiers. |
+| `destination` | Exactly `{threadId, hostId}` of the authorized coordinator chat. |
+| `stateRoot` | The request's absolute, normalized `state_root` (no trailing slash). |
+| `helperPath` | The verified helper path used for `invoke-claude`. |
+
+Loader for the relay, run once in one tool-execution cell after the helper process has ended. The
+coordinator supplies the `SCRIPT` path and the `INPUT` values; the relay adds only the outcome:
+
+<!-- forwarder-loader -->
+```js
+const SCRIPT = "<repository>/.codeheart/kit/docs/agent-interface/scripts/forward-prepared-message.js";
+const INPUT = {
+  outcome: <the helper's complete stdout JSON object, pasted unchanged>,
+  assignmentId: "<assignment_id>",
+  attemptId: "<attempt_id>",
+  destination: { threadId: "<coordinator chat>", hostId: "<host>" },
+  stateRoot: "<state_root>",
+  helperPath: "<verified helper path>"
+};
+const quote = (value) => "'" + value.split("'").join("'\\''") + "'";
+const read = await tools.exec_command({ cmd: "wc -c < " + quote(SCRIPT) + " && cat -- " + quote(SCRIPT),
+  login: false, tty: false, yield_time_ms: 30000, max_output_tokens: 60000 });
+const split = read.output.indexOf("\n");
+const source = read.output.slice(split + 1);
+if (read.exit_code !== 0 || Number(read.output.slice(0, split)) !== source.length) {
+  throw new Error("forwarder source unreadable or truncated; nothing was sent");
+}
+const forwarder = new Function(source + "\nreturn CodeheartRelayForwarder;")();
+text(JSON.stringify(await forwarder.forwardWithCodexTools(tools, INPUT)));
+```
+
+The loader evaluates only the installed managed file and checks its byte count, so truncated
+tool output fails before anything is sent. If the runtime names its text-output function
+differently, use that function; change nothing else.
+
+Sequence for an outcome that names `message_file`:
+
+1. Validate the inputs and bind the outcome to them: identifiers, `attempt_dir`
+   `<state_root>/attempts/<assignment_id>/<attempt_id>`, and that attempt's `message.json` and
+   `delivery.json`. Paths and text are passed to commands as quoted data, never as code.
+2. Confirm that the helper provides `record-delivery`, then read `delivery.json` (it must be
+   `pending` and name the destination) and `message.json` (exactly `threadId`, `hostId` and
+   `prompt`, as non-empty strings, for the destination). Every read is framed and length-checked.
+3. Claim the attempt by atomically creating `delivery-claim/`. An existing claim refuses the
+   call: another forwarder may already have sent.
+4. Pass the parsed message object to the native send tool exactly once.
+5. Save the native result to `delivery-claim/receipt.json`, derive the status and run
+   `record-delivery` with the derived status, that receipt file and the recipient the receipt
+   reported. Check its exit status and JSON result.
+6. After a definite argument rejection only, send one compact failure notice to the same
+   validated coordinator through the same tool. It names the attempt and delivery record, does
+   not repeat the reply, and its receipt is saved separately.
+
+A `fallback_message` outcome has no attempt record of its own: for example, `attempt_exists`
+names an earlier attempt that must stay untouched. The forwarder validates and sends that
+parsed object once and records no delivery state. It keeps the native result or thrown error in
+a new, uniquely named private file below `<state_root>/forwarder-receipts/<assignment_id>/`,
+never below `attempts/`. If that file cannot be written, the outcome is `recording_failed`
+with `derived_status` and `receipt_problem`, the relay reports it, and nothing is resent. Nothing guarantees once-only delivery across separate
+invocations for a fallback; the result says so with `once_only: invocation`. An outcome with
+neither field, both fields, or text that is not one JSON object is a blocker.
+
+Receipt interpretation. A tool envelope here means exactly `{content, isError}`, with a boolean
+`isError` and exactly one `{type: "text", text}` item:
+
+| Native result | Derived status |
+| --- | --- |
+| Envelope with `isError: false` whose text is JSON exactly `{"threadId": <destination>}`; or that exact payload as an object or JSON text | `sent` |
+| Envelope with `isError: true` whose whole text is the known `send_message_to_thread received invalid arguments.` | `rejected` |
+| Any other error envelope, including a permission, approval or security refusal; any extra, conflicting or unfamiliar field such as `error`, `errors`, `status` or a nested `isError`; a thrown call; a different or missing `threadId`; any other shape | `uncertain` |
+
+An error envelope is never success. A permission refusal or an uncertain send never triggers a
+failure notice, a resend or another tool. A changed host receipt shape therefore yields
+`uncertain` and calls for focused compatibility work, not an optimistic success.
+
+The compact result is printed as JSON and never contains the message or the raw receipt:
+
+| Field | Meaning |
+| --- | --- |
+| `outcome` | `delivered`, `rejected`, `uncertain`, `recording_failed`, `refused` or `blocked`. |
+| `reason`, `detail` | Machine reason and short explanation. |
+| `send_attempted`, `derived_status`, `recorded`, `delivery_status` | Whether the native tool was called, what its result means, and the record state after this call. |
+| `attempt_dir`, `delivery_file`, `claim_dir`, `receipt_file`, `receipt_shape` | Locators and the recognized receipt shape. |
+| `receipt_problem` | Present only when a fallback's receipt could not be saved. |
+| `failure_notice` | Status and receipt locator of the one failure notice, or `null`. |
+| `once_only` | `attempt_claim` for recorded attempts, `invocation` for fallbacks. |
+| `next_owner`, `next_step` | `coordinator` when the reply or a failure notice was delivered; otherwise `relay`. |
+
+When `next_owner` is `relay`, the relay reports the result unchanged in its own reply and stops.
+It never resends, edits records, deletes a claim or switches tool or recipient.
+
+- `blocked`: nothing was sent. Malformed input, a binding mismatch, an unreadable or invalid
+  record or message, a missing host tool or an unusable helper.
+- `refused`: nothing was sent. The delivery is already terminal (`already_recorded`), or a claim
+  exists (`claim_unavailable`). With `pending` and a claim, a send may have started before an
+  interruption; age or a dead process never authorizes a replay.
+- `recording_failed`: the send happened or may have happened, but its receipt or record could
+  not be completed. The claim stays, and `delivery.json` can remain `pending`.
+- `uncertain`: recorded as `uncertain`; delivery is unknown.
+
+Owner reconciliation for a claimed attempt is a deliberate coordinator decision: check the
+coordinator chat's history and read the attempt directory once. A missing notice needs no resend;
+the coordinator reads the original reply from the attempt evidence. Never remove a claim to make
+the workflow run again. This workflow is not an atomic transaction with the chat service and makes no
+exactly-once guarantee. A local claim cannot detect a sender outside this workflow.
 
 `release-lock` removes only the named attempt's lock, after checking the lock owner, the host and
 that the recorded launcher and CLI processes have ended. A reused process ID counts as running,

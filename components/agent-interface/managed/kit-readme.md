@@ -1,4 +1,4 @@
-Last updated: 2026-10-10T16:09:55Z (UTC)
+Last updated: 2026-10-30T18:08:25Z (UTC)
 
 # Codeheart Operating Kit Inventory
 
@@ -34,6 +34,8 @@ state looks missing, stale, or damaged.
   `.codeheart/kit/docs/agent-interface/reference/agent-task-coordination.md`
 - Optional cross-tool commissioning through a relay:
   `.codeheart/kit/docs/agent-interface/runbooks/coordinate-cross-tool-task.md`
+- Relay forwarding workflow, run only through its documented loader:
+  `.codeheart/kit/docs/agent-interface/scripts/forward-prepared-message.js`
 
 ## Generated State
 
