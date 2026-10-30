@@ -1,6 +1,6 @@
-Last updated: 2026-10-30T17:38:12Z (UTC)
+Last updated: 2026-10-30T17:41:36Z (UTC)
 Created: 2026-10-30
-Status: draft
+Status: active
 
 # Deterministic Relay Delivery
 
@@ -12,7 +12,7 @@ plan:
   kind: implementation
   purpose: Forward prepared cross-tool notifications through Codex without agent reconstruction, retain truthful receipts, and verify released adoption in the named coordination home.
   first_cataloged: 2026-10-30T17:31:22Z
-  catalog_metadata_updated: 2026-10-30T17:38:12Z
+  catalog_metadata_updated: 2026-10-30T17:41:36Z
   relations:
     - kind: related
       target: codeheart-operating-kit.implementation.cross-tool-agent-coordination
@@ -27,14 +27,16 @@ environment. Preserve the current CLI invocation, original replies, recipient au
 coordinator review. Finish with a published patch, adoption on the named coordination home's
 `main`, and a verified handoff through its actual relay.
 
-The user requested this draft after a bounded incident investigation and read-only feasibility
-probes on 2026-10-30. A separate discovery document is unnecessary. This document authorizes no
-implementation, messages, push, merge, release or adoption until execution is commissioned.
+The user approved this plan and its whole delivery on 2026-10-30, explicitly authorizing
+publication, merge, activation and commissioning one Claude implementer. The
+[execution log](deterministic-relay-delivery_execution_log.md) records the grant and review
+boundaries. Source implementation follows the merged activation checkpoint.
 
-Authoring checkpoint: the configured canonical catalog accepts this draft; relative links,
+Authoring checkpoint: the configured canonical catalog accepts this plan; relative links,
 required structure, Markdown timestamps and public-core checks pass. The local branch
 `codex/deterministic-relay-delivery-plan` and its isolated workspace are retained by the drafting
-director for review and authorized publication. The shared producer checkout remains on `main`.
+director for publication, then reused for the same assignment's implementation. The shared
+producer checkout remains on `main`.
 
 ## Essential Context Reference Files
 
@@ -209,7 +211,7 @@ change with an additive managed asset and reviewed external-action/recovery-poli
 record those impacts and adoption notes, not an instruction-only classification. Consumer-owned
 runbooks beyond the named coordination arrangement are outside this delivery.
 
-## 2.4 Proposed Commissioning And Delivery Boundary
+## 2.4 Approved Commissioning And Delivery Boundary
 
 The commissioning director owns acceptance; one implementer owns both epics. At activation, bind
 the named coordination home (`main`), actual relay/coordinator probe chats and host, supported CLI
@@ -217,12 +219,13 @@ and private evidence root in the existing assignment record. The intended consum
 whose relay exposed this incident, not an organization-wide rollout. Adopt its managed Kit,
 existing coordination reference and relay dispatch instructions together.
 
-Proposed whole-delivery authority covers implementation, focused tests, coherent commits, normal
+The user's whole-delivery approval covers implementation, focused tests, coherent commits, normal
 push/PR updates, ordinary reviewed merge, next-patch publication under the unchanged
 unsigned internal/prototype audience, the named consumer adoption and harmless live messages for
 verification. It includes final plan/log publication and safe cleanup of this assignment's clean,
-integrated worktrees while retaining useful evidence and branches. These effects require an
-explicit whole-delivery commission; today's drafting request supplies none of them.
+integrated worktrees while retaining useful evidence and branches. The director delegates
+execution to the implementer after publication, retaining source/candidate acceptance and
+Codex-native verification. Review gates remain binding without new user approval per epic.
 
 Use isolated implementation/publication workspaces and preserve shared checkouts and live
 assignments. Establish report-back and review checkpoints once. The director performs primary
@@ -382,7 +385,10 @@ Keep the function portable through injected capabilities while qualifying only d
 
 # Revision Notes
 
+- 2026-10-30: User approved the plan and complete delivery, including push, merge, activation and
+  Claude commissioning. Activated with a plan-only publication checkpoint and one implementer
+  retained across both epics; director acceptance and host-side verification remain explicit.
 - 2026-10-30: Drafted from the accepted deterministic-forwarding direction, observed recipient-key
   failure and read-only host feasibility probes. Defined two complete-delivery epics, local claim
   and receipt semantics, bounded failure visibility, candidate validation and named-home adoption.
-  Execution remains inactive; drafting authorizes only the local planning checkpoint.
+  The initial drafting checkpoint was inactive and local; the activation above supersedes it.
