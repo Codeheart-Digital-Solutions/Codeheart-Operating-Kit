@@ -1,6 +1,7 @@
-Last updated: 2026-10-30T18:32:36Z (UTC)
+Last updated: 2026-10-30T19:29:35Z (UTC)
 Created: 2026-10-30
-Status: active
+Status: completed
+Completed: 2026-10-30
 
 # Deterministic Relay Delivery
 
@@ -32,7 +33,21 @@ publication, merge, activation and commissioning one Claude implementer. The
 [execution log](deterministic-relay-delivery_execution_log.md) records the grant and review
 boundaries. Source implementation follows the merged activation checkpoint.
 
-Authoring checkpoint: the configured canonical catalog accepts this plan; relative links,
+Delivery outcome:
+
+- Both epics are accepted by the commissioning director and the full finish line is met.
+- Source: reviewed in PR #37, merged as `64288fa`.
+- Release: v0.1.39 was published from `5510bec`, identical to the qualified candidate, and the
+  public smoke passed.
+- Adoption: the named coordination home adopted v0.1.39 on `main` and selected the verified
+  helper. Its actual relay forwarded an original real Claude reply through the released
+  workflow, and the coordinator received it automatically after yielding.
+- Support limits: live delivery is accepted for the macOS Codex relay in that home only; Windows
+  live messaging and other consumers stay deferred (Section 4.1).
+
+The execution log holds the evidence.
+
+Authoring checkpoint (historical): the configured canonical catalog accepts this plan; relative links,
 required structure, Markdown timestamps and public-core checks pass. The local branch
 `codex/deterministic-relay-delivery-plan` and its isolated workspace are retained by the drafting
 director for publication, then reused for the same assignment's implementation. The shared
@@ -340,19 +355,22 @@ lanes/checks after scoped corrections. Routine commits and document closure do n
 
 ### F) Tasks Checklist
 
-- [ ] Select the unused patch, prepare release/impact/adoption notes and identities; complete
+- [x] Select the unused patch, prepare release/impact/adoption notes and identities; complete
       normal PR feedback, reviewed merge and required candidate qualification on applicable inputs.
-- [ ] Publish under the covered audience, verify downloaded assets and required public smoke,
+- [x] Publish under the covered audience, verify downloaded assets and required public smoke,
       and preserve the exact candidate/source/release evidence relationship.
-- [ ] Upgrade the named home through the supported lifecycle, select verified matching helper and
+- [x] Upgrade the named home through the supported lifecycle, select verified matching helper and
       script, update the existing relay invocation instructions, and merge the isolated adoption
       PR. Reconcile the usual checkout without disturbing active assignments or local files.
-- [ ] Run the bounded original-reply handoff through the actual relay after the coordinator yields;
+- [x] Run the bounded original-reply handoff through the actual relay after the coordinator yields;
       verify native receipt, private delivery record and destination history. Confirm the relay
       calls the released function rather than reconstructing arguments. Assess with the director.
-- [ ] Publish final plan/log/index status with source, release and adoption distinguished. Remove
+- [x] Publish final plan/log/index status with source, release and adoption distinguished. Remove
       only clean integrated assignment workspaces with no remaining dependency; otherwise record
       the exact retained workspace, owner and next resolving event. Preserve branches and evidence.
+      The two clean integrated assignment workspaces are retained until the director reviews and
+      merges this closure. The commissioning director then performs their safe cleanup once no
+      live process depends on them.
 
 ### G) Implementation Notes
 
@@ -385,6 +403,10 @@ Keep the function portable through injected capabilities while qualifying only d
 
 # Revision Notes
 
+- 2026-10-30: Completed. v0.1.39 was published, and the named coordination home adopted it on
+  `main`. A real Claude reply was forwarded through its actual relay by the released workflow and
+  reached the coordinator after yielding. The director accepted EP-02 and the whole delivery
+  within the macOS named-home support limit.
 - 2026-10-30: EP-01 accepted by the commissioning director after primary and independent
   review, two receipt-evidence corrections and the actual Codex-host candidate exercise; the
   source merged to `main`. EP-02 is active with the v0.1.39 release candidate.

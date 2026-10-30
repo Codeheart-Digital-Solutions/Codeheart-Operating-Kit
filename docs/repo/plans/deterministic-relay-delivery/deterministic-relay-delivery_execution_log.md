@@ -1,4 +1,4 @@
-Last updated: 2026-10-30T19:14:05Z (UTC)
+Last updated: 2026-10-30T19:29:35Z (UTC)
 Created: 2026-10-30
 
 # Deterministic Relay Delivery Execution Log
@@ -256,15 +256,70 @@ Candidate qualification:
 - Released-asset smoke: run `41113459170` with explicit `v0.1.39` passed on macOS and Windows.
   Both public installers rejected a wrong checksum, installed v0.1.39 from the public catalog,
   and then onboarded and checked a fresh consumer.
-- Separate from publication: HQ adoption, the real Claude relay smoke and closure remain open.
+- At publication, HQ adoption, the real Claude relay smoke and closure remained open; the
+  sections below record them.
+
+## EP-02 Named-Home Adoption
+
+- Upgrade: in an isolated adoption worktree, the named coordination home upgraded from v0.1.38 to
+  v0.1.39 through the supported lifecycle. It used a private copy of the verified v0.1.38 CLI and
+  the published catalog. The dry run and the apply both verified catalog, archive, pack, content
+  and binary provenance against the release.
+- Installed state: the forwarder matches the released and host-qualified digest. Checks before,
+  after and on the committed state were healthy, with no drift. Only the release's managed
+  agent-interface files and the lock changed.
+- Coordination reference: the home's existing reference now names the verified v0.1.39 helper and
+  routes new attempts through the installed forwarder, linking the managed contract instead of
+  duplicating it. Already commissioned attempts keep their route and helper.
+- Merge: the adoption PR merged normally to the home's `main`, and the usual checkout was
+  fast-forwarded. The final supported upgrade and installed-state check there passed with no
+  drift.
+- Helper selection: the local selection now names a verified v0.1.39 helper. The shared v0.1.38
+  helper is unchanged, so attempts already in flight keep their helpers.
+- Preservation: unrelated legacy files and local work in the usual checkout were confirmed
+  unchanged.
+
+## EP-02 Released Real Handoff
+
+- Relay instructions: the actual relay's dispatch instructions were updated for new attempts
+  only.
+- Smoke: one harmless released smoke assignment ran through the actual relay with the v0.1.39
+  helper and the installed forwarder. A real Claude session returned an original harmless reply
+  with no permission denials.
+- Delivery evidence: the native receipt was the qualified envelope naming the exact coordinator.
+  The delivery record says `sent` with the recipient confirmed.
+- Wakeup: the coordinator received the original reply automatically after yielding, without a
+  user turn.
+- Trace: the director inspected the relay's trace of the installed-script load, claim, native
+  send, receipt persistence and recording. Arguments were not reconstructed by the relay.
+- Privacy: the session, chat and evidence locators stay in the home's ignored assignment
+  records.
+
+## Closure
+
+The commissioning director accepted EP-02 and the complete delivery. Each part of the outcome is
+accepted on its own evidence:
+
+| Part | Accepted evidence |
+| --- | --- |
+| Source | PR #37, merged as `64288fa` |
+| Release | v0.1.39 from `5510bec`, with candidate `7980b0c`, broad run `41108029380` and public smoke `41113459170` |
+| Named-home adoption | Adoption merged on the home's `main` |
+| Real handoff | The released smoke above |
+
+Support limits: live delivery is accepted for the Codex desktop relay on macOS in the named
+coordination home only. Windows x64 has distribution and installer evidence but no live chat-host
+qualification, and other consumers have not adopted. Both remain deferred under the plan's
+Section 4.1. The workflow makes no exactly-once claim.
+
+No new release or executable change was made for closure. The source, candidate and public-smoke
+evidence above remains applicable.
 
 ## Current State
 
-- Plan: active; planning publication complete.
-- EP-01: accepted; source merged to `main` as `64288fa`.
-- EP-02: v0.1.39 is published and its public assets are validated. Consumer adoption in the
-  named coordination home, the actual-relay live smoke with a real Claude consultation and the
-  final closure are pending; they are not complete.
-- Workspace: retained by the commissioning director through implementation/review/release and
-  adoption; remove only after the approved preservation and dependency checks, retaining its
-  branch and useful evidence.
+- Plan: completed on 2026-10-30.
+- EP-01 and EP-02: accepted.
+- Workspaces: the producer worktree is clean and integrated. It is retained until the
+  commissioning director reviews and merges this closure PR, with final evidence preserved.
+  The director then performs safe cleanup of both assignment worktrees (producer and HQ
+  adoption) once no live process depends on them. Branches and useful evidence are preserved.
