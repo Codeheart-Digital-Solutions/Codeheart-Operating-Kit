@@ -1,4 +1,4 @@
-Last updated: 2026-10-30T18:20:26Z (UTC)
+Last updated: 2026-10-30T18:24:32Z (UTC)
 
 # Cross-Tool Coordination Contract
 
@@ -226,8 +226,8 @@ A `fallback_message` outcome has no attempt record of its own: for example, `att
 names an earlier attempt that must stay untouched. The forwarder validates and sends that
 parsed object once and records no delivery state. It keeps the native result or thrown error in
 a new, uniquely named private file below `<state_root>/forwarder-receipts/<assignment_id>/`,
-never below `attempts/`; if that file cannot be written, the result says so in
-`receipt_problem` and nothing is resent. Nothing guarantees once-only delivery across separate
+never below `attempts/`. If that file cannot be written, the outcome is `recording_failed`
+with `derived_status` and `receipt_problem`, the relay reports it, and nothing is resent. Nothing guarantees once-only delivery across separate
 invocations for a fallback; the result says so with `once_only: invocation`. An outcome with
 neither field, both fields, or text that is not one JSON object is a blocker.
 

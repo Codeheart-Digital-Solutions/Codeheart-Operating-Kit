@@ -350,7 +350,9 @@ var CodeheartRelayForwarder = (function () {
       await writeNewFile(callbacks.runCommand, receiptFile, sent.evidence);
       result.receipt_file = receiptFile;
     } catch (error) {
+      // Lost evidence is an incomplete handoff to the relay, even after an accepted send.
       result.receipt_problem = 'receipt not persisted: ' + error.message;
+      result.outcome = 'recording_failed';
     }
     return result;
   }

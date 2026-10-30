@@ -516,15 +516,31 @@ test('a fallback receipt that cannot be saved is reported truthfully without ano
   for (const failing of ['mkdir -p --', 'set -C;']) {
     const { tools, calls } = host(f, { exec: (params) => (params.cmd.includes(failing) ? { output: 'denied', exit_code: 1 } : null) });
     const result = await forwarder.forwardWithCodexTools(tools, input(f, { outcome: attemptExistsOutcome(f, fallback), helperPath: '/bin/unused-helper' }));
-    assert.equal(result.outcome, 'delivered', failing);
+    assert.equal(result.outcome, 'recording_failed', failing);
+    assert.equal(result.derived_status, 'sent');
     assert.equal(result.receipt_file, undefined);
     assert.match(result.receipt_problem, /^receipt not persisted: /);
+    assert.equal(result.next_owner, 'relay');
     assert.equal(calls.sends.length, 1);
   }
   const unavailable = host(f, { exec: () => { throw new Error('shell refused'); } });
   const refused = await forwarder.forwardWithCodexTools(unavailable.tools, input(f, { outcome: attemptExistsOutcome(f, fallback), helperPath: '/bin/unused-helper' }));
+  assert.equal(refused.outcome, 'recording_failed');
+  assert.equal(refused.derived_status, 'sent');
   assert.equal(refused.receipt_problem, 'receipt not persisted: shell refused');
+  assert.equal(refused.next_owner, 'relay');
   assert.equal(unavailable.calls.sends.length, 1);
+
+  // A rejected fallback whose evidence is lost keeps its derived status and still gets no notice.
+  const lost = host(f, {
+    send: () => errorEnvelope('send_message_to_thread received invalid arguments.'),
+    exec: (params) => (params.cmd.includes('set -C;') ? { output: 'denied', exit_code: 1 } : null)
+  });
+  const lostRejection = await forwarder.forwardWithCodexTools(lost.tools, input(f, { outcome: attemptExistsOutcome(f, fallback), helperPath: '/bin/unused-helper' }));
+  assert.equal(lostRejection.outcome, 'recording_failed');
+  assert.equal(lostRejection.derived_status, 'rejected');
+  assert.equal(lostRejection.failure_notice, null);
+  assert.equal(lost.calls.sends.length, 1);
   assert.deepEqual(snapshot(f.attemptDir), before);
 });
 

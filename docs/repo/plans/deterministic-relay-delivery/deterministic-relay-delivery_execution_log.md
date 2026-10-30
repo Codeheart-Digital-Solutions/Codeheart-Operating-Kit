@@ -1,4 +1,4 @@
-Last updated: 2026-10-30T18:20:26Z (UTC)
+Last updated: 2026-10-30T18:24:32Z (UTC)
 Created: 2026-10-30
 
 # Deterministic Relay Delivery Execution Log
@@ -11,6 +11,8 @@ On 2026-10-30 the user approved the plan, normal push/merge, activation and comm
 Claude implementer. The approved draft was local commit `87b16b3`; activation changes only the
 canonical plan, this execution log and the plans index. The planning checkpoint is published and
 merged before source implementation. No implementation or release success is claimed here.
+Planning publication is complete: the activation PR merged to `main` as `b443054`, the start
+commit of the implementation branch.
 
 One fresh Claude Opus 5.5 CLI implementer owns both epics. The commissioning Codex director owns
 acceptance, actual Codex-host exercises and workspace closure. The existing ordinary relay
@@ -158,12 +160,26 @@ persistence, and an unchanged `attempt_exists` attempt. Source-to-packaged equal
 packaging tests, the manifest graph digest, and the public-core, Markdown, release-manifest and
 release-identity validators were rerun. Unaffected Go and broad Python evidence is reused.
 
+## EP-01 Source Correction 2
+
+The director and the same independent reviewer examined `76e346a`. The strict classifier resolved
+the first finding, and fallback sidecar preservation resolved the ordinary case of the second. One
+failure path remained: when a fallback receipt could not be saved, the result still said
+`delivered` with the coordinator as next owner, hiding lost evidence. That case is now
+`recording_failed`, keeping `derived_status` and `receipt_problem`, and returns the incomplete
+handoff to the relay without any further send. Focused fixtures cover sent and rejected fallbacks
+whose evidence cannot be saved; `node --test tests/coordination-forwarder.test.cjs` passed 27
+tests, and mirror, digest and validator checks were rerun.
+
+The user explicitly approved one retry of the refused PR creation through the prepared body file
+under the unchanged permission profile; review, merge and release gates are unchanged. The retry
+is made from this correction's head and its result is reported in the handoff.
+
 ## Current State
 
-- Plan: active.
-- EP-01: corrected source candidate pushed for director and independent re-review and the
-  Codex-host candidate exercise; unaccepted. The source PR is absent pending the owner's
-  permission decision.
+- Plan: active; planning publication complete.
+- EP-01: source review awaits this final correction and the director's Codex-host candidate
+  probe; unaccepted. The source PR is created through the approved body-file retry.
 - EP-02 release and consumer adoption: not started; authorized after EP-01 acceptance.
 - Workspace: retained by the commissioning director through implementation/review/release and
   adoption; remove only after the approved preservation and dependency checks, retaining its
