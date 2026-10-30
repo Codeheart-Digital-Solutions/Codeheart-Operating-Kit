@@ -1,6 +1,54 @@
-Last updated: 2026-10-11T10:41:32Z (UTC)
+Last updated: 2026-10-30T18:32:36Z (UTC)
 
 # Codeheart Operating Kit Release Notes
+
+## v0.1.39 Release Notes
+
+Cross-tool relays forward the helper's prepared notice through one reviewed managed workflow
+instead of retyping message arguments, receipts or delivery status. A relay that rebuilt the
+native send call by hand could pass the wrong recipient key, and the coordinator then received
+no notice; the workflow prevents this and keeps truthful evidence.
+
+### Impact And Adoption
+
+- New managed workflow script `.codeheart/kit/docs/agent-interface/scripts/forward-prepared-message.js`
+  (additive file under the existing agent-interface target).
+  - A Codex relay runs it explicitly through the loader in
+    `reference/cross-tool-coordination-contract.md`, inside the Codex JavaScript tool-execution
+    runtime with the native send and shell tools injected. Nothing runs it on install, repair,
+    sync or upgrade.
+  - Consumers need no Node runtime, new command, service or scaffold.
+- Executable coordination and external-action change (`security or safety policy change`):
+  - The workflow binds the helper outcome to the authorized assignment, attempt, state root and
+    destination, and checks the records with byte-counted reads before sending.
+  - It claims the attempt atomically and passes the parsed message object unchanged to the send
+    tool exactly once.
+  - It keeps the native receipt and records a receipt-derived status through the existing
+    `coordination record-delivery`.
+  - Only the observed minimal success counts as `sent`. Only the exact known invalid-arguments
+    error counts as `rejected`, and it is followed by one compact failure notice. Any other result
+    is `uncertain`, with no notice, resend or alternative tool; this includes permission refusals
+    and unfamiliar or conflicting fields.
+  - An existing claim or terminal record refuses re-entry. Nothing is replayed, and the workflow
+    makes no exactly-once claim.
+- Fallback notices are sent at most once per invocation, with their receipt kept in a private
+  sidecar below `<state_root>/forwarder-receipts/`. They never touch `attempts/`.
+- Relay dispatch changes:
+  - The hybrid runbook's dispatch envelope now runs the loader.
+  - Relays must not read, retype or send message arguments themselves, or run `record-delivery`
+    for a forwarded attempt.
+  - A result whose `next_owner` is `relay` is reported unchanged.
+- Validator change: public-core hygiene also scans `.js` and `.cjs` files.
+- Compatibility: the helper's Go source and record formats are unchanged, so a verified helper
+  that already provides `coordination record-delivery` remains usable. Attempts commissioned
+  before adoption keep their original dispatch instructions; there is no mid-flight migration.
+- Adoption: upgrade through the supported lifecycle to v0.1.39. Then update the coordination home's
+  relay dispatch instructions to the loader, and confirm the installed script exists before
+  commissioning new attempts.
+- Live chat-host support remains the Codex desktop relay on macOS. Windows x64 receives the
+  managed files and installer evidence, but not chat-host qualification.
+- macOS universal and Windows x64 and the unsigned, unnotarized internal/prototype
+  HTTPS-plus-SHA256 audience are unchanged.
 
 ## v0.1.38 Release Notes
 
