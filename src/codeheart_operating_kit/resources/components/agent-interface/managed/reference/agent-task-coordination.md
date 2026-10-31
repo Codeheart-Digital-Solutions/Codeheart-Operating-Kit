@@ -1,4 +1,4 @@
-Last updated: 2026-10-11T10:41:32Z (UTC)
+Last updated: 2026-10-31T06:49:41Z (UTC)
 
 # Agent Task Coordination
 
@@ -222,6 +222,23 @@ unless an explicit delegation covers the correction cycle; see
 `../../planning-workflows/runbooks/review-planning-document.md`. Routine review corrections during
 authorized implementation stay within the existing grant.
 
+## Continue Through Handoffs
+
+During authorized implementation, receiving a handoff transfers the next action to the
+coordinator. Continue through primary review, assessment of any additional review, in-scope
+correction dispatch, acceptance and the next authorized phase. Acknowledging the handoff or
+reporting progress does not discharge that responsibility. End at the agreed finish line, an
+explicit user pause, a genuine blocker, or a pending external dependency with a supported
+continuation route. Keep required acceptance and authority boundaries in force.
+
+Keep the coordinator available for user discussion while delegated work continues. Discussion
+and status questions do not by themselves pause the assignment: answer briefly, then continue
+authorized work. Honor explicit pause instructions. When discussion raises an unresolved decision
+that could change ongoing work, hold the affected actions and coordinate any necessary pause of
+affected delegated work; unrelated authorized work may continue. A handoff received during the
+discussion remains the coordinator's responsibility. Distinguish what was happening when a
+status question arrived from actions taken afterward.
+
 ## Report And Orient
 
 At starts, meaningful transitions and completion, state the actual phase: discovery, plan amendment,
@@ -235,10 +252,12 @@ director can remain available for discussion while the implementer works. Best-e
 is sufficient: if the tool rejects delivery, retain the result in the existing record and final
 response and state that it was not delivered. Do not claim receipt or bypass the rejection.
 
-No continuous watching, busy polling, scheduler, cron, heartbeat, retry service or callback framework
-is required. Ordinary follow-up and a review handoff are enough. A sent review request is not
-acceptance. A native implementation goal supports the same plan but adds neither authority nor
-automatic cross-task notifications.
+Use supported completion notifications or bounded waits for the current dependency. Do not assume
+that a completed worker will restart an idle coordinator; follow the host-specific waiting
+guidance in `codex-task-operations.md` when using Codex. This requires no continuous watching,
+busy polling, scheduler, cron, heartbeat, retry service, callback framework or additional tracking
+document. A sent review request is not acceptance. A native implementation goal supports the same
+plan but adds neither authority nor automatic cross-task notifications.
 
 Describe actual delivery facts separately: uncommitted, committed, pushed, PR opened, merged,
 released, adopted on each named branch, worktree-reconciled, and pilot-pending. Local installed

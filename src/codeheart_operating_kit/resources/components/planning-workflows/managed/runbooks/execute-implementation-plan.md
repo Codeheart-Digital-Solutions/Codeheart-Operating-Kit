@@ -1,4 +1,4 @@
-Last updated: 2026-10-10T16:09:55Z (UTC)
+Last updated: 2026-10-31T06:49:41Z (UTC)
 
 # Execute Implementation Plan
 
@@ -315,7 +315,9 @@ For each epic:
     director at required review, completion or genuine blocker. Retain the result and disclose any
     message rejection; best-effort reporting needs no watcher, heartbeat or busy polling.
 13. At a required acceptance point, complete independent preparation then hand off for primary
-    review.
+    review. The receiving director continues through review and disposition under "Continue
+    Through Handoffs" in `../../agent-interface/reference/agent-task-coordination.md`. A review
+    checkpoint transfers responsibility; it does not require the user to restart the workflow.
     Continue dependent epic work once delegated acceptance arrives. Do not require a new task,
     release, PR or user authorization per epic.
 14. Recap whether the epic intention and acceptance are achieved; keep the plan and any whole-plan
