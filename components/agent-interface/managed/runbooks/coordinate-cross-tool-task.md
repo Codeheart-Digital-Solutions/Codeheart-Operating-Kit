@@ -1,4 +1,4 @@
-Last updated: 2026-10-30T18:08:25Z (UTC)
+Last updated: 2026-10-31T06:49:41Z (UTC)
 
 # Coordinate Cross-Tool Task
 
@@ -212,7 +212,13 @@ the result.
 4. For a question, answer from the owning decision or ask the user when it exceeds your mandate,
    then resume the same session with a new attempt. During authorized implementation, routine
    corrections continue under the existing grant; material changes return to the owner.
-5. Record accepted conclusions, the substantive session locator and acceptance in the owning plan
+5. For active implementation, continue from assessment to the next authorized action: send
+   consolidated corrections, accept and commission the next phase, or report a concrete blocker.
+   A progress summary does not discharge that responsibility. Apply "Continue Through Handoffs"
+   in `../reference/agent-task-coordination.md`, including discussion and pause handling. If an
+   additional native reviewer is pending, follow "Waiting For Delegated Work" in
+   `../reference/codex-task-operations.md` before yielding.
+6. Record accepted conclusions, the substantive session locator and acceptance in the owning plan
    or log. Do not author a separate report per message.
 
 ### 4. Recover

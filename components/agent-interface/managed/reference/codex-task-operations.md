@@ -1,4 +1,4 @@
-Last updated: 2026-10-30T18:08:25Z (UTC)
+Last updated: 2026-10-31T06:49:41Z (UTC)
 
 # Codex Task Operations
 
@@ -55,6 +55,24 @@ rejected, keep the report in the execution log/final result and say it was not d
 switch to another destination, bypass permission review, or install a reporting framework. No
 heartbeat, cron or continuous polling is needed; ordinary task follow-up carries the decision.
 
+## Waiting For Delegated Work
+
+Apply "Continue Through Handoffs" in `agent-task-coordination.md`. When a native subagent's result
+is needed for the next authorized action, do independent work if available, then remain active
+through the supported agent-wait tool. Use bounded waits that allow user interruption and assess
+the result when it arrives. A timeout does not mean completion. Avoid busy polling or repeatedly
+reading transcripts. Answer user questions during the wait and honor pauses or scope changes.
+
+Do not finish with a final status response while relying on native-child completion to wake an
+idle parent; that continuation failed on the qualified host. A running reviewer alone does not
+establish a wakeup route. If a required wait or return mechanism is unavailable, disclose the
+continuation blocker and next owner instead of implying that follow-up will happen automatically.
+
+Yielding while an independent ordinary chat works is appropriate when its authorized report-back
+route has been verified to wake the coordinator. On receipt, continue assessment and the next
+authorized action. This distinction lets the user discuss ongoing work while the implementer and
+relay run independently; it does not create a new monitoring service or messaging permission.
+
 ## Whole-Plan Goal By Default
 
 Executing an approved implementation plan in Codex uses Goal mode by default, under the generic
@@ -88,6 +106,7 @@ The cross-tool recipe in `../runbooks/coordinate-cross-tool-task.md` was qualifi
 desktop coordinator. Native subagents and task children are not report-back routes in that
 recipe: a native child's completion did not wake an idle parent, and app messages to a native
 ancestor or to a subagent recipient were rejected. Use an independent ordinary relay chat instead.
+For native reviewers, follow "Waiting For Delegated Work" above.
 The relay dispatches temporary transport workers that run the installed helper and then the
 installed forwarder `../scripts/forward-prepared-message.js` once, in one JavaScript
 tool-execution cell, through the loader in `cross-tool-coordination-contract.md`. The forwarder
