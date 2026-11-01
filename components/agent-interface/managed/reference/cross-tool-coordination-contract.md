@@ -1,4 +1,4 @@
-Last updated: 2026-10-30T18:24:32Z (UTC)
+Last updated: 2026-11-01T16:25:44Z (UTC)
 
 # Cross-Tool Coordination Contract
 
@@ -20,6 +20,39 @@ work itself and decides acceptance. Independence comes from contribution and ass
 from session freshness. Reuse an
 advisor or implementer session while it remains useful; a relay is replaceable without replacing
 the substantive session. Session IDs locate execution; they are not role identities.
+
+## Dispatch Identity And Status
+
+The relay dispatches; each temporary worker runs one assignment's prepared attempts. Bind the
+worker locator to `assignment_id`, the current `attempt_id`, and the return destination in the
+existing chat or assignment record. A new assignment gets a new worker, even if a previous worker
+is idle. Reuse a worker only for the same assignment after its preceding attempt has ended.
+The substantive session still follows the prepared request; worker freshness does not require a
+fresh Claude session for a correction. Never send unrelated work to a busy worker or infer a new
+attempt's result from that worker's previous completion.
+
+Use the host's native worker-creation operation for dispatch and return control after acceptance.
+Workers wait on their own helper processes and forward directly to their authorized coordinators.
+If capacity is unavailable, report the named assignment as unstarted with the actual error; do
+not silently queue it, interrupt another invocation, or promise an automatic retry. Native
+dispatch remains a host operation: the forwarder does not create workers or enforce their
+assignment binding, and the CLI cannot prevent a relay from choosing the wrong worker.
+
+Status claims must name the assignment and attempt and use evidence from that exact invocation:
+
+| Claim | Required evidence |
+| --- | --- |
+| Dispatched; launch unverified | The native tool accepted that worker's assignment. This proves neither helper nor Claude startup. |
+| Helper started | That worker's command result identifies its helper invocation. A shell/process session number is not a Claude session ID. |
+| Claude started | The matching attempt records a launched child, or its `stdout.jsonl` contains the matching CLI init record. A leftover `running` record alone does not prove current liveness. |
+| Response captured | That attempt's helper outcome and record report `response_captured`; this is not task acceptance. |
+| Delivered | That attempt's forwarder result and matching delivery receipt establish delivery to its authorized destination. |
+
+Report only the furthest stage supported by the current evidence. An unchanged wait or another
+worker's result establishes no new stage. When a status decision needs verification, inspect the
+known attempt once; do not add polling, launch acknowledgements to every coordinator, or another
+status registry. The [dispatch runbook](../runbooks/coordinate-cross-tool-task.md#2-dispatch-and-yield)
+places these rules in the commissioning envelope.
 
 ## Invocation Request
 
