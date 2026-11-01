@@ -278,6 +278,8 @@ test('invalid inputs, unsafe paths and binding mismatches block before any comma
     [{ destination: { threadId: 'thread\u0007', hostId: HOST } }, 'invalid_input'],
     [{ extra: true }, 'invalid_input'],
     [{ outcome: 'helper failed to start: no such file' }, 'invalid_outcome'],
+    // A completed outcome from a reused worker belongs to its original assignment.
+    [{ assignmentId: 'assign-b' }, 'binding_mismatch'],
     [{ attemptId: 'attempt-2' }, 'binding_mismatch'],
     [{ outcome: JSON.stringify({ ...f.outcome, message_file: path.join(f.stateRoot, 'attempts', ASSIGNMENT, 'attempt-0', 'message.json') }) }, 'binding_mismatch'],
     [{ outcome: JSON.stringify({ ...f.outcome, message_file: undefined, delivery_file: undefined }) }, 'no_message'],

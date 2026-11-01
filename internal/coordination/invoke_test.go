@@ -575,16 +575,37 @@ func TestDistinctConcurrentAssignmentsStayIsolated(t *testing.T) {
 	}
 	outcomes := make([]Outcome, 2)
 	var wg sync.WaitGroup
+	t.Cleanup(func() {
+		writeFile(t, h.release, "go")
+		wg.Wait()
+	})
 	for i, path := range paths {
 		wg.Add(1)
 		go func(i int, path string) {
 			defer wg.Done()
 			outcomes[i], _ = Invoke(Options{RequestPath: path, Interrupt: make(chan os.Signal)})
 		}(i, path)
+		// B arrives while A is still active; neither waits for the other's completion.
+		waitFor(t, func() bool { return len(h.fakeRecords()) == i+1 })
 	}
-	waitFor(t, func() bool { return len(h.fakeRecords()) == 2 })
+	for _, assignment := range []string{"assign-a", "assign-b"} {
+		attemptDir := AttemptDir(h.stateRoot, assignment, "attempt-1")
+		waitFor(t, func() bool {
+			record, err := ReadAttempt(attemptDir)
+			return err == nil && record.Status == StatusRunning
+		})
+		// Launch is not completion or delivery; neither record exists before the child exits.
+		for _, name := range []string{MessageFile, DeliveryFile} {
+			if _, err := os.Stat(filepath.Join(attemptDir, name)); !errors.Is(err, os.ErrNotExist) {
+				t.Fatalf("%s has premature %s: %v", assignment, name, err)
+			}
+		}
+	}
 	writeFile(t, h.release, "go")
 	wg.Wait()
+	if len(h.fakeRecords()) != 2 {
+		t.Fatal("expected exactly one launch per assignment")
+	}
 	if outcomes[0].SessionID == outcomes[1].SessionID || outcomes[0].AttemptDir == outcomes[1].AttemptDir {
 		t.Fatalf("assignments shared identity: %+v", outcomes)
 	}

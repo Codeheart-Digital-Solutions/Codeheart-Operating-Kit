@@ -1,4 +1,4 @@
-Last updated: 2026-10-31T06:49:41Z (UTC)
+Last updated: 2026-11-01T16:25:44Z (UTC)
 
 # Coordinate Cross-Tool Task
 
@@ -161,6 +161,13 @@ the outcome:
 
 ```text
 Transport request for assignment <assignment_id>, attempt <attempt_id>.
+Relay: create a dedicated temporary worker for this assignment, pass the worker instructions
+below unchanged, and return control. Never reuse a worker from another assignment, busy or idle.
+Same-assignment continuation may reuse its worker only after the preceding attempt has ended.
+If capacity is unavailable, report this assignment as unstarted with the actual error; do not
+silently queue it or interrupt another invocation. Name assignment and attempt in every status;
+dispatch acceptance is not launch or completion evidence.
+Worker instructions:
 Run: "<verified helper path>" coordination invoke-claude --request "<request path>"
 Wait on that same process through ordinary tool output yields; do not restart it.
 When it has ended, run the forwarder loader below once in one JavaScript tool-execution cell.
@@ -188,9 +195,14 @@ If the relay's runtime cannot run the loader (no JavaScript tool execution, nati
 shell tool), the relay reports that host-support blocker instead of forwarding by hand. Attempts
 commissioned before the forwarder was adopted keep the dispatch instructions they were given.
 
-With several active assignments, the relay dispatches one temporary transport worker per
-assignment and returns control. Workers send directly to the requesting ordinary chat. Do not
-route results through a native parent or subagent recipient.
+Keep each worker bound to its assignment and current attempt in the existing chat or assignment
+record. With several active assignments, dispatch a separate temporary worker for each; do not
+wait for the first helper to finish before dispatching the next. Workers send directly to the
+requesting ordinary chat. Do not route results through a native parent or subagent recipient.
+Apply the contract's [Dispatch Identity And Status](../reference/cross-tool-coordination-contract.md#dispatch-identity-and-status)
+evidence before saying work started, completed or was delivered; an old worker result cannot
+describe a new attempt. This binding concerns transport workers, not the substantive session's
+approved reuse. No scheduler or queue is introduced.
 
 While work runs, the coordinator may discuss other matters. It does not poll transcripts or
 duplicate the delegated investigation. It actively waits only when its next decision depends on
@@ -266,3 +278,8 @@ the result.
   logs may be removed through ordinary authorized cleanup. Keep unfinished attempts and locks.
 - Validate a new arrangement with one harmless consultation that returns a reply to the
   coordinator after it yields, before relying on it for implementation.
+- For dispatch changes, use a bounded two-assignment probe: keep A running, dispatch B, and
+  verify distinct workers and launches before A completes. Check an old completion cannot stand
+  in for B, unavailable capacity is reported as unstarted, and neither invocation is repeated.
+  Reuse the helper's local concurrency and forwarder binding tests for their mechanical boundaries;
+  those tests do not prove that the relay chose the correct native dispatch operation.
