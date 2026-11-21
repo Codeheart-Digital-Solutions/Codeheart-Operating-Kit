@@ -1,4 +1,4 @@
-Last updated: 2026-11-21T10:34:09Z (UTC)
+Last updated: 2026-11-21T18:47:28Z (UTC)
 
 # Draft Implementation Plan
 
@@ -108,6 +108,15 @@ differently. Name exact paths or commands when they identify an interface, a pro
 a constraint that matters to correctness or safety. Include concrete examples or data flows when
 they resolve material ambiguity. Within the approved outcome the implementer chooses ordinary
 files, functions, commands, test design and debugging.
+
+For a consequential requirement, state or link the decision the work must settle, the failure
+the safeguard should prevent and the observation sufficient for acceptance. If the proposed
+method changes who can operate or adds a condition for proceeding beyond the agreed acceptance
+criteria, cite the applicable requirement or obtain the responsible director’s decision within
+their authority. Implementers choose ordinary tests of existing requirements.
+
+Before revising an approach or commissioning another correction, would you still choose it to
+achieve the original outcome, knowing all remaining work, operator time, recovery and cleanup?
 
 Plan cheap affected checks during iteration and broader validation on a coherent candidate.
 Plan the commissioning agent's primary review at meaningful checkpoints, combining tightly

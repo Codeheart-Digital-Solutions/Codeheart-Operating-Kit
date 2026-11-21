@@ -1,4 +1,4 @@
-Last updated: 2026-11-21T10:34:09Z (UTC)
+Last updated: 2026-11-21T18:47:28Z (UTC)
 
 # Agent Task Coordination
 
@@ -202,7 +202,9 @@ return. The implementer chooses the repair. For example, "A retry after a lost r
 submit twice. Preserve one submission per request and show the regression test."
 
 The implementer and director reconsider the approach when a consequential planning assumption
-fails or fixes together materially change it. Use the execution runbook's
+fails or fixes together materially change it. Before revising an approach or commissioning
+another correction, would you still choose it to achieve the original outcome, knowing all
+remaining work, operator time, recovery and cleanup? Use the execution runbook's
 [replanning check](../../planning-workflows/runbooks/execute-implementation-plan.md#corrections-and-replanning)
 before proceeding with affected work. A genuinely separate routine repair follows
 `../../planning-workflows/runbooks/handle-routine-change.md` and retains a visible relationship
