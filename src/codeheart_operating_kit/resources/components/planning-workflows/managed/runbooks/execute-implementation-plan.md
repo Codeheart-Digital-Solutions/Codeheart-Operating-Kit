@@ -1,12 +1,12 @@
-Last updated: 2026-10-31T06:49:41Z (UTC)
+Last updated: 2026-11-21T10:34:09Z (UTC)
 
 # Execute Implementation Plan
 
 Use this runbook when executing an active `*_implementation_doc.md`. Approved implementation
 plans run under the implementing tool's native goal mode by default, in Codex and Claude Code.
 
-Implementation plans are authoritative, but their checklists may not be exhaustive. Complete the
-stated intention and outcome of each epic, not only the literal checkbox list.
+Use each epic's outcome and acceptance criteria to guide the work. An epic can state its
+approach and proof without a task checklist.
 
 Audience: agent-facing
 
@@ -75,7 +75,10 @@ Before execution:
 During execution:
 
 - keep the plan `Status: active`;
-- tick checkboxes only after the work is completed and validated;
+- update the epic's status in the plan at meaningful checkpoints, such as starting work,
+  awaiting review, encountering a blocker or completing acceptance. For an existing plan, use
+  the epic map or the epic itself without reformatting the plan;
+- tick existing checkboxes only after their work is completed and validated;
 - update `Last updated` when the plan changes;
 - add or preserve revision notes for meaningful scope, decision, strategy, or execution-plan
   changes.
@@ -157,14 +160,24 @@ plan/log change validates. Routine checkbox progress does not trigger a publicat
 
 - Execute epics sequentially.
 - Treat each epic outcome as the authority for completion.
-- Treat checkbox tasks as planned execution aids.
-- Add missing tasks when they are required for the epic outcome and are low-risk.
+- Use any existing checkbox tasks as execution aids.
+- Choose local design, files, functions, tests and debugging within the plan. Add necessary
+  low-risk work to deliver the epic outcome.
 - Return a material outcome, scope, dependency, cost or authority change to the delegated director
   for plan amendment; involve the user only outside that mandate or at a genuinely enforced user gate.
 - Keep necessary low-risk corrections inside the named epic. A separate routine repair uses
   `handle-routine-change.md` with a visible relationship, never as an escape from epic acceptance.
 - Preserve unrelated user work.
-- Do not mark an epic complete until validation and the review gate pass.
+- Mark an epic complete only after validation and required review pass.
+
+### Corrections And Replanning
+
+When a consequential planning assumption fails or successive fixes materially change the
+approach, the implementer and director each reconsider it. Would they choose it from the start
+with today's facts? Can they finish all remaining work, including recovery and cleanup, within
+the approved limits? Send the director the changed facts, effect on the plan and decision needed.
+The director revises the affected part within delegated authority. Hold that work and its
+dependents while the decision is pending. Continue independent authorized work.
 
 ## Runbook Change Execution
 
@@ -255,8 +268,10 @@ applicable. Rerun checks invalidated by corrections; a plan/log-only update does
 unrelated behavior. Explain retained evidence and its limits in the existing log. A cheap pass
 never proves an executable surface it did not exercise or substitutes for required release gates.
 
-After interruption, inspect current files, Git state, outputs and pending operations. Preserve
-usable work. Classify a failure as code, test, environment, authentication or billing before repair.
+After interruption, read the plan for epic status and acceptance criteria. Read the sibling log
+for evidence, pending review or decisions and any working list. Inspect current files, Git state,
+outputs and pending operations, and preserve usable work. Classify a failure as code, test,
+environment, authentication or billing before repair.
 Use tooling readiness for local prerequisites and the service owner for login/access/cost issues.
 For an uncertain external write, establish whether it happened before retrying. Continue safe
 in-scope fixes; do not blindly retry broad suites, increase budgets or invent an auth service.
@@ -293,21 +308,23 @@ Resolve new decisions outside the approved plan with the acceptance owner before
 For each epic:
 
 1. Restate the epic outcome in practical terms.
-2. Identify affected files, commands, and validation gates.
+2. Locate the affected area and identify the binding constraints and validation gates.
 3. Implement planned tasks, applying the Git action table in
    `../reference/planning-document-lifecycle.md` inside the loop: inspect relevant divergence at
    substantial starts/resumes, commit coherent progress, and publish useful checkpoints under
    covered authority. Preserve incomplete work before a planned pause; do not mark it accepted.
-4. Add required low-risk tasks omitted by the checklist.
+4. Carry out any additional low-risk work needed to meet the epic outcome.
 5. Run the smallest validation set that proves the outcome.
 6. For routing-bearing epics, run or verify the planned fresh low-context routing probe, or record
    why the probe is not applicable.
-7. Hand the coherent result to the commissioning agent's primary review at the planned
-   meaningful checkpoint; related epics may share one review. Include any additional independent
-   review the plan or commissioning agent selected.
-8. Fix material findings and return affected corrections to the same reviewers.
-9. Update checklist state only for completed and validated tasks.
-10. Update the execution log with meaningful divergence and review evidence.
+7. Record review pending in the plan and the evidence needed for the handoff in the log. Hand
+   the coherent result to the commissioning agent's primary review at the planned checkpoint.
+   Related epics may share one review. Include any selected independent review.
+8. Fix in-scope material findings in the same assignment and return the corrections and affected
+   evidence to the same reviewers.
+9. Update existing checkboxes for completed and validated tasks. Mark the epic complete in the
+   plan when validation and required review pass.
+10. Update the execution log with material deviations, review evidence and any remaining decisions.
 11. Reconcile the agreed commit/normal-push/PR state; this is not the first permitted checkpoint.
     Integrate independently usable accepted outcomes under covered authority and passing gates,
     or record the concrete blocker, owner and next resolving event. Keep later work active.
@@ -330,11 +347,11 @@ reviewer and owns acceptance. At the planned coherent source checkpoint it exami
 work and evidence directly, in proportion to risk, against:
 
 - epic outcome and acceptance criteria;
-- completed and incomplete checklist items;
+- epic status and completed or incomplete checklist items, where present;
 - validation evidence;
 - execution-log state;
 - scope boundaries and out-of-scope guardrails;
-- delivered feature capability, not only completed checklist lines;
+- delivered feature capability;
 - discovery capability scope when the implementation plan references one;
 - routing-standard adoption and probe evidence for routing-bearing epics;
 - accidental future-epic work.
@@ -355,14 +372,16 @@ reviewer's model and reasoning from the user's or local approved choices, otherw
 implementing agent's setup, unless the work is unusually high-risk. This default never dictates
 the commissioning agent's own model.
 
-Fix material findings and use the same reviewers for focused follow-up on corrections and their
-effects. Preserve valid review evidence. Broaden review or use a different reviewer only for a
-material design/impact change, inadequate independence, a reviewer limitation or unresolved concern.
-Continue until no material issues remain or a clear blocker is recorded. A material issue is anything that makes the epic incomplete,
-misleading, out of scope, unvalidated, not reproducible, narrow, policy-only, stubbed, unusable,
-or incomplete against the intended feature capability. If the gap is within the approved epic
-scope, fix it. If fixing it requires a new high-impact decision or scope expansion, stop and
-amend the plan instead of improvising.
+For a correction, the reviewer gives the defect, the behavior to preserve and the proof required.
+The same implementer chooses the repair. Material findings include failed acceptance criteria
+and correctness, security or integrity defects the plan did not anticipate. A discretionary style
+preference alone warrants neither a correction round nor a log entry.
+
+Use the same reviewers for focused follow-up on corrections and their effects. Preserve valid
+review evidence. Broaden review or use a different reviewer only for a material change,
+independence issue, limitation or unresolved concern. Continue until the material findings are
+resolved or a specific blocker is recorded. Apply "Corrections And Replanning" when a repair
+requires a consequential change to the plan.
 
 When a selected independent reviewer cannot be run, record why. The commissioning agent then
 performs the strongest practical review itself, and the record says that no independent review
@@ -393,8 +412,8 @@ The execution log is a review surface, not a command transcript.
 
 Log:
 
-- extra tasks added because the checklist was not exhaustive;
-- safe defaults chosen during execution;
+- material deviations and safe defaults that matter to review or resumption;
+- any implementer working list needed for resume or handoff;
 - validation substitutions or extensions;
 - routing-standard adoption evidence and fresh low-context probe results for routing-bearing
   epics;
@@ -407,10 +426,10 @@ Log:
 Do not log:
 
 - every command;
-- routine file edits already covered by the checklist;
+- routine file edits and decisions with no effect on acceptance or resumption;
 - timestamp-only edits;
 - formatting-only edits;
-- checklist progress without meaningful divergence.
+- a duplicate of the plan's status or checklist progress.
 
 ## Execution Log Shape
 
@@ -427,9 +446,10 @@ surface for divergence and evidence.
 
 When the plan and log conflict:
 
-- trust the implementation plan for current scope, checklist state, lifecycle state, and
-  acceptance criteria;
-- use the execution log to understand what changed during execution and why;
+- trust the implementation plan for current scope, lifecycle, epic status, acceptance criteria
+  and any existing checklist state;
+- use the execution log to understand the evidence, material deviations and pending decisions
+  or next actions;
 - correct the conflicting document before closing the epic or plan.
 
 ## Catalog And Visibility Hook

@@ -1,4 +1,4 @@
-Last updated: 2026-11-01T16:25:44Z (UTC)
+Last updated: 2026-11-21T10:38:35Z (UTC)
 
 # Cross-Tool Coordination Contract
 
@@ -360,19 +360,19 @@ cross-tool delegation needs no profile. Choosing and approving one is the consum
 its exact command list and paths stay in the consumer's ignored local layer.
 
 Choosing or changing a profile is the policy owner's explicit, recorded decision, made before
-work resumes. An agent never switches profiles, modes or tools in response to its own denial.
-Once approved, a profile covers the actions it lists; the owner does not need to re-approve
-each covered action.
+work resumes. Check once at commissioning that the approved role and repository profile covers
+the intended local work. Reuse it for covered work and corrections without listing its ordinary
+commands per task. Name an exact command when its identity matters to safety or correctness.
+The assignment identifies separately authorized external effects and their required gates.
+Confirm coverage again if the scope, target or profile changes.
 
 ### Explicit command permissions (`dontAsk`)
 
 For delivery work, an explicit profile is simpler and more predictable than an AI classifier.
 `dontAsk` denies any action that would otherwise ask for permission. Actions the rules allow, and
-actions that never need permission, still run. A denial comes back to the agent as a refusal; the
-session does not end, so the agent reports it instead of being judged case by case (see the
-official permissions documentation). List only the task's ordinary development and delivery
-commands, keep explicit ask and deny rules for risky options, and grant file edits only inside
-the task's directories:
+actions that never need permission, still run. A denial comes back to the agent as a refusal
+without ending the session. Keep explicit ask and deny rules for risky options, and grant file
+edits only inside the task's directories. This is an example of the settings shape:
 
 ```json
 {
@@ -393,18 +393,24 @@ the task's directories:
 }
 ```
 
-Add release, merge or other public-surface commands only when the assignment includes those
-effects. Command patterns are workflow control for a trusted agent, not operating-system
-isolation: an allowed test or build command runs repository code, and `gh` and `git push` rules
-do not check repository identity, review readiness or CI. The deny entries are illustrative
-examples, not exhaustive enforcement: other spellings, such as a `+<refspec>` force push or
+The policy owner can add permissions for release, merge or other public-surface commands only
+when the assignment includes those effects. Run those commands only when the assignment
+includes the operation, the approved profile covers it and the required gates pass.
+
+Command patterns guide a trusted agent within the runtime's enforced boundaries. An allowed
+test or build command runs repository code. Verify repository identity, review readiness and CI
+before covered GitHub delivery. The deny entries are illustrative examples, not exhaustive
+enforcement: other spellings, such as a `+<refspec>` force push or
 `:<branch>` deletion, are not matched. Branch protection, the reviewed scope and the delivery
 gates stay authoritative. The workflow still checks authority, review, CI and the exact target.
 
 When setting up or changing a profile, confirm it once with harmless probes before real work:
 the allowed probe runs, and the ask probe and one unlisted command that would normally prompt
-(for example an interpreter one-liner) are refused. Any other refusal during real work is a
-blocker to report unchanged.
+(for example an interpreter one-liner) are refused.
+
+After a real denial, stop the denied operation and its dependents. Report the refusal unchanged
+and identify the work it blocks. The denial applies across commands, profiles, modes, tools,
+identities and agents. Continue independent authorized work within the enforced restrictions.
 
 Launch or resume the session with its working directory set to the repository it must change,
 and add other task directories as working directories. A command that changes directory and then

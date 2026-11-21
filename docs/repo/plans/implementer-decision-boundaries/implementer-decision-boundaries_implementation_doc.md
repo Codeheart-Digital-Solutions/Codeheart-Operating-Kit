@@ -1,6 +1,7 @@
-Last updated: 2026-11-21T10:21:26Z (UTC)
+Last updated: 2026-11-21T10:34:09Z (UTC)
 Created: 2026-11-21
 Status: active
+Execution log: implementer-decision-boundaries_execution_log.md
 
 # Director and Implementer Decision Boundaries
 
@@ -78,10 +79,10 @@ The coordination home owns its existing `docs/repo/reference/agent-coordination.
 
 ## 3.0 Epic Map
 
-| Epic | Outcome | Size | Depends on |
-| --- | --- | --- | --- |
-| EP-01 | Drafting, review and execution give consistent decision authority. | S | Agreed direction |
-| EP-02 | Released guidance is usable in the designated coordination home. | S | Reviewed EP-01 source for release and adoption |
+| Epic | Outcome | Size | Depends on | Status |
+| --- | --- | --- | --- | --- |
+| EP-01 | Drafting, review and execution give consistent decision authority. | S | Agreed direction | Review pending |
+| EP-02 | Released guidance is usable in the designated coordination home. | S | Reviewed EP-01 source for release and adoption | Pending source acceptance |
 
 ### EP-01 · Plan, delegate and correct a coherent outcome
 
@@ -97,8 +98,8 @@ The coordination home owns its existing `docs/repo/reference/agent-coordination.
 
 **F · Tasks**
 
-- [ ] Make exhaustive file inventories, file trees and planner-written implementation steps conditional. Keep outcome, approach, dependencies, constraints and proof concrete. Align drafting, per-epic progress, review, log and resume instructions with §2.3 for plans with or without task checkboxes. Small changes may use the assignment itself.
-- [ ] Align assignments, corrections and both permission references with §2.3. Replace “List only the task's ordinary development and delivery commands” in the cross-tool contract and the matching wording in the Claude guide with instructions to check the approved profile once at commissioning and reuse it for covered work without listing those commands per task. Link the owning plan or Program section and relevant decisions in the handoff. Ask for an approach note only to resolve a consequential uncertainty. After a denial, stop the operation and its dependents, report what is blocked and continue independent authorized work. The denial applies across commands, tools, identities and agents. This epic changes wording only.
+- [x] Make exhaustive file inventories, file trees and planner-written implementation steps conditional. Keep outcome, approach, dependencies, constraints and proof concrete. Align drafting, per-epic progress, review, log and resume instructions with §2.3 for plans with or without task checkboxes. Small changes may use the assignment itself.
+- [x] Align assignments, corrections and both permission references with §2.3. Replace “List only the task's ordinary development and delivery commands” in the cross-tool contract and the matching wording in the Claude guide with instructions to check the approved profile once at commissioning and reuse it for covered work without listing those commands per task. Link the owning plan or Program section and relevant decisions in the handoff. Ask for an approach note only to resolve a consequential uncertainty. After a denial, stop the operation and its dependents, report what is blocked and continue independent authorized work. The denial applies across commands, tools, identities and agents. This epic changes wording only.
 - [ ] Verify packaged copies match source. Use the affected routing/resource checks and one fresh-context walkthrough covering three decisions: repair a duplicate submission under the existing contract, return a recovery design that outgrows its time window, and continue independent local work after a denied publication. Review the coherent diff together.
 
 **G · Implementation notes.** For the duplicate-submission case, use an epic without a predicted file list or task checklist. A fresh reader should be able to locate its review-pending status in the plan, resume from the log, and establish when the epic can be marked complete. The reviewer should still flag a second sample that leaves a consequential data decision unresolved.

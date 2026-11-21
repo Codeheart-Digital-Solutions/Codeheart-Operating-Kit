@@ -1,19 +1,18 @@
-Last updated: 2026-10-09T20:47:14Z (UTC)
+Last updated: 2026-11-21T10:34:09Z (UTC)
 
 # Draft Implementation Plan
 
 Use this runbook to turn accepted discovery, user direction, and targeted repository research into
 an execution-ready `*_implementation_doc.md`.
 
-An implementation plan is not a brainstorming note. It is the document a future agent or developer
-can execute linearly with low interpretation overhead.
+An implementation plan gives a future agent or developer the decisions and evidence needed
+to deliver the intended outcome in dependency order.
 
 Audience: agent-facing
 
 Intent:
-Create a linear implementation plan that preserves accepted capability scope, decisions,
-dependencies, validation, and review gates so a future implementer can execute without
-reinventing the workflow.
+Record the accepted capability scope, technical approach, dependencies, validation and
+review gates. Leave local design and execution choices to the implementer.
 
 Success:
 The plan has a valid lifecycle header, complete sections, concrete epics, covered feature
@@ -29,7 +28,9 @@ Stop before normal epic drafting when discovery handoff authority is missing, ca
 absent or unapproved, or a blocker prevents a single-path implementation plan.
 
 For known bounded changes, first consider `handle-routine-change.md`. Do not require a formal plan
-solely because a change touches several files. Work already necessary to an active epic stays there.
+solely because a change touches several files. For a small change that fits the routine route, the
+assignment itself can carry the outcome, limits and evidence. Work already necessary to an active
+epic stays there.
 
 ## Trigger
 
@@ -101,11 +102,12 @@ approach, consequential constraints, dependencies and evidence that will prove c
 requirements distinct from the chosen approach and assumptions. Preserve enough context for a
 fresh implementer to reason about the work; brevity alone is not quality.
 
-Set costly-to-reverse choices before dependent execution. Ordinary file organization, commands
-and implementation details may be refined within the approved outcome with a brief rationale.
-Return material scope, risk, cost, architecture or authority changes to the acceptance owner.
-Use concrete examples or data/flow detail where ambiguity warrants them; do not freeze every
-command or prescribe detail that research during implementation can safely resolve.
+The director sets intent, consequential design choices, dependencies, acceptance evidence and
+operating limits before dependent execution. Ask what would go wrong if the implementer chose
+differently. Name exact paths or commands when they identify an interface, a protected target or
+a constraint that matters to correctness or safety. Include concrete examples or data flows when
+they resolve material ambiguity. Within the approved outcome the implementer chooses ordinary
+files, functions, commands, test design and debugging.
 
 Plan cheap affected checks during iteration and broader validation on a coherent candidate.
 Plan the commissioning agent's primary review at meaningful checkpoints, combining tightly
@@ -124,10 +126,10 @@ capability, mark the omission explicitly as out of scope, deferred, or blocked w
 not let a plan quietly narrow the capability to policy, scaffolding, gates, schemas, stubs, or
 validation shells while the intended feature behavior remains unplanned.
 
-Use the fresh-implementer test before writing tasks: if a future implementer can only restate what
-must be true, but still has to invent the substantive workflow, consequential data/permission
-model or acceptance method, the epic is not implementation-ready. Ordinary in-scope refinement
-is expected; include commands and exact paths where they materially reduce execution risk.
+Apply the fresh-implementer test while drafting epics. A fresh implementer must be able to identify
+the chosen workflow, consequential data and permission decisions, and how to verify acceptance.
+An unresolved choice that can materially affect the outcome belongs in the plan as a decision or
+an explicit blocker for the affected work.
 
 ## Runbook Change Coverage
 
@@ -321,12 +323,14 @@ Current state analysis must distinguish:
 
 Include:
 
-- `2.1 Implementation Strategy With Visual File/Folder Hierarchy`
+- `2.1 Implementation Strategy`
 - `2.2 Open Questions And Assumptions Requiring Clarification`
 - `2.3 Architectural Decisions With Reasoning`
 
-The file tree must show expected paths and use inline comments such as `# create`, `# modify`, and
-`# delete` only when deletion is explicitly required and safe.
+Include a file tree when placement or layout matters to the chosen strategy. Show the paths that
+carry those decisions. If helpful, annotate them with `# create` or `# modify`. Use `# delete`
+only for explicitly required and safe deletions. Existing plans may keep their current headings
+and trees.
 
 Record open questions as `OQ-<n>` entries. Each open question must include:
 
@@ -361,7 +365,8 @@ to set a better boundary.
 ## Whole-Plan Commissioning And Delivery Boundary
 
 Before execution, settle the intended outcome, owning repository/branch, ordered epics, acceptance
-evidence, director and delegated review points in the existing plan/assignment. Include coherent
+evidence, director and delegated review points in the existing plan or assignment. Link the owning
+plan or relevant Program section and the decisions the implementer needs. Include coherent
 commits, normal pushes and PR creation/updates at agreed review, recovery and handover checkpoints.
 Identify independently usable integration outcomes, their dependencies and relevant acceptance.
 One coherent outcome may use one PR; a longer plan may use several without a PR per checkbox.
@@ -371,6 +376,12 @@ Git action table in `../reference/planning-document-lifecycle.md`.
 
 State the finish line (reviewed branch, merged main, released product or adopted consumer), who
 integrates, and whether merge/release/adoption/provider effects are included, delegated or reserved.
+
+At commissioning, check that the approved role and repository profile covers the planned local
+work. Identify any separately authorized external effects in the assignment. Follow
+[agent task coordination](../../agent-interface/reference/agent-task-coordination.md) for profile
+reuse, corrections and handoffs.
+
 For repository adoption, name the intended default/integration branches and active worktrees;
 a working-copy pilot is partial unless that narrower finish line is explicit. Include final
 record publication in the grant if closure must reach the shared baseline. Name required checks
@@ -394,35 +405,31 @@ Start with `3.0 Epic Map`, a table containing:
 - epic ID;
 - one-line outcome;
 - size `S`, `M`, `L`, or `XL`;
-- dependencies.
+- dependencies;
+- current epic status.
 
-For each epic include these fields:
+For each epic state the outcome, scope, acceptance criteria, size and dependencies. Include
+critical-path notes, implementation notes and open questions where they matter to execution.
+A file list is useful when specific paths identify an interface, protected area or starting point.
+Include a task checklist when the plan needs to communicate required sequencing or work that
+must be tracked individually.
 
-- `A) Epic ID, Title, And Outcome`
-- `B) Scope`
-- `C) Files Touched`
-- `D) Acceptance Criteria And Size`
-- `E) Dependencies And Critical-Path Notes`
-- `F) Tasks Checklist`
-- `G) Implementation Notes`
-- `H) Open Questions`
-
-The epic outcome owns completion. Checkbox tasks are an execution aid, not the full possible task
-universe. Each epic outcome should state what capability exists after the epic, and its tasks
-should cover the concrete behavior, artifact changes, and validation needed for that capability.
+The epic outcome and acceptance criteria govern completion. The plan tracks epic status, and
+its sibling execution log records evidence, material deviations and any working list the
+implementer needs for resume or handoff. Existing plans may keep their headings, file lists and
+checkboxes. Record epic status once in the epic map or the epic itself.
 
 ## Checklist Rules
 
-Use `- [ ]` tasks for capability-sized implementation actions with relevant files, components or
-validation gates. State the non-negotiable details and a chosen main approach. Ordinary conditional
-preflight and safe implementation choices are legitimate; do not reject a task for words such as
-"or", "choose" or "if needed".
+When a checklist helps, use `- [ ]` for capability-sized actions or required checkpoints. Name
+the constraints and chosen approach and leave safe implementation choices open. During
+execution, check existing tasks only after they are done and validated.
 
 Do not let policy, scaffolds, schemas or tests substitute for the intended usable capability.
 Resolve safely checkable consequential facts during planning. For action-time uncertainty, name
-the check and how its result affects execution; specify exact remediation and stops when risk
-requires them. End epics with validation that proves their outcomes, with coherent shared review
-checkpoints where declared.
+the check and how its result affects execution. Specify exact remediation and stops when risk
+requires them. Give every epic validation that proves its outcome and identify any shared review
+checkpoint.
 
 ## Blocker Handling
 
@@ -431,8 +438,7 @@ the answer.
 
 For an affected blocked epic:
 
-- include blocker-resolution tasks only;
-- do not include normal implementation tasks that depend on the answer;
+- limit planned work on the affected epic to resolving the blocker;
 - keep unaffected later epics fully planned when they remain valid regardless of the blocker.
 
 Use `BLOCKER: no` for decisions that can be safely defaulted, deferred, or resolved during
@@ -516,14 +522,14 @@ Before finalizing the plan, verify:
 - top-level section order is exact;
 - every required subsection exists;
 - Section 3 is linear and non-branching;
-- affected paths are concrete enough to locate the work;
-- every epic has verifiable acceptance criteria;
-- every epic ends with validation tasks;
+- consequential decisions are settled or explicitly blocked, and any binding paths or commands
+  are concrete enough to apply;
+- every epic has a status, dependencies and verifiable acceptance criteria with a validation method;
 - the plan covers intended feature capability or explicitly marks omitted capability areas;
 - no epic can be completed by delivering only policy, scaffolding, gates, schemas, stubs, or
   validation shells while intended capability remains unplanned;
-- avoidable non-concreteness has been resolved into checked facts or exact execution-time
-  preflight/remediation paths;
+- consequential facts are checked, or the plan gives the execution-time check and how it
+  determines the next action;
 - every `OQ-*` includes blocker status and affected epic IDs;
 - no blocked epic contains normal implementation tasks;
 - the plan is self-contained enough for a new implementer;

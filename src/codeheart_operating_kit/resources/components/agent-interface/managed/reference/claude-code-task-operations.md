@@ -1,4 +1,4 @@
-Last updated: 2026-10-10T16:27:45Z (UTC)
+Last updated: 2026-11-21T10:34:09Z (UTC)
 
 # Claude Code Task Operations
 
@@ -132,16 +132,18 @@ helper returns them unchanged. A profile that allows ordinary pull-request merge
 repository grants tool permission only; the workflow still checks authority, review, CI and
 candidate identity, and no profile adds release or deployment authority.
 
-For delivery work, an explicit `dontAsk` profile listing the task's ordinary development and
-GitHub commands is simpler than an Auto-mode classifier allowance, which refused a self-authored
-merge and a public release. `dontAsk` denies actions that would otherwise prompt; allowed actions
-still run, and a denial returns to the agent as a refusal. Choosing or changing a profile is the
-policy owner's explicit, recorded decision before work resumes; an agent never switches profiles,
-modes or tools to get past its own denial, and relayed approval does not override a refusal.
-Confirm a new profile once with harmless allowed, ask and unlisted probes. Start or resume the
-session in the repository it changes, because changing directory and then running Git in one
-command is evaluated separately. See the permission profiles section of
-`cross-tool-coordination-contract.md`.
+For delivery work using an explicit `dontAsk` profile, check once at commissioning that the
+approved role and repository profile covers the intended local work. Reuse it for covered work
+and corrections without listing ordinary commands per task. Identify separately authorized
+external effects. Only the policy owner can choose or change the profile. Confirm a new or
+changed profile once with harmless allowed, ask and unlisted probes. Follow the owning
+[Permission Profiles contract](cross-tool-coordination-contract.md#permission-profiles).
+
+`dontAsk` denies actions that would otherwise prompt. After a denial, stop the operation and
+its dependents, and report the refusal unchanged. It applies across commands, profiles, modes,
+tools, identities and agents. Continue independent authorized work within the enforced limits.
+Start or resume the session in the repository it changes, because changing directory and then
+running Git in one command is evaluated separately.
 
 ## Archival And Preservation
 

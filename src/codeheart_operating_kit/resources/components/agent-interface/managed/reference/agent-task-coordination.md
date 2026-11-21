@@ -1,4 +1,4 @@
-Last updated: 2026-10-31T06:49:41Z (UTC)
+Last updated: 2026-11-21T10:34:09Z (UTC)
 
 # Agent Task Coordination
 
@@ -21,11 +21,15 @@ qualified.
 
 ## Whole-Plan Assignment
 
-Commission one implementer for the complete executable plan and its ordered epics. Before starting,
-record these facts in the existing plan and assignment, using private locators only in the proper
-audience's records:
+Commission one implementer for a coherent outcome, which may span the complete executable plan
+and its ordered epics. Ask for an approach note only when it helps resolve a consequential
+uncertainty. For a small change that fits the
+[routine route](../../planning-workflows/runbooks/handle-routine-change.md), the assignment
+itself can carry the direction. Before starting, record these facts in the existing plan or
+assignment. Keep private locators in the proper audience's records.
 
-- canonical plan name/path and owning project, repository and branch;
+- link to the owning plan or relevant Program section and to decisions the implementer needs.
+  Name the owning project, repository and branch;
 - selected workspace, closure owner and any covered workspace-removal authority, following
   "Assignment Workspaces" below;
 - intended outcome, ordered epics, constraints, non-goals and acceptance evidence;
@@ -49,12 +53,25 @@ exact-effect binding, signing/audience condition, security boundary or tool-enfo
 binding. Determine whether the existing grant satisfies the actual contract before asking again.
 Do not fabricate approval references or treat another rollout's approval as current authority.
 
+When the repository uses a role profile, check once at commissioning that the approved profile
+covers the intended local work in the assigned repository. Reuse it for covered work and
+corrections without listing those ordinary commands per task. Identify separately authorized
+external effects. Name individual commands when their identity matters to safety or correctness.
+Recheck coverage if the profile, scope or target changes. The policy owner controls profile
+changes. For explicit cross-tool profiles see
+[Permission Profiles](cross-tool-coordination-contract.md#permission-profiles).
+
+If a tool denies an operation, stop it and its dependents, and report what is blocked. Respect
+the denial across commands, tools, identities and agents. Continue independent authorized work.
+
 Use an assignment such as:
 
 ```text
-Execute the complete <Plan name> at <canonical path> in <owning project/repository>,
-on <branch>, through its ordered epics. The approved scope includes implementation,
-validation, coherent commits, normal pushes and one delivery PR with updates.
+Deliver <coherent outcome> in <owning project/repository> on <branch> through <ordered epics>.
+Use <owning plan or Program section> and <relevant decisions> for the agreed approach, limits
+and acceptance evidence. Choose local design, tests and repairs within those decisions.
+Use the approved <role/repository profile> for covered work. The approved effects are
+<named Git and external effects>. Use <workspace>, with <owner> responsible for closure.
 The finish line is <reviewed branch / merged main / released and adopted product>.
 <Director role> accepts the first epic and final candidate; <owner> performs the
 explicitly covered integration effects after <required checks and exact inputs>.
@@ -178,11 +195,18 @@ permissions, notification channel or scheduler. Tool details: `codex-task-operat
 
 ## Execute And Review
 
-Follow `../../planning-workflows/runbooks/execute-implementation-plan.md`. Every implementation
-action belongs to a named epic and its outcome. Add necessary low-risk corrections there. Amend
-the plan for a material outcome, scope, dependency, cost or authority change. A genuinely separate
-routine repair follows `../../planning-workflows/runbooks/handle-routine-change.md` and retains a
-visible relationship to affected work. Do not use it to escape epic review.
+Follow `../../planning-workflows/runbooks/execute-implementation-plan.md`. Work under a plan
+belongs to its named epic and outcome. Handle necessary in-scope corrections in the same
+assignment. A finding gives the implementer the defect, behavior to preserve and evidence to
+return. The implementer chooses the repair. For example, "A retry after a lost response can
+submit twice. Preserve one submission per request and show the regression test."
+
+The implementer and director reconsider the approach when a consequential planning assumption
+fails or fixes together materially change it. Use the execution runbook's
+[replanning check](../../planning-workflows/runbooks/execute-implementation-plan.md#corrections-and-replanning)
+before proceeding with affected work. A genuinely separate routine repair follows
+`../../planning-workflows/runbooks/handle-routine-change.md` and retains a visible relationship
+to affected work.
 
 Use local commits for coherent recoverable progress before formal acceptance, after proportionate
 inspection and checks. Preserve incomplete progress before pauses and inspect relevant target
@@ -247,10 +271,11 @@ Use readable plan, epic, role and task names first; add stable IDs when needed t
 Explain a new abbreviation on first use.
 
 Report directly through the supported task-message surface when the assignment authorizes the
-recipient and payload. Include result/evidence, Git state and requested director action. The
-director can remain available for discussion while the implementer works. Best-effort report-back
-is sufficient: if the tool rejects delivery, retain the result in the existing record and final
-response and state that it was not delivered. Do not claim receipt or bypass the rejection.
+recipient and payload. Include the owning plan or Program section, relevant decisions, result,
+evidence, Git state and requested director action. The director can remain available for
+discussion while the implementer works. Best-effort report-back is sufficient. If the tool
+rejects delivery, retain the result in the existing record and final response and report the
+failed delivery. Do not claim receipt or bypass the rejection.
 
 Use supported completion notifications or bounded waits for the current dependency. Do not assume
 that a completed worker will restart an idle coordinator; follow the host-specific waiting

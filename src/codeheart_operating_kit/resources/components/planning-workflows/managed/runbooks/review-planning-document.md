@@ -1,4 +1,4 @@
-Last updated: 2026-10-09T20:47:14Z (UTC)
+Last updated: 2026-11-21T10:34:09Z (UTC)
 
 # Review Planning Document
 
@@ -129,7 +129,9 @@ Check whether:
 - trade-offs are explicit;
 - chosen decisions follow constraints;
 - alternatives were considered where they matter;
-- hidden assumptions should be explicit.
+- hidden assumptions should be explicit;
+- the plan resolves choices that could materially change the outcome, data or permission model,
+  interfaces, operating limits or acceptance evidence.
 
 ### Completeness
 
@@ -161,10 +163,12 @@ practices. Call out weak legacy patterns when they are copied without justificat
 For implementation docs, check whether:
 
 - epics are linear;
-- each epic has clear outcome, scope, files, acceptance criteria, dependencies, tasks, notes, and
-  open questions;
-- validation gates cover the changed surface;
-- checklist tasks provide a chosen approach and allow safe action-time refinements;
+- each epic has an outcome, scope, size, status, dependencies and acceptance criteria with
+  validation that covers the changed surface;
+- the strategy gives the implementer a usable approach, names binding paths or commands where
+  they matter, and leaves ordinary files, functions, tests and debugging open;
+- a file tree, file list or checklist is present where needed to convey a material decision or
+  required sequence. Existing formats remain usable;
 - release or migration authority is explicit;
 - the plan concretely implements the intended feature capability, not only surrounding policy,
   scaffolding, gates, schemas, stubs, or validation shells;
@@ -174,11 +178,10 @@ For implementation docs, check whether:
   recorded user approval, delegation, or revision of the relevant `Implementation Capability
   Scope` blocks;
 - omitted capability areas are explicitly out of scope, deferred, or blocked;
-- a lazy implementer cannot complete every checklist item while delivering only scaffolding,
-  policy, stubs, validation shells, or a narrow slice that does not fulfill the intended feature
-  capability;
-- checkable facts are resolved or represented by exact preflight checks, expected results,
-  remediation paths, retry validation, and stop conditions.
+- the acceptance evidence would expose delivery of only scaffolding, policy, stubs, validation
+  shells, or a narrow slice of the intended feature capability;
+- consequential facts are resolved or have an action-time check with the expected result and
+  proportionate remediation and stop conditions;
 - plans that create or materially change durable runbooks route to
   `../../agent-interface/reference/runbook-authoring-standard.md`;
 - plans that create or materially change routing-bearing surfaces cite and apply
@@ -284,12 +287,13 @@ For implementation documents, verify:
   relations, classifications, and legacy aliases;
 - section order is correct;
 - Section 3 is linear;
-- every epic has acceptance criteria and validation tasks;
-- every epic outcome and checklist set covers the intended feature capability or records explicit
-  omissions;
+- every epic has a current status and acceptance criteria with a validation method;
+- the epic outcomes cover the intended feature capability or record explicit omissions, and any
+  checklist supports those outcomes;
 - blocker handling is coherent;
 - future planning does not hide required work;
-- execution log expectations are present for goal-style runs.
+- the plan owns epic progress and the sibling execution log holds implementation evidence,
+  material deviations and any working list needed for resume or handoff;
 - activation-only wording, when present, grants only plan/log/direct-metadata branch creation/use,
   commit, and normal push; excludes unrelated files, code, PR, merge, release, force-push,
   deletion, destructive Git, ambiguity, auth/policy/rejected-push bypass; and permits execution on
