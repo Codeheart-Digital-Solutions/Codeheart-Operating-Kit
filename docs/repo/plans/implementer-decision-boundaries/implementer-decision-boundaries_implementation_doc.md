@@ -1,6 +1,6 @@
-Last updated: 2026-11-21T10:17:40Z (UTC)
+Last updated: 2026-11-21T10:21:26Z (UTC)
 Created: 2026-11-21
-Status: draft
+Status: active
 
 # Director and Implementer Decision Boundaries
 
@@ -141,3 +141,4 @@ At the next ordinary handoff, look for a correction completed within the origina
 
 - 2026-11-21: Draft from the agreed planning, correction and permission boundaries.
 - 2026-11-21: Added the two permission references, defined epic progress with optional checklists, and clarified correction and adoption criteria.
+- 2026-11-21: Owner approved the revised plan and commissioned delivery through release and verified adoption. See the [execution log](implementer-decision-boundaries_execution_log.md).
