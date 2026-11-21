@@ -1,4 +1,4 @@
-Last updated: 2026-11-21T18:47:28Z (UTC)
+Last updated: 2026-11-21T19:15:41Z (UTC)
 
 # Draft Implementation Plan
 
@@ -110,7 +110,7 @@ they resolve material ambiguity. Within the approved outcome the implementer cho
 files, functions, commands, test design and debugging.
 
 For a consequential requirement, state or link the decision the work must settle, the failure
-the safeguard should prevent and the observation sufficient for acceptance. If the proposed
+the safeguard should prevent and the simplest observation sufficient for acceptance. If the proposed
 method changes who can operate or adds a condition for proceeding beyond the agreed acceptance
 criteria, cite the applicable requirement or obtain the responsible director’s decision within
 their authority. Implementers choose ordinary tests of existing requirements.
@@ -135,10 +135,10 @@ capability, mark the omission explicitly as out of scope, deferred, or blocked w
 not let a plan quietly narrow the capability to policy, scaffolding, gates, schemas, stubs, or
 validation shells while the intended feature behavior remains unplanned.
 
-Apply the fresh-implementer test while drafting epics. A fresh implementer must be able to identify
-the chosen workflow, consequential data and permission decisions, and how to verify acceptance.
-An unresolved choice that can materially affect the outcome belongs in the plan as a decision or
-an explicit blocker for the affected work.
+Draft each epic for a competent implementer who missed the planning discussion. State or link
+the decisions, definitions and constraints needed to follow the chosen workflow and recognize
+completion. If two reasonable readings would materially change the outcome, required authority
+or operator effort, settle the choice or mark the affected work blocked before handoff.
 
 ## Runbook Change Coverage
 

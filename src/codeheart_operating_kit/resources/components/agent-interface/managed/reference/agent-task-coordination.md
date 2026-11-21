@@ -1,4 +1,4 @@
-Last updated: 2026-11-21T18:47:28Z (UTC)
+Last updated: 2026-11-21T19:15:41Z (UTC)
 
 # Agent Task Coordination
 
@@ -41,6 +41,10 @@ assignment. Keep private locators in the proper audience's records.
 - who merges, releases or adopts, which effects are included, delegated or reserved, and the
   action-time inputs and gates still required;
 - explicit report-back instruction and the commissioning task's execution locator.
+
+Before building a method that changes who can operate or adds a condition for proceeding
+beyond the agreed acceptance criteria, cite the applicable requirement or return the choice
+to the director. The implementer chooses ordinary tests of existing criteria.
 
 A reviewed draft is not an execution request. An activation-only request grants the bounded
 plan-checkpoint effects documented in planning workflows. A request to execute the whole plan
