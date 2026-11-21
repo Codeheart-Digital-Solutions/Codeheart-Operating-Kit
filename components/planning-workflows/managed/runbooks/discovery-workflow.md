@@ -1,4 +1,4 @@
-Last updated: 2026-09-09T14:08:21Z (UTC)
+Last updated: 2026-11-21T23:49:23Z (UTC)
 
 # Discovery Workflow
 
@@ -58,6 +58,16 @@ locally or through the owning source before asking the user to supply them.
 Scale depth to ambiguity, commitments and cost of reversal. Establish current platform/support
 promises, important failure behavior and costly product choices here when they shape planning.
 Do not prescribe generic product answers or assume a consumer's organizational stage.
+
+Establish who will rely on the result, what must remain usable or reusable over time, what could
+be lost, and the acceptable operator effort in normal use and recovery. Use existing Program
+decisions where they settle the question. Where a consequential trade-off remains, explain it in
+concrete terms and recommend an option to the user or delegated decision owner. Include waiting,
+coordination, retries and cleanup when judging operator effort.
+
+Carry the settled choice into the [Implementation Capability Scope handoff](#implementation-handoff-ready)
+under `Preserve decisions` or `Planner must not reinvent`. Use `Feature-level success evidence`
+when the choice changes how success is demonstrated.
 
 Use one existing document for decisions, evidence and handoff. IDs and the packet fields below
 help when dependencies need traceability; they do not require separate records, empty fields or

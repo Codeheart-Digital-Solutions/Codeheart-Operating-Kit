@@ -1,4 +1,4 @@
-Last updated: 2026-11-21T19:15:41Z (UTC)
+Last updated: 2026-11-21T23:49:23Z (UTC)
 
 # Draft Implementation Plan
 
@@ -335,6 +335,18 @@ Include:
 - `2.1 Implementation Strategy`
 - `2.2 Open Questions And Assumptions Requiring Clarification`
 - `2.3 Architectural Decisions With Reasoning`
+
+Use `2.1 Implementation Strategy` for consequential choices that affect this delivery. State or
+link who will use and operate the result, how long it must be supported, and which architectural
+or product boundaries it must preserve. State what could be lost, the acceptable operator effort
+in normal use and recovery, and the evidence sufficient for acceptance. Epics and short handoffs
+inherit that decision. State an epic-specific difference where it changes the design, procedure
+or evidence.
+
+Use the governing Program decision when one exists. A link suffices for an inherited decision.
+Otherwise, record the consequential choice in the implementation plan. A project without a
+Program uses this section directly. An authorized request can go straight to planning when
+discovery is unnecessary.
 
 Include a file tree when placement or layout matters to the chosen strategy. Show the paths that
 carry those decisions. If helpful, annotate them with `# create` or `# modify`. Use `# delete`

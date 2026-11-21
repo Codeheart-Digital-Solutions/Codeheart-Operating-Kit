@@ -1,4 +1,4 @@
-Last updated: 2026-11-21T21:02:10Z (UTC)
+Last updated: 2026-11-21T23:49:23Z (UTC)
 
 # Execute Implementation Plan
 
@@ -163,6 +163,18 @@ plan/log change validates. Routine checkbox progress does not trigger a publicat
 - Use any existing checkbox tasks as execution aids.
 - Choose local design, files, functions, tests and debugging within the plan. Add necessary
   low-risk work to deliver the epic outcome.
+- Before building a method that changes who can operate or materially adds to what the operator
+  must do in normal use or recovery, check its basis in the epic, governing handoff or binding
+  requirement. If the added obligation has no existing basis, return the choice to the director
+  with what the whole procedure will require, which failure it addresses, and whether a simpler
+  supported method would suffice. Wait for that decision before building the affected method.
+  Proceed with ordinary implementation choices and tests within the agreed limits.
+
+  Include waiting, coordination, retries and cleanup in the operating cost. If the method
+  compromises a required architectural or product boundary, or a binding control makes the agreed
+  operation infeasible, return the conflict before proceeding with the affected work. The director
+  resolves it within delegated authority and amends the affected epic when its scope changes. An
+  in-scope clarification stays in the existing assignment.
 - Return a material outcome, scope, dependency, cost or authority change to the delegated director
   for plan amendment; involve the user only outside that mandate or at a genuinely enforced user gate.
 - Keep necessary low-risk corrections inside the named epic. A separate routine repair uses
