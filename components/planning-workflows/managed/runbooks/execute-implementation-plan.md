@@ -1,4 +1,4 @@
-Last updated: 2026-11-21T20:57:14Z (UTC)
+Last updated: 2026-11-21T21:02:10Z (UTC)
 
 # Execute Implementation Plan
 
@@ -384,9 +384,9 @@ the commissioning agent's own model.
 For a correction, the reviewer gives the defect, the behavior to preserve and the proof required.
 The same implementer chooses the repair. Material findings include failed acceptance criteria
 and correctness, security or integrity defects the plan did not anticipate. Treat a material
-new obligation as a finding when it lacks a governing requirement or a decision by the
-responsible director. A discretionary style preference alone warrants neither a correction
-round nor a log entry.
+new obligation as a finding when it lacks a governing requirement or a recorded decision by the
+responsible director within their authority. A discretionary style preference alone warrants
+neither a correction round nor a log entry.
 
 Use the same reviewers for focused follow-up on corrections and their effects. Preserve valid
 review evidence. Broaden review or use a different reviewer only for a material change,
