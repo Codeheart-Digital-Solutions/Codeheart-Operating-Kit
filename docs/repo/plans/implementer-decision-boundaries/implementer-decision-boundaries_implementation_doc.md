@@ -1,4 +1,4 @@
-Last updated: 2026-11-21T09:58:31Z (UTC)
+Last updated: 2026-11-21T10:09:18Z (UTC)
 Created: 2026-11-21
 Status: draft
 
@@ -25,6 +25,7 @@ Directors need to settle decisions that affect the outcome. Implementers need ro
 | --- | --- |
 | [Drafting](../../../../components/planning-workflows/managed/runbooks/draft-implementation-plan.md) and [plan review](../../../../components/planning-workflows/managed/runbooks/review-planning-document.md) | The authoring rules and the criteria a reviewer applies to them must agree. |
 | [Execution](../../../../components/planning-workflows/managed/runbooks/execute-implementation-plan.md) and [agent task coordination](../../../../components/agent-interface/managed/reference/agent-task-coordination.md) | Existing authority for whole-plan assignments, review, corrections and report-back. |
+| [Cross-tool permission profiles](../../../../components/agent-interface/managed/reference/cross-tool-coordination-contract.md#permission-profiles) and [Claude task operations](../../../../components/agent-interface/managed/reference/claude-code-task-operations.md) | Both describe command selection for explicit profiles. The contract owns the rule and the Claude guide applies it. |
 | [Change](../../runbooks/change-operating-kit.md) and [release](../../runbooks/release-operating-kit.md) procedures | Source ownership, resource checks and candidate qualification. |
 
 Contents: [Foundation](#section-1---foundation), [Strategy](#section-2---strategy), [Execution](#section-3---execution-plan), [Future planning](#section-4---future-planning).
@@ -51,9 +52,11 @@ The Kit already permits whole-plan assignments, safe local decisions and focused
 components/planning-workflows/managed/runbooks/
   draft-implementation-plan.md    # modify planning depth, required format and quality gate
   review-planning-document.md     # modify reviewer criteria to match
-  execute-implementation-plan.md  # modify correction and replanning guidance
+  execute-implementation-plan.md  # align progress, review, resume and replanning guidance
 components/agent-interface/managed/reference/
   agent-task-coordination.md      # align the existing assignment example and handoff
+  cross-tool-coordination-contract.md  # clarify reuse of approved role/repository permissions
+  claude-code-task-operations.md       # align the Claude summary and point to the contract
 src/codeheart_operating_kit/resources/components/  # synchronize matching packaged resources
 ```
 
@@ -66,7 +69,9 @@ The coordination home owns its existing `docs/repo/reference/agent-coordination.
 ## 2.3 Architectural Decisions With Reasoning
 
 - The director owns intent, consequential design choices, dependencies, acceptance evidence and operating limits. Ask what would go wrong if the implementer chose differently. Name exact paths or commands when they identify an interface, protected target or necessary constraint. Ordinary local files, functions, test design and debugging belong to the implementer.
-- Commission one coherent outcome, which may span related epics. A reviewer states the defect, the behavior to preserve and the proof required. The same implementer chooses the repair within the agreed approach. Material correctness, security and integrity findings qualify even if the original checklist missed them.
+- Commission one coherent outcome, which may span related epics. A reviewer states the defect, the behavior to preserve and the proof required. For example, “This path can submit twice after a lost response. Preserve the single-submission guarantee and show the regression test.” The same implementer chooses the repair. Material correctness, security and integrity findings qualify even if the plan missed them. A discretionary style preference alone warrants neither a correction round nor a log entry.
+- The plan records each epic's current status and acceptance criteria. Mark the epic complete only after validation and required review. The sibling execution log holds evidence, material deviations and, when useful for resuming or handing off work, the implementer's own working list. Existing plan checkboxes still track validated tasks where present. Update epic status at meaningful checkpoints even when the approved approach stays the same.
+- An approved role and repository profile can cover ordinary local work throughout the assignment. At commissioning, check that it covers the intended work and identify any separately authorized external effects. Name individual commands when their identity matters to safety or correctness. Preserve enforced restrictions and the policy owner's authority over profile changes.
 - When an assumption fails or individually reasonable fixes together materially change the approach, both planner and implementer reconsider it. Would they choose it from the start with today's facts? Does all remaining work, including recovery, still fit the limits? The director revises the affected part within delegation. Only that work and its dependents wait.
 
 # Section 3 - Execution Plan
@@ -84,7 +89,7 @@ The coordination home owns its existing `docs/repo/reference/agent-coordination.
 
 **B) Scope.** Revise the existing guidance in one batch and preserve existing plans.
 
-**C) Files touched.** The four managed references in §2.1 and their packaged copies.
+**C) Files touched.** The six managed documents in §2.1 and their packaged copies.
 
 **D) Acceptance and size.** S. A fresh planner can leave local details open, a reviewer can still reject an unresolved consequential design choice, and an implementer can distinguish a correction from a replan.
 
@@ -92,11 +97,11 @@ The coordination home owns its existing `docs/repo/reference/agent-coordination.
 
 **F · Tasks**
 
-- [ ] Make exhaustive file inventories, file trees and planner-written implementation steps conditional. Keep outcome, chosen approach, dependencies, binding constraints and proof concrete. Align the review criteria and quality gates. Small changes may use the assignment itself.
-- [ ] Align execution and assignment guidance with the decisions above. Link the owning plan or Program section and relevant decisions in the handoff. Provide a short approach note only when it resolves a real uncertainty. Reuse covered local permissions through corrections. Respect a denial across commands, tools, identities and agents, report the blocked effect and continue independent authorized work. External effects require matching assignment authority.
+- [ ] Make exhaustive file inventories, file trees and planner-written implementation steps conditional. Keep outcome, approach, dependencies, constraints and proof concrete. Align drafting, per-epic progress, review, log and resume instructions with §2.3 for plans with or without task checkboxes. Small changes may use the assignment itself.
+- [ ] Align assignments, corrections and both permission references with §2.3. Link the owning plan or Program section and relevant decisions in the handoff. Ask for an approach note only to resolve a consequential uncertainty. After a denial, stop the operation and its dependents, report what is blocked and continue independent authorized work. The denial applies across commands, tools, identities and agents. This epic changes wording only.
 - [ ] Verify packaged copies match source. Use the affected routing/resource checks and one fresh-context walkthrough covering three decisions: repair a duplicate submission under the existing contract, return a recovery design that outgrows its time window, and continue independent local work after a denied publication. Review the coherent diff together.
 
-**G · Implementation notes.** Review a sample plan without a predicted file inventory and one that omits a material data decision. The reviewer should accept the first if executable and flag the second. Retain existing evidence for unaffected behavior.
+**G · Implementation notes.** For the duplicate-submission case, use an epic without a predicted file list or task checklist. A fresh reader should be able to locate its review-pending status in the plan, resume from the log, and establish when the epic can be marked complete. The reviewer should still flag a second sample that leaves a consequential data decision unresolved.
 
 **H · Open questions.** None.
 
@@ -116,7 +121,7 @@ The coordination home owns its existing `docs/repo/reference/agent-coordination.
 
 - [ ] At commissioning, name the producer and consumer owners, targets and authorized Git, release and adoption effects once. Use the normal release with release notes and the eligible checks for the full candidate. Treat this as an instruction change that preserves existing permission policy.
 - [ ] Adopt the release through the supported installation workflow. In the consumer reference, link the managed rules, specify which local work the role profile covers, and distinguish covered Git delivery from reserved publication, deployment or shared-resource changes.
-- [ ] Verify the installed drafting, review and execution guidance and its entry from the home. Record the local owner’s disposition of the separate permission trial.
+- [ ] Verify the installed planning, coordination and permission guidance through the home's existing entry point. EP-02 closes on verified adoption and owner-reviewed local guidance. The separate trial in §4.1 may still be unrun at closure.
 
 **G · Implementation notes.** The commissioning director accepts the source after focused review. The home owner verifies adoption. A separate release solely for this guidance is optional. Existing release and adoption gates apply.
 
@@ -135,3 +140,4 @@ At the next ordinary handoff, look for a correction completed within the origina
 # Revision Notes
 
 - 2026-11-21: Draft from the agreed planning, correction and permission boundaries.
+- 2026-11-21: Added the two permission references, defined epic progress with optional checklists, and clarified correction and adoption criteria.
