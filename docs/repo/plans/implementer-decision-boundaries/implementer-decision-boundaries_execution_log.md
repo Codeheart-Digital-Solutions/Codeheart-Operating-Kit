@@ -1,4 +1,4 @@
-Last updated: 2026-11-21T10:34:09Z (UTC)
+Last updated: 2026-11-21T10:38:50Z (UTC)
 Created: 2026-11-21
 
 # Director and Implementer Decision Boundaries — Execution Log
@@ -31,5 +31,9 @@ that the approved role profile could be reused without listing routine commands 
 that publication and its dependents had to stop after a denial while independent local
 checks could continue.
 
-The commissioning director's coherent source review is the remaining EP-01 gate. Release
-qualification and consumer adoption follow acceptance.
+The commissioning director found that the revision preserved the condition on using release or
+merge permissions but omitted the condition on adding them. The same implementer restored both
+conditions and synchronized the packaged contract. The follow-up walkthrough confirmed that a
+local-only assignment reuses its existing profile while any added public-surface permissions
+require the applicable assignment scope and the policy owner's decision. The same director
+reviews the focused correction before release qualification and consumer adoption proceed.

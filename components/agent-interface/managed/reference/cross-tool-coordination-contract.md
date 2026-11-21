@@ -1,4 +1,4 @@
-Last updated: 2026-11-21T10:34:09Z (UTC)
+Last updated: 2026-11-21T10:38:35Z (UTC)
 
 # Cross-Tool Coordination Contract
 
@@ -393,11 +393,14 @@ edits only inside the task's directories. This is an example of the settings sha
 }
 ```
 
-Run release, merge or other public-surface operations only when the assignment includes those
-effects and existing permissions cover them. Command patterns guide a trusted agent within the
-runtime's enforced boundaries. An allowed test or build command runs repository code. Verify
-repository identity, review readiness and CI before covered GitHub delivery. The deny entries
-are illustrative examples, not exhaustive enforcement: other spellings, such as a `+<refspec>` force push or
+The policy owner can add permissions for release, merge or other public-surface commands only
+when the assignment includes those effects. Run those commands only when the assignment
+includes the operation, the approved profile covers it and the required gates pass.
+
+Command patterns guide a trusted agent within the runtime's enforced boundaries. An allowed
+test or build command runs repository code. Verify repository identity, review readiness and CI
+before covered GitHub delivery. The deny entries are illustrative examples, not exhaustive
+enforcement: other spellings, such as a `+<refspec>` force push or
 `:<branch>` deletion, are not matched. Branch protection, the reviewed scope and the delivery
 gates stay authoritative. The workflow still checks authority, review, CI and the exact target.
 
