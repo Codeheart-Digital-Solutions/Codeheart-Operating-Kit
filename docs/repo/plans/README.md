@@ -1,4 +1,4 @@
-Last updated: 2026-10-30T19:29:35Z (UTC)
+Last updated: 2026-11-21T10:21:26Z (UTC)
 
 # Repo Plans
 
@@ -16,6 +16,8 @@ codeheart-operating-kit plans list --format json .
 entries after mixed cutover.
 
 ## Current Plans
+
+- Active [director and implementer decision boundaries](implementer-decision-boundaries/implementer-decision-boundaries_implementation_doc.md) covers planning depth, in-scope corrections and when the director revisits the approach. The [execution log](implementer-decision-boundaries/implementer-decision-boundaries_execution_log.md) records delivery progress.
 
 - Completed [deterministic relay delivery implementation plan](deterministic-relay-delivery/deterministic-relay-delivery_implementation_doc.md):
   a Kit-owned host-executed forwarding workflow with truthful receipts and failure handling.
