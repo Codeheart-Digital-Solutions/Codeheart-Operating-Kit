@@ -1,6 +1,7 @@
-Last updated: 2026-11-21T11:09:51Z (UTC)
+Last updated: 2026-11-21T12:00:39Z (UTC)
 Created: 2026-11-21
-Status: active
+Status: completed
+Completed: 2026-11-21
 Execution log: implementer-decision-boundaries_execution_log.md
 
 # Director and Implementer Decision Boundaries
@@ -82,7 +83,7 @@ The coordination home owns its existing `docs/repo/reference/agent-coordination.
 | Epic | Outcome | Size | Depends on | Status |
 | --- | --- | --- | --- | --- |
 | EP-01 | Drafting, review and execution give consistent decision authority. | S | Agreed direction | Complete |
-| EP-02 | Released guidance is usable in the designated coordination home. | S | Reviewed EP-01 source for release and adoption | Awaiting consumer owner review |
+| EP-02 | Released guidance is usable in the designated coordination home. | S | Reviewed EP-01 source for release and adoption | Complete |
 
 ### EP-01 · Plan, delegate and correct a coherent outcome
 
@@ -121,8 +122,8 @@ The coordination home owns its existing `docs/repo/reference/agent-coordination.
 **F · Tasks**
 
 - [x] At commissioning, name the producer and consumer owners, targets and authorized Git, release and adoption effects once. Use the normal release with release notes and the eligible checks for the full candidate. Treat this as an instruction change that preserves existing permission policy.
-- [ ] Adopt the release through the supported installation workflow. In the consumer reference, link the managed rules, specify which local work the role profile covers, and distinguish covered Git delivery from reserved publication, deployment or shared-resource changes.
-- [ ] Verify the installed planning, coordination and permission guidance through the home's existing entry point. EP-02 closes on verified adoption and owner-reviewed local guidance. The separate trial in §4.1 may still be unrun at closure.
+- [x] Adopt the release through the supported installation workflow. In the consumer reference, link the managed rules, specify which local work the role profile covers, and distinguish covered Git delivery from reserved publication, deployment or shared-resource changes.
+- [x] Verify the installed planning, coordination and permission guidance through the home's existing entry point. EP-02 closes on verified adoption and owner-reviewed local guidance. The separate trial in §4.1 may still be unrun at closure.
 
 **G · Implementation notes.** The commissioning director accepts the source after focused review. The home owner verifies adoption. A separate release solely for this guidance is optional. Existing release and adoption gates apply.
 
@@ -143,3 +144,4 @@ At the next ordinary handoff, look for a correction completed within the origina
 - 2026-11-21: Draft from the agreed planning, correction and permission boundaries.
 - 2026-11-21: Added the two permission references, defined epic progress with optional checklists, and clarified correction and adoption criteria.
 - 2026-11-21: Owner approved the revised plan and commissioned delivery through release and verified adoption. See the [execution log](implementer-decision-boundaries_execution_log.md).
+- 2026-11-21: Completed both epics after the v0.1.40 release and verified adoption on the designated coordination home's default branch.

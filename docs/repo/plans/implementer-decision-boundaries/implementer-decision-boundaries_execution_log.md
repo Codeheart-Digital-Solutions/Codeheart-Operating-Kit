@@ -1,4 +1,4 @@
-Last updated: 2026-11-21T11:09:51Z (UTC)
+Last updated: 2026-11-21T12:00:39Z (UTC)
 Created: 2026-11-21
 
 # Director and Implementer Decision Boundaries — Execution Log
@@ -52,7 +52,6 @@ The cumulative guidance guard rejects the relay test changes since the accepted 
 broad source `7980b0c51beb285c0c03db43aca1ef08dec9f1d5`. Qualification uses the broad
 candidate route for the full committed tree.
 
-
 ## EP-02 Release And Adoption Checkpoint
 
 - All four [broad qualification lanes](https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/actions/runs/44895627861)
@@ -72,6 +71,18 @@ candidate route for the full committed tree.
   passed on both supported platforms with the explicit `v0.1.40` release tag.
 - The designated coordination home's isolated adoption checkout passed the supported
   v0.1.39-to-v0.1.40 preview, apply and installed-state check. Eight updated managed guides
-  matched the release bytes and the proposed local entry-point links resolved. The adoption
-  commit is ready for the consumer owner’s agreement on the local guidance. The plan remains
-  active through that agreement, default-branch integration and verification.
+  matched the release bytes and the proposed local entry-point links resolved. At that
+  checkpoint, the adoption commit awaited the consumer owner's agreement on the local guidance.
+
+## EP-02 Adoption And Closure
+
+The coordination home's maintenance owner approved the exact local guidance before the scoped
+adoption merge. The merged default branch contains the approved wording and the released Kit
+v0.1.40. The isolated adoption checkout was fast-forwarded to the exact merged revision and
+the released CLI reported `healthy (current)`. The lock records verified release provenance.
+All eight updated managed guides match the published source, and the five local reference links
+resolve from the existing agent instructions.
+
+Both epics are complete. The permission-profile trial in §4.1 stays deferred. The commissioning
+director retains responsibility for assignment workspace closure. The private adoption record
+holds the specific merge evidence and the consumer's checkout reconciliation state.
