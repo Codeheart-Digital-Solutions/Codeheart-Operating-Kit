@@ -1,4 +1,4 @@
-Last updated: 2026-11-21T10:41:28Z (UTC)
+Last updated: 2026-11-21T11:09:51Z (UTC)
 Created: 2026-11-21
 Status: active
 Execution log: implementer-decision-boundaries_execution_log.md
@@ -82,7 +82,7 @@ The coordination home owns its existing `docs/repo/reference/agent-coordination.
 | Epic | Outcome | Size | Depends on | Status |
 | --- | --- | --- | --- | --- |
 | EP-01 | Drafting, review and execution give consistent decision authority. | S | Agreed direction | Complete |
-| EP-02 | Released guidance is usable in the designated coordination home. | S | Reviewed EP-01 source for release and adoption | In progress |
+| EP-02 | Released guidance is usable in the designated coordination home. | S | Reviewed EP-01 source for release and adoption | Awaiting consumer owner review |
 
 ### EP-01 · Plan, delegate and correct a coherent outcome
 
@@ -120,7 +120,7 @@ The coordination home owns its existing `docs/repo/reference/agent-coordination.
 
 **F · Tasks**
 
-- [ ] At commissioning, name the producer and consumer owners, targets and authorized Git, release and adoption effects once. Use the normal release with release notes and the eligible checks for the full candidate. Treat this as an instruction change that preserves existing permission policy.
+- [x] At commissioning, name the producer and consumer owners, targets and authorized Git, release and adoption effects once. Use the normal release with release notes and the eligible checks for the full candidate. Treat this as an instruction change that preserves existing permission policy.
 - [ ] Adopt the release through the supported installation workflow. In the consumer reference, link the managed rules, specify which local work the role profile covers, and distinguish covered Git delivery from reserved publication, deployment or shared-resource changes.
 - [ ] Verify the installed planning, coordination and permission guidance through the home's existing entry point. EP-02 closes on verified adoption and owner-reviewed local guidance. The separate trial in §4.1 may still be unrun at closure.
 
