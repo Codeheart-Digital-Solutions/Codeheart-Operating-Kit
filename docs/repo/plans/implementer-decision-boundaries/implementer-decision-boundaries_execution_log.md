@@ -1,4 +1,4 @@
-Last updated: 2026-11-21T10:38:50Z (UTC)
+Last updated: 2026-11-21T10:41:28Z (UTC)
 Created: 2026-11-21
 
 # Director and Implementer Decision Boundaries — Execution Log
@@ -35,5 +35,19 @@ The commissioning director found that the revision preserved the condition on us
 merge permissions but omitted the condition on adding them. The same implementer restored both
 conditions and synchronized the packaged contract. The follow-up walkthrough confirmed that a
 local-only assignment reuses its existing profile while any added public-surface permissions
-require the applicable assignment scope and the policy owner's decision. The same director
-reviews the focused correction before release qualification and consumer adoption proceed.
+require the applicable assignment scope and the policy owner's decision.
+
+The director accepted corrected head `3427a1689a45798a288e2555792e7c27700d751a` on 2026-11-21.
+[Source PR #43](https://github.com/Codeheart-Digital-Solutions/Codeheart-Operating-Kit/pull/43)
+passed feedback and merged to `main` as `ff131f9977429a3e8d237ae916f4cc79f6edea79` with the accepted
+source tree.
+
+## EP-02 Release Candidate
+
+v0.1.40 is the next unused patch after the live v0.1.39 release. The release keeps the
+unsigned, unnotarized internal/prototype audience. Its notes cover the earlier merged
+handoff and relay dispatch guidance as well as EP-01.
+
+The cumulative guidance guard rejects the relay test changes since the accepted v0.1.39
+broad source `7980b0c51beb285c0c03db43aca1ef08dec9f1d5`. Qualification uses the broad
+candidate route for the full committed tree.

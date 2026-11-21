@@ -1,6 +1,31 @@
-Last updated: 2026-10-30T18:32:36Z (UTC)
+Last updated: 2026-11-21T10:41:28Z (UTC)
 
 # Codeheart Operating Kit Release Notes
+
+## v0.1.40 Release Notes
+
+Directors commission a coherent outcome with a chosen approach, acceptance evidence and
+operating limits. Plan authors can omit file trees, file lists and checklists when those details
+do not affect the work. The plan records each epic's status, and the sibling execution log
+supports review and resumption.
+
+- Implementers choose local design, tests and in-scope corrections. An invalidated consequential
+  assumption or a series of fixes that changes the approach returns to the director before
+  dependent work proceeds.
+- At commissioning, check an approved role and repository profile once for covered work. The
+  assignment still governs any added external permissions and their use. A denied operation
+  and its dependents stop while independent authorized work can continue.
+- Coordinators continue through review and disposition after handoff. For cross-tool relay
+  assignments, independent work uses distinct transport workers, and status follows the matching
+  invocation and delivery evidence.
+
+### Impact And Adoption
+
+These instruction changes use existing managed planning-workflow and agent-interface targets.
+Existing plans can keep their headings and checkboxes. Adopt through the supported
+`upgrade --version 0.1.40 --yes` workflow, then verify installed health and the relevant routes.
+The macOS universal and Windows x64 packs use the existing unsigned, unnotarized
+internal/prototype distribution with HTTPS and SHA-256 verification.
 
 ## v0.1.39 Release Notes
 
