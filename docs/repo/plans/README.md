@@ -1,4 +1,4 @@
-Last updated: 2026-11-21T10:21:26Z (UTC)
+Last updated: 2026-11-21T11:09:51Z (UTC)
 
 # Repo Plans
 
@@ -17,7 +17,7 @@ entries after mixed cutover.
 
 ## Current Plans
 
-- Active [director and implementer decision boundaries](implementer-decision-boundaries/implementer-decision-boundaries_implementation_doc.md) covers planning depth, in-scope corrections and when the director revisits the approach. The [execution log](implementer-decision-boundaries/implementer-decision-boundaries_execution_log.md) records delivery progress.
+- Active [director and implementer decision boundaries](implementer-decision-boundaries/implementer-decision-boundaries_implementation_doc.md) covers planning depth, in-scope corrections and when the director revisits the approach. v0.1.40 is published. Adoption awaits the coordination owner's review. The [execution log](implementer-decision-boundaries/implementer-decision-boundaries_execution_log.md) records delivery progress.
 
 - Completed [deterministic relay delivery implementation plan](deterministic-relay-delivery/deterministic-relay-delivery_implementation_doc.md):
   a Kit-owned host-executed forwarding workflow with truthful receipts and failure handling.
