@@ -1,4 +1,4 @@
-Last updated: 2026-11-21T10:34:09Z (UTC)
+Last updated: 2026-11-21T18:47:28Z (UTC)
 
 # Review Planning Document
 
@@ -100,6 +100,11 @@ Review discovery for intention, evidence, consequential decisions and the reques
 Review a plan for substantive approach, capability coverage, dependencies, adaptable technical
 detail and proportionate validation. Review implementation against actual behavior and evidence;
 a planning review cannot prove implementation or release readiness.
+
+For a consequential safeguard, follow its basis and test whether the intended operator can
+complete a valid case. If it adds substantial effort, would a simpler supported check detect
+the same failure at substantially lower cost? Explain any material gap and identify the
+independent review or other protection the governing decision still requires.
 
 The commissioning agent stays the primary reviewer of a planning document it commissioned and
 owns its acceptance. Add an independent review when the decision's risk, the commissioning

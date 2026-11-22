@@ -1,4 +1,4 @@
-Last updated: 2026-11-21T10:34:09Z (UTC)
+Last updated: 2026-11-21T23:49:23Z (UTC)
 
 # Execute Implementation Plan
 
@@ -163,6 +163,18 @@ plan/log change validates. Routine checkbox progress does not trigger a publicat
 - Use any existing checkbox tasks as execution aids.
 - Choose local design, files, functions, tests and debugging within the plan. Add necessary
   low-risk work to deliver the epic outcome.
+- Before building a method that changes who can operate or materially adds to what the operator
+  must do in normal use or recovery, check its basis in the epic, governing handoff or binding
+  requirement. If the added obligation has no existing basis, return the choice to the director
+  with what the whole procedure will require, which failure it addresses, and whether a simpler
+  supported method would suffice. Wait for that decision before building the affected method.
+  Proceed with ordinary implementation choices and tests within the agreed limits.
+
+  Include waiting, coordination, retries and cleanup in the operating cost. If the method
+  compromises a required architectural or product boundary, or a binding control makes the agreed
+  operation infeasible, return the conflict before proceeding with the affected work. The director
+  resolves it within delegated authority and amends the affected epic when its scope changes. An
+  in-scope clarification stays in the existing assignment.
 - Return a material outcome, scope, dependency, cost or authority change to the delegated director
   for plan amendment; involve the user only outside that mandate or at a genuinely enforced user gate.
 - Keep necessary low-risk corrections inside the named epic. A separate routine repair uses
@@ -361,6 +373,15 @@ repeat a complete review. Forwarding another agent's verdict without examining t
 discharge primary review. Closely related epics may share the checkpoint when declared in the
 plan; keep them acceptance-pending until the review passes.
 
+Compare delivered behavior with the approved epic and any more specific decision in its governing
+handoff. Can the intended operator complete a valid case? Identify any missing capability and
+any material new condition on who can use the result or what they must do, such as needing
+another person, a new permission or an extra operating step.
+
+When commissioning an acceptance review, give the reviewer the applicable epic and handoff
+requirements and point them to this section. A specialist reviewer can focus on the assigned
+question.
+
 Add an independent reviewer when complexity or risk warrants it, when the commissioning agent took
 a substantive part in the implementation, or when the user, assignment or a binding repository
 gate requires it. Another full technical review is not required for every task. An authorship
@@ -374,8 +395,10 @@ the commissioning agent's own model.
 
 For a correction, the reviewer gives the defect, the behavior to preserve and the proof required.
 The same implementer chooses the repair. Material findings include failed acceptance criteria
-and correctness, security or integrity defects the plan did not anticipate. A discretionary style
-preference alone warrants neither a correction round nor a log entry.
+and correctness, security or integrity defects the plan did not anticipate. Treat a material
+new obligation as a finding when it lacks a governing requirement or a recorded decision by the
+responsible director within their authority. A discretionary style preference alone warrants
+neither a correction round nor a log entry.
 
 Use the same reviewers for focused follow-up on corrections and their effects. Preserve valid
 review evidence. Broaden review or use a different reviewer only for a material change,

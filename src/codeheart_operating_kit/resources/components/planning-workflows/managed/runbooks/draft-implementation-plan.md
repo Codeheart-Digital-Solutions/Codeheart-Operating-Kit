@@ -1,4 +1,4 @@
-Last updated: 2026-11-21T10:34:09Z (UTC)
+Last updated: 2026-11-21T23:49:23Z (UTC)
 
 # Draft Implementation Plan
 
@@ -109,6 +109,15 @@ a constraint that matters to correctness or safety. Include concrete examples or
 they resolve material ambiguity. Within the approved outcome the implementer chooses ordinary
 files, functions, commands, test design and debugging.
 
+For a consequential requirement, state or link the decision the work must settle, the failure
+the safeguard should prevent and the simplest observation sufficient for acceptance. If the proposed
+method changes who can operate or adds a condition for proceeding beyond the agreed acceptance
+criteria, cite the applicable requirement or obtain the responsible director’s decision within
+their authority. Implementers choose ordinary tests of existing requirements.
+
+Before revising an approach or commissioning another correction, would you still choose it to
+achieve the original outcome, knowing all remaining work, operator time, recovery and cleanup?
+
 Plan cheap affected checks during iteration and broader validation on a coherent candidate.
 Plan the commissioning agent's primary review at meaningful checkpoints, combining tightly
 related epics when useful. Add an independent reviewer where complexity, risk, the commissioning
@@ -126,10 +135,10 @@ capability, mark the omission explicitly as out of scope, deferred, or blocked w
 not let a plan quietly narrow the capability to policy, scaffolding, gates, schemas, stubs, or
 validation shells while the intended feature behavior remains unplanned.
 
-Apply the fresh-implementer test while drafting epics. A fresh implementer must be able to identify
-the chosen workflow, consequential data and permission decisions, and how to verify acceptance.
-An unresolved choice that can materially affect the outcome belongs in the plan as a decision or
-an explicit blocker for the affected work.
+Draft each epic for a competent implementer who missed the planning discussion. State or link
+the decisions, definitions and constraints needed to follow the chosen workflow and recognize
+completion. If two reasonable readings would materially change the outcome, required authority
+or operator effort, settle the choice or mark the affected work blocked before handoff.
 
 ## Runbook Change Coverage
 
@@ -326,6 +335,18 @@ Include:
 - `2.1 Implementation Strategy`
 - `2.2 Open Questions And Assumptions Requiring Clarification`
 - `2.3 Architectural Decisions With Reasoning`
+
+Use `2.1 Implementation Strategy` for consequential choices that affect this delivery. State or
+link who will use and operate the result, how long it must be supported, and which architectural
+or product boundaries it must preserve. State what could be lost, the acceptable operator effort
+in normal use and recovery, and the evidence sufficient for acceptance. Epics and short handoffs
+inherit that decision. State an epic-specific difference where it changes the design, procedure
+or evidence.
+
+Use the governing Program decision when one exists. A link suffices for an inherited decision.
+Otherwise, record the consequential choice in the implementation plan. A project without a
+Program uses this section directly. An authorized request can go straight to planning when
+discovery is unnecessary.
 
 Include a file tree when placement or layout matters to the chosen strategy. Show the paths that
 carry those decisions. If helpful, annotate them with `# create` or `# modify`. Use `# delete`
