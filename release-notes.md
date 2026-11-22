@@ -1,6 +1,25 @@
-Last updated: 2026-11-22T00:43:50Z (UTC)
+Last updated: 2026-11-22T08:15:31Z (UTC)
 
 # Codeheart Operating Kit Release Notes
+
+## v0.1.42 Release Notes
+
+The Planning Workflows guide defines a proportionate approach by weighing the whole effort a
+method demands against the outcome it serves. Include the work to build, operate, recover,
+maintain and clean up, along with operator waiting, coordination and retries. Weigh those
+costs against what could be lost, how long the result must last, and how often it will be used
+or reused.
+
+The discovery, planning and execution guides link to that definition from the passages where
+they establish the facts, record the choice and return methods outside the agreed limits to
+the director.
+
+### Impact And Adoption
+
+This instruction-only change uses existing managed planning-workflow targets. Adopt through
+the supported `upgrade --version 0.1.42 --yes` workflow and verify installed health and the
+affected guides. The macOS universal and Windows x64 packs use the existing unsigned,
+unnotarized internal/prototype distribution with HTTPS and SHA-256 verification.
 
 ## v0.1.41 Release Notes
 

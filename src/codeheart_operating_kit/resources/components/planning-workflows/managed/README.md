@@ -1,4 +1,4 @@
-Last updated: 2026-10-10T16:09:55Z (UTC)
+Last updated: 2026-11-22T08:10:42Z (UTC)
 
 # Planning Workflows
 
@@ -49,6 +49,19 @@ Local commits preserve coherent completed work. Publication and normal PR integr
 covered delivery authority; a merged draft remains draft until execution is authorized. Use the
 lifecycle reference for these defaults and execution guidance for coherent batches, useful review,
 focused correction follow-up and evidence reuse.
+
+## Proportionate Approach
+
+An approach is proportionate when the whole effort it demands fits the outcome it serves. Count
+the effort to build, operate, recover, maintain and clean up, including the operator’s waiting,
+coordination and retries. Weigh that effort against what could be lost, how long the result must
+last and how often it will be used or reused. The same judgment can favour a short procedure for
+a one-time operation or an investment in a durable capability.
+
+[Discovery](runbooks/discovery-workflow.md#proportionate-inquiry) establishes the facts when needed,
+the [implementation plan](runbooks/draft-implementation-plan.md#section-2---strategy) records the
+choice, and [execution](runbooks/execute-implementation-plan.md#execution-contract) returns a
+method outside the agreed limits to the director.
 
 ## Boundaries
 

@@ -1,4 +1,4 @@
-Last updated: 2026-11-21T23:49:23Z (UTC)
+Last updated: 2026-11-22T08:10:42Z (UTC)
 
 # Draft Implementation Plan
 
@@ -342,6 +342,9 @@ or product boundaries it must preserve. State what could be lost, the acceptable
 in normal use and recovery, and the evidence sufficient for acceptance. Epics and short handoffs
 inherit that decision. State an epic-specific difference where it changes the design, procedure
 or evidence.
+
+For a decision still open, use these facts to choose a
+[proportionate](../README.md#proportionate-approach) approach.
 
 Use the governing Program decision when one exists. A link suffices for an inherited decision.
 Otherwise, record the consequential choice in the implementation plan. A project without a
