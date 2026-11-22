@@ -1,4 +1,4 @@
-Last updated: 2026-11-21T23:49:23Z (UTC)
+Last updated: 2026-11-22T08:10:42Z (UTC)
 
 # Discovery Workflow
 
@@ -64,6 +64,8 @@ be lost, and the acceptable operator effort in normal use and recovery. Use exis
 decisions where they settle the question. Where a consequential trade-off remains, explain it in
 concrete terms and recommend an option to the user or delegated decision owner. Include waiting,
 coordination, retries and cleanup when judging operator effort.
+
+Use these facts to assess whether the approach is [proportionate](../README.md#proportionate-approach).
 
 Carry the settled choice into the [Implementation Capability Scope handoff](#implementation-handoff-ready)
 under `Preserve decisions` or `Planner must not reinvent`. Use `Feature-level success evidence`
