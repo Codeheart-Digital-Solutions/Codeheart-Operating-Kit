@@ -1,6 +1,31 @@
-Last updated: 2026-11-21T10:41:28Z (UTC)
+Last updated: 2026-11-22T00:43:50Z (UTC)
 
 # Codeheart Operating Kit Release Notes
+
+## v0.1.41 Release Notes
+
+This release carries operating requirements from discovery into implementation and review.
+Use the existing discovery handoff and implementation strategy to identify who will rely on
+the result, what must remain usable, and the acceptable effort during normal operation and
+recovery. An inherited decision can be linked from the plan.
+
+- State the failure a consequential safeguard must prevent and the simplest observation that
+  proves it works. Check whether the intended operator can complete a valid case and whether
+  a simpler supported check covers the same failure at substantially lower cost.
+- Before building a method that would change who can operate or materially increase their
+  work, check the governing decision. Return unsupported obligations or conflicts to the
+  director with the full operating and recovery costs. Ordinary implementation choices and
+  tests can proceed within the agreed limits.
+- At acceptance, compare delivered behavior against the approved epic and handoff for missing
+  capabilities and material new obligations. An additional obligation requires a governing
+  requirement or a recorded decision by the responsible director within their authority.
+
+### Impact And Adoption
+
+These instruction changes use existing planning-workflow and agent-interface targets. Adopt
+through the supported `upgrade --version 0.1.41 --yes` workflow and verify installed health and
+the affected guides. The macOS universal and Windows x64 packs use the existing unsigned,
+unnotarized internal/prototype distribution with HTTPS and SHA-256 verification.
 
 ## v0.1.40 Release Notes
 
